@@ -37,6 +37,13 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 		 */
 		var ERROR_NO_GUID = 'No guid found in device object';
 		
+		/**
+		 * @const
+		 * @private
+		 * @description Return code if item was not found.
+		 */
+		var ERROR_ITEM_NOT_FOUND = -1;
+		
 		// return service API
 		this.$get = function($rootScope, $q, $location, ketaEventBus) {
 			
@@ -62,15 +69,15 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 			 * @description Return index of given item in given list
 			 * @param {object} item item to search for
 			 * @param {object[]} list list to search in
-			 * @returns {number} index index of item or -1 if not found
+			 * @returns {number} index index of item or ERROR_ITEM_NOT_FOUND if not found
 			 */
 			var indexOfItem = function(item, list) {
 				
-				var index = -1;
+				var index = ERROR_ITEM_NOT_FOUND;
 				
 				// filter objects and return index if match was found
 				angular.forEach(list, function(object, idx) {
-					if ((index === -1) && equals(item, object)) {
+					if ((index === ERROR_ITEM_NOT_FOUND) && equals(item, object)) {
 						index = idx;
 					}
 				});
@@ -108,7 +115,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 						// get index of item to apply event to
 						var index = indexOfItem(device, devices);
 						
-						if (index !== -1) {
+						if (index !== ERROR_ITEM_NOT_FOUND) {
 							
 							if (message.type === ketaEventBus.EVENT_UPDATED) {
 								devices[index] = device;
@@ -156,16 +163,17 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 							// generate UUID for listener
 							var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_deviceSetListener';
 							
-							// set device filter
+							// set device filter and projection
 							var deviceFilter = {};
+							var deviceProjection = {};
 							
-							if (angular.isDefined(message.params) &&
-								(message.params !== null) &&
-								angular.isDefined(message.params.filter) &&
-								angular.isDefined(message.params.filter.guid)) {
-								deviceFilter = {
-									guid: message.params.filter.guid
-								};
+							if (angular.isDefined(message.params) && (message.params !== null)) {
+								if (angular.isDefined(message.params.filter)) {
+									deviceFilter = message.params.filter;
+								}
+								if (angular.isDefined(message.params.projection)) {
+									deviceProjection = message.params.projection;
+								}
 							}
 							
 							// register handler for replyAddress
@@ -178,7 +186,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 								action: 'registerDeviceSetListener',
 								body: {
 									deviceFilter: deviceFilter,
-									deviceProjection: {},
+									deviceProjection: deviceProjection,
 									replyAddress: listenerUUID
 								}
 							}, function(listenerResponse) {
@@ -205,7 +213,16 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 								response.result.total
 							);
 						} else {
-							deferred.resolve(response.result);
+							if (angular.isDefined(response.result.type) &&
+								response.result.type !== ketaEventBus.EVENT_FAILED) {
+								if (response.result.type === ketaEventBus.EVENT_UPDATED) {
+									deferred.resolve(response.result.value);
+								} else {
+									deferred.resolve(response.result);
+								}
+							} else {
+								deferred.reject('Failed');
+							}
 						}
 						
 					} else {
@@ -244,39 +261,44 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 			/**
 			 * @private
 			 * @function
-			 * @description Detect changes between two device objects.
-			 * @param {object} prev previous object version
-			 * @param {object} current current object version
+			 * @description Detect changes in two tag value objects.
+			 * @param {object} prevTags previous tags object
+			 * @param {object} currentTags current tags object
 			 * @returns {object|boolean}
 			 */
-			var getChanges = function(prev, current) {
+			var getChanges = function(prevTags, currentTags) {
 				
 				var changes = {};
-				var prop = null;
 				
-				for (prop in current) {
-					if (current.hasOwnProperty(prop)) {
-						if (!prev || prev[prop] !== current[prop]) {
-							if (typeof current[prop] === 'object') {
-								var c = getChanges(prev[prop], current[prop]);
-								if (c) {
-									changes[prop] = c;
-								}
-							} else {
-								changes[prop] = current[prop];
-							}
-						}
+				angular.forEach(currentTags, function(tag, name) {
+					if (!angular.isDefined(prevTags[name]) ||
+						!angular.equals(prevTags[name].value, tag.value)) {
+						changes[name] = {
+							value: tag.value,
+							oca: tag.oca
+						};
 					}
-				}
+				});
 				
-				for (prop in changes) {
-					if (changes.hasOwnProperty(prop)) {
-						return changes;
-					}
+				return (!angular.equals(changes, {})) ? changes : false;
+			};
+			
+			/**
+			 * @private
+			 * @function
+			 * @description Check if guid property is set in device object. If not return rejected promise.
+			 * @param {object} device device object
+			 * @returns {object|boolean}
+			 */
+			var checkIfGuidExists = function(device) {
+				if (!angular.isDefined(device.guid)) {
+					return responsePromise({
+						code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
+						message: ERROR_NO_GUID
+					}, false);
+				} else {
+					return true;
 				}
-				
-				// false when unchanged
-				return false;
 			};
 			
 			/**
@@ -377,18 +399,17 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				create: function(device) {
 					
 					// check if guid property exists in device
-					if (!angular.isDefined(device.guid)) {
-						return responsePromise({
-							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-							message: ERROR_NO_GUID
-						}, false);
-					}
+					var valid = checkIfGuidExists(device);
 					
-					return processAction({
-						action: 'createDevice',
-						params: null,
-						body: device
-					});
+					if (valid === true) {
+						return processAction({
+							action: 'createDevice',
+							params: null,
+							body: device
+						});
+					} else {
+						return valid;
+					}
 					
 				},
 				
@@ -402,47 +423,47 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 * angular.module('exampleApp', [])
 				 *     .controller('ExampleController', function(ketaDevice) {
 				 *         ketaDevice.update({
-				 *             guid: 'new-guid',
-				 *             currentAddress: 'updated-address'
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     value: 'new-name',
+				 *                     oca: 1
+				 *                 }
+				 *             }
 				 *         });
 				 *     });
 				 */
 				update: function(device) {
 					
 					// check if guid property exists in device
-					if (!angular.isDefined(device.guid)) {
-						return responsePromise({
-							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-							message: ERROR_NO_GUID
-						}, false);
-					}
+					var valid = checkIfGuidExists(device);
 					
-					// get original device object
-					var originalDevice = angular.copy(device.$$pristine);
-					
-					// get updated device object
-					var updatedDevice = angular.copy(device);
-					delete updatedDevice.$$pristine;
-					
-					var changes = getChanges(originalDevice, updatedDevice);
-					
-					if (changes) {
+					if (valid === true) {
 						
-						// oca does not change, but must be included to fulfill api
-						angular.forEach(changes.tagValues, function(tagValue, tagName) {
-							changes.tagValues[tagName].oca = updatedDevice.tagValues[tagName].oca;
-						});
+						// get original device object
+						var originalDevice = angular.copy(device.$$pristine);
 						
-						return processAction({
-							action: 'updateDevice',
-							params: {
-								deviceId: device.guid
-							},
-							body: changes
-						});
+						// get updated device object
+						var updatedDevice = angular.copy(device);
+						delete updatedDevice.$$pristine;
+						
+						var changes = getChanges(originalDevice.tagValues, updatedDevice.tagValues);
+						
+						if (changes) {
+							return processAction({
+								action: 'updateDevice',
+								params: {
+									deviceId: device.guid
+								},
+								body: {
+									tagValues: changes
+								}
+							});
+						} else {
+							return responsePromise(device, true);
+						}
 						
 					} else {
-						return responsePromise(device, true);
+						return valid;
 					}
 					
 				},
@@ -457,27 +478,26 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 * angular.module('exampleApp', [])
 				 *     .controller('ExampleController', function(ketaDevice) {
 				 *         ketaDevice.delete({
-				 *             guid: 'new-guid'
+				 *             guid: 'guid'
 				 *         });
 				 *     });
 				 */
 				'delete': function(device) {
 					
 					// check if guid property exists in device
-					if (!angular.isDefined(device.guid)) {
-						return responsePromise({
-							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-							message: ERROR_NO_GUID
-						}, false);
-					}
+					var valid = checkIfGuidExists(device);
 					
-					return processAction({
-						action: 'deleteDevice',
-						params: {
-							deviceId: device.guid
-						},
-						body: null
-					});
+					if (valid === true) {
+						return processAction({
+							action: 'deleteDevice',
+							params: {
+								deviceId: device.guid
+							},
+							body: null
+						});
+					} else {
+						return valid;
+					}
 				}
 				
 			};

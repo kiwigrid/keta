@@ -83,9 +83,9 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		STATE_LABELS[STATE_OPEN] = 'open';
 		STATE_LABELS[STATE_CLOSING] = 'closing';
 		STATE_LABELS[STATE_CLOSED] = 'closed';
-		STATE_LABELS[STATE_UNKNOWN] = 'unknown';/**
+		STATE_LABELS[STATE_UNKNOWN] = 'unknown';
 		
-		/*
+		/**
 		 * @const
 		 * @private
 		 * @description Created event id.
@@ -105,6 +105,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @description Deleted event id.
 		 */
 		var EVENT_DELETED = 'DELETED';
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Failed event id.
+		 */
+		var EVENT_FAILED = 'FAILED';
 		
 		/**
 		 * @const
@@ -140,6 +147,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @description Response code if auth token expired.
 		 */
 		var RESPONSE_CODE_AUTH_TOKEN_EXPIRED = 419;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Response code if something unexpected happened.
+		 */
+		var RESPONSE_CODE_INTERNAL_SERVER_ERROR = 500;
 		
 		/**
 		 * @const
@@ -553,7 +567,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				
 			};
 			
-			// unregister all bus handlers upon route changes
+			// unregister all bus handlers and listeners upon route changes
 			$rootScope.$on('$routeChangeStart', function() {
 				
 				// unregister all handlers
@@ -563,6 +577,17 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				
 				// clear internal stack
 				busHandlers = {};
+				
+				// unregister all listeners
+				stub.send('devices', {
+					action: 'unregisterAllListeners',
+					body: null
+				}, function(listenerResponse) {
+					if (listenerResponse.code !== stub.RESPONSE_CODE_OK) {
+						stub.log('devices:unregisterAllListeners', listenerResponse.message);
+					}
+				});
+				
 			});
 			
 			/**
@@ -610,6 +635,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
+				 * @description Failed event id.
+				 */
+				EVENT_FAILED: EVENT_FAILED,
+				
+				/**
+				 * @const
+				 * @memberOf ketaEventBusService
 				 * @description Response code if everything is fine.
 				 */
 				RESPONSE_CODE_OK: RESPONSE_CODE_OK,
@@ -641,6 +673,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @description Response code if auth token expired.
 				 */
 				RESPONSE_CODE_AUTH_TOKEN_EXPIRED: RESPONSE_CODE_AUTH_TOKEN_EXPIRED,
+				
+				/**
+				 * @const
+				 * @memberOf ketaEventBusService
+				 * @description Response code if something unexpected happened.
+				 */
+				RESPONSE_CODE_INTERNAL_SERVER_ERROR: RESPONSE_CODE_INTERNAL_SERVER_ERROR,
 				
 				/**
 				 * @function
@@ -1072,6 +1111,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 						// start timeout
 						$timeout(function() {
 							if (!requestReturned && angular.isFunction(responseHandler)) {
+								requestReturned = true;
 								responseHandler({
 									code: stub.RESPONSE_CODE_TIMEOUT,
 									message: 'Response for ' + address + ':' + message.action + ' timed out'
@@ -1082,28 +1122,41 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 						// send message
 						stub.getEventBus().send(address, message, function(reply) {
 							
-							requestReturned = true;
-							
-							if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
+							if (!requestReturned && reply) {
 								
-								// access token expired
-								ketaAccessToken.refresh().then(function(response) {
-									if (angular.isDefined(response.data.accessToken)) {
-										ketaAccessToken.set(response.data.accessToken);
-										stub.send(address, message, responseHandler);
+								requestReturned = true;
+								
+								if (angular.isDefined(reply.code)) {
+									if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
+										
+										// access token expired
+										ketaAccessToken.refresh().then(function(response) {
+											if (angular.isDefined(response.data.accessToken)) {
+												ketaAccessToken.set(response.data.accessToken);
+												stub.send(address, message, responseHandler);
+											}
+										}, function(error) {
+											responseHandler({
+												code: stub.RESPONSE_CODE_INTERNAL_SERVER_ERROR,
+												message: 'Access token could not be refreshed: ' + error
+											});
+										});
+										
+									} else {
+										
+										stub.log(SERVICE_NAME + '.send « response from ' + address + ':' + message.action, reply);
+										
+										// non-interceptable response code (200, 401, ...)
+										if (angular.isFunction(responseHandler)) {
+											responseHandler(reply);
+										}
+										
 									}
-								}, function(error) {
-									// TODO: process failure on refresh access token
-									console.error(error);
-								});
-								
-							} else {
-								
-								stub.log(SERVICE_NAME + '.send « response from ' + address + ':' + message.action, reply);
-								
-								// non-interceptable response code (200, 401, ...)
-								if (angular.isFunction(responseHandler)) {
-									responseHandler(reply);
+								} else {
+									responseHandler({
+										code: stub.RESPONSE_CODE_BAD_REQUEST,
+										message: 'Bad request'
+									});
 								}
 								
 							}
