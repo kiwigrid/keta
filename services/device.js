@@ -327,9 +327,10 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *   default projection is in place and all devices will be returned.
 				 * </p>
 				 * <p>
-				 *   Automatically a device set listener is registered.
+				 *   By default a device set listener is registered.
 				 * </p>
 				 * @param {object} [params={}] device parameter (filter, projection, offset and limit)
+				 * @param {boolean} [registerListener=true] flag if device set listener should be registered
 				 * @returns {promise}
 				 * @example
 				 * angular.module('exampleApp', [])
@@ -373,12 +374,13 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *         });
 				 *     });
 				 */
-				read: function(params) {
+				read: function(params, registerListener) {
+					var flag = (angular.isDefined(registerListener)) ? registerListener : true;
 					return processAction({
 						action: 'getDevices',
 						params: (angular.isDefined(params) ? params : null),
 						body: null
-					}, true);
+					}, flag);
 				},
 				
 				/**

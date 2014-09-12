@@ -1135,11 +1135,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 												ketaAccessToken.set(response.data.accessToken);
 												stub.send(address, message, responseHandler);
 											}
-										}, function(error) {
-											responseHandler({
-												code: stub.RESPONSE_CODE_INTERNAL_SERVER_ERROR,
-												message: 'Access token could not be refreshed: ' + error
-											});
+										}, function() {
+											$window.location.reload();
 										});
 										
 									} else {
