@@ -1176,7 +1176,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					} else {
 						
 						ketaLogger.error(
-							SERVICE_NAME + '.send » request to ' + address + ':' + message.action + ' denied. EventBus not open.',
+							SERVICE_NAME + '.send « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
 							message
 						);
 						

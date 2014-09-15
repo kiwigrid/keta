@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.4
+ * keta 0.2.5
  */
 
 // source: components/services/access-token.js
@@ -1860,7 +1860,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					} else {
 						
 						ketaLogger.error(
-							SERVICE_NAME + '.send » request to ' + address + ':' + message.action + ' denied. EventBus not open.',
+							SERVICE_NAME + '.send « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
 							message
 						);
 						
@@ -2467,9 +2467,9 @@ angular.module('keta.servicesLogger', [])
 		 * @example
 		 * angular.module('exampleApp', [])
 		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.setLogger(function(level, request, response) {
-		 *             if (request.action.indexOf('Devices') !== -1) {
-		 *                 ketaLoggerProvider.SIMPLE_LOGGER(level, request, response);
+		 *         ketaLoggerProvider.setLogger(function(level, message, request, response) {
+		 *             if (message.indexOf('Devices') !== -1) {
+		 *                 ketaLoggerProvider.SIMPLE_LOGGER(level, message, request, response);
 		 *             }
 		 *         });
 		 *     });
@@ -2568,6 +2568,20 @@ angular.module('keta.servicesLogger', [])
 				getLevelMapping: that.getLevelMapping,
 				
 				/**
+				 * @const
+				 * @memberOf ketaLogger
+				 * @description Simple logger method.
+				 */
+				SIMPLE_LOGGER: that.SIMPLE_LOGGER,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLogger
+				 * @description Advanced logger method.
+				 */
+				ADVANCED_LOGGER: that.ADVANCED_LOGGER,
+				
+				/**
 				 * @function
 				 * @memberOf ketaLoggerService
 				 * @description Enable logging.
@@ -2618,6 +2632,33 @@ angular.module('keta.servicesLogger', [])
 				 *     });
 				 */
 				setLevel: that.setLevel,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Set logger method. Also capable for filtering log messages.
+				 * @param {function} logger logger method
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(ketaLogger.SIMPLE_LOGGER);
+				 *     });
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(ketaLogger.ADVANCED_LOGGER);
+				 *     });
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(function(level, message, request, response) {
+				 *             if (message.indexOf('Devices') !== -1) {
+				 *                 ketaLogger.SIMPLE_LOGGER(level, message, request, response);
+				 *             }
+				 *         });
+				 *     });
+				 */
+				setLogger: that.setLogger,
 				
 				/**
 				 * @function
