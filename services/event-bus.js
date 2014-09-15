@@ -158,6 +158,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		/**
 		 * @const
 		 * @private
+		 * @description Response code if event bus isn't open.
+		 */
+		var RESPONSE_CODE_SERVICE_UNAVAILABLE = 503;
+		
+		/**
+		 * @const
+		 * @private
 		 * @description Timeout in seconds for send method.
 		 */
 		var DEFAULT_SEND_TIMEOUT = 10;
@@ -654,6 +661,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: RESPONSE_CODE_INTERNAL_SERVER_ERROR,
 				
 				/**
+				 * @const
+				 * @memberOf ketaEventBusService
+				 * @description Response code if event bus isn't open.
+				 */
+				RESPONSE_CODE_SERVICE_UNAVAILABLE: RESPONSE_CODE_SERVICE_UNAVAILABLE,
+				
+				/**
 				 * @function
 				 * @memberOf ketaEventBusService
 				 * @description Get configured web socket URL.
@@ -1041,121 +1055,136 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						message
 					);
 					
-					if (!config.mockMode && config.socketState === STATE_OPEN) {
-						
-						// inject access token
-						message.accessToken = ketaAccessToken.get();
-						
-						var requestReturned = false;
-						
-						// start timeout
-						$timeout(function() {
-							if (!requestReturned && angular.isFunction(responseHandler)) {
-								
-								ketaLogger.error(
-									SERVICE_NAME + '.send » response for ' + address + ':' + message.action + ' timed out',
-									message
-								);
-								
-								requestReturned = true;
-								responseHandler({
-									code: stub.RESPONSE_CODE_TIMEOUT,
-									message: 'Response for ' + address + ':' + message.action + ' timed out'
-								});
-								
-							}
-						}, config.sendTimeout * 1000);
-						
-						// send message
-						stub.getEventBus().send(address, message, function(reply) {
+					if (config.socketState === STATE_OPEN) {
+						if (!config.mockMode) {
 							
-							if (!requestReturned && reply) {
-								
-								requestReturned = true;
-								
-								if (angular.isDefined(reply.code)) {
-									if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
-										
-										// access token expired
-										ketaAccessToken.refresh().then(function(response) {
-											if (angular.isDefined(response.data.accessToken)) {
-												ketaAccessToken.set(response.data.accessToken);
-												stub.send(address, message, responseHandler);
-											}
-										}, function() {
-											$window.location.reload();
-										});
-										
-									} else {
-										
-										ketaLogger.debug(
-											SERVICE_NAME + '.send « response from ' + address + ':' + message.action,
-											message,
-											reply
-										);
-										
-										// non-interceptable response code (200, 401, ...)
-										if (angular.isFunction(responseHandler)) {
-											responseHandler(reply);
-										}
-										
-									}
-								} else {
+							// inject access token
+							message.accessToken = ketaAccessToken.get();
+							
+							var requestReturned = false;
+							
+							// start timeout
+							$timeout(function() {
+								if (!requestReturned && angular.isFunction(responseHandler)) {
 									
 									ketaLogger.error(
-										SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' was "Bad request"',
+										SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' timed out',
 										message
 									);
 									
+									requestReturned = true;
 									responseHandler({
-										code: stub.RESPONSE_CODE_BAD_REQUEST,
-										message: 'Bad request'
+										code: stub.RESPONSE_CODE_TIMEOUT,
+										message: 'Response for ' + address + ':' + message.action + ' timed out'
+									});
+									
+								}
+							}, config.sendTimeout * 1000);
+							
+							// send message
+							stub.getEventBus().send(address, message, function(reply) {
+								
+								if (!requestReturned && reply) {
+									
+									requestReturned = true;
+									
+									if (angular.isDefined(reply.code)) {
+										if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
+											
+											// access token expired
+											ketaAccessToken.refresh().then(function(response) {
+												if (angular.isDefined(response.data.accessToken)) {
+													ketaAccessToken.set(response.data.accessToken);
+													stub.send(address, message, responseHandler);
+												}
+											}, function() {
+												$window.location.reload();
+											});
+											
+										} else {
+											
+											ketaLogger.debug(
+												SERVICE_NAME + '.send « response from ' + address + ':' + message.action,
+												message,
+												reply
+											);
+											
+											// non-interceptable response code (200, 401, ...)
+											if (angular.isFunction(responseHandler)) {
+												responseHandler(reply);
+											}
+											
+										}
+									} else {
+										
+										ketaLogger.error(
+											SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' was "Bad request"',
+											message
+										);
+										
+										responseHandler({
+											code: stub.RESPONSE_CODE_BAD_REQUEST,
+											message: 'Bad request'
+										});
+										
+									}
+									
+								}
+								
+							});
+							
+						} else {
+							
+							if (angular.isDefined(message.action) &&
+								angular.isDefined(mocked.responses[address + ':' + message.action])) {
+								
+								// get reply
+								var reply = mocked.responses[address + ':' + message.action](message);
+								
+								ketaLogger.debug(
+									SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action,
+									message,
+									reply
+								);
+								
+								// send mocked reply
+								if (angular.isFunction(responseHandler)) {
+									responseHandler(reply);
+								}
+								
+								// check mocked handlers
+								matchMockHandler(message, reply);
+								
+							} else {
+								
+								// if no mocked response was found send a 404 reply
+								ketaLogger.warning(
+									SERVICE_NAME + '.send « no mocked response for ' + address + ':' + message.action + ' found',
+									message
+								);
+								
+								if (angular.isFunction(responseHandler)) {
+									responseHandler({
+										code: stub.RESPONSE_CODE_NOT_FOUND,
+										message: 'No mocked response for ' + address + ':' + message.action + ' found'
 									});
 								}
 								
 							}
 							
-						});
-						
+						}
 					} else {
 						
-						if (angular.isDefined(message.action) &&
-							angular.isDefined(mocked.responses[address + ':' + message.action])) {
-							
-							// get reply
-							var reply = mocked.responses[address + ':' + message.action](message);
-							
-							ketaLogger.debug(
-								SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action,
-								message,
-								reply
-							);
-							
-							// send mocked reply
-							if (angular.isFunction(responseHandler)) {
-								responseHandler(reply);
-							}
-							
-							// check mocked handlers
-							matchMockHandler(message, reply);
-							
-						} else {
-							
-							// if no mocked response was found send a 404 reply
-							if (angular.isFunction(responseHandler)) {
-								
-								ketaLogger.warning(
-									SERVICE_NAME + '.send » no mocked response for ' + address + ':' + message.action + ' found',
-									message
-								);
-								
-								responseHandler({
-									code: stub.RESPONSE_CODE_NOT_FOUND,
-									message: 'No mocked response for ' + address + ':' + message.action + ' found'
-								});
-								
-							}
-							
+						ketaLogger.error(
+							SERVICE_NAME + '.send » request to ' + address + ':' + message.action + ' denied. EventBus not open.',
+							message
+						);
+						
+						if (angular.isFunction(responseHandler)) {
+							responseHandler({
+								code: stub.RESPONSE_CODE_SERVICE_UNAVAILABLE,
+								message: 'EventBus not open'
+							});
 						}
 						
 					}
@@ -1188,14 +1217,26 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 */
 				publish: function(address, message) {
 					
-					if (!config.mockMode && stub.getEventBus()) {
-						
-						// inject access token
-						message.accessToken = ketaAccessToken.get();
-						
-						// send message
-						stub.getEventBus().publish(address, message);
-						
+					ketaLogger.debug(
+						SERVICE_NAME + '.publish » request to ' + address + ':' + message.action,
+						message
+					);
+					
+					if (config.socketState === STATE_OPEN) {
+						if (!config.mockMode && stub.getEventBus()) {
+							
+							// inject access token
+							message.accessToken = ketaAccessToken.get();
+							
+							// send message
+							stub.getEventBus().publish(address, message);
+							
+						}
+					} else {
+						ketaLogger.error(
+							SERVICE_NAME + '.publish « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
+							message
+						);
 					}
 					
 				},
@@ -1257,26 +1298,38 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				registerBusHandler: function(uuid, handler, actions) {
-					if (!config.mockMode && stub.getEventBus()) {
-						stub.getEventBus().registerHandler(uuid, handler);
-						busHandlers[uuid] = handler;
-						ketaLogger.info(SERVICE_NAME + '.registerBusHandler ' + uuid, actions);
-					} else {
-						if (!angular.isDefined(mocked.handlers[uuid])) {
-							mocked.handlers[uuid] = {
-								handler: handler,
-								actions: actions
-							};
-							ketaLogger.info(
-								SERVICE_NAME + '.registerBusHandler ' + uuid,
-								mocked.handlers[uuid].actions
-							);
+					
+					ketaLogger.debug(
+						SERVICE_NAME + '.registerBusHandler » request for ' + uuid,
+						actions
+					);
+						
+					if (config.socketState === STATE_OPEN) {
+						if (!config.mockMode && stub.getEventBus()) {
+							stub.getEventBus().registerHandler(uuid, handler);
+							busHandlers[uuid] = handler;
 						} else {
-							ketaLogger.warning(
-								SERVICE_NAME + '.registerBusHandler « no mocked response found',
-								mocked.handlers[uuid].actions
-							);
+							if (!angular.isDefined(mocked.handlers[uuid])) {
+								mocked.handlers[uuid] = {
+									handler: handler,
+									actions: actions
+								};
+								ketaLogger.info(
+									SERVICE_NAME + '.registerBusHandler ' + uuid + ' in mock mode',
+									mocked.handlers[uuid].actions
+								);
+							} else {
+								ketaLogger.warning(
+									SERVICE_NAME + '.registerBusHandler « no mocked response found',
+									mocked.handlers[uuid].actions
+								);
+							}
 						}
+					} else {
+						ketaLogger.error(
+							SERVICE_NAME + '.registerBusHandler « request for ' + uuid + ' denied. EventBus not open.',
+							actions
+						);
 					}
 				},
 				
@@ -1313,22 +1366,32 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				unregisterBusHandler: function(uuid, handler) {
-					if (!config.mockMode && stub.getEventBus()) {
-						stub.getEventBus().unregisterHandler(uuid, handler);
-						ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
-					} else {
-						if (angular.isDefined(mocked.handlers[uuid])) {
-							var handlers = [];
-							angular.forEach(mocked.handlers[uuid], function(h) {
-								if (handler !== h) {
-									handlers.push(h);
-								}
-							});
-							mocked.handlers[uuid] = handlers;
-							ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
+					
+					ketaLogger.debug(
+						SERVICE_NAME + '.unregisterBusHandler » request for ' + uuid
+					);
+						
+					if (config.socketState === STATE_OPEN) {
+						if (!config.mockMode && stub.getEventBus()) {
+							stub.getEventBus().unregisterHandler(uuid, handler);
 						} else {
-							ketaLogger.warning(SERVICE_NAME + '.unregisterBusHandler « no mocked response found');
+							if (angular.isDefined(mocked.handlers[uuid])) {
+								var handlers = [];
+								angular.forEach(mocked.handlers[uuid], function(h) {
+									if (handler !== h) {
+										handlers.push(h);
+									}
+								});
+								mocked.handlers[uuid] = handlers;
+								ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid + ' in mock mode');
+							} else {
+								ketaLogger.warning(SERVICE_NAME + '.unregisterBusHandler « no mocked response found');
+							}
 						}
+					} else {
+						ketaLogger.error(
+							SERVICE_NAME + '.unregisterBusHandler « request for ' + uuid + ' denied. EventBus not open.'
+						);
 					}
 				},
 				
