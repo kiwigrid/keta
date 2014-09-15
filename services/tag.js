@@ -7,7 +7,7 @@
  * @module keta.servicesTag
  * @description Tag Provider
  */
-angular.module('keta.servicesTag', ['keta.servicesEventBus'])
+angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogger'])
 	
 	/**
 	 * @class ketaTagProvider
@@ -38,7 +38,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 		var ERROR_INVALID_HANDLER = 'Invalid handler';
 		
 		// return service API
-		this.$get = function($q, ketaEventBus) {
+		this.$get = function($q, ketaEventBus, ketaLogger) {
 			
 			/**
 			 * @private
@@ -89,12 +89,12 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 				 * @returns {promise}
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaTag) {
+				 *     .controller('ExampleController', function(ketaTag, ketaLogger) {
 				 *         ketaTag.registerListener({
 				 *             tags: ['StateDevice', 'PowerOut'],
 				 *             guid: $routeParams.deviceGuid
 				 *         }, 5, function(message) {
-				 *             ketaEventBus.log('tagValueListener', message);
+				 *             ketaLogger.info('tagValueListener', message);
 				 *         });
 				 *     });
 				 */
@@ -130,12 +130,15 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 							sampleRate: sampleRate,
 							replyAddress: listenerUUID
 						}
-					}, function(listenerResponse) {
-						if (listenerResponse.code === ketaEventBus.RESPONSE_CODE_OK) {
-							deferred.resolve(listenerResponse);
+					}, function(response) {
+						if (response.code === ketaEventBus.RESPONSE_CODE_OK) {
+							deferred.resolve(response);
 						} else {
-							ketaEventBus.log(SERVICE_ENDPOINT + ':registerTagValueListener', listenerResponse.message);
-							deferred.reject(listenerResponse.message);
+							ketaLogger.info(
+								SERVICE_ENDPOINT + ':registerTagValueListener',
+								response
+							);
+							deferred.reject(response.message);
 						}
 					});
 					

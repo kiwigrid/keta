@@ -7,7 +7,7 @@
  * @module keta.servicesDevice
  * @description Device Provider
  */
-angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
+angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLogger'])
 	
 	/**
 	 * @class ketaDeviceProvider
@@ -45,7 +45,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 		var ERROR_ITEM_NOT_FOUND = -1;
 		
 		// return service API
-		this.$get = function($rootScope, $q, $location, ketaEventBus) {
+		this.$get = function($rootScope, $q, $location, ketaEventBus, ketaLogger) {
 			
 			/**
 			 * @private
@@ -105,7 +105,11 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 					if (message.type === ketaEventBus.EVENT_CREATED) {
 						
 						devices.push(device);
-						ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created', device);
+						
+						ketaLogger.debug(
+							SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created',
+							device
+						);
 						
 						// enforce digest cycle
 						$rootScope.$apply();
@@ -118,20 +122,35 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 						if (index !== ERROR_ITEM_NOT_FOUND) {
 							
 							if (message.type === ketaEventBus.EVENT_UPDATED) {
+								
 								devices[index] = device;
-								ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated', device);
+								
+								ketaLogger.debug(
+									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
+									device
+								);
+								
 							}
 							
 							if (message.type === ketaEventBus.EVENT_DELETED) {
+								
 								devices.splice(index, 1);
-								ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted', device);
+								
+								ketaLogger.debug(
+									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted',
+									device
+								);
+								
 							}
 							
 							// enforce digest cycle
 							$rootScope.$apply();
 							
 						} else {
-							ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found');
+							ketaLogger.warning(
+								SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found',
+								device
+							);
 						}
 						
 					}
@@ -189,9 +208,12 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 									deviceProjection: deviceProjection,
 									replyAddress: listenerUUID
 								}
-							}, function(listenerResponse) {
-								if (listenerResponse.code !== ketaEventBus.RESPONSE_CODE_OK) {
-									ketaEventBus.log(SERVICE_ENDPOINT + ':registerDeviceSetListener', listenerResponse.message);
+							}, function(response) {
+								if (response.code !== ketaEventBus.RESPONSE_CODE_OK) {
+									ketaLogger.info(
+										SERVICE_ENDPOINT + ':registerDeviceSetListener',
+										response
+									);
 								}
 							});
 							
@@ -334,16 +356,16 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 * @returns {promise}
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read().then(function(devices) {
 				 *             $scope.devices = devices;
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting devices');
+				 *             ketaLogger.info('ketaDevice.read: error getting devices');
 				 *         });
 				 *     });
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read({
 				 *            filter: {
 				 *                guid: $routeParams.deviceGuid
@@ -351,12 +373,12 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *         }).then(function(devices) {
 				 *             $scope.device = devices[0] || {};
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting device');
+				 *             ketaLogger.info('ketaDevice.read: error getting device');
 				 *         });
 				 *     });
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read({
 				 *             filter: {
 				 *                 deviceClasses: ['device-class-a', 'device-class-b']
@@ -370,7 +392,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *         }).then(function(devices) {
 				 *             $scope.devices = devices;
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting devices');
+				 *             ketaLogger.info('ketaDevice.read: error getting devices');
 				 *         });
 				 *     });
 				 */

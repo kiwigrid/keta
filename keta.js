@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.2
+ * keta 0.2.3
  */
 
 // source: components/services/access-token.js
@@ -158,7 +158,7 @@ angular.module('keta.servicesAppContext', [])
  * @module keta.servicesDevice
  * @description Device Provider
  */
-angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
+angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLogger'])
 	
 	/**
 	 * @class ketaDeviceProvider
@@ -196,7 +196,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 		var ERROR_ITEM_NOT_FOUND = -1;
 		
 		// return service API
-		this.$get = function($rootScope, $q, $location, ketaEventBus) {
+		this.$get = function($rootScope, $q, $location, ketaEventBus, ketaLogger) {
 			
 			/**
 			 * @private
@@ -256,7 +256,11 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 					if (message.type === ketaEventBus.EVENT_CREATED) {
 						
 						devices.push(device);
-						ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created', device);
+						
+						ketaLogger.debug(
+							SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created',
+							device
+						);
 						
 						// enforce digest cycle
 						$rootScope.$apply();
@@ -269,20 +273,35 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 						if (index !== ERROR_ITEM_NOT_FOUND) {
 							
 							if (message.type === ketaEventBus.EVENT_UPDATED) {
+								
 								devices[index] = device;
-								ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated', device);
+								
+								ketaLogger.debug(
+									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
+									device
+								);
+								
 							}
 							
 							if (message.type === ketaEventBus.EVENT_DELETED) {
+								
 								devices.splice(index, 1);
-								ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted', device);
+								
+								ketaLogger.debug(
+									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted',
+									device
+								);
+								
 							}
 							
 							// enforce digest cycle
 							$rootScope.$apply();
 							
 						} else {
-							ketaEventBus.log(SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found');
+							ketaLogger.warning(
+								SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found',
+								device
+							);
 						}
 						
 					}
@@ -340,9 +359,12 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 									deviceProjection: deviceProjection,
 									replyAddress: listenerUUID
 								}
-							}, function(listenerResponse) {
-								if (listenerResponse.code !== ketaEventBus.RESPONSE_CODE_OK) {
-									ketaEventBus.log(SERVICE_ENDPOINT + ':registerDeviceSetListener', listenerResponse.message);
+							}, function(response) {
+								if (response.code !== ketaEventBus.RESPONSE_CODE_OK) {
+									ketaLogger.info(
+										SERVICE_ENDPOINT + ':registerDeviceSetListener',
+										response
+									);
 								}
 							});
 							
@@ -485,16 +507,16 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 * @returns {promise}
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read().then(function(devices) {
 				 *             $scope.devices = devices;
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting devices');
+				 *             ketaLogger.info('ketaDevice.read: error getting devices');
 				 *         });
 				 *     });
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read({
 				 *            filter: {
 				 *                guid: $routeParams.deviceGuid
@@ -502,12 +524,12 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *         }).then(function(devices) {
 				 *             $scope.device = devices[0] || {};
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting device');
+				 *             ketaLogger.info('ketaDevice.read: error getting device');
 				 *         });
 				 *     });
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
+				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
 				 *         ketaDevice.read({
 				 *             filter: {
 				 *                 deviceClasses: ['device-class-a', 'device-class-b']
@@ -521,7 +543,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
 				 *         }).then(function(devices) {
 				 *             $scope.devices = devices;
 				 *         }, function(error) {
-				 *             ketaEventBus.log('ketaDevice.read: error getting devices');
+				 *             ketaLogger.info('ketaDevice.read: error getting devices');
 				 *         });
 				 *     });
 				 */
@@ -669,7 +691,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus'])
  * @module keta.servicesEventBus
  * @description Event Bus Service
  */
-angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
+angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servicesLogger'])
 	
 	/**
 	 * @class ketaEventBusProvider
@@ -835,7 +857,6 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @property {number} reconnectTimeout reconnect timeout to open socket again
 		 * @property {boolean} mockMode mock mode enabled
 		 * @property {boolean} debugMode debug mode enabled
-		 * @property {function|null} logFilter log filter callback method
 		 * @property {number} sendTimeout timeout in seconds for send method
 		 */
 		var config = {
@@ -846,7 +867,6 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 			reconnectTimeout: DEFAULT_RECONNECT_TIMEOUT,
 			mockMode: false,
 			debugMode: false,
-			logFilter: null,
 			sendTimeout: DEFAULT_SEND_TIMEOUT
 		};
 		
@@ -901,8 +921,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {string} [url=https://localhost:10443/kiwibus] URL of web socket
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.setSocketURL('http://localhost:8080/eventbus');
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.setSocketURL('http://localhost:8080/eventbus');
 		 *     });
 		 */
 		this.setSocketURL = function(url) {
@@ -917,8 +937,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {boolean} [enabled=false] Flag
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.enableAutoConnect(true);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.enableAutoConnect(true);
 		 *     });
 		 */
 		this.enableAutoConnect = function(enabled) {
@@ -933,8 +953,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {boolean} [enabled=false] Flag
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.enableReconnect(true);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.enableReconnect(true);
 		 *     });
 		 */
 		this.enableReconnect = function(enabled) {
@@ -949,8 +969,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {number} [timeout=10] Timeout in seconds
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.setReconnectTimeout(5);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.setReconnectTimeout(5);
 		 *     });
 		 */
 		this.setReconnectTimeout = function(timeout) {
@@ -967,8 +987,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {boolean} [enabled=false] Flag
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.enableMockMode(true);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.enableMockMode(true);
 		 *     });
 		 */
 		this.enableMockMode = function(enabled) {
@@ -983,8 +1003,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {boolean} [enabled=false] Flag
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.enableDebugMode(true);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.enableDebugMode(true);
 		 *     });
 		 */
 		this.enableDebugMode = function(enabled) {
@@ -1007,10 +1027,10 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {function} callback Callback method to return response
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *     
 		 *         // return static list of devices
-		 *         EventBusProvider.addMockResponse('devices:getDevices', function(request) {
+		 *         ketaEventBusProvider.addMockResponse('devices:getDevices', function(request) {
 		 *             return {
 		 *                 code: 200,
 		 *                 message: null,
@@ -1025,10 +1045,10 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *     
 		 *         // use request body and return it unmodified
-		 *         EventBusProvider.addMockResponse('devices:createDevice', function(request) {
+		 *         ketaEventBusProvider.addMockResponse('devices:createDevice', function(request) {
 		 *             return {
 		 *                 code: 200,
 		 *                 message: null,
@@ -1046,40 +1066,6 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		};
 		
 		/**
-		 * @name setLogFilter
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description
-		 * <p>
-		 *    Define filter method to be called by log method before outputting something.
-		 * </p>
-		 * <p>
-		 *    Only works if debug mode is enabled.
-		 * </p>
-		 * @see ketaEventBusProvider.enableDebugMode
-		 * @param {function} filter filter callback method
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         
-		 *         // only log messages where action contains "Devices"
-		 *         EventBusProvider.setLogFilter(function(headline, message) {
-		 *             var matches =
-		 *                 (angular.isDefined(message) &&
-		 *                 angular.isDefined(message.action) &&
-		 *                 message.action.indexOf('Devices') !== -1);
-		 *             return matches;
-		 *         });
-		 *         
-		 *     });
-		 */
-		this.setLogFilter = function(filter) {
-			if (angular.isFunction(filter)) {
-				config.logFilter = filter;
-			}
-		};
-		
-		/**
 		 * @name setSendTimeout
 		 * @function
 		 * @memberOf ketaEventBusProvider
@@ -1087,8 +1073,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @param {number} [timeout=10] Timeout in seconds
 		 * @example
 		 * angular.module('exampleApp', [])
-		 *     .config(function(EventBusProvider) {
-		 *         EventBusProvider.setSendTimeout(5);
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.setSendTimeout(5);
 		 *     });
 		 */
 		this.setSendTimeout = function(timeout) {
@@ -1105,8 +1091,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @returns {object} config object
 		 * @example
 		 * angular.module('exampleApp')
-		 *     .config(function(EventBusProvider) {
-		 *         var config = EventBusProvider.getConfig();
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var config = ketaEventBusProvider.getConfig();
 		 *     });
 		 */
 		this.getConfig = function() {
@@ -1121,8 +1107,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @returns {object} mocked object
 		 * @example
 		 * angular.module('exampleApp')
-		 *     .config(function(EventBusProvider) {
-		 *         var mocked = EventBusProvider.getMocked();
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var mocked = ketaEventBusProvider.getMocked();
 		 *     });
 		 */
 		this.getMocked = function() {
@@ -1137,8 +1123,8 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		 * @returns {object} event bus object
 		 * @example
 		 * angular.module('exampleApp')
-		 *     .config(function(EventBusProvider) {
-		 *         var eventBus = EventBusProvider.getEventBus();
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var eventBus = ketaEventBusProvider.getEventBus();
 		 *     });
 		 */
 		this.getEventBus = function() {
@@ -1152,7 +1138,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		var that = this;
 		
 		// return service API
-		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken) {
+		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken, ketaLogger) {
 			
 			// refresh default socket url
 			DEFAULT_SOCKET_URL = $window.appContext.bus.url || DEFAULT_SOCKET_URL;
@@ -1203,7 +1189,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				angular.forEach(mocked.handlers, function(handlerConfig, id) {
 					angular.forEach(handlerConfig.actions, function(action) {
 						if (action === message.action) {
-							stub.log(action + ' matched for handler ' + id);
+							
+							ketaLogger.debug(
+								action + ' matched for handler ' + id,
+								message,
+								response
+							);
 							
 							// build event message type
 							var type = '';
@@ -1244,9 +1235,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				stub.send('devices', {
 					action: 'unregisterAllListeners',
 					body: null
-				}, function(listenerResponse) {
-					if (listenerResponse.code !== stub.RESPONSE_CODE_OK) {
-						stub.log('devices:unregisterAllListeners', listenerResponse.message);
+				}, function(response) {
+					if (response.code !== stub.RESPONSE_CODE_OK) {
+						ketaLogger.info('devices:unregisterAllListeners', {
+							action: 'unregisterAllListeners',
+							body: null
+						}, response);
 					}
 				});
 				
@@ -1351,7 +1345,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.socketURL = ketaEventBus.getSocketURL();
+				 *         var socketURL = ketaEventBus.getSocketURL();
 				 *     });
 				 */
 				getSocketURL: function() {
@@ -1367,7 +1361,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
 				 *         // returns 0 for connecting, 1 for open, 2 for closing, 3 for closed, 4 for unknown
-				 *         $scope.socketState = ketaEventBus.getSocketState();
+				 *         var socketState = ketaEventBus.getSocketState();
 				 *     });
 				 */
 				getSocketState: function() {
@@ -1382,7 +1376,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.getSocketStateLabel = function() {
+				 *         var getSocketStateLabel = function() {
 				 *             // returns 'connecting', 'open', 'closing', 'closed' or 'unknown'
 				 *             return ketaEventBus.getSocketStateLabel();
 				 *         };
@@ -1401,7 +1395,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.autoConnectEnabled = function() {
+				 *         var autoConnectEnabled = function() {
 				 *             return ketaEventBus.autoConnectEnabled();
 				 *         };
 				 *     });
@@ -1423,7 +1417,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.reconnectEnabled = function() {
+				 *         var reconnectEnabled = function() {
 				 *             return ketaEventBus.reconnectEnabled();
 				 *         };
 				 *     });
@@ -1445,7 +1439,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.reconnectTimeout = ketaEventBus.getReconnectTimeout();
+				 *         var reconnectTimeout = ketaEventBus.getReconnectTimeout();
 				 *     });
 				 */
 				getReconnectTimeout: function() {
@@ -1460,7 +1454,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.mockModeEnabled = function() {
+				 *         var mockModeEnabled = function() {
 				 *             return ketaEventBus.mockModeEnabled();
 				 *         };
 				 *     });
@@ -1482,7 +1476,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.debugModeEnabled = function() {
+				 *         var debugModeEnabled = function() {
 				 *             return ketaEventBus.debugModeEnabled();
 				 *         };
 				 *     });
@@ -1504,7 +1498,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.config = ketaEventBus.getConfig();
+				 *         var config = ketaEventBus.getConfig();
 				 *     });
 				 */
 				getConfig: that.getConfig,
@@ -1517,7 +1511,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.mocked = ketaEventBus.getMocked();
+				 *         var mocked = ketaEventBus.getMocked();
 				 *     });
 				 */
 				getMocked: that.getMocked,
@@ -1530,47 +1524,10 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.eventBus = ketaEventBus.getEventBus();
+				 *         var eventBus = ketaEventBus.getEventBus();
 				 *     });
 				 */
 				getEventBus: that.getEventBus,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Log pretty formatted data to dev tools console. Only enabled in debug mode.
-				 * @see ketaEventBusProvider.enableDebugMode
-				 * @param {string} headline headline printed in light grey
-				 * @param {object} [data] data printed in dark grey
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         ketaEventBus.log('ketaEventBus config', ketaEventBus.getConfig());
-				 *     });
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         ketaEventBus.log('simple log message');
-				 *     });
-				 */
-				log: function(headline, data) {
-					
-					var logToConsole = function(headline, data) {
-						console.log(
-							'%c[' + new Date().toUTCString() + ']\n' + 
-							'%c' + headline + '\n' + 
-							'%c' + (angular.isDefined(data) ? JSON.stringify(data, null, 4) + '\n' : ''),
-							'color:#acbf2f', 'color:#999', 'color:#333'
-						);
-					};
-					
-					if (config.debugMode) {
-						if ((config.logFilter === null) ||
-							(angular.isFunction(config.logFilter) && config.logFilter(headline, data))) {
-							logToConsole(headline, data);
-						}
-					}
-				},
 				
 				// VERT.X EVENT BUS STUB
 				// ---------------------
@@ -1636,7 +1593,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 					
 					if (config.socketState === STATE_CLOSED) {
 						
-						stub.log(SERVICE_NAME + '.open', stub.getConfig());
+						ketaLogger.info(SERVICE_NAME + '.open', stub.getConfig());
 						
 						if (!config.mockMode) {
 							
@@ -1715,7 +1672,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         $scope.state = ketaEventBus.getState();
+				 *         var state = ketaEventBus.getState();
 				 *     });
 				 */
 				getState: function() {
@@ -1751,17 +1708,22 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @param {function} responseHandler handler to process response
 				 * @example
 				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *         ketaEventBus.send('devices', {
 				 *             action: 'getDevices'
 				 *         }, function(response) {
-				 *             ketaEventBus.log('ketaEventBus send reponse', response);
+				 *             ketaLogger.info('ketaEventBus send reponse', {
+				 *                 action: 'getDevices'
+				 *             }, response);
 				 *         });
 				 *     });
 				 */
 				send: function(address, message, responseHandler) {
 					
-					stub.log(SERVICE_NAME + '.send » request to ' + address + ':' + message.action, message);
+					ketaLogger.debug(
+						SERVICE_NAME + '.send » request to ' + address + ':' + message.action,
+						message
+					);
 					
 					if (!config.mockMode && config.socketState === STATE_OPEN) {
 						
@@ -1773,11 +1735,18 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 						// start timeout
 						$timeout(function() {
 							if (!requestReturned && angular.isFunction(responseHandler)) {
+								
+								ketaLogger.error(
+									SERVICE_NAME + '.send » response for ' + address + ':' + message.action + ' timed out',
+									message
+								);
+								
 								requestReturned = true;
 								responseHandler({
 									code: stub.RESPONSE_CODE_TIMEOUT,
 									message: 'Response for ' + address + ':' + message.action + ' timed out'
 								});
+								
 							}
 						}, config.sendTimeout * 1000);
 						
@@ -1803,7 +1772,11 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 										
 									} else {
 										
-										stub.log(SERVICE_NAME + '.send « response from ' + address + ':' + message.action, reply);
+										ketaLogger.debug(
+											SERVICE_NAME + '.send « response from ' + address + ':' + message.action,
+											message,
+											reply
+										);
 										
 										// non-interceptable response code (200, 401, ...)
 										if (angular.isFunction(responseHandler)) {
@@ -1812,6 +1785,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 										
 									}
 								} else {
+									
+									ketaLogger.error(
+										SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' was "Bad request"',
+										message
+									);
+									
 									responseHandler({
 										code: stub.RESPONSE_CODE_BAD_REQUEST,
 										message: 'Bad request'
@@ -1827,27 +1806,38 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 						if (angular.isDefined(message.action) &&
 							angular.isDefined(mocked.responses[address + ':' + message.action])) {
 							
-							// get response
-							var response = mocked.responses[address + ':' + message.action](message);
+							// get reply
+							var reply = mocked.responses[address + ':' + message.action](message);
 							
-							stub.log(SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action, response);
+							ketaLogger.debug(
+								SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action,
+								message,
+								reply
+							);
 							
 							// send mocked reply
 							if (angular.isFunction(responseHandler)) {
-								responseHandler(response);
+								responseHandler(reply);
 							}
 							
 							// check mocked handlers
-							matchMockHandler(message, response);
+							matchMockHandler(message, reply);
 							
 						} else {
 							
 							// if no mocked response was found send a 404 reply
 							if (angular.isFunction(responseHandler)) {
+								
+								ketaLogger.warning(
+									SERVICE_NAME + '.send » no mocked response for ' + address + ':' + message.action + ' found',
+									message
+								);
+								
 								responseHandler({
 									code: stub.RESPONSE_CODE_NOT_FOUND,
 									message: 'No mocked response for ' + address + ':' + message.action + ' found'
 								});
+								
 							}
 							
 						}
@@ -1919,14 +1909,14 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @param {string[]} [actions=[]] array of actions listener is responsible for
 				 * @example
 				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *     
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
 				 *     
 				 *         // register bus handler with disabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaEventBus.log('ketaEventBus device set listener', message);
+				 *             ketaLogger.info('ketaEventBus device set listener', message);
 				 *         });
 				 *         
 				 *     });
@@ -1938,14 +1928,14 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 *         EventBusProvider.enableMockMode(true);
 				 *         
 				 *     })
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *     
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
 				 *     
 				 *         // register bus handler with enabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaEventBus.log('ketaEventBus device set listener', message);
+				 *             ketaLogger.info('ketaEventBus device set listener', message);
 				 *         }, ['createDevice', 'updateDevice', 'deleteDevice']);
 				 *         
 				 *     });
@@ -1954,14 +1944,22 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 					if (!config.mockMode && stub.getEventBus()) {
 						stub.getEventBus().registerHandler(uuid, handler);
 						busHandlers[uuid] = handler;
-						stub.log(SERVICE_NAME + '.registerBusHandler ' + uuid);
+						ketaLogger.info(SERVICE_NAME + '.registerBusHandler ' + uuid, actions);
 					} else {
 						if (!angular.isDefined(mocked.handlers[uuid])) {
 							mocked.handlers[uuid] = {
 								handler: handler,
 								actions: actions
 							};
-							stub.log(SERVICE_NAME + '.registerBusHandler ' + uuid, mocked.handlers[uuid].actions);
+							ketaLogger.info(
+								SERVICE_NAME + '.registerBusHandler ' + uuid,
+								mocked.handlers[uuid].actions
+							);
+						} else {
+							ketaLogger.warning(
+								SERVICE_NAME + '.registerBusHandler « no mocked response found',
+								mocked.handlers[uuid].actions
+							);
 						}
 					}
 				},
@@ -1981,19 +1979,19 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @param {function} handler handler registered with UUID
 				 * @example
 				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *     
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
 				 *         
 				 *         // register bus handler with disabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaEventBus.log('ketaEventBus device set listener registered', message);
+				 *             ketaLogger.info('ketaEventBus device set listener registered', message);
 				 *         });
 				 *     
 				 *         // unregister bus handler with disabled mock mode
 				 *         ketaEventBus.unregisterBusHandler(listenerUUID, function(message) {
-				 *             ketaEventBus.log('ketaEventBus device set listener unregistered', message);
+				 *             ketaLogger.info('ketaEventBus device set listener unregistered', message);
 				 *         });
 				 *         
 				 *     });
@@ -2001,7 +1999,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				unregisterBusHandler: function(uuid, handler) {
 					if (!config.mockMode && stub.getEventBus()) {
 						stub.getEventBus().unregisterHandler(uuid, handler);
-						stub.log(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
+						ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
 					} else {
 						if (angular.isDefined(mocked.handlers[uuid])) {
 							var handlers = [];
@@ -2011,8 +2009,10 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 								}
 							});
 							mocked.handlers[uuid] = handlers;
-							stub.log(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
-						} 
+							ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid);
+						} else {
+							ketaLogger.warning(SERVICE_NAME + '.unregisterBusHandler « no mocked response found');
+						}
 					}
 				},
 				
@@ -2031,7 +2031,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @param {function} handler handler registered with UUID
 				 * @example
 				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *     
 				 *         // generate handler uuids
 				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
@@ -2039,12 +2039,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 *         
 				 *         // register on open handler
 				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
-				 *             ketaEventBus.log('ketaEventBus open');
+				 *             ketaLogger.info('ketaEventBus open');
 				 *         });
 				 *     
 				 *         // register on close handler
 				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
-				 *             EventBus.log('ketaEventBus closed');
+				 *             ketaLogger.info('ketaEventBus closed');
 				 *         });
 				 *         
 				 *     });
@@ -2076,7 +2076,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 * @param {string} uuid UUID for internal list
 				 * @example
 				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
+				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
 				 *     
 				 *         // generate handler uuids
 				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
@@ -2084,13 +2084,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 				 *         
 				 *         // register on open handler
 				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
-				 *             ketaEventBus.log('ketaEventBus open');
+				 *             ketaLogger.info('ketaEventBus open');
 				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID);
 				 *         });
 				 *     
 				 *         // register on close handler
 				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
-				 *             ketaEventBus.log('ketaEventBus closed');
+				 *             ketaLogger.info('ketaEventBus closed');
 				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID);
 				 *         });
 				 *         
@@ -2141,6 +2141,512 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
 		
 	});
 
+// source: components/services/logger.js
+/**
+ * @name keta.servicesLogger
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.servicesLogger
+ * @description Logger Service
+ */
+angular.module('keta.servicesLogger', [])
+	
+	/**
+	 * @class ketaLoggerProvider
+	 * @propertyOf keta.servicesLogger
+	 * @description Logger Provider
+	 */
+	.provider('ketaLogger', function() {
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for errors.
+		 */
+		var LOG_LEVEL_ERROR = 1;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for warnings.
+		 */
+		var LOG_LEVEL_WARNING = 2;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for information.
+		 */
+		var LOG_LEVEL_INFO = 4;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for debugging.
+		 */
+		var LOG_LEVEL_DEBUG = 8;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for all categories.
+		 */
+		var LOG_LEVEL_ALL =
+			LOG_LEVEL_ERROR |
+			LOG_LEVEL_WARNING |
+			LOG_LEVEL_INFO |
+			LOG_LEVEL_DEBUG;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level mappings.
+		 */
+		var LOG_LEVEL_MAPPINGS = {};
+		
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ERROR] = 'ERROR';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_WARNING] = 'WARNING';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_INFO] = 'INFO';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_DEBUG] = 'DEBUG';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ALL] = 'ALL';
+		
+		/**
+		 * @function
+		 * @private
+		 * @description Get mapping for given log level.
+		 */
+		var getLevelMapping = function(level) {
+			return (angular.isDefined(LOG_LEVEL_MAPPINGS[level])) ?
+				LOG_LEVEL_MAPPINGS[level] : 'LEVEL ' + level;
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Simple logger method.
+		 */
+		var SIMPLE_LOGGER = function(level, message, request, response) {
+			if (config.enabled && (config.level & level)) {
+				console.log(getLevelMapping(level), message, request, response);
+			}
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Advanced logger method.
+		 */
+		var ADVANCED_LOGGER = function(level, message, request, response) {
+			if (config.enabled && (config.level & level)) {
+				console.log(
+					'%c[' + getLevelMapping(level) + ' ' + new Date().toUTCString() + ']\n' +
+					'%c' + message + '\n' +
+					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, 4) + '\n' : '') +
+					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, 4) + '\n' : ''),
+					'color:#acbf2f', 'color:#333', 'color:#999', 'color:#333'
+				);
+			}
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Internal stack for configuration.
+		 * @property {boolean} enabled enable logging
+		 * @property {number} level log level
+		 * @property {function} logger logger method
+		 */
+		var config = {
+			enabled: false,
+			level: LOG_LEVEL_ERROR,
+			logger: SIMPLE_LOGGER
+		};
+		
+		// CONFIG
+		// ------
+		
+		/**
+		 * @name LOG_LEVEL_ERROR
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for errors.
+		 */
+		this.LOG_LEVEL_ERROR = LOG_LEVEL_ERROR;
+		
+		/**
+		 * @name LOG_LEVEL_WARNING
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for warnings.
+		 */
+		this.LOG_LEVEL_WARNING = LOG_LEVEL_WARNING;
+		
+		/**
+		 * @name LOG_LEVEL_INFO
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for information.
+		 */
+		this.LOG_LEVEL_INFO = LOG_LEVEL_INFO;
+		
+		/**
+		 * @name LOG_LEVEL_DEBUG
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for debugging.
+		 */
+		this.LOG_LEVEL_DEBUG = LOG_LEVEL_DEBUG;
+		
+		/**
+		 * @name LOG_LEVEL_ALL
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for all categories.
+		 */
+		this.LOG_LEVEL_ALL = LOG_LEVEL_ALL;
+		
+		/**
+		 * @name LEVEL_MAPPINGS
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level mappings.
+		 */
+		this.LOG_LEVEL_MAPPINGS = LOG_LEVEL_MAPPINGS;
+		
+		/**
+		 * @name LEVEL_MAPPINGS
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Get mapping for given log level.
+		 */
+		this.getLevelMapping = getLevelMapping;
+		
+		/**
+		 * @name SIMPLE_LOGGER
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Simple logger method.
+		 */
+		this.SIMPLE_LOGGER = SIMPLE_LOGGER;
+		
+		/**
+		 * @name ADVANCED_LOGGER
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Advanced logger method.
+		 */
+		this.ADVANCED_LOGGER = ADVANCED_LOGGER;
+		
+		/**
+		 * @name enableLogging
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Enable logging.
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.enableLogging();
+		 *     });
+		 */
+		this.enableLogging = function() {
+			config.enabled = true;
+		};
+		
+		/**
+		 * @name disableLogging
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Disable logging.
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.disableLogging();
+		 *     });
+		 */
+		this.disableLogging = function() {
+			config.enabled = false;
+		};
+		
+		/**
+		 * @name setLevel
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Set log level.
+		 * @param {number} level log level
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLevel(ketaLoggerProvider.LOG_LEVEL_DEBUG);
+		 *     });
+		 */
+		this.setLevel = function(level) {
+			if (angular.isNumber(level)) {
+				config.level = level;
+			}
+		};
+		
+		/**
+		 * @name setLogger
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Set logger method. Also capable for filtering log messages.
+		 * @param {function} logger logger method
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.SIMPLE_LOGGER);
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.ADVANCED_LOGGER);
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(function(level, request, response) {
+		 *             if (request.action.indexOf('Devices') !== -1) {
+		 *                 ketaLoggerProvider.SIMPLE_LOGGER(level, request, response);
+		 *             }
+		 *         });
+		 *     });
+		 */
+		this.setLogger = function(logger) {
+			if (angular.isFunction(logger)) {
+				config.logger = logger;
+			}
+		};
+		
+		/**
+		 * @name getConfig
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Get configuration object.
+		 * @returns {object} config object
+		 * @example
+		 * angular.module('exampleApp')
+		 *     .config(function(ketaLoggerProvider) {
+		 *         var config = ketaLoggerProvider.getConfig();
+		 *     });
+		 */
+		this.getConfig = function() {
+			return config;
+		};
+		
+		// RUN
+		// ---
+		
+		// keep reference
+		var that = this;
+		
+		// return service API
+		this.$get = function() {
+			
+			/**
+			 * @class ketaLoggerService
+			 * @propertyOf ketaLoggerProvider
+			 * @description Logger Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for errors.
+				 */
+				LOG_LEVEL_ERROR: LOG_LEVEL_ERROR,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for warnings.
+				 */
+				LOG_LEVEL_WARNING: LOG_LEVEL_WARNING,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for information.
+				 */
+				LOG_LEVEL_INFO: LOG_LEVEL_INFO,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for debugging.
+				 */
+				LOG_LEVEL_DEBUG: LOG_LEVEL_DEBUG,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for all categories.
+				 */
+				LOG_LEVEL_ALL: LOG_LEVEL_ALL,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level mappings.
+				 */
+				LOG_LEVEL_MAPPINGS: LOG_LEVEL_MAPPINGS,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Get mapping for given log level.
+				 * @param {number} level log level to map
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         var level = ketaLogger.getLevelMapping(ketaLogger.getLevel());
+				 *     });
+				 */
+				getLevelMapping: that.getLevelMapping,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Enable logging.
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.enableLogging();
+				 *     });
+				 */
+				enableLogging: that.enableLogging,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Disable logging.
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.disableLogging();
+				 *     });
+				 */
+				disableLogging: that.disableLogging,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Get configured log level.
+				 * @returns {number} logLevel
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         var logLevel = ketaLogger.getLogLevel();
+				 *     });
+				 */
+				getLevel: function() {
+					return config.level;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Set configured log level.
+				 * @param {number} level log level to set
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.setLogLevel(ketaLogger.LOG_LEVEL_DEBUG);
+				 *     });
+				 */
+				setLevel: that.setLevel,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with given level.
+				 * @param {number} level log level to use
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         
+				 *         // define it
+				 *         var level = ketaLogger.LOG_LEVEL_DEBUG;
+				 *         var message = 'Log message';
+				 *         var request = {
+				 *             address: 'address',
+				 *             params: {
+				 *                 guid: 'GUID
+				 *             }
+				 *         };
+				 *         var response = 'Nothing found';
+				 *         
+				 *         // log it
+				 *         ketaLogger.log(level, message, request, response);
+				 *         
+				 *     });
+				 */
+				log: function(level, message, request, response) {
+					config.logger(level, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with error level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				error: function(message, request, response) {
+					this.log(LOG_LEVEL_ERROR, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with warning level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				warning: function(message, request, response) {
+					this.log(LOG_LEVEL_WARNING, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with info level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				info: function(message, request, response) {
+					this.log(LOG_LEVEL_INFO, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with debug level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				debug: function(message, request, response) {
+					this.log(LOG_LEVEL_DEBUG, message, request, response);
+				}
+				
+			};
+			
+			return api;
+		};
+		
+	});
+
 // source: components/services/tag.js
 /**
  * @name keta.servicesTag
@@ -2149,7 +2655,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken'])
  * @module keta.servicesTag
  * @description Tag Provider
  */
-angular.module('keta.servicesTag', ['keta.servicesEventBus'])
+angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogger'])
 	
 	/**
 	 * @class ketaTagProvider
@@ -2180,7 +2686,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 		var ERROR_INVALID_HANDLER = 'Invalid handler';
 		
 		// return service API
-		this.$get = function($q, ketaEventBus) {
+		this.$get = function($q, ketaEventBus, ketaLogger) {
 			
 			/**
 			 * @private
@@ -2231,12 +2737,12 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 				 * @returns {promise}
 				 * @example
 				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaTag) {
+				 *     .controller('ExampleController', function(ketaTag, ketaLogger) {
 				 *         ketaTag.registerListener({
 				 *             tags: ['StateDevice', 'PowerOut'],
 				 *             guid: $routeParams.deviceGuid
 				 *         }, 5, function(message) {
-				 *             ketaEventBus.log('tagValueListener', message);
+				 *             ketaLogger.info('tagValueListener', message);
 				 *         });
 				 *     });
 				 */
@@ -2272,12 +2778,15 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus'])
 							sampleRate: sampleRate,
 							replyAddress: listenerUUID
 						}
-					}, function(listenerResponse) {
-						if (listenerResponse.code === ketaEventBus.RESPONSE_CODE_OK) {
-							deferred.resolve(listenerResponse);
+					}, function(response) {
+						if (response.code === ketaEventBus.RESPONSE_CODE_OK) {
+							deferred.resolve(response);
 						} else {
-							ketaEventBus.log(SERVICE_ENDPOINT + ':registerTagValueListener', listenerResponse.message);
-							deferred.reject(listenerResponse.message);
+							ketaLogger.info(
+								SERVICE_ENDPOINT + ':registerTagValueListener',
+								response
+							);
+							deferred.reject(response.message);
 						}
 					});
 					
