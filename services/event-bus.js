@@ -558,13 +558,6 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				stub.send('devices', {
 					action: 'unregisterAllListeners',
 					body: null
-				}, function(response) {
-					if (response.code !== stub.RESPONSE_CODE_OK) {
-						ketaLogger.info('devices:unregisterAllListeners', {
-							action: 'unregisterAllListeners',
-							body: null
-						}, response);
-					}
 				});
 				
 			});

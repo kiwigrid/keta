@@ -96,12 +96,39 @@ angular.module('keta.servicesLogger', [])
 		 */
 		var ADVANCED_LOGGER = function(level, message, request, response) {
 			if (config.enabled && (config.level & level)) {
+				
+				// colors
+				var colors = {
+					lime: 'color:#acbf2f;',
+					yellow: 'color:#f7b600;',
+					red: 'color:#ff0000;',
+					lightGrey: 'color:#999;',
+					darkGrey: 'color:#333;'
+				};
+				
+				// weights
+				var weights = {
+					lighter: 'font-weight:lighter;',
+					normal: 'font-weight:normal;',
+					bold: 'font-weight:bold',
+					bolder: 'font-weight:bolder'
+				};
+				
+				var style = colors.lime + weights.bold;
+				var reset = colors.darkGrey + weights.normal;
+				
+				if (level === LOG_LEVEL_ERROR) {
+					style = colors.red + weights.bold;
+				} else if (level === LOG_LEVEL_WARNING) {
+					style = colors.yellow + weights.bold;
+				}
+				
 				console.log(
-					'%c[' + getLevelMapping(level) + ' ' + new Date().toUTCString() + ']\n' +
+					'%c[' + getLevelMapping(level) + ' – ' + new Date().toISOString() + ']\n' +
 					'%c' + message + '\n' +
 					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, 4) + '\n' : '') +
 					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, 4) + '\n' : ''),
-					'color:#acbf2f', 'color:#333', 'color:#999', 'color:#333'
+					style, reset, colors.lightGrey, colors.darkGrey
 				);
 			}
 		};
