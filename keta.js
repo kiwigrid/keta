@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.6
+ * keta 0.2.7
  */
 
 // source: components/services/access-token.js
@@ -379,12 +379,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						}
 						
 						if (angular.isDefined(response.result.items)) {
-							deferred.resolve(
-								response.result.items,
-								response.result.offset,
-								response.result.limit,
-								response.result.total
-							);
+							deferred.resolve(response.result);
 						} else {
 							if (angular.isDefined(response.result.type) &&
 								response.result.type !== ketaEventBus.EVENT_FAILED) {

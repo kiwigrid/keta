@@ -228,12 +228,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						}
 						
 						if (angular.isDefined(response.result.items)) {
-							deferred.resolve(
-								response.result.items,
-								response.result.offset,
-								response.result.limit,
-								response.result.total
-							);
+							deferred.resolve(response.result);
 						} else {
 							if (angular.isDefined(response.result.type) &&
 								response.result.type !== ketaEventBus.EVENT_FAILED) {
