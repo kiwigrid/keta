@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.8
+ * keta 0.2.9
  */
 
 // source: components/services/access-token.js
@@ -293,7 +293,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 							
 							if (message.type === ketaEventBus.EVENT_UPDATED) {
 								
-								devices[index] = device;
+								angular.extend(devices[index], device);
 								
 								ketaLogger.debug(
 									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
