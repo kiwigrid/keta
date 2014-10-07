@@ -1,0 +1,45 @@
+	
+	/* style.css */
+	
+	body {
+		margin: 2em 0;
+		font-family: "Roboto", sans-serif;
+	}
+	
+	#logo {
+		margin: 1em 0;
+		width: 100%;
+	}
+
+	.footer {
+		margin-top: 4em;
+	}
+	
+	.sidebar {
+		position: fixed;
+		top: 0;
+		padding-top: 10%;
+	}
+	
+	@media (max-width: 767px) {
+		
+		body {
+			margin-top: 0;
+		}
+		
+		.navbar-brand {
+			height: auto;
+		}
+		
+		.navbar-toggle {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+		
+		.navbar-form {
+			border: 0;
+			margin: 0;
+			padding: 16px;
+		}
+		
+	}
