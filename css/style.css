@@ -36,7 +36,7 @@
 	}
 	
 	.canvas {
-		padding: 0 5%;
+		padding: 0 5% 1% 5%;
 		background: #f4f0e7;
 		min-height: 100%;
 	}
