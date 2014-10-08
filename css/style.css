@@ -73,6 +73,17 @@
 		color: #363636;
 	}
 	
+	.canvas .nav > li > a {
+		background: #fff;
+		color: #363636;
+	}
+	
+	.canvas .nav > li > a:hover,
+	.canvas .nav > li > a:focus {
+		background: #acbf30;
+		color: #fff;
+	}
+	
 	.color-box {
 		width: 100px;
 		padding: 10px;
