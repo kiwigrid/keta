@@ -61,8 +61,10 @@
 	
 	.sidebar .nav-pills > li.active > a,
 	.sidebar .nav-pills > li.active > a:hover,
-	.sidebar .nav-pills > li.active > a:focus {
-		background: #eee;
+	.sidebar .nav-pills > li.active > a:focus,
+	.sidebar .nav > li > a:hover,
+	.sidebar .nav > li > a:focus {
+		background: #f4f0e7;
 		color: #363636;
 	}
 	
