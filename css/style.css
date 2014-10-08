@@ -55,8 +55,9 @@
 		min-height: 100%;
 	}
 	
-	p.text {
+	.text {
 		max-width: 800px;
+		margin-bottom: 1em;
 	}
 	
 	footer hr {
@@ -358,6 +359,10 @@
 	
 	.canvas .alert {
 		margin: 2em 0 2em 0;
+	}
+	
+	.canvas .table-responsive {
+		background: #fff;
 	}
 	
 	@media (max-width: 767px) {
