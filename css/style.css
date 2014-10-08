@@ -386,6 +386,35 @@
 		padding: 20px;
 	}
 	
+	.canvas .progress {
+		background: #fff;
+	}
+	
+	.canvas .spinner {
+		border-bottom: 4px solid #fff;
+		border-left: 4px solid #fff;
+		border-right: 4px solid #fff;
+		border-top: 4px solid #acbf30;
+	}
+	
+	.canvas .spinner-small {
+		width: 22px;
+		height: 22px;
+		border-bottom: 3px solid #fff;
+		border-left: 3px solid #fff;
+		border-right: 3px solid #fff;
+		border-top: 3px solid #acbf30;
+	}
+	
+	.canvas .spinner-large {
+		width: 42px;
+		height: 42px;
+		border-bottom: 5px solid #fff;
+		border-left: 5px solid #fff;
+		border-right: 5px solid #fff;
+		border-top: 5px solid #acbf30;
+	}
+	
 	@media (max-width: 767px) {
 		
 		body {
