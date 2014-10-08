@@ -74,6 +74,10 @@
 			margin-top: 0;
 		}
 		
+		#logo {
+			padding: 0 35%;
+		}
+		
 		.navbar-brand {
 			height: auto;
 		}
