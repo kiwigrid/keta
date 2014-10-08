@@ -376,6 +376,15 @@
 		background: #fff;
 	}
 	
+	.canvas form {
+		background: #fff;
+	}
+	
+	.canvas form .col-md-6,
+	.canvas form .col-md-12 {
+		padding: 10px;
+	}
+	
 	@media (max-width: 767px) {
 		
 		body {

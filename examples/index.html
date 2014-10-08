@@ -518,9 +518,180 @@
 		</div>
 		
 		<h2 id="forms">Forms<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
-		<p class="text">
-			Coming soon
-		</p>
+		
+		<h3>Input field with placeholder and help block</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="exampleInputEmail1">Email address<span class="required-indicator">*<span></span></span></label>
+						<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+						<span class="help-block">Please enter your email address.</span>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Invalid input field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-error">
+						<label for="exampleInputPassword1">Invalid input</label>
+						<input class="form-control" id="exampleInputPassword1" type="text" placeholder="Invalid input...">
+						<span class="help-block">Given data isn't valid.</span>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Disabled input field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Disabled input</label>
+						<input class="form-control" id="" type="text" placeholder="Disabled input here..." disabled="disabled">
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Input field with icon</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-feedback">
+						<label class="control-label" for="inputWithIcon">Input with icon</label>
+						<input type="text" class="form-control" id="inputWithIcon" placeholder="Search...">
+						<span class="glyphicon glyphicon-search form-control-feedback"></span>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Input field with unit</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="input-group">
+							<input type="number" class="form-control">
+							<span class="input-group-addon">kWh</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Select field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="disabledSelect">Select menu</label>
+						<select id="disabledSelect" class="form-control">
+							<option disabled="disabled" value="Disabled option">Disabled option</option>
+							<option value="Option 1">Option 1</option>
+							<option value="Option 2">Option 2</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</form>
+		
+		<!-- 
+		<h3>Tags</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Tags<span class="required-indicator"><span></span></span></label>
+						<input type="text" class="form-control" id="" placeholder="Enter tag">
+						<div class="tags">
+							<div class="tag label label-default">
+								<span class="tag-value">Ein gaaaanz langer tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-primary">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-info">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-warning">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-danger">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+		</form>
+		 -->
+		
+		<h3>Check boxes</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset>
+						<legend>Legend for check boxes</legend>
+						<div class="checkbox disabled">
+							<label>
+								<input type="checkbox" disabled="disabled">
+								Can't check this
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox">
+								Option one is this and that—be sure to include why it's great
+							</label>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Radio boxes</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset>
+						<legend>Legend for radio boxes</legend>
+						<div class="radio">
+							<label>
+								<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="checked">
+								Option one is this and that—be sure to include why it's great
+							</label>
+						</div>
+						<div class="radio">
+							<label>
+								<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								Option two can be something else and selecting it will deselect option one
+							</label>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+		
+		<h3>Text area</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group">
+						<textarea class="form-control" rows="3"></textarea>
+					</div>
+				</div>
+			</div>
+		</form>
 		
 		<h2 id="indicators">Indicators<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
 		<p class="text">
