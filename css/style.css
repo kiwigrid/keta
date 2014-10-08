@@ -1,6 +1,12 @@
 	
 	/* style.css */
 	
+	html,
+	body {
+		height: 100%;
+		min-height: 100%;
+	}
+	
 	body {
 		margin: 0;
 		padding: 0;
@@ -29,6 +35,16 @@
 		padding: 10% 2% 0 2%;
 	}
 	
+	.canvas {
+		padding: 0 5%;
+		background: #f4f0e7;
+		min-height: 100%;
+	}
+	
+	p.text {
+		max-width: 800px;
+	}
+	
 	@media (max-width: 767px) {
 		
 		body {
@@ -50,7 +66,12 @@
 			padding: 16px;
 		}
 		
-		.footer {
+		.sidebar {
+			position: static;
+		}
+		
+		.footer,
+		.canvas {
 			margin-top: 2em;
 		}
 		
