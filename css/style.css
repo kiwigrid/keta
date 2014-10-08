@@ -59,6 +59,13 @@
 		margin-top: 4em;
 	}
 	
+	.sidebar .nav-pills > li.active > a,
+	.sidebar .nav-pills > li.active > a:hover,
+	.sidebar .nav-pills > li.active > a:focus {
+		background: #eee;
+		color: #363636;
+	}
+	
 	@media (max-width: 767px) {
 		
 		body {
