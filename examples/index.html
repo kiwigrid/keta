@@ -30,8 +30,7 @@
 		</p>
 		<p class="lead text-center">
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
-		</p>
-		<!-- 
+		</p> 
 		<p class="text-center hidden-xs">
 			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
 			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
@@ -40,7 +39,6 @@
 			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
 			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
 		</p>
-		 -->
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="/keta/">Home</a></li>
 			<li class="active"><a href="/keta/examples/">Examples</a></li>
@@ -57,8 +55,18 @@
 	</div>
 	
 	<div class="col-xs-12 col-sm-9 col-md-9 col-sm-offset-3 canvas" id="top">
-		<p><a class="btn btn-default" href="../index.html" role="button">Back home</a></p>
-		<div class="page-header">
+		<div class="button-header">
+			<p class="pull-left">
+				<a class="btn btn-default" href="../index.html" role="button">Back home</a>
+			</p>
+			<!-- 
+			<p class="pull-right">
+				<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP file</a>
+				<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR ball</a>
+			</p>
+			 -->
+		</div>
+		<div class="page-header clearfix">
 			<h1>Examples</h1>
 			<blockquote>
 				<p>Some examples are worth ten thousand words</p>
@@ -704,17 +712,13 @@
 		
 		<h3>Spinner</h3>
 		<div class="row">
-			<div class="col-md-1">
+			<div class="col-xs-12">
 				<div class="loading-spinner">
 					<div class="spinner spinner-small"></div>
 				</div>
-			</div>
-			<div class="col-md-1">
 				<div class="loading-spinner">
 					<div class="spinner"></div>
 				</div>
-			</div>
-			<div class="col-md-1">
 				<div class="loading-spinner">
 					<div class="spinner spinner-large"></div>
 				</div>

@@ -89,7 +89,7 @@
 		padding: 10px;
 		border: 1px solid #fff;
 		float: left;
-		margin-right: 10px;
+		margin: 0 10px 10px 0;
 		min-height: 160px;
 		position: relative;
 	}
@@ -390,7 +390,12 @@
 		background: #fff;
 	}
 	
+	.canvas .loading-spinner {
+		display: inline;
+	}
+	
 	.canvas .spinner {
+		display: inline-block;
 		border-bottom: 4px solid #fff;
 		border-left: 4px solid #fff;
 		border-right: 4px solid #fff;
@@ -415,7 +420,21 @@
 		border-top: 5px solid #acbf30;
 	}
 	
+	.canvas ul.nav-pills li {
+		margin-bottom: 2px;
+	}
+	
+	.canvas .btn {
+		margin-bottom: 5px;
+	}
+	
 	@media (max-width: 767px) {
+		
+		html,
+		body {
+			height: auto;
+			min-height: auto;
+		}
 		
 		body {
 			margin-top: 0;
