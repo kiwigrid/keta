@@ -403,38 +403,6 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 				/**
 				 * @function
 				 * @memberOf ketaDeviceService
-				 * @description Create a device by given object.
-				 * @param {object} device device object
-				 * @returns {promise}
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
-				 *         ketaDevice.create({
-				 *             guid: 'new-guid',
-				 *             currentAddress: 'new-address'
-				 *         });
-				 *     });
-				 */
-				create: function(device) {
-					
-					// check if guid property exists in device
-					var valid = checkIfGuidExists(device);
-					
-					if (valid === true) {
-						return processAction({
-							action: 'createDevice',
-							params: null,
-							body: device
-						});
-					} else {
-						return valid;
-					}
-					
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaDeviceService
 				 * @description Update a device by given object.
 				 * @param {object} device device object
 				 * @returns {promise}
