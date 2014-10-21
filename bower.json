@@ -1,0 +1,6 @@
+{
+  "name": "keta",
+  "private": true,
+  "main": "./keta.js",
+  "ignore": []
+}
