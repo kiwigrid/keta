@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.10
+ * keta 0.2.11
  */
 
 // source: components/services/access-token.js
@@ -692,20 +692,6 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		/**
 		 * @const
 		 * @private
-		 * @description Default reconnect timeout.
-		 */
-		var DEFAULT_RECONNECT_TIMEOUT = 10;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default web socket URL.
-		 */
-		var DEFAULT_SOCKET_URL = 'https://localhost:10443/kiwibus';
-		
-		/**
-		 * @const
-		 * @private
 		 * @description Connecting state constant.
 		 */
 		var STATE_CONNECTING = 0;
@@ -831,7 +817,56 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		/**
 		 * @const
 		 * @private
-		 * @description Timeout in seconds for send method.
+		 * @description Default value for web socket URL.
+		 */
+		var DEFAULT_SOCKET_URL = 'https://localhost:10443/kiwibus';
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for auto connect.
+		 */
+		var DEFAULT_AUTO_CONNECT = false;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for auto unregister.
+		 */
+		var DEFAULT_AUTO_UNREGISTER = true;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for reconnect.
+		 */
+		var DEFAULT_RECONNECT = true;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for reconnect timeout in seconds.
+		 */
+		var DEFAULT_RECONNECT_TIMEOUT = 10;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for mock mode.
+		 */
+		var DEFAULT_MOCK_MODE = false;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for debug mode.
+		 */
+		var DEFAULT_DEBUG_MODE = false;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Default value for send method timeout in seconds.
 		 */
 		var DEFAULT_SEND_TIMEOUT = 10;
 		
@@ -842,6 +877,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		 * @property {string} socketURL socket url
 		 * @property {number} socketState socket state
 		 * @property {boolean} autoConnect auto connect to socket
+		 * @property {boolean} autoUnregister auto unregister listeners upon route change start
 		 * @property {boolean} reconnect reconnect if socket closed
 		 * @property {number} reconnectTimeout reconnect timeout to open socket again
 		 * @property {boolean} mockMode mock mode enabled
@@ -851,11 +887,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		var config = {
 			socketURL: DEFAULT_SOCKET_URL,
 			socketState: STATE_CLOSED,
-			autoConnect: false,
-			reconnect: true,
+			autoConnect: DEFAULT_AUTO_CONNECT,
+			autoUnregister: DEFAULT_AUTO_UNREGISTER,
+			reconnect: DEFAULT_RECONNECT,
 			reconnectTimeout: DEFAULT_RECONNECT_TIMEOUT,
-			mockMode: false,
-			debugMode: false,
+			mockMode: DEFAULT_MOCK_MODE,
+			debugMode: DEFAULT_DEBUG_MODE,
 			sendTimeout: DEFAULT_SEND_TIMEOUT
 		};
 		
@@ -903,6 +940,62 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		// ------
 		
 		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for web socket URL.
+		 */
+		this.DEFAULT_SOCKET_URL = DEFAULT_SOCKET_URL;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for auto connect.
+		 */
+		this.DEFAULT_AUTO_CONNECT = DEFAULT_AUTO_CONNECT;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for auto unregister.
+		 */
+		this.DEFAULT_AUTO_UNREGISTER = DEFAULT_AUTO_UNREGISTER;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for reconnect.
+		 */
+		this.DEFAULT_RECONNECT = DEFAULT_RECONNECT;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for reconnect timeout in seconds.
+		 */
+		this.DEFAULT_RECONNECT_TIMEOUT = DEFAULT_RECONNECT_TIMEOUT;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for mock mode.
+		 */
+		this.DEFAULT_MOCK_MODE = DEFAULT_MOCK_MODE;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for debug mode.
+		 */
+		this.DEFAULT_DEBUG_MODE = DEFAULT_DEBUG_MODE;
+		
+		/**
+		 * @const
+		 * @memberOf ketaEventBusProvider
+		 * @description Default value for send method timeout in seconds.
+		 */
+		this.DEFAULT_SEND_TIMEOUT = DEFAULT_SEND_TIMEOUT;
+		
+		/**
 		 * @name setSocketURL
 		 * @function
 		 * @memberOf ketaEventBusProvider
@@ -932,6 +1025,22 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		 */
 		this.enableAutoConnect = function(enabled) {
 			config.autoConnect = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
+		};
+		
+		/**
+		 * @name enableAutoUnregister
+		 * @function
+		 * @memberOf ketaEventBusProvider
+		 * @description Enable automatic unregister of listeners upon route change start.
+		 * @param {boolean} [enabled=true] Flag
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaEventBusProvider) {
+		 *         ketaEventBusProvider.enableAutoUnregister(false);
+		 *     });
+		 */
+		this.enableAutoUnregister = function(enabled) {
+			config.autoUnregister = ((enabled === true || enabled === false) ? Boolean(enabled) : true);
 		};
 		
 		/**
@@ -1120,6 +1229,54 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 			return eventBus;
 		};
 		
+		/**
+		 * @name getOnOpenHandlers
+		 * @function
+		 * @memberOf ketaEventBusProvider
+		 * @description Get on open handlers stack.
+		 * @returns {object} on open handlers object (uuid: handler)
+		 * @example
+		 * angular.module('exampleApp')
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var onOpenHandlers = ketaEventBusProvider.getOnOpenHandlers();
+		 *     });
+		 */
+		this.getOnOpenHandlers = function() {
+			return onOpenHandlers;
+		};
+		
+		/**
+		 * @name getOnCloseHandlers
+		 * @function
+		 * @memberOf ketaEventBusProvider
+		 * @description Get on close handlers stack.
+		 * @returns {object} on close handlers object (uuid: handler)
+		 * @example
+		 * angular.module('exampleApp')
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var onCloseHandlers = ketaEventBusProvider.getOnCloseHandlers();
+		 *     });
+		 */
+		this.getOnCloseHandlers = function() {
+			return onCloseHandlers;
+		};
+		
+		/**
+		 * @name getBusHandlers
+		 * @function
+		 * @memberOf ketaEventBusProvider
+		 * @description Get bus handlers stack.
+		 * @returns {object} bus handlers object (uuid: handler)
+		 * @example
+		 * angular.module('exampleApp')
+		 *     .config(function(ketaEventBusProvider) {
+		 *         var busHandlers = ketaEventBusProvider.getBusHandlers();
+		 *     });
+		 */
+		this.getBusHandlers = function() {
+			return busHandlers;
+		};
+		
 		// RUN
 		// ---
 		
@@ -1127,11 +1284,11 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		var that = this;
 		
 		// return service API
-		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken, ketaLogger) {
+		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken, ketaAppContext, ketaLogger) {
 			
 			// refresh default socket url
-			DEFAULT_SOCKET_URL = $window.appContext.bus.url || DEFAULT_SOCKET_URL;
-			config.socketURL = DEFAULT_SOCKET_URL;
+			var busUrl = ketaAppContext.get('bus.url');
+			config.socketURL = (busUrl !== null) ? busUrl : DEFAULT_SOCKET_URL;
 			
 			// Internal open handler, which calls all registered on open handlers.
 			var openHandler = function() {
@@ -1212,7 +1369,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 			// unregister all bus handlers and listeners upon route changes
 			$rootScope.$on('$routeChangeStart', function() {
 				
-				// unregister all handlers
+				// unregister all bus handlers
 				angular.forEach(busHandlers, function(handler, uuid) {
 					stub.unregisterBusHandler(uuid, handler);
 				});
@@ -1225,6 +1382,25 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					action: 'unregisterAllListeners',
 					body: null
 				});
+				
+				// unregister all event handler
+				if (config.autoUnregister) {
+					
+					// on open handler
+					angular.forEach(onOpenHandlers, function(handler, uuid) {
+						stub.unregisterEventHandler(stub.EVENT_ON_OPEN, uuid);
+					});
+					
+					// on close handler
+					angular.forEach(onCloseHandlers, function(handler, uuid) {
+						stub.unregisterEventHandler(stub.EVENT_ON_CLOSE, uuid);
+					});
+					
+					// clear internal stacks
+					onOpenHandlers = {};
+					onCloseHandlers = {};
+					
+				}
 				
 			});
 			
@@ -1401,6 +1577,28 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
+				 * @description Check if auto unregister is enabled.
+				 * @returns {boolean} autoUnregister
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaEventBus) {
+				 *         var autoUnregisterEnabled = function() {
+				 *             return ketaEventBus.autoUnregisterEnabled();
+				 *         };
+				 *     });
+				 * @example
+				 * &lt;div data-ng-controller="exampleController"&gt;
+				 *     &lt;p data-ng-show="autoUnregisterEnabled()"&gt;Auto unregister on&lt;/p&gt;
+				 *     &lt;p data-ng-hide="autoUnregisterEnabled()"&gt;Auto unregister off&lt;/p&gt;
+				 * &lt;/div&gt;
+				 */
+				autoUnregisterEnabled: function() {
+					return config.autoUnregister;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaEventBusService
 				 * @description Check if reconnect is enabled.
 				 * @returns {boolean} reconnect
 				 * @example
@@ -1517,6 +1715,45 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getEventBus: that.getEventBus,
+				
+				/**
+				 * @function
+				 * @memberOf ketaEventBusService
+				 * @description Get on open handlers stack.
+				 * @returns {object} on open handlers object (uuid: handler)
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .config(function(ketaEventBus) {
+				 *         var onOpenHandlers = ketaEventBus.getOnOpenHandlers();
+				 *     });
+				 */
+				getOnOpenHandlers: that.getOnOpenHandlers,
+				
+				/**
+				 * @function
+				 * @memberOf ketaEventBusService
+				 * @description Get on close handlers stack.
+				 * @returns {object} on close handlers object (uuid: handler)
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .config(function(ketaEventBus) {
+				 *         var onCloseHandlers = ketaEventBus.getOnCloseHandlers();
+				 *     });
+				 */
+				getOnCloseHandlers: that.getOnCloseHandlers,
+				
+				/**
+				 * @function
+				 * @memberOf ketaEventBusService
+				 * @description Get bus handlers stack.
+				 * @returns {object} bus handlers object (uuid: handler)
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .config(function(ketaEventBus) {
+				 *         var busHandlers = ketaEventBus.getBusHandlers();
+				 *     });
+				 */
+				getBusHandlers: that.getBusHandlers,
 				
 				// VERT.X EVENT BUS STUB
 				// ---------------------
@@ -2031,8 +2268,9 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					);
 						
 					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode && stub.getEventBus()) {
+						if (!config.mockMode && stub.getEventBus() && angular.isDefined(busHandlers[uuid])) {
 							stub.getEventBus().unregisterHandler(uuid, handler);
+							delete busHandlers[uuid];
 						} else {
 							if (angular.isDefined(mocked.handlers[uuid])) {
 								var handlers = [];
@@ -2797,18 +3035,13 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 			/**
 			 * @private
 			 * @function
-			 * @description Return promise with given code and message.
+			 * @description Reject promise with given code and message.
 			 * @param {string} message return message
-			 * @param {boolean} [resolve=false] resolve or reject
 			 * @returns {promise}
 			 */
-			var responsePromise = function(message, resolve) {
+			var responseReject = function(message) {
 				var deferred = $q.defer();
-				if (resolve) {
-					deferred.resolve(message);
-				} else {
-					deferred.reject(message);
-				}
+				deferred.reject(message);
 				return deferred.promise;
 			};
 			
@@ -2855,17 +3088,17 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 				registerListener: function(filter, sampleRate, handler) {
 					
 					if (!angular.isNumber(sampleRate) || sampleRate < 5) {
-						return responsePromise({
+						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_SAMPLE_RATE
-						}, false);
+						});
 					}
 					
 					if (!angular.isFunction(handler)) {
-						return responsePromise({
+						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_HANDLER
-						}, false);
+						});
 					}
 					
 					var deferred = $q.defer();
@@ -2892,7 +3125,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 								SERVICE_ENDPOINT + ':registerTagValueListener',
 								response
 							);
-							deferred.reject(response.message);
+							deferred.reject(response);
 						}
 					});
 					

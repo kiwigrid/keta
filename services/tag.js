@@ -43,18 +43,13 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 			/**
 			 * @private
 			 * @function
-			 * @description Return promise with given code and message.
+			 * @description Reject promise with given code and message.
 			 * @param {string} message return message
-			 * @param {boolean} [resolve=false] resolve or reject
 			 * @returns {promise}
 			 */
-			var responsePromise = function(message, resolve) {
+			var responseReject = function(message) {
 				var deferred = $q.defer();
-				if (resolve) {
-					deferred.resolve(message);
-				} else {
-					deferred.reject(message);
-				}
+				deferred.reject(message);
 				return deferred.promise;
 			};
 			
@@ -101,17 +96,17 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 				registerListener: function(filter, sampleRate, handler) {
 					
 					if (!angular.isNumber(sampleRate) || sampleRate < 5) {
-						return responsePromise({
+						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_SAMPLE_RATE
-						}, false);
+						});
 					}
 					
 					if (!angular.isFunction(handler)) {
-						return responsePromise({
+						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_HANDLER
-						}, false);
+						});
 					}
 					
 					var deferred = $q.defer();
@@ -138,7 +133,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 								SERVICE_ENDPOINT + ':registerTagValueListener',
 								response
 							);
-							deferred.reject(response.message);
+							deferred.reject(response);
 						}
 					});
 					
