@@ -47,6 +47,39 @@
 	}
 	
 	@media (max-width: 991px) {
+	
+		html,
+		body {
+			height: auto;
+			min-height: auto;
+		}
+		
+		body {
+			margin-top: 0;
+		}
+		
+		#logo {
+			padding: 0 20%;
+		}
+		
+		.navbar-brand {
+			height: auto;
+		}
+		
+		.navbar-toggle {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+		
+		.navbar-form {
+			border: 0;
+			margin: 0;
+			padding: 16px;
+		}
+		
+		.sidebar {
+			position: static;
+		}
 		
 		.footer,
 		.index {
