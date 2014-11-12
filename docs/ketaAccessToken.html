@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Class: ketaAccessToken</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+	
+	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../css/docs.css" rel="stylesheet">
+	<link href="../css/prettify-tomorrow.css" rel="stylesheet">
+	
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.min.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="../img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center hidden-xs">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="/keta/">Home</a></li>
+			<li><a href="/keta/examples/">Examples</a></li>
+			<li><a href="/keta/docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs">
+			<a href="http://www.kiwigrid.com"><img src="../img/kiwigrid.svg"></a>
+		</p>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="servicesAccessToken.html">servicesAccessToken</a></li><li><a href="servicesAppContext.html">servicesAppContext</a></li><li><a href="servicesDevice.html">servicesDevice</a></li><li><a href="servicesEventBus.html">servicesEventBus</a></li><li><a href="servicesLogger.html">servicesLogger</a></li><li><a href="servicesTag.html">servicesTag</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="ketaAccessToken.html">ketaAccessToken</a></li><li><a href="ketaAppContextProvider.html">ketaAppContextProvider</a></li><li><a href="ketaDeviceProvider.html">ketaDeviceProvider</a></li><li><a href="ketaDeviceService.html">ketaDeviceService</a></li><li><a href="ketaEventBusProvider.html">ketaEventBusProvider</a></li><li><a href="ketaEventBusService.html">ketaEventBusService</a></li><li><a href="ketaLoggerProvider.html">ketaLoggerProvider</a></li><li><a href="ketaLoggerService.html">ketaLoggerService</a></li><li><a href="ketaTagProvider.html">ketaTagProvider</a></li><li><a href="ketaTagService.html">ketaTagService</a></li></ul>
+		</nav>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Class: ketaAccessToken</h1>
+		
+
+
+
+<section>
+    
+<header>
+    <h2>
+    ketaAccessToken
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h3 class="name" id="ketaAccessToken"><span class="type-signature"></span>new ketaAccessToken<span class="signature">()</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Access Token Factory
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="access-token.js.html">access-token.js</a>, <a href="access-token.js.html#line12">line 12</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <ul class="list-unstyled"><li><a href="#get"><span class="type-signature">&lt;static> </span>get<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></a></li><li><a href="#refresh"><span class="type-signature">&lt;static> </span>refresh<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#set"><span class="type-signature">&lt;static> </span>set<span class="signature">(token)</span><span class="type-signature"></span></a></li></ul>
+        
+        <dl class="methods">
+            
+<dt>
+    <h3 class="name" id="get"><span class="type-signature">&lt;static> </span>get<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get access token.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="access-token.js.html">access-token.js</a>, <a href="access-token.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">string</span>
+
+
+	
+	
+    access token
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .controller('ExampleController', function(ketaAccessToken) {
+        var accessToken = ketaAccessToken.get();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="refresh"><span class="type-signature">&lt;static> </span>refresh<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Refresh access token by requesting backend.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="access-token.js.html">access-token.js</a>, <a href="access-token.js.html#line79">line 79</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">promise</span>
+
+
+	
+	
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .controller('ExampleController', function(ketaAccessToken) {
+        ketaAccessToken.refresh().then(
+            function(response) {
+                if (angular.isDefined(response.data.accessToken)) {
+                    ketaAccessToken.set(response.data.accessToken);
+                }
+            },
+            function(message) {
+                console.error(message);
+            }
+        );
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="set"><span class="type-signature">&lt;static> </span>set<span class="signature">(token)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set access token.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">new access token</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="access-token.js.html">access-token.js</a>, <a href="access-token.js.html#line53">line 53</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .controller('ExampleController', function(ketaAccessToken) {
+        ketaAccessToken.set('new-token');
+    });</code></pre>
+
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+	</div>
+	
+	<script src="../js/prettify.js"></script>
+	<script src="../js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="../js/linenumber.js"></script>
+</body>
+</html>

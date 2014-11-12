@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: tag.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+	
+	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../css/docs.css" rel="stylesheet">
+	<link href="../css/prettify-tomorrow.css" rel="stylesheet">
+	
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.min.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="../img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center hidden-xs">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="/keta/">Home</a></li>
+			<li><a href="/keta/examples/">Examples</a></li>
+			<li><a href="/keta/docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs">
+			<a href="http://www.kiwigrid.com"><img src="../img/kiwigrid.svg"></a>
+		</p>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="servicesAccessToken.html">servicesAccessToken</a></li><li><a href="servicesAppContext.html">servicesAppContext</a></li><li><a href="servicesDevice.html">servicesDevice</a></li><li><a href="servicesEventBus.html">servicesEventBus</a></li><li><a href="servicesLogger.html">servicesLogger</a></li><li><a href="servicesTag.html">servicesTag</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="ketaAccessToken.html">ketaAccessToken</a></li><li><a href="ketaAppContextProvider.html">ketaAppContextProvider</a></li><li><a href="ketaDeviceProvider.html">ketaDeviceProvider</a></li><li><a href="ketaDeviceService.html">ketaDeviceService</a></li><li><a href="ketaEventBusProvider.html">ketaEventBusProvider</a></li><li><a href="ketaEventBusService.html">ketaEventBusService</a></li><li><a href="ketaLoggerProvider.html">ketaLoggerProvider</a></li><li><a href="ketaLoggerService.html">ketaLoggerService</a></li><li><a href="ketaTagProvider.html">ketaTagProvider</a></li><li><a href="ketaTagService.html">ketaTagService</a></li></ul>
+		</nav>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: tag.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.servicesTag
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.servicesTag
+ * @description Tag Provider
+ */
+angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogger'])
+	
+	/**
+	 * @class ketaTagProvider
+	 * @propertyOf keta.servicesTag
+	 * @description Tag Provider
+	 */
+	.provider('ketaTag', function() {
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Service endpoint for messages.
+		 */
+		var SERVICE_ENDPOINT = 'devices';
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Error message if an invalid sample rate was given.
+		 */
+		var ERROR_INVALID_SAMPLE_RATE = 'Invalid sample rate';
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Error message if an invalid handler was given.
+		 */
+		var ERROR_INVALID_HANDLER = 'Invalid handler';
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Minimum sample rate. We don't support sample rates less than 5 seconds.
+		 */
+		var MIN_SAMPLE_RATE = 5;
+		
+		// return service API
+		this.$get = function($q, ketaEventBus, ketaLogger) {
+			
+			/**
+			 * @private
+			 * @function
+			 * @description Reject promise with given code and message.
+			 * @param {string} message return message
+			 * @returns {promise}
+			 */
+			var responseReject = function(message) {
+				var deferred = $q.defer();
+				deferred.reject(message);
+				return deferred.promise;
+			};
+			
+			/**
+			 * @class ketaTagService
+			 * @propertyOf ketaTagProvider
+			 * @description Tag Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf ketaTagService
+				 * @description Error message if an invalid sample rate was given.
+				 */
+				ERROR_INVALID_SAMPLE_RATE: ERROR_INVALID_SAMPLE_RATE,
+				
+				/**
+				 * @const
+				 * @memberOf ketaTagService
+				 * @description Error message if an invalid handler was given.
+				 */
+				ERROR_INVALID_HANDLER: ERROR_INVALID_HANDLER,
+				
+				/**
+				 * @function
+				 * @memberOf ketaTagService
+				 * @description Register a tag value listener.
+				 * @param {object} filter device filter (including tag names)
+				 * @param {number} sampleRate sample rate in seconds (minimum 5)
+				 * @param {function} handler tag value listener
+				 * @returns {promise}
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .controller('ExampleController', function(ketaTag, ketaLogger) {
+				 *         ketaTag.registerListener({
+				 *             tags: ['StateDevice', 'PowerOut'],
+				 *             guid: $routeParams.deviceGuid
+				 *         }, 5, function(message) {
+				 *             ketaLogger.info('tagValueListener', message);
+				 *         });
+				 *     });
+				 */
+				registerListener: function(filter, sampleRate, handler) {
+					
+					if (!angular.isNumber(sampleRate) || sampleRate &lt; MIN_SAMPLE_RATE) {
+						return responseReject({
+							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
+							message: ERROR_INVALID_SAMPLE_RATE
+						});
+					}
+					
+					if (!angular.isFunction(handler)) {
+						return responseReject({
+							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
+							message: ERROR_INVALID_HANDLER
+						});
+					}
+					
+					var deferred = $q.defer();
+					
+					// generate UUID for listener
+					var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_tagValueListener';
+					
+					// register handler for replyAddress
+					ketaEventBus.registerBusHandler(listenerUUID, handler);
+					
+					// register listener for given address
+					ketaEventBus.send(SERVICE_ENDPOINT, {
+						action: 'registerTagValueListener',
+						body: {
+							deviceFilter: filter,
+							sampleRate: sampleRate,
+							replyAddress: listenerUUID
+						}
+					}, function(response) {
+						if (response.code === ketaEventBus.RESPONSE_CODE_OK) {
+							deferred.resolve(response);
+						} else {
+							ketaLogger.info(
+								SERVICE_ENDPOINT + ':registerTagValueListener',
+								response
+							);
+							deferred.reject(response);
+						}
+					});
+					
+					return deferred.promise;
+					
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+	
+	<script src="../js/prettify.js"></script>
+	<script src="../js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="../js/linenumber.js"></script>
+</body>
+</html>

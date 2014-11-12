@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Class: ketaEventBusProvider</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+	
+	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../css/docs.css" rel="stylesheet">
+	<link href="../css/prettify-tomorrow.css" rel="stylesheet">
+	
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.min.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="../img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center hidden-xs">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="/keta/">Home</a></li>
+			<li><a href="/keta/examples/">Examples</a></li>
+			<li><a href="/keta/docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs">
+			<a href="http://www.kiwigrid.com"><img src="../img/kiwigrid.svg"></a>
+		</p>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="servicesAccessToken.html">servicesAccessToken</a></li><li><a href="servicesAppContext.html">servicesAppContext</a></li><li><a href="servicesDevice.html">servicesDevice</a></li><li><a href="servicesEventBus.html">servicesEventBus</a></li><li><a href="servicesLogger.html">servicesLogger</a></li><li><a href="servicesTag.html">servicesTag</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="ketaAccessToken.html">ketaAccessToken</a></li><li><a href="ketaAppContextProvider.html">ketaAppContextProvider</a></li><li><a href="ketaDeviceProvider.html">ketaDeviceProvider</a></li><li><a href="ketaDeviceService.html">ketaDeviceService</a></li><li><a href="ketaEventBusProvider.html">ketaEventBusProvider</a></li><li><a href="ketaEventBusService.html">ketaEventBusService</a></li><li><a href="ketaLoggerProvider.html">ketaLoggerProvider</a></li><li><a href="ketaLoggerService.html">ketaLoggerService</a></li><li><a href="ketaTagProvider.html">ketaTagProvider</a></li><li><a href="ketaTagService.html">ketaTagService</a></li></ul>
+		</nav>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Class: ketaEventBusProvider</h1>
+		
+
+
+
+<section>
+    
+<header>
+    <h2>
+    ketaEventBusProvider
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h3 class="name" id="ketaEventBusProvider"><span class="type-signature"></span>new ketaEventBusProvider<span class="signature">()</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Event Bus Provider wrapping Vert.x event bus
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line12">line 12</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <ul class="list-unstyled"><li><a href="#this.DEFAULT_AUTO_CONNECT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_AUTO_CONNECT<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_AUTO_UNREGISTER"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_AUTO_UNREGISTER<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_DEBUG_MODE"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_DEBUG_MODE<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_MOCK_MODE"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_MOCK_MODE<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_RECONNECT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_RECONNECT<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_RECONNECT_TIMEOUT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_RECONNECT_TIMEOUT<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_SEND_TIMEOUT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_SEND_TIMEOUT<span class="type-signature"></span></a></li><li><a href="#this.DEFAULT_SOCKET_URL"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_SOCKET_URL<span class="type-signature"></span></a></li></ul>
+        
+        <dl class="members">
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_AUTO_CONNECT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_AUTO_CONNECT<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for auto connect.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line295">line 295</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_AUTO_UNREGISTER"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_AUTO_UNREGISTER<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for auto unregister.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line302">line 302</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_DEBUG_MODE"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_DEBUG_MODE<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for debug mode.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line330">line 330</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_MOCK_MODE"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_MOCK_MODE<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for mock mode.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line323">line 323</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_RECONNECT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_RECONNECT<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for reconnect.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line309">line 309</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_RECONNECT_TIMEOUT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_RECONNECT_TIMEOUT<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for reconnect timeout in seconds.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line316">line 316</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_SEND_TIMEOUT"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_SEND_TIMEOUT<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for send method timeout in seconds.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line337">line 337</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="this.DEFAULT_SOCKET_URL"><span class="type-signature">&lt;static, constant> </span>this.DEFAULT_SOCKET_URL<span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Default value for web socket URL.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line288">line 288</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <ul class="list-unstyled"><li><a href="#addMockResponse"><span class="type-signature">&lt;static> </span>addMockResponse<span class="signature">(id, callback)</span><span class="type-signature"></span></a></li><li><a href="#enableAutoConnect"><span class="type-signature">&lt;static> </span>enableAutoConnect<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></a></li><li><a href="#enableAutoUnregister"><span class="type-signature">&lt;static> </span>enableAutoUnregister<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></a></li><li><a href="#enableDebugMode"><span class="type-signature">&lt;static> </span>enableDebugMode<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></a></li><li><a href="#enableMockMode"><span class="type-signature">&lt;static> </span>enableMockMode<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></a></li><li><a href="#enableReconnect"><span class="type-signature">&lt;static> </span>enableReconnect<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></a></li><li><a href="#getBusHandlers"><span class="type-signature">&lt;static> </span>getBusHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#getConfig"><span class="type-signature">&lt;static> </span>getConfig<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#getEventBus"><span class="type-signature">&lt;static> </span>getEventBus<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#getMocked"><span class="type-signature">&lt;static> </span>getMocked<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#getOnCloseHandlers"><span class="type-signature">&lt;static> </span>getOnCloseHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#getOnOpenHandlers"><span class="type-signature">&lt;static> </span>getOnOpenHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></a></li><li><a href="#setReconnectTimeout"><span class="type-signature">&lt;static> </span>setReconnectTimeout<span class="signature">(<span class="optional">timeout</span>)</span><span class="type-signature"></span></a></li><li><a href="#setSendTimeout"><span class="type-signature">&lt;static> </span>setSendTimeout<span class="signature">(<span class="optional">timeout</span>)</span><span class="type-signature"></span></a></li><li><a href="#setSocketURL"><span class="type-signature">&lt;static> </span>setSocketURL<span class="signature">(<span class="optional">url</span>)</span><span class="type-signature"></span></a></li></ul>
+        
+        <dl class="methods">
+            
+<dt>
+    <h3 class="name" id="addMockResponse"><span class="type-signature">&lt;static> </span>addMockResponse<span class="signature">(id, callback)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Add mocked response for given id representing address and action on event bus.
+</p>
+<p>
+  Only works if mock mode is enabled.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Address and action on event bus in format address:action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Callback method to return response</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line453">line 453</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul class="list-unstyled">
+            <li><a href="ketaEventBusProvider.html#enableMockMode">ketaEventBusProvider.enableMockMode</a></li>
+        </ul>
+    </dd>
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Examples</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+    
+        // return static list of devices
+        ketaEventBusProvider.addMockResponse('devices:getDevices', function(request) {
+            return {
+                code: 200,
+                message: null,
+                result: [{
+                    guid: 'sample-guid',
+                    currentAddress: 'sample-current-address'
+                }],
+                status: 'ok'
+            };
+        });
+        
+    });</code></pre>
+
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+    
+        // use request body and return it unmodified
+        ketaEventBusProvider.addMockResponse('devices:createDevice', function(request) {
+            return {
+                code: 200,
+                message: null,
+                result: request.body,
+                status: 'ok'
+            };
+        });
+        
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="enableAutoConnect"><span class="type-signature">&lt;static> </span>enableAutoConnect<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Enable automatic connect upon start.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">Flag</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line355">line 355</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.enableAutoConnect(true);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="enableAutoUnregister"><span class="type-signature">&lt;static> </span>enableAutoUnregister<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Enable automatic unregister of listeners upon route change start.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">Flag</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line371">line 371</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.enableAutoUnregister(false);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="enableDebugMode"><span class="type-signature">&lt;static> </span>enableDebugMode<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Enable debug mode to print formatted outputs to dev tools console.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">Flag</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line437">line 437</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.enableDebugMode(true);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="enableMockMode"><span class="type-signature">&lt;static> </span>enableMockMode<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Enable mock mode to use event bus service without real socket.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">Flag</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line421">line 421</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.enableMockMode(true);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="enableReconnect"><span class="type-signature">&lt;static> </span>enableReconnect<span class="signature">(<span class="optional">enabled</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Enable reconnect if web socket was closed.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">Flag</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line387">line 387</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.enableReconnect(true);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getBusHandlers"><span class="type-signature">&lt;static> </span>getBusHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get bus handlers stack.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line605">line 605</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    bus handlers object (uuid: handler)
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var busHandlers = ketaEventBusProvider.getBusHandlers();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getConfig"><span class="type-signature">&lt;static> </span>getConfig<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get configuration object.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line525">line 525</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    config object
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var config = ketaEventBusProvider.getConfig();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getEventBus"><span class="type-signature">&lt;static> </span>getEventBus<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get event bus object.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line557">line 557</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    event bus object
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var eventBus = ketaEventBusProvider.getEventBus();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getMocked"><span class="type-signature">&lt;static> </span>getMocked<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get mocked object.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line541">line 541</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    mocked object
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var mocked = ketaEventBusProvider.getMocked();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getOnCloseHandlers"><span class="type-signature">&lt;static> </span>getOnCloseHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get on close handlers stack.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line589">line 589</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    on close handlers object (uuid: handler)
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var onCloseHandlers = ketaEventBusProvider.getOnCloseHandlers();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getOnOpenHandlers"><span class="type-signature">&lt;static> </span>getOnOpenHandlers<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get on open handlers stack.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line573">line 573</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">object</span>
+
+
+	
+	
+    on open handlers object (uuid: handler)
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp')
+    .config(function(ketaEventBusProvider) {
+        var onOpenHandlers = ketaEventBusProvider.getOnOpenHandlers();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="setReconnectTimeout"><span class="type-signature">&lt;static> </span>setReconnectTimeout<span class="signature">(<span class="optional">timeout</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set timeout for retry of reconnect in case of closed web socket.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>timeout</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
+            
+            <td class="description last">Timeout in seconds</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line403">line 403</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.setReconnectTimeout(5);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="setSendTimeout"><span class="type-signature">&lt;static> </span>setSendTimeout<span class="signature">(<span class="optional">timeout</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set timeout for send method.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>timeout</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
+            
+            <td class="description last">Timeout in seconds</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line507">line 507</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.setSendTimeout(5);
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="setSocketURL"><span class="type-signature">&lt;static> </span>setSocketURL<span class="signature">(<span class="optional">url</span>)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set URL of web socket EventBus connects to.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    https://localhost:10443/kiwibus
+                
+                </td>
+            
+            
+            <td class="description last">URL of web socket</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="event-bus.js.html">event-bus.js</a>, <a href="event-bus.js.html#line339">line 339</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', [])
+    .config(function(ketaEventBusProvider) {
+        ketaEventBusProvider.setSocketURL('http://localhost:8080/eventbus');
+    });</code></pre>
+
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+	</div>
+	
+	<script src="../js/prettify.js"></script>
+	<script src="../js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="../js/linenumber.js"></script>
+</body>
+</html>

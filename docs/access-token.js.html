@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: access-token.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 	
 	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
@@ -55,29 +55,106 @@
 	</div>
 	
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: access-token.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.servicesAccessToken
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.servicesAccessToken
+ * @description Access Token Factory
+ */
+angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
+	
+	/**
+	 * @class ketaAccessToken
+	 * @propertyOf keta.servicesAccessToken
+	 * @description Access Token Factory
+	 */
+	.factory('ketaAccessToken', function($http, ketaAppContext) {
+		
+		/**
+		 * @private
+		 * @description Internal representation of access token which was injected by web server into context.js.
+		 */
+		var accessToken = ketaAppContext.get('oauth.accessToken');
+		
+		var api = {
+			
+			/**
+			 * @function
+			 * @memberOf ketaAccessToken
+			 * @description Get access token.
+			 * @returns {string} access token
+			 * @example
+			 * angular.module('exampleApp', [])
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessToken = ketaAccessToken.get();
+			 *     });
+			 */
+			get: function() {
+				return accessToken;
+			},
+			
+			/**
+			 * @function
+			 * @memberOf ketaAccessToken
+			 * @description Set access token.
+			 * @param {string} token new access token
+			 * @example
+			 * angular.module('exampleApp', [])
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         ketaAccessToken.set('new-token');
+			 *     });
+			 */
+			set: function(token) {
+				if (angular.isDefined(token) && angular.isString(token)) {
+					accessToken = token;
+				}
+			},
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+			/**
+			 * @function
+			 * @memberOf ketaAccessToken
+			 * @description Refresh access token by requesting backend.
+			 * @returns {promise}
+			 * @example
+			 * angular.module('exampleApp', [])
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         ketaAccessToken.refresh().then(
+			 *             function(response) {
+			 *                 if (angular.isDefined(response.data.accessToken)) {
+			 *                     ketaAccessToken.set(response.data.accessToken);
+			 *                 }
+			 *             },
+			 *             function(message) {
+			 *                 console.error(message);
+			 *             }
+			 *         );
+			 *     });
+			 */
+			refresh: function() {
+				return $http({
+					method: 'GET',
+					url: '/refreshAccessToken'
+				});
+			}
+		
+		};
+		
+		return api;
+		
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

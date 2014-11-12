@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: app-context.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 	
 	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
@@ -55,29 +55,91 @@
 	</div>
 	
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: app-context.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ * @name keta.servicesAppContext
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.servicesAppContext
+ * @description App Context Provider
+ */
+angular.module('keta.servicesAppContext', [])
+	
+	/**
+	 * @class ketaAppContextProvider
+	 * @propertyOf keta.servicesAppContext
+	 * @description App Context Provider
+	 */
+	.provider('ketaAppContext', function() {
+		
+		/**
+		 * @private
+		 * @description Internal representation of app context from global namespace injected by context.js.
+		 */
+		var appContext = (angular.isDefined(window.appContext)) ? window.appContext : {};
+		
+		/**
+		 * @name get
+		 * @function
+		 * @memberOf ketaAppContextProvider
+		 * @description Get value by key from app context object.
+		 * @param {string} key key to retrieve from app context
+		 * @returns {*}
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaAppContextProvider) {
+		 *         var socketURL = ketaAppContextProvider.get('bus.url');
+		 *     });
+		 */
+		this.get = function(key) {
+			var obj = appContext;
+			key = key.split('.');
+			for (var i = 0, l = key.length; i &lt; l; i++) {
+				if (angular.isDefined(obj[key[i]])) {
+					obj = obj[key[i]];
+				} else {
+					return null;
+				}
+			}
+			return obj;
+		};
+		
+		this.$get = function() {
+			
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf ketaAppContext
+				 * @description Get value by key from app context object.
+				 * @param {string} key key to retrieve from app context
+				 * @returns {*}
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .controller('ExampleController', function(ketaAppContext) {
+				 *         var socketURL = ketaAppContext.get('bus.url');
+				 *     });
+				 */
+				get: this.get
+			
+			};
+			
+			return api;
+			
+		};
+		
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

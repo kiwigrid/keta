@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: logger.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+	
+	<link href="../css/bootstrap.kiwigrid.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../css/docs.css" rel="stylesheet">
+	<link href="../css/prettify-tomorrow.css" rel="stylesheet">
+	
+	<!--[if lt IE 9]>
+	<script src="js/html5shiv.min.js"></script>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="../img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center hidden-xs">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/master" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/master" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="/keta/">Home</a></li>
+			<li><a href="/keta/examples/">Examples</a></li>
+			<li><a href="/keta/docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs">
+			<a href="http://www.kiwigrid.com"><img src="../img/kiwigrid.svg"></a>
+		</p>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="servicesAccessToken.html">servicesAccessToken</a></li><li><a href="servicesAppContext.html">servicesAppContext</a></li><li><a href="servicesDevice.html">servicesDevice</a></li><li><a href="servicesEventBus.html">servicesEventBus</a></li><li><a href="servicesLogger.html">servicesLogger</a></li><li><a href="servicesTag.html">servicesTag</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="ketaAccessToken.html">ketaAccessToken</a></li><li><a href="ketaAppContextProvider.html">ketaAppContextProvider</a></li><li><a href="ketaDeviceProvider.html">ketaDeviceProvider</a></li><li><a href="ketaDeviceService.html">ketaDeviceService</a></li><li><a href="ketaEventBusProvider.html">ketaEventBusProvider</a></li><li><a href="ketaEventBusService.html">ketaEventBusService</a></li><li><a href="ketaLoggerProvider.html">ketaLoggerProvider</a></li><li><a href="ketaLoggerService.html">ketaLoggerService</a></li><li><a href="ketaTagProvider.html">ketaTagProvider</a></li><li><a href="ketaTagService.html">ketaTagService</a></li></ul>
+		</nav>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: logger.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.servicesLogger
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.servicesLogger
+ * @description Logger Service
+ */
+angular.module('keta.servicesLogger', [])
+	
+	/**
+	 * @class ketaLoggerProvider
+	 * @propertyOf keta.servicesLogger
+	 * @description Logger Provider
+	 */
+	.provider('ketaLogger', function() {
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for errors.
+		 */
+		var LOG_LEVEL_ERROR = 1;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for warnings.
+		 */
+		var LOG_LEVEL_WARNING = 2;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for information.
+		 */
+		var LOG_LEVEL_INFO = 4;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for debugging.
+		 */
+		var LOG_LEVEL_DEBUG = 8;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level for all categories.
+		 */
+		var LOG_LEVEL_ALL =
+			LOG_LEVEL_ERROR |
+			LOG_LEVEL_WARNING |
+			LOG_LEVEL_INFO |
+			LOG_LEVEL_DEBUG;
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Log level mappings.
+		 */
+		var LOG_LEVEL_MAPPINGS = {};
+		
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ERROR] = 'ERROR';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_WARNING] = 'WARNING';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_INFO] = 'INFO';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_DEBUG] = 'DEBUG';
+		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ALL] = 'ALL';
+		
+		/**
+		 * @function
+		 * @private
+		 * @description Get mapping for given log level.
+		 */
+		var getLevelMapping = function(level) {
+			return (angular.isDefined(LOG_LEVEL_MAPPINGS[level])) ?
+				LOG_LEVEL_MAPPINGS[level] : 'LEVEL ' + level;
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Simple logger method.
+		 */
+		var SIMPLE_LOGGER = function(level, message, request, response) {
+			if (config.enabled && (config.level & level)) {
+				console.log(getLevelMapping(level), message, request, response);
+			}
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Advanced logger method.
+		 */
+		var ADVANCED_LOGGER = function(level, message, request, response) {
+			if (config.enabled && (config.level & level)) {
+				
+				// colors
+				var colors = {
+					lime: 'color:#acbf2f;',
+					yellow: 'color:#f7b600;',
+					red: 'color:#ff0000;',
+					lightGrey: 'color:#999;',
+					darkGrey: 'color:#333;'
+				};
+				
+				// weights
+				var weights = {
+					lighter: 'font-weight:lighter;',
+					normal: 'font-weight:normal;',
+					bold: 'font-weight:bold',
+					bolder: 'font-weight:bolder'
+				};
+				
+				var style = colors.lime + weights.bold;
+				var reset = colors.darkGrey + weights.normal;
+				
+				if (level === LOG_LEVEL_ERROR) {
+					style = colors.red + weights.bold;
+				} else if (level === LOG_LEVEL_WARNING) {
+					style = colors.yellow + weights.bold;
+				}
+				
+				console.log(
+					'%c[' + getLevelMapping(level) + ' – ' + new Date().toISOString() + ']\n' +
+					'%c' + message + '\n' +
+					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, '\t') + '\n' : '') +
+					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, '\t') + '\n' : ''),
+					style, reset, colors.lightGrey, colors.darkGrey
+				);
+			}
+		};
+		
+		/**
+		 * @const
+		 * @private
+		 * @description Internal stack for configuration.
+		 * @property {boolean} enabled enable logging
+		 * @property {number} level log level
+		 * @property {function} logger logger method
+		 */
+		var config = {
+			enabled: false,
+			level: LOG_LEVEL_ERROR,
+			logger: SIMPLE_LOGGER
+		};
+		
+		// CONFIG
+		// ------
+		
+		/**
+		 * @name LOG_LEVEL_ERROR
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for errors.
+		 */
+		this.LOG_LEVEL_ERROR = LOG_LEVEL_ERROR;
+		
+		/**
+		 * @name LOG_LEVEL_WARNING
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for warnings.
+		 */
+		this.LOG_LEVEL_WARNING = LOG_LEVEL_WARNING;
+		
+		/**
+		 * @name LOG_LEVEL_INFO
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for information.
+		 */
+		this.LOG_LEVEL_INFO = LOG_LEVEL_INFO;
+		
+		/**
+		 * @name LOG_LEVEL_DEBUG
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for debugging.
+		 */
+		this.LOG_LEVEL_DEBUG = LOG_LEVEL_DEBUG;
+		
+		/**
+		 * @name LOG_LEVEL_ALL
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level for all categories.
+		 */
+		this.LOG_LEVEL_ALL = LOG_LEVEL_ALL;
+		
+		/**
+		 * @name LEVEL_MAPPINGS
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Log level mappings.
+		 */
+		this.LOG_LEVEL_MAPPINGS = LOG_LEVEL_MAPPINGS;
+		
+		/**
+		 * @name LEVEL_MAPPINGS
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Get mapping for given log level.
+		 */
+		this.getLevelMapping = getLevelMapping;
+		
+		/**
+		 * @name SIMPLE_LOGGER
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Simple logger method.
+		 */
+		this.SIMPLE_LOGGER = SIMPLE_LOGGER;
+		
+		/**
+		 * @name ADVANCED_LOGGER
+		 * @const
+		 * @memberOf ketaLoggerProvider
+		 * @description Advanced logger method.
+		 */
+		this.ADVANCED_LOGGER = ADVANCED_LOGGER;
+		
+		/**
+		 * @name enableLogging
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Enable logging.
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.enableLogging();
+		 *     });
+		 */
+		this.enableLogging = function() {
+			config.enabled = true;
+		};
+		
+		/**
+		 * @name disableLogging
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Disable logging.
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.disableLogging();
+		 *     });
+		 */
+		this.disableLogging = function() {
+			config.enabled = false;
+		};
+		
+		/**
+		 * @name setLevel
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Set log level.
+		 * @param {number} level log level
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLevel(ketaLoggerProvider.LOG_LEVEL_DEBUG);
+		 *     });
+		 */
+		this.setLevel = function(level) {
+			if (angular.isNumber(level)) {
+				config.level = level;
+			}
+		};
+		
+		/**
+		 * @name setLogger
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Set logger method. Also capable for filtering log messages.
+		 * @param {function} logger logger method
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.SIMPLE_LOGGER);
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.ADVANCED_LOGGER);
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', [])
+		 *     .config(function(ketaLoggerProvider) {
+		 *         ketaLoggerProvider.setLogger(function(level, message, request, response) {
+		 *             if (message.indexOf('Devices') !== -1) {
+		 *                 ketaLoggerProvider.SIMPLE_LOGGER(level, message, request, response);
+		 *             }
+		 *         });
+		 *     });
+		 */
+		this.setLogger = function(logger) {
+			if (angular.isFunction(logger)) {
+				config.logger = logger;
+			}
+		};
+		
+		/**
+		 * @name getConfig
+		 * @function
+		 * @memberOf ketaLoggerProvider
+		 * @description Get configuration object.
+		 * @returns {object} config object
+		 * @example
+		 * angular.module('exampleApp')
+		 *     .config(function(ketaLoggerProvider) {
+		 *         var config = ketaLoggerProvider.getConfig();
+		 *     });
+		 */
+		this.getConfig = function() {
+			return config;
+		};
+		
+		// RUN
+		// ---
+		
+		// keep reference
+		var that = this;
+		
+		// return service API
+		this.$get = function() {
+			
+			/**
+			 * @class ketaLoggerService
+			 * @propertyOf ketaLoggerProvider
+			 * @description Logger Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for errors.
+				 */
+				LOG_LEVEL_ERROR: LOG_LEVEL_ERROR,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for warnings.
+				 */
+				LOG_LEVEL_WARNING: LOG_LEVEL_WARNING,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for information.
+				 */
+				LOG_LEVEL_INFO: LOG_LEVEL_INFO,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for debugging.
+				 */
+				LOG_LEVEL_DEBUG: LOG_LEVEL_DEBUG,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level for all categories.
+				 */
+				LOG_LEVEL_ALL: LOG_LEVEL_ALL,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLoggerService
+				 * @description Log level mappings.
+				 */
+				LOG_LEVEL_MAPPINGS: LOG_LEVEL_MAPPINGS,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Get mapping for given log level.
+				 * @param {number} level log level to map
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         var level = ketaLogger.getLevelMapping(ketaLogger.getLevel());
+				 *     });
+				 */
+				getLevelMapping: that.getLevelMapping,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLogger
+				 * @description Simple logger method.
+				 */
+				SIMPLE_LOGGER: that.SIMPLE_LOGGER,
+				
+				/**
+				 * @const
+				 * @memberOf ketaLogger
+				 * @description Advanced logger method.
+				 */
+				ADVANCED_LOGGER: that.ADVANCED_LOGGER,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Enable logging.
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.enableLogging();
+				 *     });
+				 */
+				enableLogging: that.enableLogging,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Disable logging.
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.disableLogging();
+				 *     });
+				 */
+				disableLogging: that.disableLogging,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Get configured log level.
+				 * @returns {number} logLevel
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         var logLevel = ketaLogger.getLogLevel();
+				 *     });
+				 */
+				getLevel: function() {
+					return config.level;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Set configured log level.
+				 * @param {number} level log level to set
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         ketaLogger.setLogLevel(ketaLogger.LOG_LEVEL_DEBUG);
+				 *     });
+				 */
+				setLevel: that.setLevel,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Set logger method. Also capable for filtering log messages.
+				 * @param {function} logger logger method
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(ketaLogger.SIMPLE_LOGGER);
+				 *     });
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(ketaLogger.ADVANCED_LOGGER);
+				 *     });
+				 * @example
+				 * angular.module('exampleApp', [])
+				 *     .config(function(ketaLogger) {
+				 *         ketaLogger.setLogger(function(level, message, request, response) {
+				 *             if (message.indexOf('Devices') !== -1) {
+				 *                 ketaLogger.SIMPLE_LOGGER(level, message, request, response);
+				 *             }
+				 *         });
+				 *     });
+				 */
+				setLogger: that.setLogger,
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with given level.
+				 * @param {number} level log level to use
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @example
+				 * angular.module('exampleApp')
+				 *     .controller('exampleController', function(ketaLogger) {
+				 *         
+				 *         // define it
+				 *         var level = ketaLogger.LOG_LEVEL_DEBUG;
+				 *         var message = 'Log message';
+				 *         var request = {
+				 *             address: 'address',
+				 *             params: {
+				 *                 guid: 'GUID
+				 *             }
+				 *         };
+				 *         var response = 'Nothing found';
+				 *         
+				 *         // log it
+				 *         ketaLogger.log(level, message, request, response);
+				 *         
+				 *     });
+				 */
+				log: function(level, message, request, response) {
+					config.logger(level, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with error level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				error: function(message, request, response) {
+					this.log(LOG_LEVEL_ERROR, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with warning level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				warning: function(message, request, response) {
+					this.log(LOG_LEVEL_WARNING, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with info level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				info: function(message, request, response) {
+					this.log(LOG_LEVEL_INFO, message, request, response);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf ketaLoggerService
+				 * @description Log message with debug level.
+				 * @param {string} message log message
+				 * @param {mixed} request request to log
+				 * @param {mixed} response response to log
+				 * @see ketaLoggerService.log
+				 */
+				debug: function(message, request, response) {
+					this.log(LOG_LEVEL_DEBUG, message, request, response);
+				}
+				
+			};
+			
+			return api;
+		};
+		
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+	
+	<script src="../js/prettify.js"></script>
+	<script src="../js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="../js/linenumber.js"></script>
+</body>
+</html>
