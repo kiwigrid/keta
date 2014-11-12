@@ -46,6 +46,18 @@
 		margin-bottom: 20px;
 	}
 	
+	@media (max-width: 767px) {
+	
+		.footer {
+			margin-top: 2em;
+		}
+		
+		.canvas {
+			margin-top: 0;
+		}
+	
+	}
+	
 	@media (max-width: 991px) {
 	
 		html,
@@ -81,9 +93,8 @@
 			position: static;
 		}
 		
-		.footer,
-		.index {
-			margin-top: 2em;
+		.sidebar .nav.nav-pills {
+			margin-bottom: 1em;
 		}
 		
 		.canvas {
