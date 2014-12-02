@@ -74,6 +74,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		/**
 		 * @const
 		 * @private
+		 * @description Multiplicator to transform milli units to units.
+		 */
+		var MILLI_MULTIPLICATOR = 1000;
+		
+		/**
+		 * @const
+		 * @private
 		 * @description Created event id.
 		 */
 		var EVENT_CREATED = 'CREATED';
@@ -653,11 +660,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					}
 				});
 				
+				// TODO: make this a singleton
 				// reconnect
 				if (config.reconnect) {
 					$timeout(function() {
 						stub.open();
-					}, config.reconnectTimeout * 1000);
+					}, config.reconnectTimeout * MILLI_MULTIPLICATOR);
 				}
 				
 			};
@@ -1309,7 +1317,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 									});
 									
 								}
-							}, config.sendTimeout * 1000);
+							}, config.sendTimeout * MILLI_MULTIPLICATOR);
 							
 							// send message
 							stub.getEventBus().send(address, message, function(reply) {
@@ -1736,7 +1744,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				generateUUID: function() {
 					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 						.replace(/[xy]/g, function(a, b) {
-							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16);
+							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16); // buddy ignore:line
 						});
 				}
 				

@@ -126,8 +126,8 @@ angular.module('keta.servicesLogger', [])
 				console.log(
 					'%c[' + getLevelMapping(level) + ' – ' + new Date().toISOString() + ']\n' +
 					'%c' + message + '\n' +
-					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, 4) + '\n' : '') +
-					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, 4) + '\n' : ''),
+					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, '\t') + '\n' : '') +
+					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, '\t') + '\n' : ''),
 					style, reset, colors.lightGrey, colors.darkGrey
 				);
 			}
