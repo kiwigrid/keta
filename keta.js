@@ -26,7 +26,16 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
 		var accessToken = ketaAppContext.get('oauth.accessToken');
-		
+
+		/**
+		 * @private
+		 * @description Internal representation of the path to invoke refreshToken requests against.
+		 */
+		var refreshPath = ketaAppContext.get('oauth.refreshPath');
+		if (refreshPath === null) {
+			refreshPath = '/refreshAccessToken';
+		}
+
 		var api = {
 			
 			/**
@@ -84,7 +93,7 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			refresh: function() {
 				return $http({
 					method: 'GET',
-					url: '/refreshAccessToken'
+					url: refreshPath
 				});
 			}
 		
