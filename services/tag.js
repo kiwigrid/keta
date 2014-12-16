@@ -37,6 +37,13 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 		 */
 		var ERROR_INVALID_HANDLER = 'Invalid handler';
 		
+		/**
+		 * @const
+		 * @private
+		 * @description Minimum sample rate. We don't support sample rates less than 5 seconds.
+		 */
+		var MIN_SAMPLE_RATE = 5;
+		
 		// return service API
 		this.$get = function($q, ketaEventBus, ketaLogger) {
 			
@@ -95,7 +102,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 				 */
 				registerListener: function(filter, sampleRate, handler) {
 					
-					if (!angular.isNumber(sampleRate) || sampleRate < 5) {
+					if (!angular.isNumber(sampleRate) || sampleRate < MIN_SAMPLE_RATE) {
 						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_SAMPLE_RATE

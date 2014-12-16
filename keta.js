@@ -26,7 +26,16 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
 		var accessToken = ketaAppContext.get('oauth.accessToken');
-		
+
+		/**
+		 * @private
+		 * @description Internal representation of the path to invoke refreshToken requests against.
+		 */
+		var refreshPath = ketaAppContext.get('oauth.refreshPath');
+		if (refreshPath === null) {
+			refreshPath = '/refreshAccessToken';
+		}
+
 		var api = {
 			
 			/**
@@ -84,7 +93,7 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			refresh: function() {
 				return $http({
 					method: 'GET',
-					url: '/refreshAccessToken'
+					url: refreshPath
 				});
 			}
 		
@@ -740,6 +749,13 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		/**
 		 * @const
 		 * @private
+		 * @description Multiplicator to transform milli units to units.
+		 */
+		var MILLI_MULTIPLICATOR = 1000;
+		
+		/**
+		 * @const
+		 * @private
 		 * @description Created event id.
 		 */
 		var EVENT_CREATED = 'CREATED';
@@ -1319,11 +1335,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					}
 				});
 				
+				// TODO: make this a singleton
 				// reconnect
 				if (config.reconnect) {
 					$timeout(function() {
 						stub.open();
-					}, config.reconnectTimeout * 1000);
+					}, config.reconnectTimeout * MILLI_MULTIPLICATOR);
 				}
 				
 			};
@@ -1975,7 +1992,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 									});
 									
 								}
-							}, config.sendTimeout * 1000);
+							}, config.sendTimeout * MILLI_MULTIPLICATOR);
 							
 							// send message
 							stub.getEventBus().send(address, message, function(reply) {
@@ -2402,7 +2419,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				generateUUID: function() {
 					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 						.replace(/[xy]/g, function(a, b) {
-							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16);
+							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16); // buddy ignore:line
 						});
 				}
 				
@@ -2544,8 +2561,8 @@ angular.module('keta.servicesLogger', [])
 				console.log(
 					'%c[' + getLevelMapping(level) + ' – ' + new Date().toISOString() + ']\n' +
 					'%c' + message + '\n' +
-					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, 4) + '\n' : '') +
-					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, 4) + '\n' : ''),
+					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, '\t') + '\n' : '') +
+					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, '\t') + '\n' : ''),
 					style, reset, colors.lightGrey, colors.darkGrey
 				);
 			}
@@ -3029,6 +3046,13 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 		 */
 		var ERROR_INVALID_HANDLER = 'Invalid handler';
 		
+		/**
+		 * @const
+		 * @private
+		 * @description Minimum sample rate. We don't support sample rates less than 5 seconds.
+		 */
+		var MIN_SAMPLE_RATE = 5;
+		
 		// return service API
 		this.$get = function($q, ketaEventBus, ketaLogger) {
 			
@@ -3087,7 +3111,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 				 */
 				registerListener: function(filter, sampleRate, handler) {
 					
-					if (!angular.isNumber(sampleRate) || sampleRate < 5) {
+					if (!angular.isNumber(sampleRate) || sampleRate < MIN_SAMPLE_RATE) {
 						return responseReject({
 							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
 							message: ERROR_INVALID_SAMPLE_RATE
