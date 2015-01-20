@@ -1,52 +1,46 @@
 'use strict';
 
 /**
- * keta 0.2.11
+ * keta 0.3.0
  */
 
-// source: components/services/access-token.js
+// source: dist/services/access-token.js
 /**
- * @name keta.servicesAccessToken
+ * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesAccessToken
- * @description Access Token Factory
+ * @module keta.services.AccessToken
+ * @description AccessToken Factory
  */
-angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
+angular.module('keta.services.AccessToken',
+	[
+		'keta.services.AppContext'
+	])
 	
 	/**
-	 * @class ketaAccessToken
-	 * @propertyOf keta.servicesAccessToken
+	 * @class AccessToken
+	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('ketaAccessToken', function($http, ketaAppContext) {
+	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
 		
 		/**
 		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = ketaAppContext.get('oauth.accessToken');
-
-		/**
-		 * @private
-		 * @description Internal representation of the path to invoke refreshToken requests against.
-		 */
-		var refreshPath = ketaAppContext.get('oauth.refreshPath');
-		if (refreshPath === null) {
-			refreshPath = '/refreshAccessToken';
-		}
-
+		var accessToken = AppContext.get('oauth.accessToken');
+		
 		var api = {
 			
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Get access token.
 			 * @returns {string} access token
 			 * @example
-			 * angular.module('exampleApp', [])
-			 *     .controller('ExampleController', function(ketaAccessToken) {
-			 *         var accessToken = ketaAccessToken.get();
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         var accessToken = AccessToken.get();
 			 *     });
 			 */
 			get: function() {
@@ -55,13 +49,13 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Set access token.
 			 * @param {string} token new access token
 			 * @example
-			 * angular.module('exampleApp', [])
-			 *     .controller('ExampleController', function(ketaAccessToken) {
-			 *         ketaAccessToken.set('new-token');
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         AccessToken.set('new-token');
 			 *     });
 			 */
 			set: function(token) {
@@ -93,7 +87,7 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			refresh: function() {
 				return $http({
 					method: 'GET',
-					url: refreshPath
+					url: '/refreshAccessToken'
 				});
 			}
 		
@@ -103,22 +97,115 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 		
 	});
 
-// source: components/services/app-context.js
+// source: dist/services/access-token.min.js
 /**
- * @name keta.servicesAppContext
+ * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesAppContext
- * @description App Context Provider
+ * @module keta.services.AccessToken
+ * @description AccessToken Factory
  */
-angular.module('keta.servicesAppContext', [])
+angular.module('keta.services.AccessToken',
+	[
+		'keta.services.AppContext'
+	])
 	
 	/**
-	 * @class ketaAppContextProvider
-	 * @propertyOf keta.servicesAppContext
+	 * @class AccessToken
+	 * @propertyOf keta.services.AccessToken
+	 * @description Access Token Factory
+	 */
+	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
+		
+		/**
+		 * @private
+		 * @description Internal representation of access token which was injected by web server into context.js.
+		 */
+		var accessToken = AppContext.get('oauth.accessToken');
+		
+		var api = {
+			
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Get access token.
+			 * @returns {string} access token
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         var accessToken = AccessToken.get();
+			 *     });
+			 */
+			get: function() {
+				return accessToken;
+			},
+			
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Set access token.
+			 * @param {string} token new access token
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         AccessToken.set('new-token');
+			 *     });
+			 */
+			set: function(token) {
+				if (angular.isDefined(token) && angular.isString(token)) {
+					accessToken = token;
+				}
+			},
+
+			/**
+			 * @function
+			 * @memberOf ketaAccessToken
+			 * @description Refresh access token by requesting backend.
+			 * @returns {promise}
+			 * @example
+			 * angular.module('exampleApp', [])
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         ketaAccessToken.refresh().then(
+			 *             function(response) {
+			 *                 if (angular.isDefined(response.data.accessToken)) {
+			 *                     ketaAccessToken.set(response.data.accessToken);
+			 *                 }
+			 *             },
+			 *             function(message) {
+			 *                 console.error(message);
+			 *             }
+			 *         );
+			 *     });
+			 */
+			refresh: function() {
+				return $http({
+					method: 'GET',
+					url: '/refreshAccessToken'
+				});
+			}
+		
+		};
+		
+		return api;
+		
+	});
+
+// source: dist/services/app-context.js
+/**
+ * @name keta.services.AppContext
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.AppContext
+ * @description AppContext Provider
+ */
+angular.module('keta.services.AppContext', [])
+	
+	/**
+	 * @class AppContextProvider
+	 * @propertyOf keta.services.AppContext
 	 * @description App Context Provider
 	 */
-	.provider('ketaAppContext', function() {
+	.provider('AppContext', function AppContextProvider() {
 		
 		/**
 		 * @private
@@ -129,14 +216,18 @@ angular.module('keta.servicesAppContext', [])
 		/**
 		 * @name get
 		 * @function
-		 * @memberOf ketaAppContextProvider
-		 * @description Get value by key from app context object.
+		 * @memberOf AppContextProvider
+		 * @description
+		 * <p>
+		 *   Get value by key from app context object. There <code>key</code> is a string in dot notation to describe
+		 *   object properties with hierarchy.
+		 * </p>
 		 * @param {string} key key to retrieve from app context
 		 * @returns {*}
 		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaAppContextProvider) {
-		 *         var socketURL = ketaAppContextProvider.get('bus.url');
+		 * angular.module('exampleApp', ['keta.services.AppContext'])
+		 *     .config(function(AppContextProvider) {
+		 *         var socketURL = AppContextProvider.get('bus.url');
 		 *     });
 		 */
 		this.get = function(key) {
@@ -152,20 +243,29 @@ angular.module('keta.servicesAppContext', [])
 			return obj;
 		};
 		
-		this.$get = function() {
+		this.$get = function AppContextService() {
 			
+			/**
+			 * @class AppContext
+			 * @propertyOf AppContextProvider
+			 * @description AppContext Service
+			 */
 			var api = {
 				
 				/**
 				 * @function
-				 * @memberOf ketaAppContext
-				 * @description Get value by key from app context object.
+				 * @memberOf AppContext
+				 * @description
+				 * <p>
+				 *   Get value by key from app context object. There <code>key</code> is a string in dot notation
+				 *   to describe object properties with hierarchy.
+				 * </p>
 				 * @param {string} key key to retrieve from app context
 				 * @returns {*}
 				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaAppContext) {
-				 *         var socketURL = ketaAppContext.get('bus.url');
+				 * angular.module('exampleApp', ['keta.services.AppContext'])
+				 *     .controller('ExampleController', function(AppContext) {
+				 *         var socketURL = AppContext.get('bus.url');
 				 *     });
 				 */
 				get: this.get
@@ -178,492 +278,1465 @@ angular.module('keta.servicesAppContext', [])
 		
 	});
 
-// source: components/services/device.js
+// source: dist/services/app-context.min.js
 /**
- * @name keta.servicesDevice
+ * @name keta.services.AppContext
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesDevice
- * @description Device Provider
+ * @module keta.services.AppContext
+ * @description AppContext Provider
  */
-angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLogger'])
+angular.module('keta.services.AppContext', [])
 	
 	/**
-	 * @class ketaDeviceProvider
-	 * @propertyOf keta.servicesDevice
+	 * @class AppContextProvider
+	 * @propertyOf keta.services.AppContext
+	 * @description App Context Provider
+	 */
+	.provider('AppContext', function AppContextProvider() {
+		
+		/**
+		 * @private
+		 * @description Internal representation of app context from global namespace injected by context.js.
+		 */
+		var appContext = (angular.isDefined(window.appContext)) ? window.appContext : {};
+		
+		/**
+		 * @name get
+		 * @function
+		 * @memberOf AppContextProvider
+		 * @description
+		 * <p>
+		 *   Get value by key from app context object. There <code>key</code> is a string in dot notation to describe
+		 *   object properties with hierarchy.
+		 * </p>
+		 * @param {string} key key to retrieve from app context
+		 * @returns {*}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.AppContext'])
+		 *     .config(function(AppContextProvider) {
+		 *         var socketURL = AppContextProvider.get('bus.url');
+		 *     });
+		 */
+		this.get = function(key) {
+			var obj = appContext;
+			key = key.split('.');
+			for (var i = 0, l = key.length; i < l; i++) {
+				if (angular.isDefined(obj[key[i]])) {
+					obj = obj[key[i]];
+				} else {
+					return null;
+				}
+			}
+			return obj;
+		};
+		
+		this.$get = function AppContextService() {
+			
+			/**
+			 * @class AppContext
+			 * @propertyOf AppContextProvider
+			 * @description AppContext Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf AppContext
+				 * @description
+				 * <p>
+				 *   Get value by key from app context object. There <code>key</code> is a string in dot notation
+				 *   to describe object properties with hierarchy.
+				 * </p>
+				 * @param {string} key key to retrieve from app context
+				 * @returns {*}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.AppContext'])
+				 *     .controller('ExampleController', function(AppContext) {
+				 *         var socketURL = AppContext.get('bus.url');
+				 *     });
+				 */
+				get: this.get
+			
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/device-event.js
+/**
+ * @name keta.services.DeviceEvent
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.DeviceEvent
+ * @description DeviceEvent Provider
+ */
+angular.module('keta.services.DeviceEvent', [])
+	
+	/**
+	 * @class DeviceEventProvider
+	 * @propertyOf keta.services.DeviceEvent
+	 * @description DeviceEvent Provider
+	 */
+	.provider('DeviceEvent', function DeviceEventProvider() {
+		
+		this.$get = function DeviceEventService() {
+			
+			/**
+			 * @class DeviceEventInstance
+			 * @propertyOf DeviceEvent
+			 * @description DeviceEvent Instance
+			 */
+			var DeviceEventInstance = function(givenType, givenDevice) {
+				
+				// keep reference
+				var that = this;
+				
+				// internal DeviceEvent type
+				var type = givenType;
+				
+				/**
+				 * @name getType
+				 * @function
+				 * @memberOf DeviceEventInstance
+				 * @description
+				 * <p>
+				 *   Returns type of DeviceEvent.
+				 * </p>
+				 * @return {string} type
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEventType = deviceEvent.getType();
+				 *     });
+				 */
+				that.getType = function() {
+					return type;
+				};
+				
+				// internal DeviceEvent device
+				var device = givenDevice;
+				
+				/**
+				 * @name getDevice
+				 * @function
+				 * @memberOf DeviceEventInstance
+				 * @description
+				 * <p>
+				 *   Returns device of DeviceEvent.
+				 * </p>
+				 * @return {DeviceInstance} device
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEventDevice = deviceEvent.getDevice();
+				 *     });
+				 */
+				that.getDevice = function() {
+					return device;
+				};
+				
+			};
+			
+			/**
+			 * @class DeviceEvent
+			 * @propertyOf DeviceEventProvider
+			 * @description DeviceEvent Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for created event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.CREATED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				CREATED: 'CREATED',
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for updated event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.UPDATED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				UPDATED: 'UPDATED',
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for deleted event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.DELETED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				DELETED: 'DELETED',
+				
+				/**
+				 * @function
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Creates a DeviceEventInstance with given type and Device instance.
+				 * </p>
+				 * @param {string} type DeviceEvent type
+				 * @param {DeviceInstance} device Device instance
+				 * @returns {DeviceEventInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create(eventBus, {
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *     });
+				 */
+				create: function(type, device) {
+					return new DeviceEventInstance(type, device);
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/device-event.min.js
+/**
+ * @name keta.services.DeviceEvent
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.DeviceEvent
+ * @description DeviceEvent Provider
+ */
+angular.module('keta.services.DeviceEvent', [])
+	
+	/**
+	 * @class DeviceEventProvider
+	 * @propertyOf keta.services.DeviceEvent
+	 * @description DeviceEvent Provider
+	 */
+	.provider('DeviceEvent', function DeviceEventProvider() {
+		
+		this.$get = function DeviceEventService() {
+			
+			/**
+			 * @class DeviceEventInstance
+			 * @propertyOf DeviceEvent
+			 * @description DeviceEvent Instance
+			 */
+			var DeviceEventInstance = function(givenType, givenDevice) {
+				
+				// keep reference
+				var that = this;
+				
+				// internal DeviceEvent type
+				var type = givenType;
+				
+				/**
+				 * @name getType
+				 * @function
+				 * @memberOf DeviceEventInstance
+				 * @description
+				 * <p>
+				 *   Returns type of DeviceEvent.
+				 * </p>
+				 * @return {string} type
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEventType = deviceEvent.getType();
+				 *     });
+				 */
+				that.getType = function() {
+					return type;
+				};
+				
+				// internal DeviceEvent device
+				var device = givenDevice;
+				
+				/**
+				 * @name getDevice
+				 * @function
+				 * @memberOf DeviceEventInstance
+				 * @description
+				 * <p>
+				 *   Returns device of DeviceEvent.
+				 * </p>
+				 * @return {DeviceInstance} device
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEventDevice = deviceEvent.getDevice();
+				 *     });
+				 */
+				that.getDevice = function() {
+					return device;
+				};
+				
+			};
+			
+			/**
+			 * @class DeviceEvent
+			 * @propertyOf DeviceEventProvider
+			 * @description DeviceEvent Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for created event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.CREATED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				CREATED: 'CREATED',
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for updated event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.UPDATED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				UPDATED: 'UPDATED',
+				
+				/**
+				 * @const
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Type for deleted event.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.DELETED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				DELETED: 'DELETED',
+				
+				/**
+				 * @function
+				 * @memberOf DeviceEvent
+				 * @description
+				 * <p>
+				 *   Creates a DeviceEventInstance with given type and Device instance.
+				 * </p>
+				 * @param {string} type DeviceEvent type
+				 * @param {DeviceInstance} device Device instance
+				 * @returns {DeviceEventInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create(eventBus, {
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *     });
+				 */
+				create: function(type, device) {
+					return new DeviceEventInstance(type, device);
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/device-set.js
+/**
+ * @name keta.services.DeviceSet
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.DeviceSet
+ * @description DeviceSet Provider
+ */
+angular.module('keta.services.DeviceSet',
+	[
+		'keta.services.Device',
+		'keta.services.DeviceEvent',
+		'keta.services.EventBusDispatcher'
+	])
+	
+	/**
+	 * @class DeviceSetProvider
+	 * @propertyOf keta.services.DeviceSet
+	 * @description DeviceSet Provider
+	 */
+	.provider('DeviceSet', function DeviceSetProvider() {
+		
+		this.$get = function DeviceSetService($q, $rootScope, DeviceEvent, EventBusDispatcher) {
+			
+			/**
+			 * @class DeviceSetInstance
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Instance
+			 */
+			var DeviceSetInstance = function(givenEventBus) {
+				
+				// keep reference
+				var that = this;
+				
+				// save EventBus instance
+				var eventBus = givenEventBus;
+				
+				// internal params object
+				var params = {};
+				
+				/**
+				 * @name filter
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a filter before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} filter filter to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .filter({
+				 *                 guid: 'guid'
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.filter = function(filter) {
+					params.filter = filter;
+					return that;
+				};
+				
+				/**
+				 * @name project
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a projection before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} projection projection to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .project({
+				 *                 guid: 1,
+				 *                 tagValues: {
+				 *                     IdName: 1
+				 *                 }
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.project = function(projection) {
+					params.projection = projection;
+					return that;
+				};
+				
+				/**
+				 * @name sort
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a sorting before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} sorting sorting to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .sort({
+				 *                 'tagValue.IdName.value': 1
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.sort = function(sorting) {
+					params.sorting = sorting;
+					return that;
+				};
+				
+				/**
+				 * @name paginate
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a pagination before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} pagination pagination to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .paginate({
+				 *                 offset: 0,
+				 *                 limit: 50
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.paginate = function(pagination) {
+					if (angular.isDefined(pagination)) {
+						if (angular.isDefined(pagination.offset)) {
+							params.offset = pagination.offset;
+						}
+						if (angular.isDefined(pagination.limit)) {
+							params.limit = pagination.limit;
+						}
+					}
+					return that;
+				};
+				
+				/**
+				 * @name query
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Finally executes DeviceSet query by sending it to the associated EventBus instance.
+				 * </p>
+				 * @returns {promise}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.query = function() {
+					var deferred = $q.defer();
+					
+					EventBusDispatcher.send(eventBus, 'devices', {
+						action: 'getDevices',
+						params: params
+					}, function(reply) {
+						if (reply) {
+							// inject used params
+							reply.params = params;
+							
+							if (reply.code === 200) {
+								deferred.resolve(reply);
+								$rootScope.$digest();
+							} else {
+								deferred.reject(reply);
+							}
+						} else {
+							deferred.reject('Something bad happened. Got no reply.');
+						}
+					});
+					
+					return deferred.promise;
+				};
+				
+			};
+			
+			/**
+			 * @class DeviceSet
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Creates a DeviceSetInstance with given EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         var deviceSet = DeviceSet.create(eventBus);
+				 *     });
+				 */
+				create: function(eventBus) {
+					return new DeviceSetInstance(eventBus);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns index of given Device in DeviceSet by comparing GUIDs.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {DeviceInstance} device DeviceInstance to search for
+				 * @returns {number} index
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // index equals 0 after the call
+				 *                 var index = DeviceSet.indexOf(reply, reply.result.items[0]);
+				 *             });
+				 *     });
+				 */
+				indexOf: function(set, device) {
+					var index = -1;
+					angular.forEach(set.result.items, function(item, key) {
+						if (item.guid === device.guid) {
+							index = key;
+						}
+					});
+					return index;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns number of devices in given DeviceSet.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {number} number of devices
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // length equals number of devices in DeviceSet
+				 *                 var length = DeviceSet.length(reply);
+				 *             });
+				 *     });
+				 */
+				length: function(set) {
+					return (angular.isDefined(set.result.items)) ? set.result.items.length : 0;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns device in given DeviceSet by specified index.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {number} index Index of device to return
+				 * @returns {DeviceInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // device equals first item after the call
+				 *                 var device = DeviceSet.get(reply, 0);
+				 *             });
+				 *     });
+				 */
+				get: function(set, index) {
+					return (angular.isDefined(set.result.items[index])) ? set.result.items[index] : null;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns all devices in given DeviceSet.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {Array}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 var devices = DeviceSet.getAll(reply);
+				 *             });
+				 *     });
+				 */
+				getAll: function(set) {
+					return (angular.isDefined(set.result.items)) ? set.result.items : [];
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Synchronizes given DeviceSet with given DeviceEvent.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to sync
+				 * @param {DeviceEventInstance} event DeviceEventInstance to process
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.sync(
+				 *             DeviceSet.create().query(),
+				 *             DeviceEvent.create({
+				 *                 type: DeviceEvent.CREATED,
+				 *                 device: Device.create(eventBus, {
+				 *                     guid: 'guid'
+				 *                 })
+				 *             })
+				 *         );
+				 *     });
+				 */
+				sync: function(set, event) {
+					if (event.getType() === DeviceEvent.CREATED) {
+						set.result.items.push(event.getDevice());
+					} else if (event.getType() === DeviceEvent.DELETED) {
+						set.result.items.splice(api.indexOf(set, event.getDevice()), 1);
+					} else if (event.getType() === DeviceEvent.UPDATED) {
+						var index = api.indexOf(set, event.getDevice());
+						if (index !== -1) {
+							angular.extend(api.get(set, index), event.getDevice());
+						}
+					}
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/device-set.min.js
+/**
+ * @name keta.services.DeviceSet
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.DeviceSet
+ * @description DeviceSet Provider
+ */
+angular.module('keta.services.DeviceSet',
+	[
+		'keta.services.Device',
+		'keta.services.DeviceEvent',
+		'keta.services.EventBusDispatcher'
+	])
+	
+	/**
+	 * @class DeviceSetProvider
+	 * @propertyOf keta.services.DeviceSet
+	 * @description DeviceSet Provider
+	 */
+	.provider('DeviceSet', function DeviceSetProvider() {
+		
+		this.$get = function DeviceSetService($q, $rootScope, DeviceEvent, EventBusDispatcher) {
+			
+			/**
+			 * @class DeviceSetInstance
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Instance
+			 */
+			var DeviceSetInstance = function(givenEventBus) {
+				
+				// keep reference
+				var that = this;
+				
+				// save EventBus instance
+				var eventBus = givenEventBus;
+				
+				// internal params object
+				var params = {};
+				
+				/**
+				 * @name filter
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a filter before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} filter filter to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .filter({
+				 *                 guid: 'guid'
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.filter = function(filter) {
+					params.filter = filter;
+					return that;
+				};
+				
+				/**
+				 * @name project
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a projection before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} projection projection to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .project({
+				 *                 guid: 1,
+				 *                 tagValues: {
+				 *                     IdName: 1
+				 *                 }
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.project = function(projection) {
+					params.projection = projection;
+					return that;
+				};
+				
+				/**
+				 * @name sort
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a sorting before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} sorting sorting to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .sort({
+				 *                 'tagValue.IdName.value': 1
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.sort = function(sorting) {
+					params.sorting = sorting;
+					return that;
+				};
+				
+				/**
+				 * @name paginate
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a pagination before DeviceSet query is sent to EventBus.
+				 * </p>
+				 * @param {Object} pagination pagination to use
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .paginate({
+				 *                 offset: 0,
+				 *                 limit: 50
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.paginate = function(pagination) {
+					if (angular.isDefined(pagination)) {
+						if (angular.isDefined(pagination.offset)) {
+							params.offset = pagination.offset;
+						}
+						if (angular.isDefined(pagination.limit)) {
+							params.limit = pagination.limit;
+						}
+					}
+					return that;
+				};
+				
+				/**
+				 * @name query
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Finally executes DeviceSet query by sending it to the associated EventBus instance.
+				 * </p>
+				 * @returns {promise}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.query = function() {
+					var deferred = $q.defer();
+					
+					EventBusDispatcher.send(eventBus, 'devices', {
+						action: 'getDevices',
+						params: params
+					}, function(reply) {
+						if (reply) {
+							// inject used params
+							reply.params = params;
+							
+							if (reply.code === 200) {
+								deferred.resolve(reply);
+								$rootScope.$digest();
+							} else {
+								deferred.reject(reply);
+							}
+						} else {
+							deferred.reject('Something bad happened. Got no reply.');
+						}
+					});
+					
+					return deferred.promise;
+				};
+				
+			};
+			
+			/**
+			 * @class DeviceSet
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Creates a DeviceSetInstance with given EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {DeviceSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         var deviceSet = DeviceSet.create(eventBus);
+				 *     });
+				 */
+				create: function(eventBus) {
+					return new DeviceSetInstance(eventBus);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns index of given Device in DeviceSet by comparing GUIDs.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {DeviceInstance} device DeviceInstance to search for
+				 * @returns {number} index
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // index equals 0 after the call
+				 *                 var index = DeviceSet.indexOf(reply, reply.result.items[0]);
+				 *             });
+				 *     });
+				 */
+				indexOf: function(set, device) {
+					var index = -1;
+					angular.forEach(set.result.items, function(item, key) {
+						if (item.guid === device.guid) {
+							index = key;
+						}
+					});
+					return index;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns number of devices in given DeviceSet.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {number} number of devices
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // length equals number of devices in DeviceSet
+				 *                 var length = DeviceSet.length(reply);
+				 *             });
+				 *     });
+				 */
+				length: function(set) {
+					return (angular.isDefined(set.result.items)) ? set.result.items.length : 0;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns device in given DeviceSet by specified index.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {number} index Index of device to return
+				 * @returns {DeviceInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // device equals first item after the call
+				 *                 var device = DeviceSet.get(reply, 0);
+				 *             });
+				 *     });
+				 */
+				get: function(set, index) {
+					return (angular.isDefined(set.result.items[index])) ? set.result.items[index] : null;
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Returns all devices in given DeviceSet.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {Array}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 var devices = DeviceSet.getAll(reply);
+				 *             });
+				 *     });
+				 */
+				getAll: function(set) {
+					return (angular.isDefined(set.result.items)) ? set.result.items : [];
+				},
+				
+				/**
+				 * @function
+				 * @memberOf DeviceSet
+				 * @description
+				 * <p>
+				 *   Synchronizes given DeviceSet with given DeviceEvent.
+				 * </p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to sync
+				 * @param {DeviceEventInstance} event DeviceEventInstance to process
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.sync(
+				 *             DeviceSet.create().query(),
+				 *             DeviceEvent.create({
+				 *                 type: DeviceEvent.CREATED,
+				 *                 device: Device.create(eventBus, {
+				 *                     guid: 'guid'
+				 *                 })
+				 *             })
+				 *         );
+				 *     });
+				 */
+				sync: function(set, event) {
+					if (event.getType() === DeviceEvent.CREATED) {
+						set.result.items.push(event.getDevice());
+					} else if (event.getType() === DeviceEvent.DELETED) {
+						set.result.items.splice(api.indexOf(set, event.getDevice()), 1);
+					} else if (event.getType() === DeviceEvent.UPDATED) {
+						var index = api.indexOf(set, event.getDevice());
+						if (index !== -1) {
+							angular.extend(api.get(set, index), event.getDevice());
+						}
+					}
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/device.js
+/**
+ * @name keta.services.Device
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.Device
+ * @description Device Provider
+ */
+angular.module('keta.services.Device',
+	[
+		'keta.services.EventBusDispatcher'
+	])
+	
+	/**
+	 * @class DeviceProvider
+	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
-	.provider('ketaDevice', function() {
+	.provider('Device', function DeviceProvider() {
 		
-		/**
-		 * @const
-		 * @private
-		 * @description Service name used in log messages for instance.
-		 */
-		var SERVICE_NAME = 'ketaDevice';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Service endpoint for messages.
-		 */
-		var SERVICE_ENDPOINT = 'devices';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Error message if no GUID was found in given device object.
-		 */
-		var ERROR_NO_GUID = 'No guid found in device object';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Return code if item was not found.
-		 */
-		var ERROR_ITEM_NOT_FOUND = -1;
-		
-		// return service API
-		this.$get = function($rootScope, $q, $location, ketaEventBus, ketaLogger) {
+		this.$get = function DeviceService($q, EventBusDispatcher) {
 			
 			/**
-			 * @private
-			 * @function
-			 * @description Check if two devices match by comparing device properties.
-			 * @param {object} deviceOne first device
-			 * @param {object} deviceTwo second device
-			 * @returns {boolean}
+			 * @class DeviceInstance
+			 * @propertyOf Device
+			 * @description Device Instance
 			 */
-			var equals = function(deviceOne, deviceTwo) {
-				var matches =
-					angular.isDefined(deviceOne.guid) &&
-					angular.isDefined(deviceTwo.guid) &&
-					deviceOne.guid === deviceTwo.guid;
-				return matches;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Return index of given item in given list
-			 * @param {object} item item to search for
-			 * @param {object[]} list list to search in
-			 * @returns {number} index index of item or ERROR_ITEM_NOT_FOUND if not found
-			 */
-			var indexOfItem = function(item, list) {
+			var DeviceInstance = function(givenEventBus, properties) {
 				
-				var index = ERROR_ITEM_NOT_FOUND;
+				// keep reference
+				var that = this;
 				
-				// filter objects and return index if match was found
-				angular.forEach(list, function(object, idx) {
-					if ((index === ERROR_ITEM_NOT_FOUND) && equals(item, object)) {
-						index = idx;
+				// save EventBus instance
+				var eventBus = givenEventBus;
+				
+				// populate properties
+				angular.forEach(properties, function(value, key) {
+					that[key] = value;
+					
+					// save copy under $pristine
+					if (!angular.isDefined(that.$pristine)) {
+						that.$pristine = {};
 					}
+					
+					that.$pristine[key] = angular.copy(value);
 				});
 				
-				return index;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Process device event.
-			 * @param {object} message message received from event bus
-			 * @param {object[]} devices device list to apply event to
-			 */
-			var processEvent = function(message, devices) {
-				
-				if (angular.isDefined(message.type) &&
-					angular.isDefined(message.value) &&
-					angular.isDefined(message.value.guid)) {
+				// send message and return promise
+				var sendMessage = function(message) {
+					var deferred = $q.defer();
 					
-					// save pristine copy of item
-					var device = message.value;
-					device.$$pristine = angular.copy(device);
-					
-					if (message.type === ketaEventBus.EVENT_CREATED) {
-						
-						devices.push(device);
-						
-						ketaLogger.debug(
-							SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created',
-							device
-						);
-						
-						// enforce digest cycle
-						$rootScope.$apply();
-						
-					} else {
-					
-						// get index of item to apply event to
-						var index = indexOfItem(device, devices);
-						
-						if (index !== ERROR_ITEM_NOT_FOUND) {
-							
-							if (message.type === ketaEventBus.EVENT_UPDATED) {
-								
-								angular.extend(devices[index], device);
-								
-								ketaLogger.debug(
-									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
-									device
-								);
-								
-							}
-							
-							if (message.type === ketaEventBus.EVENT_DELETED) {
-								
-								devices.splice(index, 1);
-								
-								ketaLogger.debug(
-									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted',
-									device
-								);
-								
-							}
-							
-							// enforce digest cycle
-							$rootScope.$apply();
-							
+					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+						if (reply.code === 200) {
+							deferred.resolve(reply);
 						} else {
-							ketaLogger.warning(
-								SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found',
-								device
-							);
+							deferred.reject(reply);
 						}
-						
-					}
+					});
 					
-				}
+					return deferred.promise;
+				};
 				
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Process device action.
-			 * @param {object} message message to send to event bus
-			 * @param {boolean} registerListener flag to determine, if device set listener should be registered
-			 * @returns {promise}
-			 */
-			var processAction = function(message, registerListener) {
-				
-				var deferred = $q.defer();
-				
-				ketaEventBus.send(SERVICE_ENDPOINT, message, function(response) {
-					if (angular.isDefined(response.code) &&
-						angular.isDefined(response.result) &&
-						response.code === ketaEventBus.RESPONSE_CODE_OK) {
-						
-						// register device set listener
-						if (registerListener) {
-							
-							// generate UUID for listener
-							var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_deviceSetListener';
-							
-							// set device filter and projection
-							var deviceFilter = {};
-							var deviceProjection = {};
-							
-							if (angular.isDefined(message.params) && (message.params !== null)) {
-								if (angular.isDefined(message.params.filter)) {
-									deviceFilter = message.params.filter;
-								}
-								if (angular.isDefined(message.params.projection)) {
-									deviceProjection = message.params.projection;
-								}
-							}
-							
-							// register handler for replyAddress
-							ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-								processEvent(message, response.result.items);
-							});
-							
-							// register listener for given address
-							ketaEventBus.send(SERVICE_ENDPOINT, {
-								action: 'registerDeviceSetListener',
-								body: {
-									deviceFilter: deviceFilter,
-									deviceProjection: deviceProjection,
-									replyAddress: listenerUUID
-								}
-							}, function(response) {
-								if (response.code !== ketaEventBus.RESPONSE_CODE_OK) {
-									ketaLogger.info(
-										SERVICE_ENDPOINT + ':registerDeviceSetListener',
-										response
-									);
-								}
-							});
-							
-							// save listener UUID in result
-							response.result.$$listenerUUID = listenerUUID;
-							
-							// save pristine copy of each item
-							angular.forEach(response.result.items, function(item) {
-								item.$$pristine = angular.copy(item);
-							});
-							
-						}
-						
-						if (angular.isDefined(response.result.items)) {
-							deferred.resolve(response.result);
-						} else {
-							if (angular.isDefined(response.result.type) &&
-								response.result.type !== ketaEventBus.EVENT_FAILED) {
-								if (response.result.type === ketaEventBus.EVENT_UPDATED) {
-									deferred.resolve(response.result.value);
-								} else {
-									deferred.resolve(response.result);
-								}
-							} else {
-								deferred.reject('Failed');
-							}
-						}
-						
-					} else {
-						if (angular.isDefined(response.message)) {
-							deferred.reject(response.message);
-						} else {
-							deferred.reject('Unknown error');
-						}
-					}
-				}, function(error) {
-					deferred.reject(error);
-				});
-				
-				return deferred.promise;
-				
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Return promise with given code and message.
-			 * @param {string} message return message
-			 * @param {boolean} resolve resolve or reject
-			 * @returns {promise}
-			 */
-			var responsePromise = function(message, resolve) {
-				var deferred = $q.defer();
-				if (resolve) {
-					deferred.resolve(message);
-				} else {
+				var returnRejectedPromise = function(message) {
+					var deferred = $q.defer();
 					deferred.reject(message);
-				}
-				return deferred.promise;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Detect changes in two tag value objects.
-			 * @param {object} prevTags previous tags object
-			 * @param {object} currentTags current tags object
-			 * @returns {object|boolean}
-			 */
-			var getChanges = function(prevTags, currentTags) {
+					return deferred.promise;
+				};
 				
-				var changes = {};
-				
-				angular.forEach(currentTags, function(tag, name) {
-					if (!angular.isDefined(prevTags[name]) ||
-						!angular.equals(prevTags[name].value, tag.value)) {
-						changes[name] = {
-							value: tag.value,
-							oca: tag.oca
-						};
+				/**
+				 * @name update
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Updates a remote DeviceInstance from local one the method is called on.
+				 * </p>
+				 * <p>
+				 *   Only value changes in <code>tagValues</code> property will be recognized as changes.
+				 * </p>
+				 * @return {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         device.tagValues.IdName.value = 'Modified Device';
+				 *         device.update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.update = function() {
+					
+					// collect changes in tagValues property
+					var changes = {
+						tagValues: {}
+					};
+					
+					angular.forEach(that.tagValues, function(tagValue, tagName) {
+						if (that.tagValues[tagName].value !== that.$pristine.tagValues[tagName].value) {
+							changes.tagValues[tagName] = {};
+							changes.tagValues[tagName].value = tagValue.value;
+							changes.tagValues[tagName].oca = tagValue.oca + 1;
+						}
+					});
+					
+					if (Object.keys(changes.tagValues).length) {
+						var deferred = $q.defer();
+						
+						sendMessage({
+							action: 'updateDevice',
+							params: {
+								deviceId: that.guid
+							},
+							body: changes
+						}).then(function(reply) {
+							
+							// update $pristine copies after success
+							angular.forEach(that.$pristine, function(value, key) {
+								that.$pristine[key] = angular.copy(that[key]);
+							});
+							
+							deferred.resolve(reply);
+						}, function(reply) {
+							deferred.reject(reply);
+						});
+						
+						return deferred.promise;
+					} else {
+						return returnRejectedPromise('No changes found');
 					}
-				});
+				};
 				
-				return (!angular.equals(changes, {})) ? changes : false;
+				/**
+				 * @name delete
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Deletes a remote DeviceInstance from local one the method is called on.
+				 * </p>
+				 * @return {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         device.delete()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.delete = function() {
+					return sendMessage({
+						action: 'deleteDevice',
+						params: {
+							deviceId: that.guid
+						}
+					});
+				};
+				
 			};
 			
 			/**
-			 * @private
-			 * @function
-			 * @description Check if guid property is set in device object. If not return rejected promise.
-			 * @param {object} device device object
-			 * @returns {object|boolean}
-			 */
-			var checkIfGuidExists = function(device) {
-				if (!angular.isDefined(device.guid)) {
-					return responsePromise({
-						code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-						message: ERROR_NO_GUID
-					}, false);
-				} else {
-					return true;
-				}
-			};
-			
-			/**
-			 * @class ketaDeviceService
-			 * @propertyOf ketaDeviceProvider
+			 * @class Device
+			 * @propertyOf DeviceProvider
 			 * @description Device Service
 			 */
 			var api = {
 				
 				/**
-				 * @const
-				 * @memberOf ketaDeviceService
-				 * @description Error message if no GUID was found in given device object.
-				 */
-				ERROR_NO_GUID: ERROR_NO_GUID,
-				
-				/**
 				 * @function
-				 * @memberOf ketaDeviceService
+				 * @memberOf Device
 				 * @description
 				 * <p>
-				 *   Read all devices with given filter and projection.
+				 *   Creates a DeviceInstance with given EventBus instance and properties.
 				 * </p>
-				 * <p>
-				 *   By default an empty filter and an empty projection is used which means, that
-				 *   default projection is in place and all devices will be returned.
-				 * </p>
-				 * <p>
-				 *   By default a device set listener is registered.
-				 * </p>
-				 * @param {object} [params={}] device parameter (filter, projection, offset and limit)
-				 * @param {boolean} [registerListener=true] flag if device set listener should be registered
-				 * @returns {promise}
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {Object} properties Properties to set upon DeviceInstance creation
+				 * @returns {DeviceInstance}
 				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read().then(function(devices) {
-				 *             $scope.devices = devices;
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting devices');
-				 *         });
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read({
-				 *            filter: {
-				 *                guid: $routeParams.deviceGuid
-				 *            }
-				 *         }).then(function(devices) {
-				 *             $scope.device = devices[0] || {};
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting device');
-				 *         });
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read({
-				 *             filter: {
-				 *                 deviceClasses: ['device-class-a', 'device-class-b']
-				 *             },
-				 *             projection: {
-				 *                 guid: 1,
-				 *                 deviceClass: 1
-				 *             },
-				 *             offset: 10,
-				 *             limit: 10
-				 *         }).then(function(devices) {
-				 *             $scope.devices = devices;
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting devices');
-				 *         });
-				 *     });
-				 */
-				read: function(params, registerListener) {
-					var flag = (angular.isDefined(registerListener)) ? registerListener : true;
-					return processAction({
-						action: 'getDevices',
-						params: (angular.isDefined(params) ? params : null),
-						body: null
-					}, flag);
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaDeviceService
-				 * @description Update a device by given object.
-				 * @param {object} device device object
-				 * @returns {promise}
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
-				 *         ketaDevice.update({
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
-				 *                     value: 'new-name',
-				 *                     oca: 1
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
 				 *                 }
 				 *             }
 				 *         });
 				 *     });
 				 */
-				update: function(device) {
-					
-					// check if guid property exists in device
-					var valid = checkIfGuidExists(device);
-					
-					if (valid === true) {
-						
-						// get original device object
-						var originalDevice = angular.copy(device.$$pristine);
-						
-						// get updated device object
-						var updatedDevice = angular.copy(device);
-						delete updatedDevice.$$pristine;
-						
-						var changes = getChanges(originalDevice.tagValues, updatedDevice.tagValues);
-						
-						if (changes) {
-							return processAction({
-								action: 'updateDevice',
-								params: {
-									deviceId: device.guid
-								},
-								body: {
-									tagValues: changes
-								}
-							});
-						} else {
-							return responsePromise(device, true);
-						}
-						
-					} else {
-						return valid;
-					}
-					
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaDeviceService
-				 * @description Delete a device by given object.
-				 * @param {object} device device object
-				 * @returns {promise}
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
-				 *         ketaDevice.delete({
-				 *             guid: 'guid'
-				 *         });
-				 *     });
-				 */
-				'delete': function(device) {
-					
-					// check if guid property exists in device
-					var valid = checkIfGuidExists(device);
-					
-					if (valid === true) {
-						return processAction({
-							action: 'deleteDevice',
-							params: {
-								deviceId: device.guid
-							},
-							body: null
-						});
-					} else {
-						return valid;
-					}
+				create: function(eventBus, properties) {
+					return new DeviceInstance(eventBus, properties);
 				}
 				
 			};
@@ -674,2487 +1747,3041 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 		
 	});
 
-// source: components/services/event-bus.js
+// source: dist/services/device.min.js
 /**
- * @name keta.servicesEventBus
+ * @name keta.services.Device
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesEventBus
- * @description Event Bus Service
+ * @module keta.services.Device
+ * @description Device Provider
  */
-angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servicesLogger'])
+angular.module('keta.services.Device',
+	[
+		'keta.services.EventBusDispatcher'
+	])
 	
 	/**
-	 * @class ketaEventBusProvider
-	 * @propertyOf keta.servicesEventBus
-	 * @description Event Bus Provider wrapping Vert.x event bus
+	 * @class DeviceProvider
+	 * @propertyOf keta.services.Device
+	 * @description Device Provider
 	 */
-	.provider('ketaEventBus', function() {
+	.provider('Device', function DeviceProvider() {
 		
-		/**
-		 * @const
-		 * @private
-		 * @description Service name used in log messages for instance.
-		 */
-		var SERVICE_NAME = 'ketaEventBus';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Connecting state constant.
-		 */
-		var STATE_CONNECTING = 0;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Open state constant.
-		 */
-		var STATE_OPEN = 1;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Closing state constant.
-		 */
-		var STATE_CLOSING = 2;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Closed state constant.
-		 */
-		var STATE_CLOSED = 3;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Unknown state constant.
-		 */
-		var STATE_UNKNOWN = 4;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description State labels.
-		 */
-		var STATE_LABELS = {};
-		
-		STATE_LABELS[STATE_CONNECTING] = 'connecting';
-		STATE_LABELS[STATE_OPEN] = 'open';
-		STATE_LABELS[STATE_CLOSING] = 'closing';
-		STATE_LABELS[STATE_CLOSED] = 'closed';
-		STATE_LABELS[STATE_UNKNOWN] = 'unknown';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Multiplicator to transform milli units to units.
-		 */
-		var MILLI_MULTIPLICATOR = 1000;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Created event id.
-		 */
-		var EVENT_CREATED = 'CREATED';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Updated event id.
-		 */
-		var EVENT_UPDATED = 'UPDATED';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Deleted event id.
-		 */
-		var EVENT_DELETED = 'DELETED';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Failed event id.
-		 */
-		var EVENT_FAILED = 'FAILED';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if everything is fine.
-		 */
-		var RESPONSE_CODE_OK = 200;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if an API call was malformed.
-		 */
-		var RESPONSE_CODE_BAD_REQUEST = 400;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if something wasn't found.
-		 */
-		var RESPONSE_CODE_NOT_FOUND = 404;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if request timed out.
-		 */
-		var RESPONSE_CODE_TIMEOUT = 408;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if auth token expired.
-		 */
-		var RESPONSE_CODE_AUTH_TOKEN_EXPIRED = 419;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if something unexpected happened.
-		 */
-		var RESPONSE_CODE_INTERNAL_SERVER_ERROR = 500;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Response code if event bus isn't open.
-		 */
-		var RESPONSE_CODE_SERVICE_UNAVAILABLE = 503;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for web socket URL.
-		 */
-		var DEFAULT_SOCKET_URL = 'https://localhost:10443/kiwibus';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for auto connect.
-		 */
-		var DEFAULT_AUTO_CONNECT = false;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for auto unregister.
-		 */
-		var DEFAULT_AUTO_UNREGISTER = true;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for reconnect.
-		 */
-		var DEFAULT_RECONNECT = true;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for reconnect timeout in seconds.
-		 */
-		var DEFAULT_RECONNECT_TIMEOUT = 10;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for mock mode.
-		 */
-		var DEFAULT_MOCK_MODE = false;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for debug mode.
-		 */
-		var DEFAULT_DEBUG_MODE = false;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Default value for send method timeout in seconds.
-		 */
-		var DEFAULT_SEND_TIMEOUT = 10;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack for configuration.
-		 * @property {string} socketURL socket url
-		 * @property {number} socketState socket state
-		 * @property {boolean} autoConnect auto connect to socket
-		 * @property {boolean} autoUnregister auto unregister listeners upon route change start
-		 * @property {boolean} reconnect reconnect if socket closed
-		 * @property {number} reconnectTimeout reconnect timeout to open socket again
-		 * @property {boolean} mockMode mock mode enabled
-		 * @property {boolean} debugMode debug mode enabled
-		 * @property {number} sendTimeout timeout in seconds for send method
-		 */
-		var config = {
-			socketURL: DEFAULT_SOCKET_URL,
-			socketState: STATE_CLOSED,
-			autoConnect: DEFAULT_AUTO_CONNECT,
-			autoUnregister: DEFAULT_AUTO_UNREGISTER,
-			reconnect: DEFAULT_RECONNECT,
-			reconnectTimeout: DEFAULT_RECONNECT_TIMEOUT,
-			mockMode: DEFAULT_MOCK_MODE,
-			debugMode: DEFAULT_DEBUG_MODE,
-			sendTimeout: DEFAULT_SEND_TIMEOUT
-		};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack for mocked responses and handlers.
-		 * @property {object} responses mocked responses
-		 * @property {object} handlers mocked handlers
-		 */
-		var mocked = {
-			responses: {},
-			handlers: {}
-		};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Stubbed Vert.x event bus instance.
-		 */
-		var eventBus = null;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack of on open handlers.
-		 */
-		var onOpenHandlers = {};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack of on close handlers.
-		 */
-		var onCloseHandlers = {};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack of registered bus handlers.
-		 */
-		var busHandlers = {};
-		
-		// CONFIG
-		// ------
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for web socket URL.
-		 */
-		this.DEFAULT_SOCKET_URL = DEFAULT_SOCKET_URL;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for auto connect.
-		 */
-		this.DEFAULT_AUTO_CONNECT = DEFAULT_AUTO_CONNECT;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for auto unregister.
-		 */
-		this.DEFAULT_AUTO_UNREGISTER = DEFAULT_AUTO_UNREGISTER;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for reconnect.
-		 */
-		this.DEFAULT_RECONNECT = DEFAULT_RECONNECT;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for reconnect timeout in seconds.
-		 */
-		this.DEFAULT_RECONNECT_TIMEOUT = DEFAULT_RECONNECT_TIMEOUT;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for mock mode.
-		 */
-		this.DEFAULT_MOCK_MODE = DEFAULT_MOCK_MODE;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for debug mode.
-		 */
-		this.DEFAULT_DEBUG_MODE = DEFAULT_DEBUG_MODE;
-		
-		/**
-		 * @const
-		 * @memberOf ketaEventBusProvider
-		 * @description Default value for send method timeout in seconds.
-		 */
-		this.DEFAULT_SEND_TIMEOUT = DEFAULT_SEND_TIMEOUT;
-		
-		/**
-		 * @name setSocketURL
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Set URL of web socket EventBus connects to.
-		 * @param {string} [url=https://localhost:10443/kiwibus] URL of web socket
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.setSocketURL('http://localhost:8080/eventbus');
-		 *     });
-		 */
-		this.setSocketURL = function(url) {
-			config.socketURL = (angular.isString(url) ? String(url) : DEFAULT_SOCKET_URL);
-		};
-		
-		/**
-		 * @name enableAutoConnect
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Enable automatic connect upon start.
-		 * @param {boolean} [enabled=false] Flag
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.enableAutoConnect(true);
-		 *     });
-		 */
-		this.enableAutoConnect = function(enabled) {
-			config.autoConnect = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
-		};
-		
-		/**
-		 * @name enableAutoUnregister
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Enable automatic unregister of listeners upon route change start.
-		 * @param {boolean} [enabled=true] Flag
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.enableAutoUnregister(false);
-		 *     });
-		 */
-		this.enableAutoUnregister = function(enabled) {
-			config.autoUnregister = ((enabled === true || enabled === false) ? Boolean(enabled) : true);
-		};
-		
-		/**
-		 * @name enableReconnect
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Enable reconnect if web socket was closed.
-		 * @param {boolean} [enabled=false] Flag
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.enableReconnect(true);
-		 *     });
-		 */
-		this.enableReconnect = function(enabled) {
-			config.reconnect = ((enabled === true || enabled === false) ? Boolean(enabled) : true);
-		};
-		
-		/**
-		 * @name setReconnectTimeout
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Set timeout for retry of reconnect in case of closed web socket.
-		 * @param {number} [timeout=10] Timeout in seconds
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.setReconnectTimeout(5);
-		 *     });
-		 */
-		this.setReconnectTimeout = function(timeout) {
-			config.reconnectTimeout =
-				(angular.isDefined(timeout) && angular.isNumber(timeout) && (timeout > 0)) ?
-					timeout : DEFAULT_RECONNECT_TIMEOUT;
-		};
-		
-		/**
-		 * @name enableMockMode
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Enable mock mode to use event bus service without real socket.
-		 * @param {boolean} [enabled=false] Flag
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.enableMockMode(true);
-		 *     });
-		 */
-		this.enableMockMode = function(enabled) {
-			config.mockMode = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
-		};
-		
-		/**
-		 * @name enableDebugMode
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Enable debug mode to print formatted outputs to dev tools console.
-		 * @param {boolean} [enabled=false] Flag
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.enableDebugMode(true);
-		 *     });
-		 */
-		this.enableDebugMode = function(enabled) {
-			config.debugMode = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
-		};
-		
-		/**
-		 * @name addMockResponse
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description
-		 * <p>
-		 *   Add mocked response for given id representing address and action on event bus.
-		 * </p>
-		 * <p>
-		 *   Only works if mock mode is enabled.
-		 * </p>
-		 * @see ketaEventBusProvider.enableMockMode
-		 * @param {string} id Address and action on event bus in format address:action
-		 * @param {function} callback Callback method to return response
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *     
-		 *         // return static list of devices
-		 *         ketaEventBusProvider.addMockResponse('devices:getDevices', function(request) {
-		 *             return {
-		 *                 code: 200,
-		 *                 message: null,
-		 *                 result: [{
-		 *                     guid: 'sample-guid',
-		 *                     currentAddress: 'sample-current-address'
-		 *                 }],
-		 *                 status: 'ok'
-		 *             };
-		 *         });
-		 *         
-		 *     });
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *     
-		 *         // use request body and return it unmodified
-		 *         ketaEventBusProvider.addMockResponse('devices:createDevice', function(request) {
-		 *             return {
-		 *                 code: 200,
-		 *                 message: null,
-		 *                 result: request.body,
-		 *                 status: 'ok'
-		 *             };
-		 *         });
-		 *         
-		 *     });
-		 */
-		this.addMockResponse = function(id, callback) {
-			if (!angular.isDefined(mocked.responses[id]) &&	angular.isFunction(callback)) {
-				mocked.responses[id] = callback;
-			}
-		};
-		
-		/**
-		 * @name setSendTimeout
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Set timeout for send method.
-		 * @param {number} [timeout=10] Timeout in seconds
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaEventBusProvider) {
-		 *         ketaEventBusProvider.setSendTimeout(5);
-		 *     });
-		 */
-		this.setSendTimeout = function(timeout) {
-			config.sendTimeout =
-				(angular.isDefined(timeout) && angular.isNumber(timeout) && (timeout > 0)) ?
-					timeout : DEFAULT_SEND_TIMEOUT;
-		};
-		
-		/**
-		 * @name getConfig
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get configuration object.
-		 * @returns {object} config object
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var config = ketaEventBusProvider.getConfig();
-		 *     });
-		 */
-		this.getConfig = function() {
-			return config;
-		};
-		
-		/**
-		 * @name getMocked
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get mocked object.
-		 * @returns {object} mocked object
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var mocked = ketaEventBusProvider.getMocked();
-		 *     });
-		 */
-		this.getMocked = function() {
-			return mocked;
-		};
-		
-		/**
-		 * @name getEventBus
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get event bus object.
-		 * @returns {object} event bus object
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var eventBus = ketaEventBusProvider.getEventBus();
-		 *     });
-		 */
-		this.getEventBus = function() {
-			return eventBus;
-		};
-		
-		/**
-		 * @name getOnOpenHandlers
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get on open handlers stack.
-		 * @returns {object} on open handlers object (uuid: handler)
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var onOpenHandlers = ketaEventBusProvider.getOnOpenHandlers();
-		 *     });
-		 */
-		this.getOnOpenHandlers = function() {
-			return onOpenHandlers;
-		};
-		
-		/**
-		 * @name getOnCloseHandlers
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get on close handlers stack.
-		 * @returns {object} on close handlers object (uuid: handler)
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var onCloseHandlers = ketaEventBusProvider.getOnCloseHandlers();
-		 *     });
-		 */
-		this.getOnCloseHandlers = function() {
-			return onCloseHandlers;
-		};
-		
-		/**
-		 * @name getBusHandlers
-		 * @function
-		 * @memberOf ketaEventBusProvider
-		 * @description Get bus handlers stack.
-		 * @returns {object} bus handlers object (uuid: handler)
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaEventBusProvider) {
-		 *         var busHandlers = ketaEventBusProvider.getBusHandlers();
-		 *     });
-		 */
-		this.getBusHandlers = function() {
-			return busHandlers;
-		};
-		
-		// RUN
-		// ---
-		
-		// keep reference
-		var that = this;
-		
-		// return service API
-		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken, ketaAppContext, ketaLogger) {
-			
-			// refresh default socket url
-			var busUrl = ketaAppContext.get('bus.url');
-			config.socketURL = (busUrl !== null) ? busUrl : DEFAULT_SOCKET_URL;
-			
-			// Internal open handler, which calls all registered on open handlers.
-			var openHandler = function() {
-				
-				// update internal socket state
-				config.socketState = STATE_OPEN;
-				
-				// loop on open handlers
-				angular.forEach(onOpenHandlers, function(handler) {
-					if (angular.isFunction(handler)) {
-						handler();
-					}
-				});
-				
-			};
-			
-			// Internal close handler, which calls all registered on close handlers and
-			// automatically tries to reconnect if configured
-			var closeHandler = function() {
-				
-				// update internal socket state
-				config.socketState = STATE_CLOSED;
-				
-				// loop on close handlers
-				angular.forEach(onCloseHandlers, function(handler) {
-					if (angular.isFunction(handler)) {
-						handler();
-					}
-				});
-				
-				// TODO: make this a singleton
-				// reconnect
-				if (config.reconnect) {
-					$timeout(function() {
-						stub.open();
-					}, config.reconnectTimeout * MILLI_MULTIPLICATOR);
-				}
-				
-			};
-			
-			// matches mock handler by requested action and send corresponding event message
-			var matchMockHandler = function(message, response) {
-				
-				// check mocked handlers
-				angular.forEach(mocked.handlers, function(handlerConfig, id) {
-					angular.forEach(handlerConfig.actions, function(action) {
-						if (action === message.action) {
-							
-							ketaLogger.debug(
-								action + ' matched for handler ' + id,
-								message,
-								response
-							);
-							
-							// build event message type
-							var type = '';
-							
-							if (message.action.indexOf('create') === 0) {
-								type = EVENT_CREATED;
-							}
-							if (message.action.indexOf('update') === 0) {
-								type = EVENT_UPDATED;
-							}
-							if (message.action.indexOf('delete') === 0) {
-								type = EVENT_DELETED;
-							}
-							
-							handlerConfig.handler({
-								type: type,
-								value: response.result
-							});
-							
-						}
-					});
-				});
-				
-			};
-			
-			// unregister all bus handlers and listeners upon route changes
-			$rootScope.$on('$routeChangeStart', function() {
-				
-				// unregister all bus handlers
-				angular.forEach(busHandlers, function(handler, uuid) {
-					stub.unregisterBusHandler(uuid, handler);
-				});
-				
-				// clear internal stack
-				busHandlers = {};
-				
-				// unregister all listeners
-				stub.send('devices', {
-					action: 'unregisterAllListeners',
-					body: null
-				});
-				
-				// unregister all event handler
-				if (config.autoUnregister) {
-					
-					// on open handler
-					angular.forEach(onOpenHandlers, function(handler, uuid) {
-						stub.unregisterEventHandler(stub.EVENT_ON_OPEN, uuid);
-					});
-					
-					// on close handler
-					angular.forEach(onCloseHandlers, function(handler, uuid) {
-						stub.unregisterEventHandler(stub.EVENT_ON_CLOSE, uuid);
-					});
-					
-					// clear internal stacks
-					onOpenHandlers = {};
-					onCloseHandlers = {};
-					
-				}
-				
-			});
+		this.$get = function DeviceService($q, EventBusDispatcher) {
 			
 			/**
-			 * @class ketaEventBusService
-			 * @propertyOf ketaEventBusProvider
-			 * @description Event Bus Service wrapping Vert.x event bus
+			 * @class DeviceInstance
+			 * @propertyOf Device
+			 * @description Device Instance
 			 */
-			var stub = {
+			var DeviceInstance = function(givenEventBus, properties) {
 				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description On open event id.
-				 */
-				EVENT_ON_OPEN: 'onOpen',
+				// keep reference
+				var that = this;
 				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description On close event id.
-				 */
-				EVENT_ON_CLOSE: 'onClose',
+				// save EventBus instance
+				var eventBus = givenEventBus;
 				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Created event id.
-				 */
-				EVENT_CREATED: EVENT_CREATED,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Updated event id.
-				 */
-				EVENT_UPDATED: EVENT_UPDATED,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Deleted event id.
-				 */
-				EVENT_DELETED: EVENT_DELETED,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Failed event id.
-				 */
-				EVENT_FAILED: EVENT_FAILED,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if everything is fine.
-				 */
-				RESPONSE_CODE_OK: RESPONSE_CODE_OK,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if an API call was malformed.
-				 */
-				RESPONSE_CODE_BAD_REQUEST: RESPONSE_CODE_BAD_REQUEST,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if something wasn't found.
-				 */
-				RESPONSE_CODE_NOT_FOUND: RESPONSE_CODE_NOT_FOUND,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if request timed out.
-				 */
-				RESPONSE_CODE_TIMEOUT: RESPONSE_CODE_TIMEOUT,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if auth token expired.
-				 */
-				RESPONSE_CODE_AUTH_TOKEN_EXPIRED: RESPONSE_CODE_AUTH_TOKEN_EXPIRED,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if something unexpected happened.
-				 */
-				RESPONSE_CODE_INTERNAL_SERVER_ERROR: RESPONSE_CODE_INTERNAL_SERVER_ERROR,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description Response code if event bus isn't open.
-				 */
-				RESPONSE_CODE_SERVICE_UNAVAILABLE: RESPONSE_CODE_SERVICE_UNAVAILABLE,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get configured web socket URL.
-				 * @returns {string} socketURL
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var socketURL = ketaEventBus.getSocketURL();
-				 *     });
-				 */
-				getSocketURL: function() {
-					return config.socketURL;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get internal value of socket state.
-				 * @returns {number} socketState
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         // returns 0 for connecting, 1 for open, 2 for closing, 3 for closed, 4 for unknown
-				 *         var socketState = ketaEventBus.getSocketState();
-				 *     });
-				 */
-				getSocketState: function() {
-					return config.socketState;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get label of internal value of socket state.
-				 * @returns {string}
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var getSocketStateLabel = function() {
-				 *             // returns 'connecting', 'open', 'closing', 'closed' or 'unknown'
-				 *             return ketaEventBus.getSocketStateLabel();
-				 *         };
-				 *     });
-				 */
-				getSocketStateLabel: function() {
-					return (angular.isDefined(STATE_LABELS[config.socketState])) ?
-						STATE_LABELS[config.socketState] : STATE_LABELS[STATE_UNKNOWN];
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Check if auto connect is enabled.
-				 * @returns {boolean} autoConnect
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var autoConnectEnabled = function() {
-				 *             return ketaEventBus.autoConnectEnabled();
-				 *         };
-				 *     });
-				 * @example
-				 * &lt;div data-ng-controller="exampleController"&gt;
-				 *     &lt;p data-ng-show="autoConnectEnabled()"&gt;Auto connect on&lt;/p&gt;
-				 *     &lt;p data-ng-hide="autoConnectEnabled()"&gt;Auto connect off&lt;/p&gt;
-				 * &lt;/div&gt;
-				 */
-				autoConnectEnabled: function() {
-					return config.autoConnect;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Check if auto unregister is enabled.
-				 * @returns {boolean} autoUnregister
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var autoUnregisterEnabled = function() {
-				 *             return ketaEventBus.autoUnregisterEnabled();
-				 *         };
-				 *     });
-				 * @example
-				 * &lt;div data-ng-controller="exampleController"&gt;
-				 *     &lt;p data-ng-show="autoUnregisterEnabled()"&gt;Auto unregister on&lt;/p&gt;
-				 *     &lt;p data-ng-hide="autoUnregisterEnabled()"&gt;Auto unregister off&lt;/p&gt;
-				 * &lt;/div&gt;
-				 */
-				autoUnregisterEnabled: function() {
-					return config.autoUnregister;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Check if reconnect is enabled.
-				 * @returns {boolean} reconnect
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var reconnectEnabled = function() {
-				 *             return ketaEventBus.reconnectEnabled();
-				 *         };
-				 *     });
-				 * @example
-				 * &lt;div data-ng-controller="exampleController"&gt;
-				 *     &lt;p data-ng-show="reconnectEnabled()"&gt;Reconnect on&lt;/p&gt;
-				 *     &lt;p data-ng-hide="reconnectEnabled()"&gt;Reconnect off&lt;/p&gt;
-				 * &lt;/div&gt;
-				 */
-				reconnectEnabled: function() {
-					return config.reconnect;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get reconnect timeout configured.
-				 * @returns {number} reconnect timeout in seconds
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var reconnectTimeout = ketaEventBus.getReconnectTimeout();
-				 *     });
-				 */
-				getReconnectTimeout: function() {
-					return config.reconnectTimeout;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Check if mock mode is enabled.
-				 * @returns {boolean} mockMode
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var mockModeEnabled = function() {
-				 *             return ketaEventBus.mockModeEnabled();
-				 *         };
-				 *     });
-				 * @example
-				 * &lt;div data-ng-controller="exampleController"&gt;
-				 *     &lt;p data-ng-show="mockModeEnabled()"&gt;Mock mode on&lt;/p&gt;
-				 *     &lt;p data-ng-hide="mockModeEnabled()"&gt;Mock mode off&lt;/p&gt;
-				 * &lt;/div&gt;
-				 */
-				mockModeEnabled: function() {
-					return config.mockMode;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Check if debug mode is enabled.
-				 * @returns {boolean} mockMode
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var debugModeEnabled = function() {
-				 *             return ketaEventBus.debugModeEnabled();
-				 *         };
-				 *     });
-				 * @example
-				 * &lt;div data-ng-controller="exampleController"&gt;
-				 *     &lt;p data-ng-show="debugModeEnabled()"&gt;Debug mode on&lt;/p&gt;
-				 *     &lt;p data-ng-hide="debugModeEnabled()"&gt;Debug mode off&lt;/p&gt;
-				 * &lt;/div&gt;
-				 */
-				debugModeEnabled: function() {
-					return config.debugMode;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get configuration object.
-				 * @returns {object} config object
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var config = ketaEventBus.getConfig();
-				 *     });
-				 */
-				getConfig: that.getConfig,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get mocked object.
-				 * @returns {object} mocked object
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var mocked = ketaEventBus.getMocked();
-				 *     });
-				 */
-				getMocked: that.getMocked,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get event bus object.
-				 * @returns {object} event bus object
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var eventBus = ketaEventBus.getEventBus();
-				 *     });
-				 */
-				getEventBus: that.getEventBus,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get on open handlers stack.
-				 * @returns {object} on open handlers object (uuid: handler)
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .config(function(ketaEventBus) {
-				 *         var onOpenHandlers = ketaEventBus.getOnOpenHandlers();
-				 *     });
-				 */
-				getOnOpenHandlers: that.getOnOpenHandlers,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get on close handlers stack.
-				 * @returns {object} on close handlers object (uuid: handler)
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .config(function(ketaEventBus) {
-				 *         var onCloseHandlers = ketaEventBus.getOnCloseHandlers();
-				 *     });
-				 */
-				getOnCloseHandlers: that.getOnCloseHandlers,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description Get bus handlers stack.
-				 * @returns {object} bus handlers object (uuid: handler)
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .config(function(ketaEventBus) {
-				 *         var busHandlers = ketaEventBus.getBusHandlers();
-				 *     });
-				 */
-				getBusHandlers: that.getBusHandlers,
-				
-				// VERT.X EVENT BUS STUB
-				// ---------------------
-				
-				// socket states
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description State while connecting to web socket.
-				 */
-				STATE_CONNECTING: STATE_CONNECTING,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description State while web socket is open.
-				 */
-				STATE_OPEN: STATE_OPEN,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description State while closing web socket.
-				 */
-				STATE_CLOSING: STATE_CLOSING,
-				
-				/**
-				 * @const
-				 * @memberOf ketaEventBusService
-				 * @description State while web socket is closed.
-				 */
-				STATE_CLOSED: STATE_CLOSED,
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Open web socket connection to configured socket URL.
-				 * </p>
-				 * <p>
-				 *   By default a generic open and close handler will be attached.
-				 *   This means every handler registered via <i>registerOnOpenHandler</i> or
-				 *   <i>registerOnCloseHandler</i> will be saved and called inside of generic handlers if
-				 *   <i>onOpen</i> or <i>onClose</i> events occur.
-				 * </p>
-				 * <p>
-				 *   If <i>autoConnect</i> is enabled no direct call to <i>ketaEventBus.open()</i> is necessary.
-				 * </p>
-				 * <p>
-				 *   In mocked mode internal socket state is set to open immediately and open handler is called.
-				 * </p>
-				 * @see ketaEventBusProvider.enableAutoConnect
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         ketaEventBus.open();
-				 *     });
-				 */
-				open: function() {
+				// populate properties
+				angular.forEach(properties, function(value, key) {
+					that[key] = value;
 					
-					if (config.socketState === STATE_CLOSED) {
-						
-						ketaLogger.info(SERVICE_NAME + '.open', stub.getConfig());
-						
-						if (!config.mockMode) {
-							
-							// establish web socket
-							eventBus = new vertx.EventBus(config.socketURL);
-							
-							// register on open handler
-							eventBus.onopen = openHandler;
-							
-							// register on close handler
-							eventBus.onclose = closeHandler;
-							
+					// save copy under $pristine
+					if (!angular.isDefined(that.$pristine)) {
+						that.$pristine = {};
+					}
+					
+					that.$pristine[key] = angular.copy(value);
+				});
+				
+				// send message and return promise
+				var sendMessage = function(message) {
+					var deferred = $q.defer();
+					
+					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+						if (reply.code === 200) {
+							deferred.resolve(reply);
 						} else {
-							
-							// set internal state to open
-							config.socketState = STATE_OPEN;
-							
-							// call open handler
-							openHandler();
-							
+							deferred.reject(reply);
 						}
-						
-					}
+					});
 					
-				},
+					return deferred.promise;
+				};
+				
+				var returnRejectedPromise = function(message) {
+					var deferred = $q.defer();
+					deferred.reject(message);
+					return deferred.promise;
+				};
 				
 				/**
+				 * @name update
 				 * @function
-				 * @memberOf ketaEventBusService
+				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
-				 *   Close web socket connection.
+				 *   Updates a remote DeviceInstance from local one the method is called on.
 				 * </p>
 				 * <p>
-				 *   In mocked mode internal socket state is set to closed immediately and close handler is called.
+				 *   Only value changes in <code>tagValues</code> property will be recognized as changes.
 				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
+				 * @return {promise} promise
 				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         ketaEventBus.close();
-				 *     });
-				 */
-				close: function() {
-					
-					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode) {
-							
-							// close web socket
-							stub.getEventBus().close();
-							
-						} else {
-							
-							// set internal state to closed
-							config.socketState = STATE_CLOSED;
-							
-							// call close handler
-							closeHandler();
-							
-						}
-					}
-					
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Return state of web socket.
-				 * </p>
-				 * <p>
-				 *   In mocked mode internal socket state is returned immediately.
-				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var state = ketaEventBus.getState();
-				 *     });
-				 */
-				getState: function() {
-					
-					var state = stub.getSocketState();
-					
-					if (!config.mockMode && stub.getEventBus()) {
-						state = stub.getEventBus().readyState();
-					}
-					
-					return state;
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Send message to given address and register response handler.
-				 * </p>
-				 * <p>
-				 *   If access token has expired response code is 419, access token will be refreshed automatically and
-				 *   request will be repeated. If access token could not be refreshed an error is thrown and the application halts.
-				 * </p>
-				 * <p>
-				 *   In mocked mode registered responses are checked by matching given address and
-				 *   mocked response is returned if one was found. Also a corresponding event will be
-				 *   broadcasted if action within message matches registered actions of a listener.
-				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @param {string} address unique address on event bus
-				 * @param {object} message message object to send
-				 * @param {function} responseHandler handler to process response
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *         ketaEventBus.send('devices', {
-				 *             action: 'getDevices'
-				 *         }, function(response) {
-				 *             ketaLogger.info('ketaEventBus send reponse', {
-				 *                 action: 'getDevices'
-				 *             }, response);
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
 				 *         });
+				 *         device.tagValues.IdName.value = 'Modified Device';
+				 *         device.update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
 				 *     });
 				 */
-				send: function(address, message, responseHandler) {
+				that.update = function() {
 					
-					ketaLogger.debug(
-						SERVICE_NAME + '.send » request to ' + address + ':' + message.action,
-						message
-					);
+					// collect changes in tagValues property
+					var changes = {
+						tagValues: {}
+					};
 					
-					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode) {
+					angular.forEach(that.tagValues, function(tagValue, tagName) {
+						if (that.tagValues[tagName].value !== that.$pristine.tagValues[tagName].value) {
+							changes.tagValues[tagName] = {};
+							changes.tagValues[tagName].value = tagValue.value;
+							changes.tagValues[tagName].oca = tagValue.oca + 1;
+						}
+					});
+					
+					if (Object.keys(changes.tagValues).length) {
+						var deferred = $q.defer();
+						
+						sendMessage({
+							action: 'updateDevice',
+							params: {
+								deviceId: that.guid
+							},
+							body: changes
+						}).then(function(reply) {
 							
-							// inject access token
-							message.accessToken = ketaAccessToken.get();
-							
-							var requestReturned = false;
-							
-							// start timeout
-							$timeout(function() {
-								if (!requestReturned && angular.isFunction(responseHandler)) {
-									
-									ketaLogger.error(
-										SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' timed out',
-										message
-									);
-									
-									requestReturned = true;
-									responseHandler({
-										code: stub.RESPONSE_CODE_TIMEOUT,
-										message: 'Response for ' + address + ':' + message.action + ' timed out'
-									});
-									
-								}
-							}, config.sendTimeout * MILLI_MULTIPLICATOR);
-							
-							// send message
-							stub.getEventBus().send(address, message, function(reply) {
-								
-								if (!requestReturned && reply) {
-									
-									requestReturned = true;
-									
-									if (angular.isDefined(reply.code)) {
-										if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
-											
-											// access token expired
-											ketaAccessToken.refresh().then(function(response) {
-												if (angular.isDefined(response.data.accessToken)) {
-													ketaAccessToken.set(response.data.accessToken);
-													stub.send(address, message, responseHandler);
-												}
-											}, function() {
-												$window.location.reload();
-											});
-											
-										} else {
-											
-											ketaLogger.debug(
-												SERVICE_NAME + '.send « response from ' + address + ':' + message.action,
-												message,
-												reply
-											);
-											
-											// non-interceptable response code (200, 401, ...)
-											if (angular.isFunction(responseHandler)) {
-												responseHandler(reply);
-											}
-											
-										}
-									} else {
-										
-										ketaLogger.error(
-											SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' was "Bad request"',
-											message
-										);
-										
-										responseHandler({
-											code: stub.RESPONSE_CODE_BAD_REQUEST,
-											message: 'Bad request'
-										});
-										
-									}
-									
-								}
-								
+							// update $pristine copies after success
+							angular.forEach(that.$pristine, function(value, key) {
+								that.$pristine[key] = angular.copy(that[key]);
 							});
 							
-						} else {
-							
-							if (angular.isDefined(message.action) &&
-								angular.isDefined(mocked.responses[address + ':' + message.action])) {
-								
-								// get reply
-								var reply = mocked.responses[address + ':' + message.action](message);
-								
-								ketaLogger.debug(
-									SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action,
-									message,
-									reply
-								);
-								
-								// send mocked reply
-								if (angular.isFunction(responseHandler)) {
-									responseHandler(reply);
-								}
-								
-								// check mocked handlers
-								matchMockHandler(message, reply);
-								
-							} else {
-								
-								// if no mocked response was found send a 404 reply
-								ketaLogger.warning(
-									SERVICE_NAME + '.send « no mocked response for ' + address + ':' + message.action + ' found',
-									message
-								);
-								
-								if (angular.isFunction(responseHandler)) {
-									responseHandler({
-										code: stub.RESPONSE_CODE_NOT_FOUND,
-										message: 'No mocked response for ' + address + ':' + message.action + ' found'
-									});
-								}
-								
-							}
-							
-						}
+							deferred.resolve(reply);
+						}, function(reply) {
+							deferred.reject(reply);
+						});
+						
+						return deferred.promise;
 					} else {
-						
-						ketaLogger.error(
-							SERVICE_NAME + '.send « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
-							message
-						);
-						
-						if (angular.isFunction(responseHandler)) {
-							responseHandler({
-								code: stub.RESPONSE_CODE_SERVICE_UNAVAILABLE,
-								message: 'EventBus not open'
-							});
-						}
-						
+						return returnRejectedPromise('No changes found');
 					}
-					
-				},
+				};
+				
+				/**
+				 * @name delete
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Deletes a remote DeviceInstance from local one the method is called on.
+				 * </p>
+				 * @return {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         device.delete()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.delete = function() {
+					return sendMessage({
+						action: 'deleteDevice',
+						params: {
+							deviceId: that.guid
+						}
+					});
+				};
+				
+			};
+			
+			/**
+			 * @class Device
+			 * @propertyOf DeviceProvider
+			 * @description Device Service
+			 */
+			var api = {
 				
 				/**
 				 * @function
-				 * @memberOf ketaEventBusService
+				 * @memberOf Device
 				 * @description
 				 * <p>
-				 *   Publish message to given address.
+				 *   Creates a DeviceInstance with given EventBus instance and properties.
 				 * </p>
-				 * <p>
-				 *   In mocked mode nothing happens as there is no response handler for publishing messages.
-				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @param {string} address unique address on event bus
-				 * @param {object} message message object to send
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {Object} properties Properties to set upon DeviceInstance creation
+				 * @returns {DeviceInstance}
 				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         ketaEventBus.publish('logger', {
-				 *             action: 'log',
-				 *             body: {
-				 *                 message: 'log this'
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create(eventBus, {
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
 				 *             }
 				 *         });
 				 *     });
 				 */
-				publish: function(address, message) {
-					
-					ketaLogger.debug(
-						SERVICE_NAME + '.publish » request to ' + address + ':' + message.action,
-						message
-					);
-					
-					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode && stub.getEventBus()) {
-							
-							// inject access token
-							message.accessToken = ketaAccessToken.get();
-							
-							// send message
-							stub.getEventBus().publish(address, message);
-							
-						}
-					} else {
-						ketaLogger.error(
-							SERVICE_NAME + '.publish « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
-							message
-						);
-					}
-					
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Register a handler with a universal unique identifier on event bus.
-				 * </p>
-				 * <p>
-				 *   For mocked mode a third parameter exists, which defines actions the listener is responsible for.
-				 *   The EventBusService holds a handler array internally in which handler UUID and actions are saved.
-				 *   Inside <i>send</i> methods response handler a check is performed, if one of the registered actions
-				 *   was received and in case of true the handler is called with a generated event message.
-				 * </p>
-				 * <p>
-				 *   A handler UUID can be generated with <i>generateUUID</i>. Handler UUIDs are saved internally and
-				 *   unregistered upon route changes.
-				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @see ketaEventBusService.send
-				 * @see ketaEventBusService.generateUUID
-				 * @param {string} uuid UUID on event bus
-				 * @param {function} handler handler registered with UUID
-				 * @param {string[]} [actions=[]] array of actions listener is responsible for
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
-				 *         // generate handler uuid
-				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *     
-				 *         // register bus handler with disabled mock mode
-				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaLogger.info('ketaEventBus device set listener', message);
-				 *         });
-				 *         
-				 *     });
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .config(function(EventBusProvider) {
-				 *     
-				 *         // enable mock mode
-				 *         EventBusProvider.enableMockMode(true);
-				 *         
-				 *     })
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
-				 *         // generate handler uuid
-				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *     
-				 *         // register bus handler with enabled mock mode
-				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaLogger.info('ketaEventBus device set listener', message);
-				 *         }, ['createDevice', 'updateDevice', 'deleteDevice']);
-				 *         
-				 *     });
-				 */
-				registerBusHandler: function(uuid, handler, actions) {
-					
-					ketaLogger.debug(
-						SERVICE_NAME + '.registerBusHandler » request for ' + uuid,
-						actions
-					);
-						
-					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode && stub.getEventBus()) {
-							stub.getEventBus().registerHandler(uuid, handler);
-							busHandlers[uuid] = handler;
-						} else {
-							if (!angular.isDefined(mocked.handlers[uuid])) {
-								mocked.handlers[uuid] = {
-									handler: handler,
-									actions: actions
-								};
-								ketaLogger.info(
-									SERVICE_NAME + '.registerBusHandler ' + uuid + ' in mock mode',
-									mocked.handlers[uuid].actions
-								);
-							} else {
-								ketaLogger.warning(
-									SERVICE_NAME + '.registerBusHandler « no mocked response found',
-									mocked.handlers[uuid].actions
-								);
-							}
-						}
-					} else {
-						ketaLogger.error(
-							SERVICE_NAME + '.registerBusHandler « request for ' + uuid + ' denied. EventBus not open.',
-							actions
-						);
-					}
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Unregister a handler with a universal unique identifier on event bus.
-				 * </p>
-				 * <p>
-				 *   For mocked mode the internal handler list is updated by removing the specified handler with given UUID.
-				 * </p>
-				 * @see ketaEventBusProvider.enableMockMode
-				 * @param {string} uuid UUID on event bus
-				 * @param {function} handler handler registered with UUID
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
-				 *         // generate handler uuid
-				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *         
-				 *         // register bus handler with disabled mock mode
-				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-				 *             ketaLogger.info('ketaEventBus device set listener registered', message);
-				 *         });
-				 *     
-				 *         // unregister bus handler with disabled mock mode
-				 *         ketaEventBus.unregisterBusHandler(listenerUUID, function(message) {
-				 *             ketaLogger.info('ketaEventBus device set listener unregistered', message);
-				 *         });
-				 *         
-				 *     });
-				 */
-				unregisterBusHandler: function(uuid, handler) {
-					
-					ketaLogger.debug(
-						SERVICE_NAME + '.unregisterBusHandler » request for ' + uuid
-					);
-						
-					if (config.socketState === STATE_OPEN) {
-						if (!config.mockMode && stub.getEventBus() && angular.isDefined(busHandlers[uuid])) {
-							stub.getEventBus().unregisterHandler(uuid, handler);
-							delete busHandlers[uuid];
-						} else {
-							if (angular.isDefined(mocked.handlers[uuid])) {
-								var handlers = [];
-								angular.forEach(mocked.handlers[uuid], function(h) {
-									if (handler !== h) {
-										handlers.push(h);
-									}
-								});
-								mocked.handlers[uuid] = handlers;
-								ketaLogger.info(SERVICE_NAME + '.unregisterBusHandler ' + uuid + ' in mock mode');
-							} else {
-								ketaLogger.warning(SERVICE_NAME + '.unregisterBusHandler « no mocked response found');
-							}
-						}
-					} else {
-						ketaLogger.error(
-							SERVICE_NAME + '.unregisterBusHandler « request for ' + uuid + ' denied. EventBus not open.'
-						);
-					}
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Register an event handler.
-				 * </p>
-				 * @see ketaEventBusService.EVENT_ON_OPEN
-				 * @see ketaEventBusService.EVENT_ON_CLOSE
-				 * @see ketaEventBusService.unregisterEventHandler
-				 * @param {string} event event id
-				 * @param {string} uuid UUID for internal list
-				 * @param {function} handler handler registered with UUID
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
-				 *         // generate handler uuids
-				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
-				 *         var onCloseHandlerUUID = ketaEventBus.generateUUID();
-				 *         
-				 *         // register on open handler
-				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
-				 *             ketaLogger.info('ketaEventBus open');
-				 *         });
-				 *     
-				 *         // register on close handler
-				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
-				 *             ketaLogger.info('ketaEventBus closed');
-				 *         });
-				 *         
-				 *     });
-				 */
-				registerEventHandler: function(event, uuid, handler) {
-					if (event === stub.EVENT_ON_OPEN) {
-						if (!angular.isDefined(onOpenHandlers[uuid])) {
-							onOpenHandlers[uuid] = handler;
-						}
-					}
-					if (event === stub.EVENT_ON_CLOSE) {
-						if (!angular.isDefined(onCloseHandlers[uuid])) {
-							onCloseHandlers[uuid] = handler;
-						}
-					}
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Unregister an event handler.
-				 * </p>
-				 * @see ketaEventBusService.EVENT_ON_OPEN
-				 * @see ketaEventBusService.EVENT_ON_CLOSE
-				 * @see ketaEventBusService.registerEventHandler
-				 * @param {string} event event id
-				 * @param {string} uuid UUID for internal list
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
-				 *         // generate handler uuids
-				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
-				 *         var onCloseHandlerUUID = ketaEventBus.generateUUID();
-				 *         
-				 *         // register on open handler
-				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
-				 *             ketaLogger.info('ketaEventBus open');
-				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID);
-				 *         });
-				 *     
-				 *         // register on close handler
-				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
-				 *             ketaLogger.info('ketaEventBus closed');
-				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID);
-				 *         });
-				 *         
-				 *     });
-				 */
-				unregisterEventHandler: function(event, uuid) {
-					if (event === stub.EVENT_ON_OPEN) {
-						if (angular.isDefined(onOpenHandlers[uuid])) {
-							delete onOpenHandlers[uuid];
-						}
-					}
-					if (event === stub.EVENT_ON_CLOSE) {
-						if (angular.isDefined(onCloseHandlers[uuid])) {
-							delete onCloseHandlers[uuid];
-						}
-					}
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaEventBusService
-				 * @description
-				 * <p>
-				 *   Generate an UUID for handler.
-				 * </p>
-				 * @returns {string} uuid
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaEventBus) {
-				 *         var handlerUUID = ketaEventBus.generateUUID();
-				 *     });
-				 */
-				generateUUID: function() {
-					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-						.replace(/[xy]/g, function(a, b) {
-							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16); // buddy ignore:line
-						});
+				create: function(eventBus, properties) {
+					return new DeviceInstance(eventBus, properties);
 				}
 				
 			};
 			
-			if (config.autoConnect) {
-				stub.open();
-			}
+			return api;
 			
-			return stub;
 		};
 		
 	});
 
-// source: components/services/logger.js
+// source: dist/services/event-bus-dispatcher.js
 /**
- * @name keta.servicesLogger
+ * @name keta.services.EventBusDispatcher
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesLogger
- * @description Logger Service
+ * @module keta.services.EventBusDispatcher
+ * @description EventBusDispatcher Provider
  */
-angular.module('keta.servicesLogger', [])
+angular.module('keta.services.EventBusDispatcher',
+	[
+		'keta.services.AccessToken'
+	])
 	
 	/**
-	 * @class ketaLoggerProvider
-	 * @propertyOf keta.servicesLogger
-	 * @description Logger Provider
+	 * @class EventBusDispatcherProvider
+	 * @propertyOf keta.services.EventBusDispatcher
+	 * @description EventBusDispatcher Provider
 	 */
-	.provider('ketaLogger', function() {
+	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
 		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level for errors.
-		 */
-		var LOG_LEVEL_ERROR = 1;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level for warnings.
-		 */
-		var LOG_LEVEL_WARNING = 2;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level for information.
-		 */
-		var LOG_LEVEL_INFO = 4;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level for debugging.
-		 */
-		var LOG_LEVEL_DEBUG = 8;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level for all categories.
-		 */
-		var LOG_LEVEL_ALL =
-			LOG_LEVEL_ERROR |
-			LOG_LEVEL_WARNING |
-			LOG_LEVEL_INFO |
-			LOG_LEVEL_DEBUG;
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Log level mappings.
-		 */
-		var LOG_LEVEL_MAPPINGS = {};
-		
-		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ERROR] = 'ERROR';
-		LOG_LEVEL_MAPPINGS[LOG_LEVEL_WARNING] = 'WARNING';
-		LOG_LEVEL_MAPPINGS[LOG_LEVEL_INFO] = 'INFO';
-		LOG_LEVEL_MAPPINGS[LOG_LEVEL_DEBUG] = 'DEBUG';
-		LOG_LEVEL_MAPPINGS[LOG_LEVEL_ALL] = 'ALL';
-		
-		/**
-		 * @function
-		 * @private
-		 * @description Get mapping for given log level.
-		 */
-		var getLevelMapping = function(level) {
-			return (angular.isDefined(LOG_LEVEL_MAPPINGS[level])) ?
-				LOG_LEVEL_MAPPINGS[level] : 'LEVEL ' + level;
-		};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Simple logger method.
-		 */
-		var SIMPLE_LOGGER = function(level, message, request, response) {
-			if (config.enabled && (config.level & level)) {
-				console.log(getLevelMapping(level), message, request, response);
-			}
-		};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Advanced logger method.
-		 */
-		var ADVANCED_LOGGER = function(level, message, request, response) {
-			if (config.enabled && (config.level & level)) {
-				
-				// colors
-				var colors = {
-					lime: 'color:#acbf2f;',
-					yellow: 'color:#f7b600;',
-					red: 'color:#ff0000;',
-					lightGrey: 'color:#999;',
-					darkGrey: 'color:#333;'
-				};
-				
-				// weights
-				var weights = {
-					lighter: 'font-weight:lighter;',
-					normal: 'font-weight:normal;',
-					bold: 'font-weight:bold',
-					bolder: 'font-weight:bolder'
-				};
-				
-				var style = colors.lime + weights.bold;
-				var reset = colors.darkGrey + weights.normal;
-				
-				if (level === LOG_LEVEL_ERROR) {
-					style = colors.red + weights.bold;
-				} else if (level === LOG_LEVEL_WARNING) {
-					style = colors.yellow + weights.bold;
-				}
-				
-				console.log(
-					'%c[' + getLevelMapping(level) + ' – ' + new Date().toISOString() + ']\n' +
-					'%c' + message + '\n' +
-					'%c' + (angular.isDefined(request) ? JSON.stringify(request, null, '\t') + '\n' : '') +
-					'%c' + (angular.isDefined(response) ? JSON.stringify(response, null, '\t') + '\n' : ''),
-					style, reset, colors.lightGrey, colors.darkGrey
-				);
-			}
-		};
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Internal stack for configuration.
-		 * @property {boolean} enabled enable logging
-		 * @property {number} level log level
-		 * @property {function} logger logger method
-		 */
-		var config = {
-			enabled: false,
-			level: LOG_LEVEL_ERROR,
-			logger: SIMPLE_LOGGER
-		};
-		
-		// CONFIG
-		// ------
-		
-		/**
-		 * @name LOG_LEVEL_ERROR
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level for errors.
-		 */
-		this.LOG_LEVEL_ERROR = LOG_LEVEL_ERROR;
-		
-		/**
-		 * @name LOG_LEVEL_WARNING
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level for warnings.
-		 */
-		this.LOG_LEVEL_WARNING = LOG_LEVEL_WARNING;
-		
-		/**
-		 * @name LOG_LEVEL_INFO
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level for information.
-		 */
-		this.LOG_LEVEL_INFO = LOG_LEVEL_INFO;
-		
-		/**
-		 * @name LOG_LEVEL_DEBUG
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level for debugging.
-		 */
-		this.LOG_LEVEL_DEBUG = LOG_LEVEL_DEBUG;
-		
-		/**
-		 * @name LOG_LEVEL_ALL
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level for all categories.
-		 */
-		this.LOG_LEVEL_ALL = LOG_LEVEL_ALL;
-		
-		/**
-		 * @name LEVEL_MAPPINGS
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Log level mappings.
-		 */
-		this.LOG_LEVEL_MAPPINGS = LOG_LEVEL_MAPPINGS;
-		
-		/**
-		 * @name LEVEL_MAPPINGS
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Get mapping for given log level.
-		 */
-		this.getLevelMapping = getLevelMapping;
-		
-		/**
-		 * @name SIMPLE_LOGGER
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Simple logger method.
-		 */
-		this.SIMPLE_LOGGER = SIMPLE_LOGGER;
-		
-		/**
-		 * @name ADVANCED_LOGGER
-		 * @const
-		 * @memberOf ketaLoggerProvider
-		 * @description Advanced logger method.
-		 */
-		this.ADVANCED_LOGGER = ADVANCED_LOGGER;
-		
-		/**
-		 * @name enableLogging
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Enable logging.
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.enableLogging();
-		 *     });
-		 */
-		this.enableLogging = function() {
-			config.enabled = true;
-		};
-		
-		/**
-		 * @name disableLogging
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Disable logging.
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.disableLogging();
-		 *     });
-		 */
-		this.disableLogging = function() {
-			config.enabled = false;
-		};
-		
-		/**
-		 * @name setLevel
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Set log level.
-		 * @param {number} level log level
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.setLevel(ketaLoggerProvider.LOG_LEVEL_DEBUG);
-		 *     });
-		 */
-		this.setLevel = function(level) {
-			if (angular.isNumber(level)) {
-				config.level = level;
-			}
-		};
-		
-		/**
-		 * @name setLogger
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Set logger method. Also capable for filtering log messages.
-		 * @param {function} logger logger method
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.SIMPLE_LOGGER);
-		 *     });
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.setLogger(ketaLoggerProvider.ADVANCED_LOGGER);
-		 *     });
-		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaLoggerProvider) {
-		 *         ketaLoggerProvider.setLogger(function(level, message, request, response) {
-		 *             if (message.indexOf('Devices') !== -1) {
-		 *                 ketaLoggerProvider.SIMPLE_LOGGER(level, message, request, response);
-		 *             }
-		 *         });
-		 *     });
-		 */
-		this.setLogger = function(logger) {
-			if (angular.isFunction(logger)) {
-				config.logger = logger;
-			}
-		};
-		
-		/**
-		 * @name getConfig
-		 * @function
-		 * @memberOf ketaLoggerProvider
-		 * @description Get configuration object.
-		 * @returns {object} config object
-		 * @example
-		 * angular.module('exampleApp')
-		 *     .config(function(ketaLoggerProvider) {
-		 *         var config = ketaLoggerProvider.getConfig();
-		 *     });
-		 */
-		this.getConfig = function() {
-			return config;
-		};
-		
-		// RUN
-		// ---
-		
-		// keep reference
-		var that = this;
-		
-		// return service API
-		this.$get = function() {
+		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
 			
 			/**
-			 * @class ketaLoggerService
-			 * @propertyOf ketaLoggerProvider
-			 * @description Logger Service
+			 * @class EventBusDispatcher
+			 * @propertyOf EventBusDispatcherProvider
+			 * @description EventBusDispatcher Service
 			 */
 			var api = {
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level for errors.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Connecting state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CONNECTING) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_ERROR: LOG_LEVEL_ERROR,
+				STATE_CONNECTING: 0,
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level for warnings.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Open state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_OPEN) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_WARNING: LOG_LEVEL_WARNING,
+				STATE_OPEN: 1,
+
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closing state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CLOSING) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				STATE_CLOSING: 2,
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level for information.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closed state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CLOSED) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_INFO: LOG_LEVEL_INFO,
+				STATE_CLOSED: 3,
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level for debugging.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 200.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_OK) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_DEBUG: LOG_LEVEL_DEBUG,
+				RESPONSE_CODE_OK: 200,
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level for all categories.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 200.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_OK) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_ALL: LOG_LEVEL_ALL,
+				RESPONSE_MESSAGE_OK: 'OK',
 				
 				/**
 				 * @const
-				 * @memberOf ketaLoggerService
-				 * @description Log level mappings.
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 400.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+				 *             // ...
+				 *         }
+				 *     });
 				 */
-				LOG_LEVEL_MAPPINGS: LOG_LEVEL_MAPPINGS,
+				RESPONSE_CODE_BAD_REQUEST: 400,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 400.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 401.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_UNAUTHORIZED: 401,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 401.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 404.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_NOT_FOUND: 404,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 404.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 408.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 408.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 419.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 419.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 500.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 500.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 503.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 503.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Get mapping for given log level.
-				 * @param {number} level log level to map
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Send a message to a specified address using the specified EventBus instance and
+				 *   the specified replyHandler.
+				 * </p>
+				 * <p>
+				 *   There is a reply interceptor to check whether the access token injected automatically
+				 *   is expired or not. If it's expired the AccessToken service is used to refresh it and
+				 *   repeat the original request. If access token could not be refreshed a full page reload
+				 *   is performed which usually results in a redirection to the OAuth server.
+				 * </p>
+				 * @see AccessToken.refresh
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {object} message message object to send
+				 * @param {function} replyHandler handler to process reply
 				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         var level = ketaLogger.getLevelMapping(ketaLogger.getLevel());
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.send(eventBus, 'address', {
+				 *             action: 'action',
+				 *             body: {
+				 *                 guid: 'guid'
+				 *             }
+				 *         }, function(reply) {
+				 *             // ...
+				 *         });
 				 *     });
 				 */
-				getLevelMapping: that.getLevelMapping,
-				
-				/**
-				 * @const
-				 * @memberOf ketaLogger
-				 * @description Simple logger method.
-				 */
-				SIMPLE_LOGGER: that.SIMPLE_LOGGER,
-				
-				/**
-				 * @const
-				 * @memberOf ketaLogger
-				 * @description Advanced logger method.
-				 */
-				ADVANCED_LOGGER: that.ADVANCED_LOGGER,
-				
-				/**
-				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Enable logging.
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         ketaLogger.enableLogging();
-				 *     });
-				 */
-				enableLogging: that.enableLogging,
-				
-				/**
-				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Disable logging.
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         ketaLogger.disableLogging();
-				 *     });
-				 */
-				disableLogging: that.disableLogging,
-				
-				/**
-				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Get configured log level.
-				 * @returns {number} logLevel
-				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         var logLevel = ketaLogger.getLogLevel();
-				 *     });
-				 */
-				getLevel: function() {
-					return config.level;
+				send: function(eventBus, address, message, replyHandler) {
+					
+					// inject access token
+					message.accessToken = AccessToken.get();
+					
+					var handler = function(reply) {
+						if (reply && reply.code === 419) {
+							// refresh access token
+							AccessToken.refresh().then(function(response) {
+								if (angular.isDefined(response.data.accessToken)) {
+									AccessToken.set(response.data.accessToken);
+									api.send(eventBus, address, message, replyHandler);
+								} else {
+									$window.location.reload();
+								}
+							}, function() {
+								$window.location.reload();
+							});
+						} else {
+							if (angular.isFunction(replyHandler)) {
+								replyHandler(reply);
+							}
+						}
+					};
+					
+					$timeout(function() {
+						if (angular.isFunction(replyHandler)) {
+							replyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
+						}
+					}, eventBus.getConfig().requestTimeout * 1000);
+					
+					// call stub method
+					eventBus.getInstance().send(address, message, handler);
+					
 				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Set configured log level.
-				 * @param {number} level log level to set
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Publish a message to a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {object} message message object to send
 				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         ketaLogger.setLogLevel(ketaLogger.LOG_LEVEL_DEBUG);
-				 *     });
-				 */
-				setLevel: that.setLevel,
-				
-				/**
-				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Set logger method. Also capable for filtering log messages.
-				 * @param {function} logger logger method
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .config(function(ketaLogger) {
-				 *         ketaLogger.setLogger(ketaLogger.SIMPLE_LOGGER);
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .config(function(ketaLogger) {
-				 *         ketaLogger.setLogger(ketaLogger.ADVANCED_LOGGER);
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .config(function(ketaLogger) {
-				 *         ketaLogger.setLogger(function(level, message, request, response) {
-				 *             if (message.indexOf('Devices') !== -1) {
-				 *                 ketaLogger.SIMPLE_LOGGER(level, message, request, response);
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.publish(eventBus, 'address', {
+				 *             action: 'action',
+				 *             body: {
+				 *                 guid: 'guid'
 				 *             }
 				 *         });
 				 *     });
 				 */
-				setLogger: that.setLogger,
+				publish: function(eventBus, address, message) {
+					
+					// inject access token and call stub method
+					message.accessToken = AccessToken.get();
+					eventBus.getInstance().publish(address, message);
+					
+				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Log message with given level.
-				 * @param {number} level log level to use
-				 * @param {string} message log message
-				 * @param {mixed} request request to log
-				 * @param {mixed} response response to log
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Registers a handler on a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {function} handler handler to process messages coming in from EventBus instance
 				 * @example
-				 * angular.module('exampleApp')
-				 *     .controller('exampleController', function(ketaLogger) {
-				 *         
-				 *         // define it
-				 *         var level = ketaLogger.LOG_LEVEL_DEBUG;
-				 *         var message = 'Log message';
-				 *         var request = {
-				 *             address: 'address',
-				 *             params: {
-				 *                 guid: 'GUID
-				 *             }
-				 *         };
-				 *         var response = 'Nothing found';
-				 *         
-				 *         // log it
-				 *         ketaLogger.log(level, message, request, response);
-				 *         
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
+				 *             // ...
+				 *         });
 				 *     });
 				 */
-				log: function(level, message, request, response) {
-					config.logger(level, message, request, response);
+				registerHandler: function(eventBus, address, handler) {
+					eventBus.getInstance().registerHandler(address, handler);
 				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Log message with error level.
-				 * @param {string} message log message
-				 * @param {mixed} request request to log
-				 * @param {mixed} response response to log
-				 * @see ketaLoggerService.log
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Unregisters a handler on a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {function} handler handler to process messages coming in from EventBus instance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
+				 *             // ...
+				 *         });
+				 *     });
 				 */
-				error: function(message, request, response) {
-					this.log(LOG_LEVEL_ERROR, message, request, response);
+				unregisterHandler: function(eventBus, address, handler) {
+					eventBus.getInstance().unregisterHandler(address, handler);
 				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Log message with warning level.
-				 * @param {string} message log message
-				 * @param {mixed} request request to log
-				 * @param {mixed} response response to log
-				 * @see ketaLoggerService.log
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closes connection to specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.close(eventBus);
+				 *     });
 				 */
-				warning: function(message, request, response) {
-					this.log(LOG_LEVEL_WARNING, message, request, response);
+				close: function(eventBus) {
+					eventBus.getInstance().close();
 				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Log message with info level.
-				 * @param {string} message log message
-				 * @param {mixed} request request to log
-				 * @param {mixed} response response to log
-				 * @see ketaLoggerService.log
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Returns connection state of specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @returns {number} connection state
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         var state = EventBusDispatcher.readyState(eventBus);
+				 *     });
 				 */
-				info: function(message, request, response) {
-					this.log(LOG_LEVEL_INFO, message, request, response);
+				readyState: function(eventBus) {
+					return eventBus.getInstance().readyState();
 				},
 				
 				/**
 				 * @function
-				 * @memberOf ketaLoggerService
-				 * @description Log message with debug level.
-				 * @param {string} message log message
-				 * @param {mixed} request request to log
-				 * @param {mixed} response response to log
-				 * @see ketaLoggerService.log
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Generates an UUID for handler.
+				 * </p>
+				 * @returns {string} uuid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         var handlerUUID = ketaEventBus.generateUUID();
+				 *     });
 				 */
-				debug: function(message, request, response) {
-					this.log(LOG_LEVEL_DEBUG, message, request, response);
+				generateUUID: function() {
+					var HEX_RANGE = 16;
+					var BIT_HALF = 8;
+					var BIT_SHIFT = 3;
+					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+						.replace(/[xy]/g, function(a, b) {
+							return b = Math.random() * HEX_RANGE,
+								(a === 'y' ? (b & BIT_SHIFT | BIT_HALF) : (b | 0)).toString(HEX_RANGE);
+						});
 				}
 				
 			};
 			
 			return api;
+			
 		};
 		
 	});
 
-// source: components/services/tag.js
+// source: dist/services/event-bus-dispatcher.min.js
 /**
- * @name keta.servicesTag
+ * @name keta.services.EventBusDispatcher
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesTag
- * @description Tag Provider
+ * @module keta.services.EventBusDispatcher
+ * @description EventBusDispatcher Provider
  */
-angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogger'])
+angular.module('keta.services.EventBusDispatcher',
+	[
+		'keta.services.AccessToken'
+	])
 	
 	/**
-	 * @class ketaTagProvider
-	 * @propertyOf keta.servicesTag
-	 * @description Tag Provider
+	 * @class EventBusDispatcherProvider
+	 * @propertyOf keta.services.EventBusDispatcher
+	 * @description EventBusDispatcher Provider
 	 */
-	.provider('ketaTag', function() {
+	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
+		
+		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
+			
+			/**
+			 * @class EventBusDispatcher
+			 * @propertyOf EventBusDispatcherProvider
+			 * @description EventBusDispatcher Service
+			 */
+			var api = {
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Connecting state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CONNECTING) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				STATE_CONNECTING: 0,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Open state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_OPEN) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				STATE_OPEN: 1,
+
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closing state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CLOSING) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				STATE_CLOSING: 2,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closed state constant.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (state === EventBusDispatcher.STATE_CLOSED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				STATE_CLOSED: 3,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 200.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_OK) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_OK: 200,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 200.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_OK) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_OK: 'OK',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 400.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_BAD_REQUEST: 400,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 400.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 401.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_UNAUTHORIZED: 401,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 401.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 404.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_NOT_FOUND: 404,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 404.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 408.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 408.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 419.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 419.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 500.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 500.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response code 503.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
+				
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Response message 503.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Send a message to a specified address using the specified EventBus instance and
+				 *   the specified replyHandler.
+				 * </p>
+				 * <p>
+				 *   There is a reply interceptor to check whether the access token injected automatically
+				 *   is expired or not. If it's expired the AccessToken service is used to refresh it and
+				 *   repeat the original request. If access token could not be refreshed a full page reload
+				 *   is performed which usually results in a redirection to the OAuth server.
+				 * </p>
+				 * @see AccessToken.refresh
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {object} message message object to send
+				 * @param {function} replyHandler handler to process reply
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.send(eventBus, 'address', {
+				 *             action: 'action',
+				 *             body: {
+				 *                 guid: 'guid'
+				 *             }
+				 *         }, function(reply) {
+				 *             // ...
+				 *         });
+				 *     });
+				 */
+				send: function(eventBus, address, message, replyHandler) {
+					
+					// inject access token
+					message.accessToken = AccessToken.get();
+					
+					var handler = function(reply) {
+						if (reply && reply.code === 419) {
+							// refresh access token
+							AccessToken.refresh().then(function(response) {
+								if (angular.isDefined(response.data.accessToken)) {
+									AccessToken.set(response.data.accessToken);
+									api.send(eventBus, address, message, replyHandler);
+								} else {
+									$window.location.reload();
+								}
+							}, function() {
+								$window.location.reload();
+							});
+						} else {
+							if (angular.isFunction(replyHandler)) {
+								replyHandler(reply);
+							}
+						}
+					};
+					
+					$timeout(function() {
+						if (angular.isFunction(replyHandler)) {
+							replyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
+						}
+					}, eventBus.getConfig().requestTimeout * 1000);
+					
+					// call stub method
+					eventBus.getInstance().send(address, message, handler);
+					
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Publish a message to a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {object} message message object to send
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.publish(eventBus, 'address', {
+				 *             action: 'action',
+				 *             body: {
+				 *                 guid: 'guid'
+				 *             }
+				 *         });
+				 *     });
+				 */
+				publish: function(eventBus, address, message) {
+					
+					// inject access token and call stub method
+					message.accessToken = AccessToken.get();
+					eventBus.getInstance().publish(address, message);
+					
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Registers a handler on a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {function} handler handler to process messages coming in from EventBus instance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
+				 *             // ...
+				 *         });
+				 *     });
+				 */
+				registerHandler: function(eventBus, address, handler) {
+					eventBus.getInstance().registerHandler(address, handler);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Unregisters a handler on a specified address using the specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @param {string} address unique address on EventBus instance
+				 * @param {function} handler handler to process messages coming in from EventBus instance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
+				 *             // ...
+				 *         });
+				 *     });
+				 */
+				unregisterHandler: function(eventBus, address, handler) {
+					eventBus.getInstance().unregisterHandler(address, handler);
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Closes connection to specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         EventBusDispatcher.close(eventBus);
+				 *     });
+				 */
+				close: function(eventBus) {
+					eventBus.getInstance().close();
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Returns connection state of specified EventBus instance.
+				 * </p>
+				 * @param {EventBus} eventBus EventBus instance
+				 * @returns {number} connection state
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         var state = EventBusDispatcher.readyState(eventBus);
+				 *     });
+				 */
+				readyState: function(eventBus) {
+					return eventBus.getInstance().readyState();
+				},
+				
+				/**
+				 * @function
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
+				 *   Generates an UUID for handler.
+				 * </p>
+				 * @returns {string} uuid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         var handlerUUID = ketaEventBus.generateUUID();
+				 *     });
+				 */
+				generateUUID: function() {
+					var HEX_RANGE = 16;
+					var BIT_HALF = 8;
+					var BIT_SHIFT = 3;
+					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+						.replace(/[xy]/g, function(a, b) {
+							return b = Math.random() * HEX_RANGE,
+								(a === 'y' ? (b & BIT_SHIFT | BIT_HALF) : (b | 0)).toString(HEX_RANGE);
+						});
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/event-bus-manager.js
+/**
+ * @name keta.services.EventBusManager
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.EventBusManager
+ * @description EventBusManager Provider
+ */
+angular.module('keta.services.EventBusManager', [])
+	
+	/**
+	 * @class EventBusManagerProvider
+	 * @propertyOf keta.services.EventBusManager
+	 * @description EventBusManager Provider
+	 */
+	.provider('EventBusManager', function EventBusManagerProvider() {
+		
+		// keep reference
+		var that = this;
 		
 		/**
-		 * @const
 		 * @private
-		 * @description Service endpoint for messages.
+		 * @description Internal list of EventBus instances.
 		 */
-		var SERVICE_ENDPOINT = 'devices';
+		var eventBuses = {};
 		
 		/**
-		 * @const
-		 * @private
-		 * @description Error message if an invalid sample rate was given.
+		 * @name add
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Adds an EventBus instance to internal list, from which it can be retrieved later on by it's id.
+		 * </p>
+		 * @param {EventBus} eventBus EventBus instance to add
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
 		 */
-		var ERROR_INVALID_SAMPLE_RATE = 'Invalid sample rate';
+		this.add = function(eventBus) {
+			eventBuses[eventBus.getConfig().id] = eventBus;
+			return that;
+		};
 		
 		/**
-		 * @const
-		 * @private
-		 * @description Error message if an invalid handler was given.
+		 * @name remove
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Removes an EventBus instance from internal list.
+		 * </p>
+		 * @param {EventBus} eventBus EventBus instance to remove
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
 		 */
-		var ERROR_INVALID_HANDLER = 'Invalid handler';
+		this.remove = function(eventBus) {
+			if (angular.isDefined(eventBuses[eventBus.getConfig().id])) {
+				delete eventBuses[eventBus.getConfig().id];
+			}
+			return that;
+		};
 		
 		/**
-		 * @const
-		 * @private
-		 * @description Minimum sample rate. We don't support sample rates less than 5 seconds.
+		 * @name removeAll
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Removes all EventBus instances from internal list.
+		 * </p>
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .removeAll();
+		 *     });
 		 */
-		var MIN_SAMPLE_RATE = 5;
+		this.removeAll = function() {
+			eventBuses = {};
+			return that;
+		};
 		
-		// return service API
-		this.$get = function($q, ketaEventBus, ketaLogger) {
+		/**
+		 * @name get
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Gets an EventBus instance from internal list by specified id.
+		 * </p>
+		 * @param {string} eventBusId EventBus instance id to retrieve from internal list
+		 * @returns {EventBus} EventBus instance if found, otherwise null
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         var eventBus = EventBusManagerProvider.get('eventBus');
+		 *     });
+		 */
+		this.get = function(eventBusId) {
+			return (angular.isDefined(eventBuses[eventBusId])) ? eventBuses[eventBusId] : null;
+		};
+		
+		/**
+		 * @name getAll
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Gets all EventBus instances from internal list.
+		 * </p>
+		 * @returns {Object} EventBus instances map (id as key)
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         var eventBuses = EventBusManagerProvider.getAll();
+		 *     });
+		 */
+		this.getAll = function() {
+			return eventBuses;
+		};
+		
+		this.$get = function EventBusManagerService() {
+			
+			/**
+			 * @class EventBusManager
+			 * @propertyOf EventBusManagerProvider
+			 * @description EventBusManager Service
+			 */
+			var api = {
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.add
+				 */
+				add: this.add,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.remove
+				 */
+				remove: this.remove,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.removeAll
+				 */
+				removeAll: this.removeAll,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.get
+				 */
+				get: this.get,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.getAll
+				 */
+				getAll: this.getAll
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/event-bus-manager.min.js
+/**
+ * @name keta.services.EventBusManager
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.EventBusManager
+ * @description EventBusManager Provider
+ */
+angular.module('keta.services.EventBusManager', [])
+	
+	/**
+	 * @class EventBusManagerProvider
+	 * @propertyOf keta.services.EventBusManager
+	 * @description EventBusManager Provider
+	 */
+	.provider('EventBusManager', function EventBusManagerProvider() {
+		
+		// keep reference
+		var that = this;
+		
+		/**
+		 * @private
+		 * @description Internal list of EventBus instances.
+		 */
+		var eventBuses = {};
+		
+		/**
+		 * @name add
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Adds an EventBus instance to internal list, from which it can be retrieved later on by it's id.
+		 * </p>
+		 * @param {EventBus} eventBus EventBus instance to add
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
+		 */
+		this.add = function(eventBus) {
+			eventBuses[eventBus.getConfig().id] = eventBus;
+			return that;
+		};
+		
+		/**
+		 * @name remove
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Removes an EventBus instance from internal list.
+		 * </p>
+		 * @param {EventBus} eventBus EventBus instance to remove
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
+		 */
+		this.remove = function(eventBus) {
+			if (angular.isDefined(eventBuses[eventBus.getConfig().id])) {
+				delete eventBuses[eventBus.getConfig().id];
+			}
+			return that;
+		};
+		
+		/**
+		 * @name removeAll
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Removes all EventBus instances from internal list.
+		 * </p>
+		 * @returns {EventBusManagerProvider}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .removeAll();
+		 *     });
+		 */
+		this.removeAll = function() {
+			eventBuses = {};
+			return that;
+		};
+		
+		/**
+		 * @name get
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Gets an EventBus instance from internal list by specified id.
+		 * </p>
+		 * @param {string} eventBusId EventBus instance id to retrieve from internal list
+		 * @returns {EventBus} EventBus instance if found, otherwise null
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         var eventBus = EventBusManagerProvider.get('eventBus');
+		 *     });
+		 */
+		this.get = function(eventBusId) {
+			return (angular.isDefined(eventBuses[eventBusId])) ? eventBuses[eventBusId] : null;
+		};
+		
+		/**
+		 * @name getAll
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Gets all EventBus instances from internal list.
+		 * </p>
+		 * @returns {Object} EventBus instances map (id as key)
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         var eventBuses = EventBusManagerProvider.getAll();
+		 *     });
+		 */
+		this.getAll = function() {
+			return eventBuses;
+		};
+		
+		this.$get = function EventBusManagerService() {
+			
+			/**
+			 * @class EventBusManager
+			 * @propertyOf EventBusManagerProvider
+			 * @description EventBusManager Service
+			 */
+			var api = {
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.add
+				 */
+				add: this.add,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.remove
+				 */
+				remove: this.remove,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.removeAll
+				 */
+				removeAll: this.removeAll,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.get
+				 */
+				get: this.get,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.getAll
+				 */
+				getAll: this.getAll
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/event-bus.js
+/**
+ * @name keta.services.EventBus
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.EventBus
+ * @description EventBus Provider
+ */
+angular.module('keta.services.EventBus', [])
+	
+	/**
+	 * @class EventBusProvider
+	 * @propertyOf keta.services.EventBus
+	 * @description EventBus Provider
+	 */
+	.provider('EventBus', function EventBusProvider() {
+	
+		/**
+		 * @class EventBus
+		 * @propertyOf keta.services.EventBus
+		 * @description EventBus Instance
+		 */
+		var EventBus = function EventBus(givenConfig) {
 			
 			/**
 			 * @private
-			 * @function
-			 * @description Reject promise with given code and message.
-			 * @param {string} message return message
-			 * @returns {promise}
+			 * @description Default config for EventBus instances.
 			 */
-			var responseReject = function(message) {
-				var deferred = $q.defer();
-				deferred.reject(message);
-				return deferred.promise;
+			var DEFAULT_CONFIG = {
+				id: 'kiwibus',
+				url: 'https://localhost:10443/kiwibus',
+				reconnect: true,
+				reconnectTimeout: 5,
+				autoConnect: false,
+				autoUnregister: true,
+				requestTimeout: 10
 			};
 			
 			/**
-			 * @class ketaTagService
-			 * @propertyOf ketaTagProvider
+			 * @name getDefaultConfig
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns default config used to merge in EventBus instance create method.
+			 * </p>
+			 * @returns {Object} default configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var defaultConfig = eventBus.getDefaultConfig();
+			 *     });
+			 */
+			this.getDefaultConfig = function() {
+				return DEFAULT_CONFIG;
+			};
+			
+			/**
+			 * @private
+			 * @description Effective config as merge result of given and default config.
+			 */
+			var config = angular.extend({}, DEFAULT_CONFIG, givenConfig);
+			
+			/**
+			 * @name getConfig
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns effective config of EventBus instance.
+			 * </p>
+			 * @returns {Object} effective configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var effectiveConfig = eventBus.getConfig();
+			 *     });
+			 */
+			this.getConfig = function() {
+				return config;
+			};
+			
+			/**
+			 * @private
+			 * @description Internal reference to vertx.EventBus instance.
+			 */
+			var eb = null;
+			
+			/**
+			 * @name getInstance
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns vertx.EventBus instance.
+			 * </p>
+			 * @returns {vertx.EventBus} vertx.EventBus instance
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var instance = eventBus.getInstance();
+			 *     });
+			 */
+			this.getInstance = function() {
+				return eb;
+			};
+			
+			// init vertx.EventBus
+			var init = function() {
+				
+				// instantiate vertx.EventBus
+				eb = new vertx.EventBus(config.url);
+				
+				// add onclose handler
+				eb.onclose = function() {
+					
+					// reconnect if enabled
+					if (config.reconnect) {
+						window.setTimeout(function() {
+							init();
+						}, config.reconnectTimeout * 1000);
+					}
+					
+				};
+			
+			};
+			
+			init();
+			
+		};
+		
+		/**
+		 * @name create
+		 * @function
+		 * @memberOf EventBusProvider
+		 * @description
+		 * <p>
+		 *   Creates an EventBus instance with given config, which is merged with the default config.
+		 * </p>
+		 * @param {Object} config config to use in created EventBus instance
+		 * @returns {EventBus}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with default config
+		 *         var eventBus = EventBusProvider.create();
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with custom id
+		 *         var eventBus = EventBusProvider.create({id: 'myEventBus'});
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         
+		 *         // create with custom config
+		 *         // in this case it's exactly the default config
+		 *         var eventBus = EventBusProvider.create({
+		 *             id: 'kiwibus',
+		 *             url: 'https://localhost:10443/kiwibus',
+		 *             reconnect: true,
+		 *             reconnectTimeout: 5,
+		 *             autoConnect: false,
+		 *             autoUnregister: true,
+		 *             requestTimeout: 10
+		 *         });
+		 *         
+		 *     });
+		 */
+		this.create = function(config) {
+			return new EventBus(config);
+		};
+		
+		this.$get = function EventBusService() {};
+		
+	});
+
+// source: dist/services/event-bus.min.js
+/**
+ * @name keta.services.EventBus
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.EventBus
+ * @description EventBus Provider
+ */
+angular.module('keta.services.EventBus', [])
+	
+	/**
+	 * @class EventBusProvider
+	 * @propertyOf keta.services.EventBus
+	 * @description EventBus Provider
+	 */
+	.provider('EventBus', function EventBusProvider() {
+	
+		/**
+		 * @class EventBus
+		 * @propertyOf keta.services.EventBus
+		 * @description EventBus Instance
+		 */
+		var EventBus = function EventBus(givenConfig) {
+			
+			/**
+			 * @private
+			 * @description Default config for EventBus instances.
+			 */
+			var DEFAULT_CONFIG = {
+				id: 'kiwibus',
+				url: 'https://localhost:10443/kiwibus',
+				reconnect: true,
+				reconnectTimeout: 5,
+				autoConnect: false,
+				autoUnregister: true,
+				requestTimeout: 10
+			};
+			
+			/**
+			 * @name getDefaultConfig
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns default config used to merge in EventBus instance create method.
+			 * </p>
+			 * @returns {Object} default configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var defaultConfig = eventBus.getDefaultConfig();
+			 *     });
+			 */
+			this.getDefaultConfig = function() {
+				return DEFAULT_CONFIG;
+			};
+			
+			/**
+			 * @private
+			 * @description Effective config as merge result of given and default config.
+			 */
+			var config = angular.extend({}, DEFAULT_CONFIG, givenConfig);
+			
+			/**
+			 * @name getConfig
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns effective config of EventBus instance.
+			 * </p>
+			 * @returns {Object} effective configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var effectiveConfig = eventBus.getConfig();
+			 *     });
+			 */
+			this.getConfig = function() {
+				return config;
+			};
+			
+			/**
+			 * @private
+			 * @description Internal reference to vertx.EventBus instance.
+			 */
+			var eb = null;
+			
+			/**
+			 * @name getInstance
+			 * @function
+			 * @memberOf EventBus
+			 * @description
+			 * <p>
+			 *   Returns vertx.EventBus instance.
+			 * </p>
+			 * @returns {vertx.EventBus} vertx.EventBus instance
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var instance = eventBus.getInstance();
+			 *     });
+			 */
+			this.getInstance = function() {
+				return eb;
+			};
+			
+			// init vertx.EventBus
+			var init = function() {
+				
+				// instantiate vertx.EventBus
+				eb = new vertx.EventBus(config.url);
+				
+				// add onclose handler
+				eb.onclose = function() {
+					
+					// reconnect if enabled
+					if (config.reconnect) {
+						window.setTimeout(function() {
+							init();
+						}, config.reconnectTimeout * 1000);
+					}
+					
+				};
+			
+			};
+			
+			init();
+			
+		};
+		
+		/**
+		 * @name create
+		 * @function
+		 * @memberOf EventBusProvider
+		 * @description
+		 * <p>
+		 *   Creates an EventBus instance with given config, which is merged with the default config.
+		 * </p>
+		 * @param {Object} config config to use in created EventBus instance
+		 * @returns {EventBus}
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with default config
+		 *         var eventBus = EventBusProvider.create();
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with custom id
+		 *         var eventBus = EventBusProvider.create({id: 'myEventBus'});
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         
+		 *         // create with custom config
+		 *         // in this case it's exactly the default config
+		 *         var eventBus = EventBusProvider.create({
+		 *             id: 'kiwibus',
+		 *             url: 'https://localhost:10443/kiwibus',
+		 *             reconnect: true,
+		 *             reconnectTimeout: 5,
+		 *             autoConnect: false,
+		 *             autoUnregister: true,
+		 *             requestTimeout: 10
+		 *         });
+		 *         
+		 *     });
+		 */
+		this.create = function(config) {
+			return new EventBus(config);
+		};
+		
+		this.$get = function EventBusService() {};
+		
+	});
+
+// source: dist/services/logger.js
+/**
+ * @name keta.services.Logger
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.Logger
+ * @description Logger Decorator
+ */
+angular.module('keta.services.Logger', [])
+	
+	/**
+	 * @class LoggerConfig
+	 * @propertyOf keta.services.Logger
+	 * @description Logger Config
+	 */
+	.config(function LoggerConfig($provide) {
+		
+		/**
+		 * @class LoggerDecorator
+		 * @propertyOf LoggerConfig
+		 * @description Logger Decorator
+		 */
+		$provide.decorator('$log', function LoggerDecorator($delegate) {
+			
+			/**
+			 * @name ADVANCED_FORMATTER
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Formats a message in an advanced, colored manner.
+			 * </p>
+			 * @param {Array} messages Messages as array
+			 * @returns {string}
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         $log.request([request, response], $log.ADVANCED_FORMATTER);
+			 *     });
+			 */
+			$delegate.ADVANCED_FORMATTER = function(messages) {
+				
+				if (!angular.isArray(messages)) {
+					messages = [messages];
+				}
+				
+				var output = '%c[' + new Date().toISOString() + ']\n%c';
+				angular.forEach(messages, function(message) {
+					output+= JSON.stringify(message, null, '\t') + '\n';
+				});
+				
+				console.log(
+					output,
+					'color:#acbf2f;font-weight:bold;',
+					'color:#333;font-weight:normal;'
+				);
+				
+			};
+			
+			/**
+			 * @name request
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Logs a message-based request using <code>console.log</code>. Additionally a custom or
+			 *   predefined formatter (<code>ADVANCED_FORMATTER</code>) can be specified.
+			 * </p>
+			 * @param {Array} messages Messages to log
+			 * @param {function} [formatter] Formatter to use
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         
+			 *         // use no formatter
+			 *         $log.request([request, response]);
+			 *         
+			 *         // use ADVANCED_FORMATTER
+			 *         $log.request([request, response], $log.ADVANCED_FORMATTER);
+			 *         
+			 *         // use custom formatter
+			 *         $log.request([request, response], function(messages) {
+			 *             // custom logging
+			 *         });
+			 *         
+			 *     });
+			 */
+			$delegate.request = function(messages, formatter) {
+				if (angular.isDefined(formatter) && angular.isFunction(formatter)) {
+					formatter(messages);
+				} else {
+					console.log(messages);
+				}
+			};
+			
+			/**
+			 * @name event
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Logs a message-based event using <code>console.log</code>. Additionally a custom or
+			 *   predefined formatter (<code>ADVANCED_FORMATTER</code>) can be specified.
+			 * </p>
+			 * @param {Array} messages Messages to log
+			 * @param {function} [formatter] Formatter to use
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         
+			 *         // use no formatter
+			 *         $log.event(event);
+			 *         
+			 *         // use ADVANCED_FORMATTER
+			 *         $log.event(event, $log.ADVANCED_FORMATTER);
+			 *         
+			 *         // use custom formatter
+			 *         $log.event(event, function(messages) {
+			 *             // custom logging
+			 *         });
+			 *         
+			 *     });
+			 */
+			$delegate.event = function(messages, formatter) {
+				$delegate.request(messages, formatter);
+			};
+			
+			return $delegate;
+			
+		});
+		
+	});
+
+// source: dist/services/logger.min.js
+/**
+ * @name keta.services.Logger
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.Logger
+ * @description Logger Decorator
+ */
+angular.module('keta.services.Logger', [])
+	
+	/**
+	 * @class LoggerConfig
+	 * @propertyOf keta.services.Logger
+	 * @description Logger Config
+	 */
+	.config(function LoggerConfig($provide) {
+		
+		/**
+		 * @class LoggerDecorator
+		 * @propertyOf LoggerConfig
+		 * @description Logger Decorator
+		 */
+		$provide.decorator('$log', function LoggerDecorator($delegate) {
+			
+			/**
+			 * @name ADVANCED_FORMATTER
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Formats a message in an advanced, colored manner.
+			 * </p>
+			 * @param {Array} messages Messages as array
+			 * @returns {string}
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         $log.request([request, response], $log.ADVANCED_FORMATTER);
+			 *     });
+			 */
+			$delegate.ADVANCED_FORMATTER = function(messages) {
+				
+				if (!angular.isArray(messages)) {
+					messages = [messages];
+				}
+				
+				var output = '%c[' + new Date().toISOString() + ']\n%c';
+				angular.forEach(messages, function(message) {
+					output+= JSON.stringify(message, null, '\t') + '\n';
+				});
+				
+				console.log(
+					output,
+					'color:#acbf2f;font-weight:bold;',
+					'color:#333;font-weight:normal;'
+				);
+				
+			};
+			
+			/**
+			 * @name request
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Logs a message-based request using <code>console.log</code>. Additionally a custom or
+			 *   predefined formatter (<code>ADVANCED_FORMATTER</code>) can be specified.
+			 * </p>
+			 * @param {Array} messages Messages to log
+			 * @param {function} [formatter] Formatter to use
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         
+			 *         // use no formatter
+			 *         $log.request([request, response]);
+			 *         
+			 *         // use ADVANCED_FORMATTER
+			 *         $log.request([request, response], $log.ADVANCED_FORMATTER);
+			 *         
+			 *         // use custom formatter
+			 *         $log.request([request, response], function(messages) {
+			 *             // custom logging
+			 *         });
+			 *         
+			 *     });
+			 */
+			$delegate.request = function(messages, formatter) {
+				if (angular.isDefined(formatter) && angular.isFunction(formatter)) {
+					formatter(messages);
+				} else {
+					console.log(messages);
+				}
+			};
+			
+			/**
+			 * @name event
+			 * @function
+			 * @memberOf LoggerDecorator
+			 * @description
+			 * <p>
+			 *   Logs a message-based event using <code>console.log</code>. Additionally a custom or
+			 *   predefined formatter (<code>ADVANCED_FORMATTER</code>) can be specified.
+			 * </p>
+			 * @param {Array} messages Messages to log
+			 * @param {function} [formatter] Formatter to use
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.Logger'])
+			 *     .controller('ExampleController', function($log) {
+			 *         
+			 *         // use no formatter
+			 *         $log.event(event);
+			 *         
+			 *         // use ADVANCED_FORMATTER
+			 *         $log.event(event, $log.ADVANCED_FORMATTER);
+			 *         
+			 *         // use custom formatter
+			 *         $log.event(event, function(messages) {
+			 *             // custom logging
+			 *         });
+			 *         
+			 *     });
+			 */
+			$delegate.event = function(messages, formatter) {
+				$delegate.request(messages, formatter);
+			};
+			
+			return $delegate;
+			
+		});
+		
+	});
+
+// source: dist/services/tag-set.js
+/**
+ * @name keta.services.TagSet
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.TagSet
+ * @description TagSet Provider
+ */
+angular.module('keta.services.TagSet',
+	[
+		'keta.services.Tag'
+	])
+	
+	/**
+	 * @class TagSetProvider
+	 * @propertyOf keta.services.TagSet
+	 * @description TagSet Provider
+	 */
+	.provider('TagSet', function TagSetProvider() {
+		
+		this.$get = function TagSetService() {
+			
+			/**
+			 * @class TagSetInstance
+			 * @propertyOf TagSetProvider
+			 * @description TagSet Instance
+			 */
+			var TagSetInstance = function() {
+				
+				// keep reference
+				var that = this;
+				
+				// internal array of tags
+				var tags = [];
+				
+				// internal map of tags
+				var tagsAsHierarchy = {};
+				
+				/**
+				 * @name getTags
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Returns tags as an Array.
+				 * </p>
+				 * @returns {Array} tags
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *         var tags = tagSet.getTags();
+				 *     });
+				 */
+				that.getTags = function() {
+					return tags;
+				};
+				
+				/**
+				 * @name getTagsAsHierarchy
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Returns tags as hierarchically organized Object. First level represents devices
+				 *   specified by <code>guid</code> property. On the second level <code>name</code> property
+				 *   is used as key pointing to the <code>Tag</code> object.
+				 * </p>
+				 * @returns {Object} tagsAsHierarchy
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *         var hierarchy = tagSet.getTagsAsHierarchy();
+				 *     });
+				 */
+				that.getTagsAsHierarchy = function() {
+					return tagsAsHierarchy;
+				};
+				
+				/**
+				 * @name add
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
+				 *   In this case nothing will be changed.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         TagSet
+				 *             .create()
+				 *             .add(Tag.create({
+				 *                 guid: 'guid',
+				 *                 name: 'name',
+				 *                 sampleRate: 10
+				 *             }));
+				 *     });
+				 */
+				that.add = function(tag) {
+					if (!angular.isDefined(tagsAsHierarchy[tag.getGuid()]) ||
+						!angular.isDefined(tagsAsHierarchy[tag.getGuid()][tag.getName()])) {
+						if (!angular.isDefined(tagsAsHierarchy[tag.getGuid()])) {
+							tagsAsHierarchy[tag.getGuid()] = {};
+						}
+						tagsAsHierarchy[tag.getGuid()][tag.getName()] = tag;
+						tags.push(tag);
+					}
+					return that;
+				};
+				
+				/**
+				 * @name remove
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
+				 *   Otherwise nothing will be changed.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         TagSet
+				 *             .create()
+				 *             .add(tag)
+				 *             .remove(tag);
+				 *     });
+				 */
+				that.remove = function(tag) {
+					if (angular.isDefined(tagsAsHierarchy[tag.getGuid()][tag.getName()])) {
+						delete tagsAsHierarchy[tag.getGuid()][tag.getName()];
+						if (Object.keys(tagsAsHierarchy[tag.getGuid()]).length === 0) {
+							delete tagsAsHierarchy[tag.getGuid()];
+						}
+						tags.splice(tags.indexOf(tag), 1);
+					}
+					return that;
+				}; 
+				
+			};
+			
+			/**
+			 * @class TagSet
+			 * @propertyOf TagSetProvider
+			 * @description TagSet Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf TagSet
+				 * @description
+				 * <p>
+				 *   Creates a TagSetInstance.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *     });
+				 */
+				create: function() {
+					return new TagSetInstance();
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/tag-set.min.js
+/**
+ * @name keta.services.TagSet
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.TagSet
+ * @description TagSet Provider
+ */
+angular.module('keta.services.TagSet',
+	[
+		'keta.services.Tag'
+	])
+	
+	/**
+	 * @class TagSetProvider
+	 * @propertyOf keta.services.TagSet
+	 * @description TagSet Provider
+	 */
+	.provider('TagSet', function TagSetProvider() {
+		
+		this.$get = function TagSetService() {
+			
+			/**
+			 * @class TagSetInstance
+			 * @propertyOf TagSetProvider
+			 * @description TagSet Instance
+			 */
+			var TagSetInstance = function() {
+				
+				// keep reference
+				var that = this;
+				
+				// internal array of tags
+				var tags = [];
+				
+				// internal map of tags
+				var tagsAsHierarchy = {};
+				
+				/**
+				 * @name getTags
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Returns tags as an Array.
+				 * </p>
+				 * @returns {Array} tags
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *         var tags = tagSet.getTags();
+				 *     });
+				 */
+				that.getTags = function() {
+					return tags;
+				};
+				
+				/**
+				 * @name getTagsAsHierarchy
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Returns tags as hierarchically organized Object. First level represents devices
+				 *   specified by <code>guid</code> property. On the second level <code>name</code> property
+				 *   is used as key pointing to the <code>Tag</code> object.
+				 * </p>
+				 * @returns {Object} tagsAsHierarchy
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *         var hierarchy = tagSet.getTagsAsHierarchy();
+				 *     });
+				 */
+				that.getTagsAsHierarchy = function() {
+					return tagsAsHierarchy;
+				};
+				
+				/**
+				 * @name add
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
+				 *   In this case nothing will be changed.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         TagSet
+				 *             .create()
+				 *             .add(Tag.create({
+				 *                 guid: 'guid',
+				 *                 name: 'name',
+				 *                 sampleRate: 10
+				 *             }));
+				 *     });
+				 */
+				that.add = function(tag) {
+					if (!angular.isDefined(tagsAsHierarchy[tag.getGuid()]) ||
+						!angular.isDefined(tagsAsHierarchy[tag.getGuid()][tag.getName()])) {
+						if (!angular.isDefined(tagsAsHierarchy[tag.getGuid()])) {
+							tagsAsHierarchy[tag.getGuid()] = {};
+						}
+						tagsAsHierarchy[tag.getGuid()][tag.getName()] = tag;
+						tags.push(tag);
+					}
+					return that;
+				};
+				
+				/**
+				 * @name remove
+				 * @function
+				 * @memberOf TagSetInstance
+				 * @description
+				 * <p>
+				 *   Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
+				 *   Otherwise nothing will be changed.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         TagSet
+				 *             .create()
+				 *             .add(tag)
+				 *             .remove(tag);
+				 *     });
+				 */
+				that.remove = function(tag) {
+					if (angular.isDefined(tagsAsHierarchy[tag.getGuid()][tag.getName()])) {
+						delete tagsAsHierarchy[tag.getGuid()][tag.getName()];
+						if (Object.keys(tagsAsHierarchy[tag.getGuid()]).length === 0) {
+							delete tagsAsHierarchy[tag.getGuid()];
+						}
+						tags.splice(tags.indexOf(tag), 1);
+					}
+					return that;
+				}; 
+				
+			};
+			
+			/**
+			 * @class TagSet
+			 * @propertyOf TagSetProvider
+			 * @description TagSet Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf TagSet
+				 * @description
+				 * <p>
+				 *   Creates a TagSetInstance.
+				 * </p>
+				 * @returns {TagSetInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.TagSet'])
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
+				 *     });
+				 */
+				create: function() {
+					return new TagSetInstance();
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/tag.js
+/**
+ * @name keta.services.Tag
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.Tag
+ * @description Tag Provider
+ */
+angular.module('keta.services.Tag', [])
+	
+	/**
+	 * @class TagProvider
+	 * @propertyOf keta.services.Tag
+	 * @description Tag Provider
+	 */
+	.provider('Tag', function TagProvider() {
+		
+		this.$get = function TagService() {
+			
+			/**
+			 * @class TagInstance
+			 * @propertyOf TagSetProvider
+			 * @description Tag Instance
+			 */
+			var TagInstance = function(properties) {
+				
+				// guid of device tag belongs to
+				var guid = (angular.isDefined(properties.guid)) ? properties.guid : null;
+				
+				/**
+				 * @name getGuid
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>guid</code> property of Tag.
+				 * </p>
+				 * @returns {string} guid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagGuid = tag.getGuid();
+				 *     });
+				 */
+				this.getGuid = function() {
+					return guid;
+				};
+				
+				// tag name
+				var name = (angular.isDefined(properties.name)) ? properties.name : null;
+				
+				/**
+				 * @name getName
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>name</code> property of Tag.
+				 * </p>
+				 * @returns {string} name
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagName = tag.getName();
+				 *     });
+				 */
+				this.getName = function() {
+					return name;
+				};
+				
+				// sample rate
+				var sampleRate =
+					(angular.isDefined(properties.sampleRate) && (properties.sampleRate >= 5)) ?
+						properties.sampleRate : null;
+				
+				/**
+				 * @name getSampleRate
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>sampleRate</code> property of Tag.
+				 * </p>
+				 * @returns {number} sampleRate
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagSampleRate = tag.getSampleRate();
+				 *     });
+				 */
+				this.getSampleRate = function() {
+					return sampleRate;
+				};
+				
+			};
+			
+			/**
+			 * @class Tag
+			 * @propertyOf TagProvider
 			 * @description Tag Service
 			 */
 			var api = {
 				
 				/**
-				 * @const
-				 * @memberOf ketaTagService
-				 * @description Error message if an invalid sample rate was given.
-				 */
-				ERROR_INVALID_SAMPLE_RATE: ERROR_INVALID_SAMPLE_RATE,
-				
-				/**
-				 * @const
-				 * @memberOf ketaTagService
-				 * @description Error message if an invalid handler was given.
-				 */
-				ERROR_INVALID_HANDLER: ERROR_INVALID_HANDLER,
-				
-				/**
 				 * @function
-				 * @memberOf ketaTagService
-				 * @description Register a tag value listener.
-				 * @param {object} filter device filter (including tag names)
-				 * @param {number} sampleRate sample rate in seconds (minimum 5)
-				 * @param {function} handler tag value listener
-				 * @returns {promise}
+				 * @memberOf Tag
+				 * @description
+				 * <p>
+				 *   Creates a TagInstance.
+				 * </p>
+				 * @returns {TagInstance}
 				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaTag, ketaLogger) {
-				 *         ketaTag.registerListener({
-				 *             tags: ['StateDevice', 'PowerOut'],
-				 *             guid: $routeParams.deviceGuid
-				 *         }, 5, function(message) {
-				 *             ketaLogger.info('tagValueListener', message);
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'IdName',
+				 *             sampleRate: 10
 				 *         });
 				 *     });
 				 */
-				registerListener: function(filter, sampleRate, handler) {
-					
-					if (!angular.isNumber(sampleRate) || sampleRate < MIN_SAMPLE_RATE) {
-						return responseReject({
-							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-							message: ERROR_INVALID_SAMPLE_RATE
-						});
-					}
-					
-					if (!angular.isFunction(handler)) {
-						return responseReject({
-							code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-							message: ERROR_INVALID_HANDLER
-						});
-					}
-					
-					var deferred = $q.defer();
-					
-					// generate UUID for listener
-					var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_tagValueListener';
-					
-					// register handler for replyAddress
-					ketaEventBus.registerBusHandler(listenerUUID, handler);
-					
-					// register listener for given address
-					ketaEventBus.send(SERVICE_ENDPOINT, {
-						action: 'registerTagValueListener',
-						body: {
-							deviceFilter: filter,
-							sampleRate: sampleRate,
-							replyAddress: listenerUUID
-						}
-					}, function(response) {
-						if (response.code === ketaEventBus.RESPONSE_CODE_OK) {
-							deferred.resolve(response);
-						} else {
-							ketaLogger.info(
-								SERVICE_ENDPOINT + ':registerTagValueListener',
-								response
-							);
-							deferred.reject(response);
-						}
-					});
-					
-					return deferred.promise;
-					
+				create: function(properties) {
+					return new TagInstance(properties);
+				}
+				
+			};
+			
+			return api;
+			
+		};
+		
+	});
+
+// source: dist/services/tag.min.js
+/**
+ * @name keta.services.Tag
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014
+ * @module keta.services.Tag
+ * @description Tag Provider
+ */
+angular.module('keta.services.Tag', [])
+	
+	/**
+	 * @class TagProvider
+	 * @propertyOf keta.services.Tag
+	 * @description Tag Provider
+	 */
+	.provider('Tag', function TagProvider() {
+		
+		this.$get = function TagService() {
+			
+			/**
+			 * @class TagInstance
+			 * @propertyOf TagSetProvider
+			 * @description Tag Instance
+			 */
+			var TagInstance = function(properties) {
+				
+				// guid of device tag belongs to
+				var guid = (angular.isDefined(properties.guid)) ? properties.guid : null;
+				
+				/**
+				 * @name getGuid
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>guid</code> property of Tag.
+				 * </p>
+				 * @returns {string} guid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagGuid = tag.getGuid();
+				 *     });
+				 */
+				this.getGuid = function() {
+					return guid;
+				};
+				
+				// tag name
+				var name = (angular.isDefined(properties.name)) ? properties.name : null;
+				
+				/**
+				 * @name getName
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>name</code> property of Tag.
+				 * </p>
+				 * @returns {string} name
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagName = tag.getName();
+				 *     });
+				 */
+				this.getName = function() {
+					return name;
+				};
+				
+				// sample rate
+				var sampleRate =
+					(angular.isDefined(properties.sampleRate) && (properties.sampleRate >= 5)) ?
+						properties.sampleRate : null;
+				
+				/**
+				 * @name getSampleRate
+				 * @function
+				 * @memberOf TagInstance
+				 * @description
+				 * <p>
+				 *   Returns <code>sampleRate</code> property of Tag.
+				 * </p>
+				 * @returns {number} sampleRate
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagSampleRate = tag.getSampleRate();
+				 *     });
+				 */
+				this.getSampleRate = function() {
+					return sampleRate;
+				};
+				
+			};
+			
+			/**
+			 * @class Tag
+			 * @propertyOf TagProvider
+			 * @description Tag Service
+			 */
+			var api = {
+				
+				/**
+				 * @function
+				 * @memberOf Tag
+				 * @description
+				 * <p>
+				 *   Creates a TagInstance.
+				 * </p>
+				 * @returns {TagInstance}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'IdName',
+				 *             sampleRate: 10
+				 *         });
+				 *     });
+				 */
+				create: function(properties) {
+					return new TagInstance(properties);
 				}
 				
 			};

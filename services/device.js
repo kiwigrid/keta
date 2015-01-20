@@ -1,490 +1,221 @@
 'use strict';
 
 /**
- * @name keta.servicesDevice
+ * @name keta.services.Device
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesDevice
+ * @module keta.services.Device
  * @description Device Provider
  */
-angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLogger'])
+angular.module('keta.services.Device',
+	[
+		'keta.services.EventBusDispatcher'
+	])
 	
 	/**
-	 * @class ketaDeviceProvider
-	 * @propertyOf keta.servicesDevice
+	 * @class DeviceProvider
+	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
-	.provider('ketaDevice', function() {
+	.provider('Device', function DeviceProvider() {
 		
-		/**
-		 * @const
-		 * @private
-		 * @description Service name used in log messages for instance.
-		 */
-		var SERVICE_NAME = 'ketaDevice';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Service endpoint for messages.
-		 */
-		var SERVICE_ENDPOINT = 'devices';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Error message if no GUID was found in given device object.
-		 */
-		var ERROR_NO_GUID = 'No guid found in device object';
-		
-		/**
-		 * @const
-		 * @private
-		 * @description Return code if item was not found.
-		 */
-		var ERROR_ITEM_NOT_FOUND = -1;
-		
-		// return service API
-		this.$get = function($rootScope, $q, $location, ketaEventBus, ketaLogger) {
+		this.$get = function DeviceService($q, EventBusDispatcher) {
 			
 			/**
-			 * @private
-			 * @function
-			 * @description Check if two devices match by comparing device properties.
-			 * @param {object} deviceOne first device
-			 * @param {object} deviceTwo second device
-			 * @returns {boolean}
+			 * @class DeviceInstance
+			 * @propertyOf Device
+			 * @description Device Instance
 			 */
-			var equals = function(deviceOne, deviceTwo) {
-				var matches =
-					angular.isDefined(deviceOne.guid) &&
-					angular.isDefined(deviceTwo.guid) &&
-					deviceOne.guid === deviceTwo.guid;
-				return matches;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Return index of given item in given list
-			 * @param {object} item item to search for
-			 * @param {object[]} list list to search in
-			 * @returns {number} index index of item or ERROR_ITEM_NOT_FOUND if not found
-			 */
-			var indexOfItem = function(item, list) {
+			var DeviceInstance = function(givenEventBus, properties) {
 				
-				var index = ERROR_ITEM_NOT_FOUND;
+				// keep reference
+				var that = this;
 				
-				// filter objects and return index if match was found
-				angular.forEach(list, function(object, idx) {
-					if ((index === ERROR_ITEM_NOT_FOUND) && equals(item, object)) {
-						index = idx;
+				// save EventBus instance
+				var eventBus = givenEventBus;
+				
+				// populate properties
+				angular.forEach(properties, function(value, key) {
+					that[key] = value;
+					
+					// save copy under $pristine
+					if (!angular.isDefined(that.$pristine)) {
+						that.$pristine = {};
 					}
+					
+					that.$pristine[key] = angular.copy(value);
 				});
 				
-				return index;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Process device event.
-			 * @param {object} message message received from event bus
-			 * @param {object[]} devices device list to apply event to
-			 */
-			var processEvent = function(message, devices) {
-				
-				if (angular.isDefined(message.type) &&
-					angular.isDefined(message.value) &&
-					angular.isDefined(message.value.guid)) {
+				// send message and return promise
+				var sendMessage = function(message) {
+					var deferred = $q.defer();
 					
-					// save pristine copy of item
-					var device = message.value;
-					device.$$pristine = angular.copy(device);
-					
-					if (message.type === ketaEventBus.EVENT_CREATED) {
-						
-						devices.push(device);
-						
-						ketaLogger.debug(
-							SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created',
-							device
-						);
-						
-						// enforce digest cycle
-						$rootScope.$apply();
-						
-					} else {
-					
-						// get index of item to apply event to
-						var index = indexOfItem(device, devices);
-						
-						if (index !== ERROR_ITEM_NOT_FOUND) {
-							
-							if (message.type === ketaEventBus.EVENT_UPDATED) {
-								
-								angular.extend(devices[index], device);
-								
-								ketaLogger.debug(
-									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
-									device
-								);
-								
-							}
-							
-							if (message.type === ketaEventBus.EVENT_DELETED) {
-								
-								devices.splice(index, 1);
-								
-								ketaLogger.debug(
-									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted',
-									device
-								);
-								
-							}
-							
-							// enforce digest cycle
-							$rootScope.$apply();
-							
+					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+						if (reply.code === 200) {
+							deferred.resolve(reply);
 						} else {
-							ketaLogger.warning(
-								SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found',
-								device
-							);
+							deferred.reject(reply);
 						}
-						
-					}
+					});
 					
-				}
+					return deferred.promise;
+				};
 				
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Process device action.
-			 * @param {object} message message to send to event bus
-			 * @param {boolean} registerListener flag to determine, if device set listener should be registered
-			 * @returns {promise}
-			 */
-			var processAction = function(message, registerListener) {
-				
-				var deferred = $q.defer();
-				
-				ketaEventBus.send(SERVICE_ENDPOINT, message, function(response) {
-					if (angular.isDefined(response.code) &&
-						angular.isDefined(response.result) &&
-						response.code === ketaEventBus.RESPONSE_CODE_OK) {
-						
-						// register device set listener
-						if (registerListener) {
-							
-							// generate UUID for listener
-							var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_deviceSetListener';
-							
-							// set device filter and projection
-							var deviceFilter = {};
-							var deviceProjection = {};
-							
-							if (angular.isDefined(message.params) && (message.params !== null)) {
-								if (angular.isDefined(message.params.filter)) {
-									deviceFilter = message.params.filter;
-								}
-								if (angular.isDefined(message.params.projection)) {
-									deviceProjection = message.params.projection;
-								}
-							}
-							
-							// register handler for replyAddress
-							ketaEventBus.registerBusHandler(listenerUUID, function(message) {
-								processEvent(message, response.result.items);
-							});
-							
-							// register listener for given address
-							ketaEventBus.send(SERVICE_ENDPOINT, {
-								action: 'registerDeviceSetListener',
-								body: {
-									deviceFilter: deviceFilter,
-									deviceProjection: deviceProjection,
-									replyAddress: listenerUUID
-								}
-							}, function(response) {
-								if (response.code !== ketaEventBus.RESPONSE_CODE_OK) {
-									ketaLogger.info(
-										SERVICE_ENDPOINT + ':registerDeviceSetListener',
-										response
-									);
-								}
-							});
-							
-							// save listener UUID in result
-							response.result.$$listenerUUID = listenerUUID;
-							
-							// save pristine copy of each item
-							angular.forEach(response.result.items, function(item) {
-								item.$$pristine = angular.copy(item);
-							});
-							
-						}
-						
-						if (angular.isDefined(response.result.items)) {
-							deferred.resolve(response.result);
-						} else {
-							if (angular.isDefined(response.result.type) &&
-								response.result.type !== ketaEventBus.EVENT_FAILED) {
-								if (response.result.type === ketaEventBus.EVENT_UPDATED) {
-									deferred.resolve(response.result.value);
-								} else {
-									deferred.resolve(response.result);
-								}
-							} else {
-								deferred.reject('Failed');
-							}
-						}
-						
-					} else {
-						if (angular.isDefined(response.message)) {
-							deferred.reject(response.message);
-						} else {
-							deferred.reject('Unknown error');
-						}
-					}
-				}, function(error) {
-					deferred.reject(error);
-				});
-				
-				return deferred.promise;
-				
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Return promise with given code and message.
-			 * @param {string} message return message
-			 * @param {boolean} resolve resolve or reject
-			 * @returns {promise}
-			 */
-			var responsePromise = function(message, resolve) {
-				var deferred = $q.defer();
-				if (resolve) {
-					deferred.resolve(message);
-				} else {
+				var returnRejectedPromise = function(message) {
+					var deferred = $q.defer();
 					deferred.reject(message);
-				}
-				return deferred.promise;
-			};
-			
-			/**
-			 * @private
-			 * @function
-			 * @description Detect changes in two tag value objects.
-			 * @param {object} prevTags previous tags object
-			 * @param {object} currentTags current tags object
-			 * @returns {object|boolean}
-			 */
-			var getChanges = function(prevTags, currentTags) {
+					return deferred.promise;
+				};
 				
-				var changes = {};
-				
-				angular.forEach(currentTags, function(tag, name) {
-					if (!angular.isDefined(prevTags[name]) ||
-						!angular.equals(prevTags[name].value, tag.value)) {
-						changes[name] = {
-							value: tag.value,
-							oca: tag.oca
-						};
+				/**
+				 * @name update
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Updates a remote DeviceInstance from local one the method is called on.
+				 * </p>
+				 * <p>
+				 *   Only value changes in <code>tagValues</code> property will be recognized as changes.
+				 * </p>
+				 * @return {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         device.tagValues.IdName.value = 'Modified Device';
+				 *         device.update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.update = function() {
+					
+					// collect changes in tagValues property
+					var changes = {
+						tagValues: {}
+					};
+					
+					angular.forEach(that.tagValues, function(tagValue, tagName) {
+						if (that.tagValues[tagName].value !== that.$pristine.tagValues[tagName].value) {
+							changes.tagValues[tagName] = {};
+							changes.tagValues[tagName].value = tagValue.value;
+							changes.tagValues[tagName].oca = tagValue.oca + 1;
+						}
+					});
+					
+					if (Object.keys(changes.tagValues).length) {
+						var deferred = $q.defer();
+						
+						sendMessage({
+							action: 'updateDevice',
+							params: {
+								deviceId: that.guid
+							},
+							body: changes
+						}).then(function(reply) {
+							
+							// update $pristine copies after success
+							angular.forEach(that.$pristine, function(value, key) {
+								that.$pristine[key] = angular.copy(that[key]);
+							});
+							
+							deferred.resolve(reply);
+						}, function(reply) {
+							deferred.reject(reply);
+						});
+						
+						return deferred.promise;
+					} else {
+						return returnRejectedPromise('No changes found');
 					}
-				});
+				};
 				
-				return (!angular.equals(changes, {})) ? changes : false;
+				/**
+				 * @name delete
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Deletes a remote DeviceInstance from local one the method is called on.
+				 * </p>
+				 * @return {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid'
+				 *         });
+				 *         device.delete()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.delete = function() {
+					return sendMessage({
+						action: 'deleteDevice',
+						params: {
+							deviceId: that.guid
+						}
+					});
+				};
+				
 			};
 			
 			/**
-			 * @private
-			 * @function
-			 * @description Check if guid property is set in device object. If not return rejected promise.
-			 * @param {object} device device object
-			 * @returns {object|boolean}
-			 */
-			var checkIfGuidExists = function(device) {
-				if (!angular.isDefined(device.guid)) {
-					return responsePromise({
-						code: ketaEventBus.RESPONSE_CODE_BAD_REQUEST,
-						message: ERROR_NO_GUID
-					}, false);
-				} else {
-					return true;
-				}
-			};
-			
-			/**
-			 * @class ketaDeviceService
-			 * @propertyOf ketaDeviceProvider
+			 * @class Device
+			 * @propertyOf DeviceProvider
 			 * @description Device Service
 			 */
 			var api = {
 				
 				/**
-				 * @const
-				 * @memberOf ketaDeviceService
-				 * @description Error message if no GUID was found in given device object.
-				 */
-				ERROR_NO_GUID: ERROR_NO_GUID,
-				
-				/**
 				 * @function
-				 * @memberOf ketaDeviceService
+				 * @memberOf Device
 				 * @description
 				 * <p>
-				 *   Read all devices with given filter and projection.
+				 *   Creates a DeviceInstance with given EventBus instance and properties.
 				 * </p>
-				 * <p>
-				 *   By default an empty filter and an empty projection is used which means, that
-				 *   default projection is in place and all devices will be returned.
-				 * </p>
-				 * <p>
-				 *   By default a device set listener is registered.
-				 * </p>
-				 * @param {object} [params={}] device parameter (filter, projection, offset and limit)
-				 * @param {boolean} [registerListener=true] flag if device set listener should be registered
-				 * @returns {promise}
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {Object} properties Properties to set upon DeviceInstance creation
+				 * @returns {DeviceInstance}
 				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read().then(function(devices) {
-				 *             $scope.devices = devices;
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting devices');
-				 *         });
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read({
-				 *            filter: {
-				 *                guid: $routeParams.deviceGuid
-				 *            }
-				 *         }).then(function(devices) {
-				 *             $scope.device = devices[0] || {};
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting device');
-				 *         });
-				 *     });
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice, ketaLogger) {
-				 *         ketaDevice.read({
-				 *             filter: {
-				 *                 deviceClasses: ['device-class-a', 'device-class-b']
-				 *             },
-				 *             projection: {
-				 *                 guid: 1,
-				 *                 deviceClass: 1
-				 *             },
-				 *             offset: 10,
-				 *             limit: 10
-				 *         }).then(function(devices) {
-				 *             $scope.devices = devices;
-				 *         }, function(error) {
-				 *             ketaLogger.info('ketaDevice.read: error getting devices');
-				 *         });
-				 *     });
-				 */
-				read: function(params, registerListener) {
-					var flag = (angular.isDefined(registerListener)) ? registerListener : true;
-					return processAction({
-						action: 'getDevices',
-						params: (angular.isDefined(params) ? params : null),
-						body: null
-					}, flag);
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaDeviceService
-				 * @description Update a device by given object.
-				 * @param {object} device device object
-				 * @returns {promise}
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
-				 *         ketaDevice.update({
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
-				 *                     value: 'new-name',
-				 *                     oca: 1
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
 				 *                 }
 				 *             }
 				 *         });
 				 *     });
 				 */
-				update: function(device) {
-					
-					// check if guid property exists in device
-					var valid = checkIfGuidExists(device);
-					
-					if (valid === true) {
-						
-						// get original device object
-						var originalDevice = angular.copy(device.$$pristine);
-						
-						// get updated device object
-						var updatedDevice = angular.copy(device);
-						delete updatedDevice.$$pristine;
-						
-						var changes = getChanges(originalDevice.tagValues, updatedDevice.tagValues);
-						
-						if (changes) {
-							return processAction({
-								action: 'updateDevice',
-								params: {
-									deviceId: device.guid
-								},
-								body: {
-									tagValues: changes
-								}
-							});
-						} else {
-							return responsePromise(device, true);
-						}
-						
-					} else {
-						return valid;
-					}
-					
-				},
-				
-				/**
-				 * @function
-				 * @memberOf ketaDeviceService
-				 * @description Delete a device by given object.
-				 * @param {object} device device object
-				 * @returns {promise}
-				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaDevice) {
-				 *         ketaDevice.delete({
-				 *             guid: 'guid'
-				 *         });
-				 *     });
-				 */
-				'delete': function(device) {
-					
-					// check if guid property exists in device
-					var valid = checkIfGuidExists(device);
-					
-					if (valid === true) {
-						return processAction({
-							action: 'deleteDevice',
-							params: {
-								deviceId: device.guid
-							},
-							body: null
-						});
-					} else {
-						return valid;
-					}
+				create: function(eventBus, properties) {
+					return new DeviceInstance(eventBus, properties);
 				}
 				
 			};

@@ -1,47 +1,41 @@
 'use strict';
 
 /**
- * @name keta.servicesAccessToken
+ * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesAccessToken
- * @description Access Token Factory
+ * @module keta.services.AccessToken
+ * @description AccessToken Factory
  */
-angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
+angular.module('keta.services.AccessToken',
+	[
+		'keta.services.AppContext'
+	])
 	
 	/**
-	 * @class ketaAccessToken
-	 * @propertyOf keta.servicesAccessToken
+	 * @class AccessToken
+	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('ketaAccessToken', function($http, ketaAppContext) {
+	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
 		
 		/**
 		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = ketaAppContext.get('oauth.accessToken');
-
-		/**
-		 * @private
-		 * @description Internal representation of the path to invoke refreshToken requests against.
-		 */
-		var refreshPath = ketaAppContext.get('oauth.refreshPath');
-		if (refreshPath === null) {
-			refreshPath = '/refreshAccessToken';
-		}
-
+		var accessToken = AppContext.get('oauth.accessToken');
+		
 		var api = {
 			
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Get access token.
 			 * @returns {string} access token
 			 * @example
-			 * angular.module('exampleApp', [])
-			 *     .controller('ExampleController', function(ketaAccessToken) {
-			 *         var accessToken = ketaAccessToken.get();
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         var accessToken = AccessToken.get();
 			 *     });
 			 */
 			get: function() {
@@ -50,13 +44,13 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Set access token.
 			 * @param {string} token new access token
 			 * @example
-			 * angular.module('exampleApp', [])
-			 *     .controller('ExampleController', function(ketaAccessToken) {
-			 *         ketaAccessToken.set('new-token');
+			 * angular.module('exampleApp', ['keta.services.AccessToken'])
+			 *     .controller('ExampleController', function(AccessToken) {
+			 *         AccessToken.set('new-token');
 			 *     });
 			 */
 			set: function(token) {
@@ -88,7 +82,7 @@ angular.module('keta.servicesAccessToken', ['keta.servicesAppContext'])
 			refresh: function() {
 				return $http({
 					method: 'GET',
-					url: refreshPath
+					url: '/refreshAccessToken'
 				});
 			}
 		

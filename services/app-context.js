@@ -1,20 +1,20 @@
 'use strict';
 
 /**
- * @name keta.servicesAppContext
+ * @name keta.services.AppContext
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014
- * @module keta.servicesAppContext
- * @description App Context Provider
+ * @module keta.services.AppContext
+ * @description AppContext Provider
  */
-angular.module('keta.servicesAppContext', [])
+angular.module('keta.services.AppContext', [])
 	
 	/**
-	 * @class ketaAppContextProvider
-	 * @propertyOf keta.servicesAppContext
+	 * @class AppContextProvider
+	 * @propertyOf keta.services.AppContext
 	 * @description App Context Provider
 	 */
-	.provider('ketaAppContext', function() {
+	.provider('AppContext', function AppContextProvider() {
 		
 		/**
 		 * @private
@@ -25,14 +25,18 @@ angular.module('keta.servicesAppContext', [])
 		/**
 		 * @name get
 		 * @function
-		 * @memberOf ketaAppContextProvider
-		 * @description Get value by key from app context object.
+		 * @memberOf AppContextProvider
+		 * @description
+		 * <p>
+		 *   Get value by key from app context object. There <code>key</code> is a string in dot notation to describe
+		 *   object properties with hierarchy.
+		 * </p>
 		 * @param {string} key key to retrieve from app context
 		 * @returns {*}
 		 * @example
-		 * angular.module('exampleApp', [])
-		 *     .config(function(ketaAppContextProvider) {
-		 *         var socketURL = ketaAppContextProvider.get('bus.url');
+		 * angular.module('exampleApp', ['keta.services.AppContext'])
+		 *     .config(function(AppContextProvider) {
+		 *         var socketURL = AppContextProvider.get('bus.url');
 		 *     });
 		 */
 		this.get = function(key) {
@@ -48,20 +52,29 @@ angular.module('keta.servicesAppContext', [])
 			return obj;
 		};
 		
-		this.$get = function() {
+		this.$get = function AppContextService() {
 			
+			/**
+			 * @class AppContext
+			 * @propertyOf AppContextProvider
+			 * @description AppContext Service
+			 */
 			var api = {
 				
 				/**
 				 * @function
-				 * @memberOf ketaAppContext
-				 * @description Get value by key from app context object.
+				 * @memberOf AppContext
+				 * @description
+				 * <p>
+				 *   Get value by key from app context object. There <code>key</code> is a string in dot notation
+				 *   to describe object properties with hierarchy.
+				 * </p>
 				 * @param {string} key key to retrieve from app context
 				 * @returns {*}
 				 * @example
-				 * angular.module('exampleApp', [])
-				 *     .controller('ExampleController', function(ketaAppContext) {
-				 *         var socketURL = ketaAppContext.get('bus.url');
+				 * angular.module('exampleApp', ['keta.services.AppContext'])
+				 *     .controller('ExampleController', function(AppContext) {
+				 *         var socketURL = AppContext.get('bus.url');
 				 *     });
 				 */
 				get: this.get
