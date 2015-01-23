@@ -21,7 +21,7 @@ angular.module('keta.services.DeviceSet',
 	 */
 	.provider('DeviceSet', function DeviceSetProvider() {
 		
-		this.$get = function DeviceSetService($q, $rootScope, DeviceEvent, EventBusDispatcher) {
+		this.$get = function DeviceSetService($q, $rootScope, Device, DeviceEvent, EventBusDispatcher) {
 			
 			/**
 			 * @class DeviceSetInstance
@@ -213,6 +213,13 @@ angular.module('keta.services.DeviceSet',
 							reply.params = params;
 							
 							if (reply.code === 200) {
+								// create DeviceInstances
+								if (angular.isDefined(reply.result) &&
+									angular.isDefined(reply.result.items)) {
+									angular.forEach(reply.result.items, function(item, index) {
+										reply.result.items[index] = Device.create(eventBus, item);
+									});
+								}
 								deferred.resolve(reply);
 								$rootScope.$digest();
 							} else {

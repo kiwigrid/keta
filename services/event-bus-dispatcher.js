@@ -22,6 +22,40 @@ angular.module('keta.services.EventBusDispatcher',
 		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
 			
 			/**
+			 * @private
+			 * @memberOf EventBusDispatcher
+			 * @description
+			 * <p>
+			 *   Wait for EventBus to have open state before sending messages.
+			 * </p>
+			 * @param {EventBus} eventBus EventBus instance
+			 * @param {Function} success Success handler to call when EventBus is in open state
+			 * @param {Function} error Error handler to call when EventBus could not be opened within timeout
+			 */
+			var waitForOpen = function(eventBus, success, error) {
+				
+				// set timeout
+				$timeout(function() {
+					error();
+				}, eventBus.getConfig().requestTimeout * 1000);
+				
+				// save current onopen
+				var onopen = null;
+				if (angular.isFunction(eventBus.getInstance().onopen)) {
+					onopen = eventBus.getInstance().onopen;
+				}
+				
+				// wait for open state
+				eventBus.getInstance().onopen = function() {
+					if (angular.isFunction(onopen)) {
+						onopen();
+					}
+					success();
+				};
+				
+			};
+			
+			/**
 			 * @class EventBusDispatcher
 			 * @propertyOf EventBusDispatcherProvider
 			 * @description EventBusDispatcher Service
@@ -425,17 +459,15 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 					};
 					
-					$timeout(function() {
-						if (angular.isFunction(replyHandler)) {
-							replyHandler({
-								code: 408,
-								message: 'Request Time-out'
-							});
-						}
-					}, eventBus.getConfig().requestTimeout * 1000);
-					
 					// call stub method
-					eventBus.getInstance().send(address, message, handler);
+					waitForOpen(eventBus, function() {
+						eventBus.getInstance().send(address, message, handler);
+					}, function() {
+						replyHandler({
+							code: 408,
+							message: 'Request Time-out'
+						});
+					});
 					
 				},
 				
@@ -464,7 +496,10 @@ angular.module('keta.services.EventBusDispatcher',
 					
 					// inject access token and call stub method
 					message.accessToken = AccessToken.get();
-					eventBus.getInstance().publish(address, message);
+					
+					waitForOpen(eventBus, function() {
+						eventBus.getInstance().publish(address, message);
+					});
 					
 				},
 				
@@ -487,7 +522,9 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				registerHandler: function(eventBus, address, handler) {
-					eventBus.getInstance().registerHandler(address, handler);
+					waitForOpen(eventBus, function() {
+						eventBus.getInstance().registerHandler(address, handler);
+					});
 				},
 				
 				/**
@@ -509,7 +546,9 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				unregisterHandler: function(eventBus, address, handler) {
-					eventBus.getInstance().unregisterHandler(address, handler);
+					waitForOpen(eventBus, function() {
+						eventBus.getInstance().unregisterHandler(address, handler);
+					});
 				},
 				
 				/**
