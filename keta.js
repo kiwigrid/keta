@@ -882,7 +882,7 @@ angular.module('keta.services.Device',
 					};
 					
 					angular.forEach(that.tagValues, function(tagValue, tagName) {
-						if (that.tagValues[tagName].value !== that.$pristine.tagValues[tagName].value) {
+						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
 							changes.tagValues[tagName].value = tagValue.value;
 							changes.tagValues[tagName].oca = tagValue.oca + 1;
