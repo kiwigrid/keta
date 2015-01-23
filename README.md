@@ -2,7 +2,7 @@
 
 #### Frontend Components for Kiwigrid Platform based AngularJS Apps
 
-Copyright © 2014 Kiwigrid GmbH
+Copyright Kiwigrid GmbH 2014-2015
 
 ---
 
