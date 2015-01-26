@@ -376,7 +376,9 @@ angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
 		'keta.services.DeviceEvent',
-		'keta.services.EventBusDispatcher'
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
 	])
 	
 	/**
@@ -386,7 +388,9 @@ angular.module('keta.services.DeviceSet',
 	 */
 	.provider('DeviceSet', function DeviceSetProvider() {
 		
-		this.$get = function DeviceSetService($q, $rootScope, Device, DeviceEvent, EventBusDispatcher) {
+		this.$get = function DeviceSetService(
+			$q, $rootScope, $log,
+			Device, DeviceEvent, EventBusDispatcher, EventBusManager) {
 			
 			/**
 			 * @class DeviceSetInstance
@@ -578,6 +582,7 @@ angular.module('keta.services.DeviceSet',
 							reply.params = params;
 							
 							if (reply.code === 200) {
+								
 								// create DeviceInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
@@ -585,8 +590,18 @@ angular.module('keta.services.DeviceSet',
 										reply.result.items[index] = Device.create(eventBus, item);
 									});
 								}
+								
+								// log if in debug mode
+								if (EventBusManager.inDebugMode()) {
+									$log.request([{
+										action: 'getDevices',
+										params: params
+									}, reply], $log.ADVANCED_FORMATTER);
+								}
+								
 								deferred.resolve(reply);
 								$rootScope.$digest();
+								
 							} else {
 								deferred.reject(reply);
 							}
@@ -779,7 +794,9 @@ angular.module('keta.services.DeviceSet',
  */
 angular.module('keta.services.Device',
 	[
-		'keta.services.EventBusDispatcher'
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
 	])
 	
 	/**
@@ -789,7 +806,7 @@ angular.module('keta.services.Device',
 	 */
 	.provider('Device', function DeviceProvider() {
 		
-		this.$get = function DeviceService($q, EventBusDispatcher) {
+		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
 			
 			/**
 			 * @class DeviceInstance
@@ -821,11 +838,18 @@ angular.module('keta.services.Device',
 					var deferred = $q.defer();
 					
 					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+						
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.request([message, reply], $log.ADVANCED_FORMATTER);
+						}
+						
 						if (reply.code === 200) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
 						}
+						
 					});
 					
 					return deferred.promise;
@@ -885,7 +909,7 @@ angular.module('keta.services.Device',
 						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
 							changes.tagValues[tagName].value = tagValue.value;
-							changes.tagValues[tagName].oca = tagValue.oca + 1;
+							changes.tagValues[tagName].oca = tagValue.oca;
 						}
 					});
 					
@@ -1036,19 +1060,26 @@ angular.module('keta.services.EventBusDispatcher',
 					error();
 				}, eventBus.getConfig().requestTimeout * 1000);
 				
-				// save current onopen
-				var onopen = null;
-				if (angular.isFunction(eventBus.getInstance().onopen)) {
-					onopen = eventBus.getInstance().onopen;
-				}
-				
-				// wait for open state
-				eventBus.getInstance().onopen = function() {
-					if (angular.isFunction(onopen)) {
-						onopen();
+				// wait if readyState isn't open
+				if (eventBus.getInstance().readyState() !== 1) {
+					
+					// save current onopen
+					var onopen = null;
+					if (angular.isFunction(eventBus.getInstance().onopen)) {
+						onopen = eventBus.getInstance().onopen;
 					}
+					
+					// wait for open state
+					eventBus.getInstance().onopen = function() {
+						if (angular.isFunction(onopen)) {
+							onopen();
+						}
+						success();
+					};
+					
+				} else {
 					success();
-				};
+				}
 				
 			};
 			
@@ -1457,14 +1488,18 @@ angular.module('keta.services.EventBusDispatcher',
 					};
 					
 					// call stub method
-					waitForOpen(eventBus, function() {
-						eventBus.getInstance().send(address, message, handler);
-					}, function() {
-						replyHandler({
-							code: 408,
-							message: 'Request Time-out'
+					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
+						waitForOpen(eventBus, function() {
+							eventBus.getInstance().send(address, message, handler);
+						}, function() {
+							replyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
 						});
-					});
+					} else {
+						eventBus.getInstance().send(address, message, handler);
+					}
 					
 				},
 				
@@ -1645,6 +1680,12 @@ angular.module('keta.services.EventBusManager', [])
 		var eventBuses = {};
 		
 		/**
+		 * @private
+		 * @description Debug mode enabled or not.
+		 */
+		var debug = false;
+		
+		/**
 		 * @name add
 		 * @function
 		 * @memberOf EventBusManagerProvider
@@ -1753,6 +1794,62 @@ angular.module('keta.services.EventBusManager', [])
 			return eventBuses;
 		};
 		
+		/**
+		 * @name enableDebug
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Enables debug mode which outputs requests and responses to console.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider.enableDebug();
+		 *     });
+		 */
+		this.enableDebug = function() {
+			debug = true;
+		};
+		
+		/**
+		 * @name disableDebug
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Disables debug mode which normally outputs requests and responses to console.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider.disableDebug();
+		 *     });
+		 */
+		this.disableDebug = function() {
+			debug = false;
+		};
+		
+		/**
+		 * @name inDebugMode
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Returns true if currently in debug mode.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         if (EventBusManagerProvider.inDebugMode()) {
+		 *             // do something useful
+		 *         }
+		 *     });
+		 */
+		this.inDebugMode = function() {
+			return (debug === true);
+		};
+		
 		this.$get = function EventBusManagerService() {
 			
 			/**
@@ -1790,7 +1887,25 @@ angular.module('keta.services.EventBusManager', [])
 				 * @memberOf EventBusManager
 				 * @see EventBusManagerProvider.getAll
 				 */
-				getAll: this.getAll
+				getAll: this.getAll,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.enableDebug
+				 */
+				enableDebug: this.enableDebug,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.disableDebug
+				 */
+				disableDebug: this.disableDebug,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.inDebugMode
+				 */
+				inDebugMode: this.inDebugMode
 				
 			};
 			

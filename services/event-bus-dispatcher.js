@@ -39,19 +39,26 @@ angular.module('keta.services.EventBusDispatcher',
 					error();
 				}, eventBus.getConfig().requestTimeout * 1000);
 				
-				// save current onopen
-				var onopen = null;
-				if (angular.isFunction(eventBus.getInstance().onopen)) {
-					onopen = eventBus.getInstance().onopen;
-				}
-				
-				// wait for open state
-				eventBus.getInstance().onopen = function() {
-					if (angular.isFunction(onopen)) {
-						onopen();
+				// wait if readyState isn't open
+				if (eventBus.getInstance().readyState() !== 1) {
+					
+					// save current onopen
+					var onopen = null;
+					if (angular.isFunction(eventBus.getInstance().onopen)) {
+						onopen = eventBus.getInstance().onopen;
 					}
+					
+					// wait for open state
+					eventBus.getInstance().onopen = function() {
+						if (angular.isFunction(onopen)) {
+							onopen();
+						}
+						success();
+					};
+					
+				} else {
 					success();
-				};
+				}
 				
 			};
 			
@@ -460,14 +467,18 @@ angular.module('keta.services.EventBusDispatcher',
 					};
 					
 					// call stub method
-					waitForOpen(eventBus, function() {
-						eventBus.getInstance().send(address, message, handler);
-					}, function() {
-						replyHandler({
-							code: 408,
-							message: 'Request Time-out'
+					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
+						waitForOpen(eventBus, function() {
+							eventBus.getInstance().send(address, message, handler);
+						}, function() {
+							replyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
 						});
-					});
+					} else {
+						eventBus.getInstance().send(address, message, handler);
+					}
 					
 				},
 				

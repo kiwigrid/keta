@@ -9,7 +9,9 @@
  */
 angular.module('keta.services.Device',
 	[
-		'keta.services.EventBusDispatcher'
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
 	])
 	
 	/**
@@ -19,7 +21,7 @@ angular.module('keta.services.Device',
 	 */
 	.provider('Device', function DeviceProvider() {
 		
-		this.$get = function DeviceService($q, EventBusDispatcher) {
+		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
 			
 			/**
 			 * @class DeviceInstance
@@ -51,11 +53,18 @@ angular.module('keta.services.Device',
 					var deferred = $q.defer();
 					
 					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+						
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.request([message, reply], $log.ADVANCED_FORMATTER);
+						}
+						
 						if (reply.code === 200) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
 						}
+						
 					});
 					
 					return deferred.promise;
@@ -115,7 +124,7 @@ angular.module('keta.services.Device',
 						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
 							changes.tagValues[tagName].value = tagValue.value;
-							changes.tagValues[tagName].oca = tagValue.oca + 1;
+							changes.tagValues[tagName].oca = tagValue.oca;
 						}
 					});
 					

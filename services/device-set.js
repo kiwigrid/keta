@@ -11,7 +11,9 @@ angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
 		'keta.services.DeviceEvent',
-		'keta.services.EventBusDispatcher'
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
 	])
 	
 	/**
@@ -21,7 +23,9 @@ angular.module('keta.services.DeviceSet',
 	 */
 	.provider('DeviceSet', function DeviceSetProvider() {
 		
-		this.$get = function DeviceSetService($q, $rootScope, Device, DeviceEvent, EventBusDispatcher) {
+		this.$get = function DeviceSetService(
+			$q, $rootScope, $log,
+			Device, DeviceEvent, EventBusDispatcher, EventBusManager) {
 			
 			/**
 			 * @class DeviceSetInstance
@@ -213,6 +217,7 @@ angular.module('keta.services.DeviceSet',
 							reply.params = params;
 							
 							if (reply.code === 200) {
+								
 								// create DeviceInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
@@ -220,8 +225,18 @@ angular.module('keta.services.DeviceSet',
 										reply.result.items[index] = Device.create(eventBus, item);
 									});
 								}
+								
+								// log if in debug mode
+								if (EventBusManager.inDebugMode()) {
+									$log.request([{
+										action: 'getDevices',
+										params: params
+									}, reply], $log.ADVANCED_FORMATTER);
+								}
+								
 								deferred.resolve(reply);
 								$rootScope.$digest();
+								
 							} else {
 								deferred.reject(reply);
 							}

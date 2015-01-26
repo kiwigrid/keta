@@ -26,6 +26,12 @@ angular.module('keta.services.EventBusManager', [])
 		var eventBuses = {};
 		
 		/**
+		 * @private
+		 * @description Debug mode enabled or not.
+		 */
+		var debug = false;
+		
+		/**
 		 * @name add
 		 * @function
 		 * @memberOf EventBusManagerProvider
@@ -134,6 +140,62 @@ angular.module('keta.services.EventBusManager', [])
 			return eventBuses;
 		};
 		
+		/**
+		 * @name enableDebug
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Enables debug mode which outputs requests and responses to console.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider.enableDebug();
+		 *     });
+		 */
+		this.enableDebug = function() {
+			debug = true;
+		};
+		
+		/**
+		 * @name disableDebug
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Disables debug mode which normally outputs requests and responses to console.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         EventBusManagerProvider.disableDebug();
+		 *     });
+		 */
+		this.disableDebug = function() {
+			debug = false;
+		};
+		
+		/**
+		 * @name inDebugMode
+		 * @function
+		 * @memberOf EventBusManagerProvider
+		 * @description
+		 * <p>
+		 *   Returns true if currently in debug mode.
+		 * </p>
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(EventBusManagerProvider) {
+		 *         if (EventBusManagerProvider.inDebugMode()) {
+		 *             // do something useful
+		 *         }
+		 *     });
+		 */
+		this.inDebugMode = function() {
+			return (debug === true);
+		};
+		
 		this.$get = function EventBusManagerService() {
 			
 			/**
@@ -171,7 +233,25 @@ angular.module('keta.services.EventBusManager', [])
 				 * @memberOf EventBusManager
 				 * @see EventBusManagerProvider.getAll
 				 */
-				getAll: this.getAll
+				getAll: this.getAll,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.enableDebug
+				 */
+				enableDebug: this.enableDebug,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.disableDebug
+				 */
+				disableDebug: this.disableDebug,
+				
+				/**
+				 * @memberOf EventBusManager
+				 * @see EventBusManagerProvider.inDebugMode
+				 */
+				inDebugMode: this.inDebugMode
 				
 			};
 			
