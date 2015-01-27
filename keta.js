@@ -408,6 +408,9 @@ angular.module('keta.services.DeviceSet',
 				// internal params object
 				var params = {};
 				
+				// internal set object
+				var set = {};
+				
 				/**
 				 * @name filter
 				 * @function
@@ -548,6 +551,72 @@ angular.module('keta.services.DeviceSet',
 				};
 				
 				/**
+				 * @name live
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds live update capabilities by registering a DeviceSetListener.
+				 * </p>
+				 * @returns {promise}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .live()
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 */
+				that.live = function() {
+					
+					// generate UUID
+					var liveHandlerUUID = 'CLIENT_' + EventBusDispatcher.generateUUID();
+					
+					// register handler under created UUID
+					EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
+						
+						// process event using sync
+						api.sync(set, DeviceEvent.create(event.type, event.value));
+						
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.event([event], $log.ADVANCED_FORMATTER);
+						}
+						
+					});
+					
+					// register device set listener
+					EventBusDispatcher.send(eventBus, 'devices', {
+						action: 'registerDeviceSetListener',
+						body: {
+							deviceFilter: params.filter,
+							deviceProjection: params.projection,
+							replyAddress: liveHandlerUUID
+						}
+					}, function(reply) {
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.request([{
+								action: 'registerDeviceSetListener',
+								body: {
+									deviceFilter: params.filter,
+									deviceProjection: params.projection,
+									replyAddress: liveHandlerUUID
+								}
+							}, reply], $log.ADVANCED_FORMATTER);
+						}
+					});
+					
+					return that;
+				};
+				
+				/**
 				 * @name query
 				 * @function
 				 * @memberOf DeviceSetInstance
@@ -589,6 +658,9 @@ angular.module('keta.services.DeviceSet',
 									angular.forEach(reply.result.items, function(item, index) {
 										reply.result.items[index] = Device.create(eventBus, item);
 									});
+									set = reply;
+								} else {
+									set = {};
 								}
 								
 								// log if in debug mode
@@ -1050,15 +1122,18 @@ angular.module('keta.services.EventBusDispatcher',
 			 *   Wait for EventBus to have open state before sending messages.
 			 * </p>
 			 * @param {EventBus} eventBus EventBus instance
+			 * @param {boolean} replied Is message replied, so that we have to check for timeout?
 			 * @param {Function} success Success handler to call when EventBus is in open state
 			 * @param {Function} error Error handler to call when EventBus could not be opened within timeout
 			 */
-			var waitForOpen = function(eventBus, success, error) {
+			var waitForOpen = function(eventBus, replied, success, error) {
 				
 				// set timeout
-				$timeout(function() {
-					error();
-				}, eventBus.getConfig().requestTimeout * 1000);
+				if (replied) {
+					$timeout(function() {
+						error();
+					}, eventBus.getConfig().requestTimeout * 1000);
+				}
 				
 				// wait if readyState isn't open
 				if (eventBus.getInstance().readyState() !== 1) {
@@ -1489,7 +1564,7 @@ angular.module('keta.services.EventBusDispatcher',
 					
 					// call stub method
 					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
-						waitForOpen(eventBus, function() {
+						waitForOpen(eventBus, true, function() {
 							eventBus.getInstance().send(address, message, handler);
 						}, function() {
 							replyHandler({
@@ -1529,7 +1604,7 @@ angular.module('keta.services.EventBusDispatcher',
 					// inject access token and call stub method
 					message.accessToken = AccessToken.get();
 					
-					waitForOpen(eventBus, function() {
+					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().publish(address, message);
 					});
 					
@@ -1554,7 +1629,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				registerHandler: function(eventBus, address, handler) {
-					waitForOpen(eventBus, function() {
+					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().registerHandler(address, handler);
 					});
 				},
@@ -1578,7 +1653,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				unregisterHandler: function(eventBus, address, handler) {
-					waitForOpen(eventBus, function() {
+					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().unregisterHandler(address, handler);
 					});
 				},

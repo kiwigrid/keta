@@ -43,6 +43,9 @@ angular.module('keta.services.DeviceSet',
 				// internal params object
 				var params = {};
 				
+				// internal set object
+				var set = {};
+				
 				/**
 				 * @name filter
 				 * @function
@@ -183,6 +186,72 @@ angular.module('keta.services.DeviceSet',
 				};
 				
 				/**
+				 * @name live
+				 * @function
+				 * @memberOf DeviceSetInstance
+				 * @description
+				 * <p>
+				 *   Adds live update capabilities by registering a DeviceSetListener.
+				 * </p>
+				 * @returns {promise}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(DeviceSet) {
+				 *         DeviceSet.create(eventBus)
+				 *             .live()
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 */
+				that.live = function() {
+					
+					// generate UUID
+					var liveHandlerUUID = 'CLIENT_' + EventBusDispatcher.generateUUID();
+					
+					// register handler under created UUID
+					EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
+						
+						// process event using sync
+						api.sync(set, DeviceEvent.create(event.type, event.value));
+						
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.event([event], $log.ADVANCED_FORMATTER);
+						}
+						
+					});
+					
+					// register device set listener
+					EventBusDispatcher.send(eventBus, 'devices', {
+						action: 'registerDeviceSetListener',
+						body: {
+							deviceFilter: params.filter,
+							deviceProjection: params.projection,
+							replyAddress: liveHandlerUUID
+						}
+					}, function(reply) {
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.request([{
+								action: 'registerDeviceSetListener',
+								body: {
+									deviceFilter: params.filter,
+									deviceProjection: params.projection,
+									replyAddress: liveHandlerUUID
+								}
+							}, reply], $log.ADVANCED_FORMATTER);
+						}
+					});
+					
+					return that;
+				};
+				
+				/**
 				 * @name query
 				 * @function
 				 * @memberOf DeviceSetInstance
@@ -224,6 +293,9 @@ angular.module('keta.services.DeviceSet',
 									angular.forEach(reply.result.items, function(item, index) {
 										reply.result.items[index] = Device.create(eventBus, item);
 									});
+									set = reply;
+								} else {
+									set = {};
 								}
 								
 								// log if in debug mode
