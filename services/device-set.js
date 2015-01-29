@@ -471,16 +471,28 @@ angular.module('keta.services.DeviceSet',
 				 *     });
 				 */
 				sync: function(set, event) {
+					
+					var modified = false;
+					
 					if (event.getType() === DeviceEvent.CREATED) {
 						set.result.items.push(event.getDevice());
+						modified = true;
 					} else if (event.getType() === DeviceEvent.DELETED) {
 						set.result.items.splice(api.indexOf(set, event.getDevice()), 1);
+						modified = true;
 					} else if (event.getType() === DeviceEvent.UPDATED) {
 						var index = api.indexOf(set, event.getDevice());
 						if (index !== -1) {
 							angular.extend(api.get(set, index), event.getDevice());
+							modified = true;
 						}
 					}
+					
+					// trigger scope digest if anything was modified and not automatically triggered
+					if (modified && !$rootScope.$$phase) {
+						$rootScope.$apply();
+					}
+					
 				}
 				
 			};
