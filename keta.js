@@ -4,6 +4,1486 @@
  * keta 0.3.0
  */
 
+// source: dist/directives/extended-table.js
+/**
+ * @name keta.directives.ExtendedTable
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.ExtendedTable
+ * @description
+ * <p>
+ *   A table directive with extended functionality as column sorting, column customizing, paging
+ *   and filtering.
+ * </p>
+ * <p>
+ *   Basic principle is the usage of optional parameters and callbacks, which offer a really
+ *   flexible API for customizing the table to you very own needs.
+ * </p>
+ * @example
+ * &lt;div data-extended-table
+ *     data-rows="rows"
+ *     data-label-add-column="labelAddColumn"
+ *     data-disabledComponents="disabledComponents"
+ *     data-switchable-columns="switchableColumns"
+ *     data-visible-columns="visibleColumns"
+ *     data-header-label-callback="headerLabelCallback"
+ *     data-operations-mode="operationsMode"
+ *     data-row-sort-enabled="rowSortEnabled"
+ *     data-row-sort-criteria="rowSortCriteria"
+ *     data-row-sort-order-ascending="rowSortOrderAscending"
+ *     data-action-list="actionList"
+ *     data-cell-renderer="cellRenderer"
+ *     data-column-class-callback="columnClassCallback"
+ *     data-pager="pager"
+ *     data-search="search"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.ExtendedTable'])
+ *     .controller('ExampleController', function($scope, ketaSharedConfig) {
+ *         
+ *         // data as array of objects, keys from first element are taken as headers
+ *         $scope.rows = [{
+ *             guid: 'guid-1',
+ *             idName: 'Device 1',
+ *             stateDevice: 'OK',
+ *             deviceClass: 'class-1'
+ *         }, {
+ *             guid: 'guid-2',
+ *             idName: 'Device 2',
+ *             stateDevice: 'ERROR',
+ *             deviceClass: 'class-2'
+ *         }, {
+ *             guid: 'guid-3',
+ *             idName: 'Device 3',
+ *             stateDevice: 'FATAL',
+ *             deviceClass: 'class-3'
+ *         }];
+ *
+ *         $scope.labelAddColumn = 'add col:';
+ *
+ *         // array of disabled components (empty by default)
+ *         $scope.disabledComponents = [
+ *             // the table itself
+ *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.TABLE,
+ *             // an input field to search throughout the full dataset
+ *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.FILTER,
+ *             // a selector to add columns to table
+ *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.SELECTOR,
+ *             // a pager to navigate through paged data
+ *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER
+ *         ];
+ *         
+ *         // array of switchable columns (empty by default)
+ *         // together with selector component the given columns can be remove from
+ *         // table and added to table afterwards
+ *         $scope.switchableColumns = ['deviceClass'];
+ *         
+ *         // array of visible columns (full by default)
+ *         // use this property to filter out columns like primary keys
+ *         $scope.visibleColumns = ['idName', 'stateDevice', 'deviceClass'];
+ *         
+ *         // callback method to specify header labels (instead of using auto-generated ones)
+ *         $scope.headerLabelCallback = function(column) {
+ *             var mappings = {
+ *                 idName: 'Name',
+ *                 stateDevice: 'State',
+ *                 deviceClass: 'Device Class'
+ *             };
+ *             return (angular.isDefined(mappings[column])) ? mappings[column] : column;
+ *         };
+ *         
+ *         // operations mode ("view" for frontend or "data" for backend)
+ *         // by defining operations mode as "view" the directive itself manages sorting,
+ *         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
+ *         // dataset by querying a backend, you have to use "data"
+ *         $scope.operationsMode = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
+ *         
+ *         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
+ *         $scope.rowSortEnabled = true;
+ *         
+ *         // criteria to sort for as string
+ *         $scope.rowSortCriteria = 'idName';
+ *         
+ *         // boolean flag to determine if sort order is ascending (true by default)
+ *         $scope.rowSortOrderAscending = true;
+ *         
+ *         // array of actions to render for each row
+ *         // getLink method will be used to construct a link with the help of the row object,
+ *         // label is used as value for title-tag,
+ *         // icon is used as icon-class for visualizing the action
+ *         $scope.actionList = [{
+ *             getLink: function(row) {
+ *                 return 'edit/' + row.guid;
+ *             },
+ *             label: 'Edit',
+ *             icon: 'glyphicon glyphicon-pencil'
+ *         }, {
+ *             getLink: function(row) {
+ *                 return 'remove/' + row.guid;
+ *             },
+ *             label: 'Remove',
+ *             icon: 'glyphicon glyphicon-remove'
+ *         }];
+ *         
+ *         // callback method to render each cell individually
+ *         // with the help of this method you can overwrite default cell rendering behavior,
+ *         // e.g. suppressing output for stateDevice property
+ *         $scope.cellRenderer = function(row, column) {
+ *             var value = angular.isDefined(row[column]) ? row[column] : null;
+ *             if (column === 'stateDevice') {
+ *                 value = '';
+ *             }
+ *             return value;
+ *         };
+ *         
+ *         // callback method to return class attribute for each column
+ *         // in this example together with cellRenderer the deviceState column is
+ *         // expressed as just a table data element with css classes
+ *         $scope.columnClassCallback = function(row, column, isHeader) {
+ *             var columnClass = '';
+ *             if (column === 'stateDevice') {
+ *                 columnClass = 'state';
+ *                 if (row.state === ketaSharedConfig.STATE.OK && !isHeader) {
+ *                     columnClass+= ' state-success';
+ *                 }
+ *                 if (row.state === ketaSharedConfig.STATE.ERROR && !isHeader) {
+ *                     columnClass+= ' state-warning';
+ *                 }
+ *                 if (row.state === ketaSharedConfig.STATE.FATAL && !isHeader) {
+ *                     columnClass+= ' state-danger';
+ *                 }
+ *             }
+ *             return columnClass;
+ *         };
+ *         
+ *         // object for pager configuration (total, limit, offset)
+ *         // with this configuration object you are able to manage paging
+ *         // total is the total number of rows in the dataset
+ *         // limit is the number of rows shown per page
+ *         // offset is the index in the dataset to start from
+ *         var pager = {};
+ *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.TOTAL] = $scope.allRows.length;
+ *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT] = 5;
+ *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET] = 0;
+ *         $scope.pager = pager;
+ *         
+ *         // search term to filter the table
+ *         // as two-way-binded property this variable contains the search string
+ *         // typed by the user in the frontend and can therefor be used for querying
+ *         // the backend, if watched here additionally
+ *         $scope.search = null;
+ *         
+ *     });
+ * 
+ */
+angular.module('keta.directives.ExtendedTable',
+	[
+		'ngSanitize',
+		'keta.shared',
+		'keta.filters.OrderObjectBy',
+		'keta.filters.Slice'
+	])
+	
+	.directive('extendedTable', function ExtendedTableDirective($compile, $filter, ketaSharedConfig) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				
+				// data as array of objects, keys from first element are taken as headers
+				rows: '=',
+
+				// label prefixed to selector-component
+				labelAddColumn: '=?',
+				
+				// array of disabled components (empty by default)
+				disabledComponents: '=?',
+				
+				// array of switchable columns (empty by default)
+				switchableColumns: '=?',
+				
+				// array of visible columns (full by default)
+				visibleColumns: '=?',
+				
+				// callback method to specify header labels (instead of using auto-generated ones)
+				headerLabelCallback: '=?',
+				
+				// operations mode ("view" for frontend or "data" for backend)
+				operationsMode: '=?',
+				
+				// boolean flag to enable or disable row sorting in frontend
+				rowSortEnabled: '=?',
+				
+				// criteria to sort for as string
+				rowSortCriteria: '=?',
+				
+				// boolean flag to enable ascending sort order for rows
+				rowSortOrderAscending: '=?',
+				
+				// array of actions to render for each row
+				actionList: '=?',
+				
+				// callback method to render each cell individually
+				cellRenderer: '=?',
+				
+				// callback method to return class attribute for each column
+				columnClassCallback: '=?',
+				
+				// object for pager configuration (total, limit, offset)
+				pager: '=?',
+				
+				// search term to filter the table
+				search: '=?'
+				
+			},
+			templateUrl: '/components/directives/extended-table.html',
+			controller: function($scope) {
+				
+				// CONSTANTS ---
+				
+				$scope.COMPONENTS_FILTER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.FILTER;
+				$scope.COMPONENTS_SELECTOR = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.SELECTOR;
+				$scope.COMPONENTS_TABLE = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.TABLE;
+				$scope.COMPONENTS_PAGER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER;
+				
+				$scope.OPERATIONS_MODE_DATA = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.DATA;
+				$scope.OPERATIONS_MODE_VIEW = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
+				
+				$scope.PAGER_TOTAL = ketaSharedConfig.EXTENDED_TABLE.PAGER.TOTAL;
+				$scope.PAGER_LIMIT = ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT;
+				$scope.PAGER_OFFSET = ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET;
+				
+				// HELPER ---
+				
+				var inArray = function(array, key) {
+					var found = false;
+					angular.forEach(array, function(item) {
+						if (item === key) {
+							found = true;
+						}
+					});
+					return found;
+				};
+
+				$scope.labelAddColumn = $scope.labelAddColumn || 'Add column';
+				
+				// CALLBACKS ---
+				
+				// headers to save
+				$scope.headers =
+					(angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
+						$scope.rows[0] : {};
+				
+				// disabledComponents
+				$scope.disabledComponents = $scope.disabledComponents || [
+					$scope.COMPONENTS_FILTER,
+					$scope.COMPONENTS_SELECTOR,
+					$scope.COMPONENTS_PAGER
+				];
+				
+				$scope.isDisabled = function(key) {
+					return inArray($scope.disabledComponents, key);
+				};
+				
+				// switchableColumns
+				$scope.switchableColumns = $scope.switchableColumns || [];
+				
+				$scope.isSwitchable = function(key) {
+					return inArray($scope.switchableColumns, key);
+				};
+				
+				// visibleColumns
+				$scope.visibleColumns =
+					$scope.visibleColumns ||
+					((angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
+						Object.keys($scope.rows[0]) : []);
+				
+				// headerLabelCallback
+				$scope.headerLabelCallback = $scope.headerLabelCallback || function(column) {
+					return column;
+				};
+				
+				// operationsMode
+				$scope.operationsMode = $scope.operationsMode || $scope.OPERATIONS_MODE_VIEW;
+				
+				// rowSortEnabled
+				$scope.rowSortEnabled =
+					(angular.isDefined($scope.rowSortEnabled)) ?
+						$scope.rowSortEnabled : false;
+				
+				// rowSortCriteria
+				$scope.rowSortCriteria =
+					$scope.rowSortCriteria ||
+					((angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
+						Object.keys($scope.rows[0])[0] : null);
+				
+				$scope.isSortCriteria = function(key) {
+					var criteria =
+						(angular.isDefined($scope.rowSortCriteria)) ?
+							$scope.rowSortCriteria : null;
+					if (criteria !== null && (criteria[0] === '+' || criteria[0] === '-')) {
+						criteria = criteria.substr(1);
+					}
+					return (key === criteria);
+				};
+				
+				// rowSortOrderAscending
+				$scope.rowSortOrderAscending =
+					(angular.isDefined($scope.rowSortOrderAscending)) ?
+						$scope.rowSortOrderAscending : true;
+				
+				// actionList
+				$scope.actionList = $scope.actionList || [];
+				
+				// cellRenderer
+				$scope.cellRenderer = $scope.cellRenderer || function(row, column) {
+					return angular.isDefined(row[column]) ? row[column] : null;
+				};
+				
+				// columnClassCallback
+				$scope.columnClassCallback = $scope.columnClassCallback || function() {
+					// parameters: row, column, isHeader
+					return '';
+				};
+				
+				// pager
+				var defaultPager = {};
+				defaultPager[$scope.PAGER_TOTAL] = angular.isArray($scope.rows) ? $scope.rows.length : 0;
+				defaultPager[$scope.PAGER_LIMIT] = angular.isArray($scope.rows) ? $scope.rows.length : 0;
+				defaultPager[$scope.PAGER_OFFSET] = 0;
+				$scope.pager = $scope.pager || defaultPager;
+				$scope.pages = [];
+				$scope.currentPage = 0;
+				
+				var resetPager = function() {
+					if (angular.isDefined($scope.pager) && ($scope.pager !== null)) {
+						
+						// update pager
+						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
+							var rows = $scope.rows || [];
+							var rowsLength = $filter('filter')(rows, $scope.search).length;
+							$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
+							if ($scope.pager[$scope.PAGER_OFFSET] > rowsLength - 1) {
+								$scope.pager[$scope.PAGER_OFFSET] = 0;
+							}
+						}
+						
+						// determine array of pages
+						if (angular.isNumber($scope.pager[$scope.PAGER_TOTAL]) &&
+							angular.isNumber($scope.pager[$scope.PAGER_LIMIT])) {
+							$scope.pages = [];
+							var numOfPages = Math.ceil($scope.pager[$scope.PAGER_TOTAL] / $scope.pager[$scope.PAGER_LIMIT]);
+							for (var i = 0; i < numOfPages; i++) {
+								$scope.pages.push(i + 1);
+							}
+						}
+						
+						// determine current page
+						if (angular.isNumber($scope.pager[$scope.PAGER_LIMIT]) &&
+							angular.isNumber($scope.pager[$scope.PAGER_OFFSET])) {
+							$scope.currentPage =
+								Math.floor($scope.pager[$scope.PAGER_OFFSET] / $scope.pager[$scope.PAGER_LIMIT]) + 1;
+						}
+						
+					}
+				};
+				
+				$scope.$watch('pager', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						resetPager();
+					}
+				}, true);
+				
+				$scope.$watch('search', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						resetPager();
+					}
+				});
+				
+				resetPager();
+				
+				// search
+				$scope.search = $scope.search || null;
+				
+				// ACTIONS ---
+				
+				$scope.sortBy = function(column) {
+					if ($scope.rowSortEnabled && $scope.headerLabelCallback(column) !== null) {
+						if ($scope.rowSortCriteria === column) {
+							$scope.rowSortOrderAscending = !$scope.rowSortOrderAscending;
+						} else {
+							$scope.rowSortCriteria = column;
+						}
+					}
+				};
+				
+				$scope.selectedColumn = null;
+				
+				var resetSelectedColumn = function() {
+					var possibleColumns = $filter('filter')($scope.switchableColumns, $scope.filterColumns);
+					if (!inArray(possibleColumns, $scope.selectedColumn)) {
+						$scope.selectedColumn = (angular.isDefined(possibleColumns[0])) ? possibleColumns[0] : null;
+					}
+				};
+				
+				$scope.$watch('switchableColumns.length', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						resetSelectedColumn();
+					}
+				});
+				
+				$scope.filterColumns = function(column) {
+					return !inArray($scope.visibleColumns, column);
+				};
+				
+				$scope.addColumn = function(column) {
+					$scope.visibleColumns.push(column);
+					resetSelectedColumn();
+				};
+				
+				$scope.removeColumn = function(column) {
+					var columns = [];
+					angular.forEach($scope.visibleColumns, function(col) {
+						if (col !== column) {
+							columns.push(col);
+						}
+					});
+					$scope.visibleColumns = columns;
+					resetSelectedColumn();
+				};
+				
+				$scope.goToPage = function(page) {
+					$scope.pager[$scope.PAGER_OFFSET] = $scope.pager[$scope.PAGER_LIMIT] * (page - 1);
+					resetPager();
+				};
+				
+			}
+		};
+	});
+
+// prepopulate template cache
+angular.module('keta.directives.ExtendedTable')
+	.run(function($templateCache) {
+		$templateCache.put('/components/directives/extended-table.html', '<div data-ng-class="{' +
+'	\'keta-extended-table\': true' +
+'}">' +
+'' +
+'	<div class="row">' +
+'		<div class="col-xs-12 col-sm-6">' +
+'		' +
+'			<!-- FILTER -->' +
+'			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
+'				<div class="form-group form-inline">' +
+'					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
+'						<input type="text" class="form-control" placeholder="Search" data-ng-model="search">' +
+'						<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>' +
+'					</div>' +
+'				</div>' +
+'			</div>' +
+'			' +
+'		</div>' +
+'		<div class="col-xs-12 col-sm-6 pull-right">' +
+'			' +
+'			<!-- SELECTOR -->' +
+'			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
+'				<div class="form-group form-inline pull-right" data-ng-show="selectedColumn !== null">' +
+'					<label for="columnSelector">{{ labelAddColumn }}</label>' +
+'					<select id="columnSelector" class="form-control"' +
+'						data-ng-model="selectedColumn"' +
+'						data-ng-options="' +
+'							column as headerLabelCallback(column) for column in switchableColumns |' +
+'							filter:filterColumns">' +
+'					</select>' +
+'					<button type="button" class="btn btn-primary" data-ng-click="addColumn(selectedColumn)">' +
+'						<i class="glyphicon glyphicon-plus"></i>' +
+'					</button>' +
+'				</div>' +
+'				<div class="form-group form-inline pull-right">' +
+'					<span class="form-group-label">&nbsp;</span>' +
+'				</div>' +
+'			</div>' +
+'			' +
+'		</div>' +
+'	</div>' +
+'	' +
+'	<!-- TABLE -->' +
+'	<table class="table table-striped" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
+'		<thead>' +
+'			<tr>' +
+'				<th class="{{columnClassCallback(headers, column, true)}}"' +
+'					data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'					data-ng-if="rowSortEnabled">' +
+'					<a class="header" data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
+'					<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
+'						<span class="glyphicon glyphicon-chevron-up"></span>' +
+'					</a>' +
+'					<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
+'						<span class="glyphicon glyphicon-chevron-down"></span>' +
+'					</a>' +
+'					<span data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
+'						class="glyphicon glyphicon-resize-vertical"></span>' +
+'					<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
+'						<span class="glyphicon glyphicon-minus"></span>' +
+'					</a>' +
+'				</th>' +
+'				<th class="{{columnClassCallback(headers, column, true)}}"' +
+'					data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'					data-ng-if="!rowSortEnabled">' +
+'					{{headerLabelCallback(column)}}' +
+'					<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
+'						<span class="glyphicon glyphicon-minus"></span>' +
+'					</a>' +
+'				</th>' +
+'				<th data-ng-if="actionList.length">' +
+'					{{headerLabelCallback(\'actions\')}}' +
+'				</th>' +
+'			</tr>' +
+'		</thead>' +
+'		<tbody>' +
+'			<!-- operationsMode: data -->' +
+'			<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
+'				data-ng-repeat="row in rows">' +
+'				<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
+'					class="{{columnClassCallback(row, column, false)}}">' +
+'					<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'				</td>' +
+'				<td data-ng-if="actionList.length">' +
+'					<ul class="list-inline list-inline-icons">' +
+'						<li data-ng-repeat="item in actionList">' +
+'							<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
+'								<span class="{{item.icon}}"></span>' +
+'							</a>' +
+'						</li>' +
+'					</ul>' +
+'				</td>' +
+'			</tr>' +
+'			<!-- operationsMode: view -->' +
+'			<tr data-ng-if="operationsMode === OPERATIONS_MODE_VIEW"' +
+'				data-ng-repeat="' +
+'					row in rows |' +
+'					filter:search |' +
+'					orderBy:rowSortCriteria:!rowSortOrderAscending |' +
+'					slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
+'				<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
+'					class="{{columnClassCallback(row, column, false)}}">' +
+'					<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'				</td>' +
+'				<td data-ng-if="actionList.length">' +
+'					<ul class="list-inline list-inline-icons">' +
+'						<li data-ng-repeat="item in actionList">' +
+'							<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
+'								<span class="{{item.icon}}"></span>' +
+'							</a>' +
+'						</li>' +
+'					</ul>' +
+'				</td>' +
+'			</tr>' +
+'		</tbody>' +
+'	</table>' +
+'	' +
+'	<!-- PAGER -->' +
+'	<div data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
+'		<div class="btn-group" role="group">' +
+'			<button type="button"' +
+'				data-ng-repeat="page in pages"' +
+'				data-ng-click="goToPage(page)"' +
+'				data-ng-class="{' +
+'					\'btn\': true,' +
+'					\'btn-default\': true,' +
+'					\'btn-primary\': page === currentPage' +
+'				}">{{page}}</button>' +
+'		</div>' +
+'	</div>' +
+'	' +
+'</div>');
+	});
+
+// source: dist/directives/main-menu.js
+/**
+ * @name keta.directives.MainMenu
+ * @author Jan Uhlmann <jan.uhlmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.MainMenu
+ * @description
+ * <p>
+ *   Main menu with marking of currently active menu-entry. The menu can be nested (maximum 3 levels) with automatic
+ *   expand/fold functionality.
+ * </p>
+ * @example
+ * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.MainMenu'])
+ *     .controller('ExampleController', function($scope) {
+ *         
+ *         // menu object to use as input for directive
+ *         $scope.menuConfiguration = {
+ *             items: [{
+ *                 name: 'Dashboard',
+ *                 link: '/dashboard',
+ *                 icon: 'signal'
+ *             }, {
+ *                 name: 'Applications',
+ *                 icon: 'th-large',
+ *                 items: [{
+ *                     name: 'Application 1',
+ *                     link: '/applications/1'
+ *                 }, {
+ *                     name: 'All Apps',
+ *                     items: [{
+ *                         name: 'Application 2',
+ *                         link: '/applications/2'
+ *                     }, {
+ *                         name: 'Application 3',
+ *                         link: '/applications/3'
+ *                     }]
+ *                 }]
+ *             }],
+ *             compactMode: false
+ *         };
+ *         
+ *     });
+ */
+angular.module('keta.directives.MainMenu', [])
+	.directive('mainMenu', function MainMenuDirective($location) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '='
+			},
+			templateUrl: '/components/directives/main-menu.html',
+			link: function(scope) {
+				scope.compactMode = (angular.isDefined(scope.configuration.compactMode)) ?
+					scope.configuration.compactMode : false;
+	
+				function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {
+					for (var i = 1; i < currentMenuLevelParts.length; i++) {
+						if (currentMenuLevelParts[i] !== locationLevelParts[i]) {
+							activeFlag = false;
+						}
+					}
+					return activeFlag;
+				}
+				
+				scope.isActive = function(menuEntry) {
+					var currentMenuLevelParts = menuEntry.link.split('/');
+					var locationLevelParts = $location.path().split('/');
+					var isActive = true;
+	
+					if (scope.compactMode === true) {
+						return currentMenuLevelParts[1] === locationLevelParts[1];
+					}
+					
+					// Menu-entries with sub-entries have another active-class
+					// to visualize the breadcrumb-path (in normal menu mode, see function isActiveParent)
+					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+						return false;
+					}
+					
+					isActive = checkPaths(currentMenuLevelParts, locationLevelParts, isActive);
+					return isActive;
+				};
+				
+				scope.isActiveParent = function(menuEntry) {
+					var currentMenuLevelParts = menuEntry.link.split('/');
+					var locationLevelParts = $location.path().split('/');
+					var isActiveParent = false;
+					
+					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+						isActiveParent = true;
+						isActiveParent = checkPaths(currentMenuLevelParts, locationLevelParts, isActiveParent);
+					}
+					return isActiveParent;
+				};
+				
+				scope.checkExpand = function(menuEntry, $event) {
+					// trigger expand-functionality only when navigation is shown in tablet/desktop mode
+					if (scope.compactMode === false) {
+						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+							// prevent route-redirect when clicking an expand-menu-entry
+							$event.preventDefault();
+							if (angular.isUndefined(menuEntry.expanded) || (menuEntry.expanded === false)) {
+								menuEntry.expanded = true;
+							} else {
+								menuEntry.expanded = !menuEntry.expanded;
+							}
+						}
+					// compact mode
+					} else {
+						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+							// Redirect to first sub-entry because the parent-route should
+							// not be accessible directly.
+							$event.preventDefault();
+							$location.path(menuEntry.items[0].link);
+						}
+					}
+				};
+				
+			}
+		};
+	});
+
+// prepopulate template cache
+angular.module('keta.directives.MainMenu')
+	.run(function($templateCache) {
+		$templateCache.put('/components/directives/main-menu.html', '<ul data-ng-class="{' +
+'	\'nav\': true,' +
+'	\'nav-pills\': true,' +
+'	\'nav-stacked\': true,' +
+'	\'nav-extended\': !compactMode,' +
+'	\'nav-compact\': compactMode,' +
+'	\'keta-main-menu\': true' +
+'}">' +
+'	<li data-ng-repeat="entry in configuration.items"' +
+'		data-ng-class="{' +
+'			\'active\': isActive(entry),' +
+'			\'active-parent\': isActiveParent(entry)' +
+'		}">' +
+'		<a data-ng-href="#{{ entry.link }}" data-ng-click="checkExpand(entry, $event)"' +
+'		   title="{{ compactMode ? entry.name : \'\' }}">' +
+'			<span class="glyphicon glyphicon-{{ entry.icon }}"></span>' +
+'			<span class="list-item" data-ng-if="!compactMode">{{ entry.name }}</span>' +
+'			<span class="expander glyphicon"' +
+'				data-ng-if="entry.items && !compactMode"' +
+'				data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
+'			</span>' +
+'		</a>' +
+'		<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entry.expanded && !compactMode">' +
+'			<li data-ng-repeat="entryLevel2 in entry.items"' +
+'				data-ng-class="{' +
+'					\'active\': isActive(entryLevel2),' +
+'					\'active-parent\': isActiveParent(entryLevel2)' +
+'				}">' +
+'				<a data-ng-href="#{{ entryLevel2.link }}" data-ng-click="checkExpand(entryLevel2, $event)">' +
+'					<span data-ng-if="!compactMode">{{ entryLevel2.name }}</span>' +
+'					<span class="expander glyphicon"' +
+'						data-ng-if="entryLevel2.items && !compactMode"' +
+'						data-ng-class="{ \'glyphicon-minus\': entryLevel2.expanded, \'glyphicon-plus\': !entryLevel2.expanded }">' +
+'					</span>' +
+'				</a>' +
+'				<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entryLevel2.expanded && !compactMode">' +
+'					<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
+'						data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
+'						<a data-ng-href="#{{ entryLevel3.link }}">' +
+'							<span data-ng-if="!compactMode">{{ entryLevel3.name }}</span>' +
+'						</a>' +
+'					</li>' +
+'				</ul>' +
+'			</li>' +
+'		</ul>' +
+'	</li>' +
+'</ul>');
+	});
+
+// source: dist/directives/sidebar.js
+/**
+ * @name keta.directives.Sidebar
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.Sidebar
+ * @description
+ * <p>
+ *   Sidebar with expand/fold functionality, configurable position and toggle area label.
+ * </p>
+ * @example
+ * &lt;div data-sidebar data-configuration="{position: 'left', label: 'Fold'}"&gt;&lt;/div&gt;
+ */
+angular.module('keta.directives.Sidebar',
+	[
+		'keta.shared'
+	])
+	
+	.directive('sidebar', function SidebarDirective($document, ketaSharedConfig) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '='
+			},
+			templateUrl: '/components/directives/sidebar.html',
+			transclude: true,
+			link: function(scope, element) {
+				
+				// set default values
+				scope.configuration.position =
+					angular.isDefined(scope.configuration.position) ?
+						scope.configuration.position :
+						ketaSharedConfig.SIDEBAR.POSITION_LEFT;
+				
+				// flag for showing toggle area in sidebar
+				scope.showToggleArea = angular.isDefined(scope.configuration.label);
+				scope.toggleAreaTop = 0;
+				scope.transcludeTop = 0;
+				
+				// get body element to toggle css classes
+				var bodyElem = angular.element(document).find('body');
+
+				// toggle css class on body element
+				scope.toggleSideBar = function() {
+					bodyElem.toggleClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+				};
+
+				// close open sidebars if location change starts
+				scope.$on('$locationChangeStart', function() {
+					bodyElem.removeClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+				});
+				
+				// if sidebars are toggled from outside toggle css class on body element
+				var toggleBodyClass = function(position) {
+					if (scope.configuration.position === position) {
+						bodyElem.toggleClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+					}
+				};
+				
+				// sidebar left
+				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT, function() {
+					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_LEFT);
+				});
+				
+				// sidebar right
+				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT, function() {
+					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_RIGHT);
+				});
+
+				// position toggle area according to height of brand bar
+				if (scope.showToggleArea) {
+
+					// determine brand bar height
+					var brandBarElem = bodyElem[0].getElementsByClassName(ketaSharedConfig.SIDEBAR.CSS_BRAND_BAR);
+					var brandBarHeight = angular.isDefined(brandBarElem[0]) ? brandBarElem[0].clientHeight : 0;
+					
+					scope.toggleAreaTop = brandBarHeight + ketaSharedConfig.SIDEBAR.TOGGLE_AREA_OFFSET;
+					scope.transcludeTop = ketaSharedConfig.SIDEBAR.TRANSCLUDE_OFFSET;
+					
+				}
+				
+				// close on click outside
+				$document.bind('click', function(event) {
+					if (bodyElem.hasClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position)) {
+						var sideBarHtml = element.html(),
+							targetElementHtml = angular.element(event.target).html();
+						if (sideBarHtml.indexOf(targetElementHtml) !== -1) {
+							return;
+						}
+						scope.toggleSideBar();
+					}
+				});
+				
+			}
+		};
+	});
+
+// prepopulate template cache
+angular.module('keta.directives.Sidebar')
+	.run(function($templateCache) {
+		$templateCache.put('/components/directives/sidebar.html', '<div class="sidebar-offcanvas sidebar-{{configuration.position}} keta-sidebar">' +
+'	<div class="sidebar-inner">' +
+'		' +
+'		<!-- extended navigation -->' +
+'		<ul class="nav nav-pills nav-stacked nav-extended nav-extended-toggle"' +
+'			data-ng-if="showToggleArea" data-ng-style="{marginTop: toggleAreaTop + \'px\'}">' +
+'			<li>' +
+'				<a href="" data-ng-click="toggleSideBar()">' +
+'					<span class="glyphicon glyphicon-align-justify"></span>' +
+'					<span>{{ configuration.label }}</span>' +
+'				</a>' +
+'			</li>' +
+'		</ul>' +
+'		' +
+'		<!-- compact navigation -->' +
+'		<ul class="nav nav-pills nav-stacked nav-compact nav-compact-toggle"' +
+'			data-ng-if="showToggleArea">' +
+'			<li>' +
+'				<a href="" data-ng-click="toggleSideBar()">' +
+'					<span class="glyphicon glyphicon-align-justify"></span>' +
+'				</a>' +
+'			</li>' +
+'		</ul>' +
+'		' +
+'		<!--  transcluded content -->' +
+'		<div data-ng-transclude class="sidebar-transclude" data-ng-style="{marginTop: transcludeTop + \'px\'}"></div>' +
+'		' +
+'	</div>' +
+'</div>');
+	});
+
+// source: dist/directives/world-bar.js
+/**
+ * @name keta.directives.WorldBar
+ * @author Jan Uhlmann <jan.uhlmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.WorldBar
+ * @description
+ * <p>
+ *   Horizontal bar with multiple menus (world switcher, user navigation, language switcher,
+ *   notification toggle-button).<br>
+ *   All menus (except world switcher) can be hidden by boolean attributes.
+ * </p>
+ * @example
+ * &lt;div data-world-bar data-configuration="worldBarConfig"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.WorldBar'])
+ *     .controller('ExampleController', function($scope) {
+ * 
+ *         // world bar configuration object
+ *         $scope.worldBarConfig = {
+ *             contextSwitcher: {
+ *                 worlds: {
+ *                     items: [{
+ *                         name: 'Desktop',
+ *                         link: 'https://cloud.mycompany.com'
+ *                     }, {
+ *                         name: 'Market',
+ *                         link: 'https://market.mycompany.com'
+ *                     }, {
+ *                         name: 'Service',
+ *                         link: 'https://service.mycompany.com'
+ *                     }]
+ *                 },
+ *                 apps: {
+ *                     labels: {
+ *                         allApps: 'Alle Apps'
+ *                     },
+ *                     hidden: false,
+ *                     items: [{
+ *                         name: 'Smart Power Control',
+ *                         link: 'https://smartpowercontrol.mycompany.com'
+ *                     }, {
+ *                         name: 'Tag-App',
+ *                         link: 'https://tagapp.mycompany.com'
+ *                     }, {
+ *                         name: 'My Monitor',
+ *                         link: 'https://mymonitor.mycompany.com'
+ *                     }, {
+ *                         name: 'Anoter App',
+ *                         link: 'https://anotherapp.mycompany.com'
+ *                     }]
+ *                 }
+ *             },
+ *             userMenu: {
+ *                 labels: {
+ *                     userProfile: 'Benutzerkonto',
+ *                     logout: 'Logout'
+ *                 },
+ *                 profile: {
+ *                     login: 'max.mustermann',
+ *                     firstName: 'Max',
+ *                     lastName: 'Mustermann'
+ *                 },
+ *                 additionalItems: [{
+ *                     name: 'Share on Facebook',
+ *                     link: 'https://www.facebook.com'
+ *                 }]
+ *             },
+ *             energyManagerMenu: {
+ *                 labels: {
+ *                     allEnergyManagers: 'Alle Energy-Manager'
+ *                 },
+ *                 items: [{
+ *                     name: 'ERC02-000001051',
+ *                     link: 'http://192.168.125.81'
+ *                 }]
+ *             },
+ *             languageMenu: {
+ *                 items: [{
+ *                     name: 'Deutsch',
+ *                     nameShort: 'DE',
+ *                     code: 'de'
+ *                 }, {
+ *                     name: 'English',
+ *                     nameShort: 'EN',
+ *                     code: 'en-UK'
+ *                 }]
+ *             }
+ *         };
+ *     });
+ */
+angular.module('keta.directives.WorldBar',
+	[
+		'keta.shared'
+	])
+	
+	.directive('worldBar', function WorldBarDirective(ketaSharedConfig, $rootScope, $document, ketaSharedFactory) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '=?'
+			},
+			templateUrl: '/components/directives/world-bar.html',
+			link: function(scope, element) {
+				
+				// TODO: instead of configuring full content, configure eventBusId to use to gather data
+				
+				scope.configuration = scope.configuration || {};
+				
+				scope.allAppsLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'contextSwitcher.apps.labels.allApps') ?
+						scope.configuration.contextSwitcher.apps.labels.allApps : 'All Apps';
+
+				scope.allEnergyManagersLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'energyManagerMenu.labels.allEnergyManagers') ?
+						scope.configuration.energyManagerMenu.labels.allEnergyManagers : 'All Energy-Managers';
+
+				scope.userProfileLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.userProfile') ?
+						scope.configuration.userMenu.labels.userProfile : 'User Profile';
+
+				scope.logoutUserLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.logout') ?
+						scope.configuration.userMenu.labels.logout : 'Logout';
+				
+				// type constants used in ng-repeats orderBy filter
+				scope.TYPES = {
+					APPS: 'APPS',
+					ENERGY_MANAGER: 'ENERGY_MANAGER'
+				};
+
+				// limit constants used in ng-repeats limit filter
+				scope.LIMITS = {
+					APPS: 3,
+					ENERGY_MANAGER: 3
+				};
+
+				// order predicates and reverse flags
+				var PREDICATES = {
+					APPS: {
+						field: 'name',
+						reverse: false
+					},
+					ENERGY_MANAGER: {
+						field: 'name',
+						reverse: false
+					}
+				};
+
+				scope.order = function(type) {
+					var field = (angular.isDefined(PREDICATES[type])) ? PREDICATES[type].field : 'name';
+					return function(item) {
+						return (angular.isDefined(item[field])) ? item[field] : '';
+					};
+				};
+
+				scope.reverse = function(type) {
+					return (angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse)) ?
+						PREDICATES[type].reverse : false;
+				};
+
+				var menuReferenceObject = {
+					activeEntry: null,
+					isOpen: false
+				};
+
+				function useFirstEntryAsActive(menuName, subKey) {
+					// use first entry as active entry for demonstration
+					// TODO: replace by real logic to determine active entry
+					if (angular.isDefined(scope.configuration) &&
+						angular.isDefined(scope.configuration[menuName])) {
+						if (angular.isDefined(scope.configuration[menuName].items) &&
+							angular.isDefined(scope.configuration[menuName].items[0])) {
+							scope[menuName].activeEntry = scope.configuration[menuName].items[0];
+						} else if (angular.isDefined(scope.configuration[menuName][subKey]) &&
+							angular.isDefined(scope.configuration[menuName][subKey].items) &&
+							angular.isDefined(scope.configuration[menuName][subKey].items[0])) {
+							scope[menuName].activeEntry = scope.configuration[menuName][subKey].items[0];
+						}
+					}
+				}
+
+				function initMenus() {
+					scope.contextSwitcher = angular.copy(menuReferenceObject);
+					useFirstEntryAsActive(
+						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER,
+						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER_WORLDS
+					);
+					scope.userMenu = angular.copy(menuReferenceObject);
+					scope.energyManagerMenu = angular.copy(menuReferenceObject);
+					scope.settingsMenu = angular.copy(menuReferenceObject);
+					scope.languageMenu = angular.copy(menuReferenceObject);
+					useFirstEntryAsActive(ketaSharedConfig.WORLD_BAR.ENTRY_LANGUAGE_MENU);
+				}
+
+				initMenus();
+
+				scope.toggleSidebar = function($event, position) {
+					$event.stopPropagation();
+					if (position === ketaSharedConfig.SIDEBAR.POSITION_LEFT) {
+						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT);
+					} else if (position === ketaSharedConfig.SIDEBAR.POSITION_RIGHT) {
+						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT);
+					}
+				};
+
+				scope.additionalUserItemsConfigured = function() {
+					return (angular.isDefined(scope.configuration) &&
+						angular.isDefined(scope.configuration.userMenu) &&
+						angular.isDefined(scope.configuration.userMenu.additionalItems) &&
+						scope.configuration.userMenu.additionalItems.length > 0);
+				};
+
+				scope.isOpen = function(menuName) {
+					return (angular.isDefined(scope[menuName])) ? scope[menuName].isOpen : null;
+				};
+
+				scope.isActive = function(menuName, entry) {
+					return (angular.isDefined(scope[menuName]) && (scope[menuName].activeEntry === entry));
+				};
+
+				function closeAllMenus() {
+					scope.contextSwitcher.isOpen = false;
+					scope.userMenu.isOpen = false;
+					scope.energyManagerMenu.isOpen = false;
+					scope.settingsMenu.isOpen = false;
+					scope.languageMenu.isOpen = false;
+				}
+
+				scope.toggleOpenState = function(menuName) {
+					if (angular.isDefined(scope[menuName])) {
+						var currentState = angular.copy(scope[menuName].isOpen);
+						closeAllMenus();
+						if (currentState === scope[menuName].isOpen) {
+							scope[menuName].isOpen = !scope[menuName].isOpen;
+						}
+					}
+				};
+
+				scope.$on('$locationChangeStart', function() {
+					closeAllMenus();
+				});
+
+				// close menus when user clicks anywhere outside
+				$document.bind('click', function(event) {
+					var worldBarHtml = element.html(),
+						targetElementHtml = angular.element(event.target).html();
+					if (worldBarHtml.indexOf(targetElementHtml) !== -1) {
+						return;
+					}
+					closeAllMenus();
+					scope.$digest();
+				});
+			}
+		};
+	});
+
+// prepopulate template cache
+angular.module('keta.directives.WorldBar')
+	.run(function($templateCache) {
+		$templateCache.put('/components/directives/world-bar.html', '<div class="container-fluid keta-world-bar">' +
+'	<ul class="nav navbar-nav">' +
+'		<li class="menu-navbar">' +
+'			<a href="" data-ng-click="toggleSidebar($event, \'left\')">' +
+'				<span class="glyphicon glyphicon-align-justify"></span>' +
+'			</a>' +
+'		</li>' +
+'		<li class="dropdown context-switcher" data-ng-class="{ open: isOpen(\'contextSwitcher\') }">' +
+'			<a href="" data-ng-click="toggleOpenState(\'contextSwitcher\')">' +
+'				{{ contextSwitcher.activeEntry.name }}' +
+'				<span class="caret"></span>' +
+'			</a>' +
+'			<ul class="dropdown-menu">' +
+'				<li data-ng-repeat="entry in configuration.contextSwitcher.worlds.items"' +
+'					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'				<li class="divider"	data-ng-if="' +
+'					configuration.contextSwitcher.apps.items.length > 0 &&' +
+'					!configuration.contextSwitcher.apps.hidden"></li>' +
+'				<li data-ng-if="!configuration.contextSwitcher.apps.hidden"' +
+'					data-ng-repeat="' +
+'						entry in configuration.contextSwitcher.apps.items |' +
+'						orderBy:order(TYPES.APPS):reverse(TYPES.APPS) |' +
+'						limitTo:LIMITS.APPS"' +
+'					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'				<li data-ng-if="' +
+'					configuration.contextSwitcher.apps.items.length > LIMITS.APPS &&' +
+'					!configuration.contextSwitcher.apps.hidden">' +
+'					<a data-ng-href="#/applications">{{ allAppsLabel }}</a>' +
+'				</li>' +
+'			</ul>' +
+'		</li>' +
+'	</ul>' +
+'	<ul class="nav navbar-nav navbar-right">' +
+'		<!-- large version (> 767px) -->' +
+'		<li class="dropdown hidden-xs user-menu" data-ng-class="{ open: isOpen(\'userMenu\') }">' +
+'			<a href="" data-ng-click="toggleOpenState(\'userMenu\')">' +
+'				<span class="glyphicon glyphicon-user"></span>' +
+'				<span class="hidden-xs hidden-sm hidden-md">' +
+'					{{ configuration.userMenu.profile.firstName }} {{ configuration.userMenu.profile.lastName }}' +
+'				</span>' +
+'				<span class="caret"></span>' +
+'			</a>' +
+'			<ul class="dropdown-menu dropdown-menu-right">' +
+'				<li>' +
+'					<a data-ng-href="/users/profile/{{configuration.userMenu.profile.login}}">{{ userProfileLabel }}</a>' +
+'				</li>' +
+'				<li>' +
+'					<a data-ng-href="/users/logout">{{ logoutUserLabel }}</a>' +
+'				</li>' +
+'				<li class="divider" data-ng-if="additionalUserItemsConfigured()"></li>' +
+'				<li data-ng-repeat="entry in configuration.userMenu.additionalItems"' +
+'					data-ng-class="{ active: isActive(\'userMenu\', entry) }">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'			</ul>' +
+'		</li>' +
+'		<li class="dropdown hidden-xs energy-manager-menu" data-ng-class="{ open: isOpen(\'energyManagerMenu\') }"' +
+'			data-ng-if="configuration.energyManagerMenu.items.length">' +
+'			<a href="" data-ng-click="toggleOpenState(\'energyManagerMenu\')">' +
+'				<span class="glyphicon glyphicon-tasks"></span>' +
+'				<span class="hidden-xs hidden-sm hidden-md">' +
+'					Energy-Manager' +
+'				</span>' +
+'				<span class="caret"></span>' +
+'				<span class="badge" data-ng-if="configuration.energyManagerMenu.items.length > 0">' +
+'					{{configuration.energyManagerMenu.items.length}}' +
+'				</span>' +
+'			</a>' +
+'			<ul class="dropdown-menu dropdown-menu-right">' +
+'				<li data-ng-repeat="' +
+'					entry in configuration.energyManagerMenu.items |' +
+'					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
+'					limitTo:LIMITS.ENERGY_MANAGER">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'				<li>' +
+'					<a data-ng-href="#/devices?class=com.kiwigrid.device.EnergyManager">{{ allEnergyManagersLabel }}</a>' +
+'				</li>' +
+'			</ul>' +
+'		</li>' +
+'		<li class="dropdown hidden-xs language-menu" data-ng-class="{ open: isOpen(\'languageMenu\') }"' +
+'			data-ng-if="configuration.languageMenu.items.length">' +
+'			<a href="" data-ng-click="toggleOpenState(\'languageMenu\')">' +
+'				<span class="glyphicon glyphicon-flag" title="{{ languageMenu.activeEntry.name }}"></span>' +
+'				<span class="hidden-sm hidden-md hidden-xs">{{ languageMenu.activeEntry.nameShort }}</span>' +
+'				<span class="caret"></span>' +
+'			</a>' +
+'			<ul class="dropdown-menu dropdown-menu-right">' +
+'				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
+'					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
+'					<a data-ng-href="{{ entry.code }}">{{ entry.name }}</a>' +
+'				</li>' +
+'			</ul>' +
+'		</li>' +
+'		<!-- collapsed version (< 768px) -->' +
+'		<li class="dropdown visible-xs settings-menu" data-ng-class="{ open: isOpen(\'settingsMenu\') }">' +
+'			<a href="" data-ng-click="toggleOpenState(\'settingsMenu\')">' +
+'				<span class="glyphicon glyphicon-th-large"></span>' +
+'				<span class="caret"></span>' +
+'			</a>' +
+'			<ul class="dropdown-menu dropdown-menu-right">' +
+'				<li>' +
+'					<a data-ng-href="/users/profile/{{configuration.userMenu.profile.login}}">{{ userProfileLabel }}</a>' +
+'				</li>' +
+'				<li>' +
+'					<a data-ng-href="/users/logout">{{ logoutUserLabel }}</a>' +
+'				</li>' +
+'				<li data-ng-repeat="entry in configuration.userMenu.additionalItems"' +
+'					data-ng-class="{ active: isActive(\'userMenu\', entry) }">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'				<li class="divider" data-ng-if="configuration.energyManagerMenu.items.length"></li>' +
+'				<li data-ng-repeat="' +
+'					entry in configuration.energyManagerMenu.items |' +
+'					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
+'					limitTo:LIMITS.ENERGY_MANAGER">' +
+'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				</li>' +
+'				<li>' +
+'					<a data-ng-href="#/devices?class=com.kiwigrid.device.EnergyManager">{{ allEnergyManagersLabel }}</a>' +
+'				</li>' +
+'				<li class="divider" data-ng-if="configuration.languageMenu.items.length"></li>' +
+'				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
+'					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
+'					<a data-ng-href="{{ entry.code }}">{{ entry.name }}</a>' +
+'				</li>' +
+'			</ul>' +
+'		</li>' +
+'		<li>' +
+'			<a href="" data-ng-click="toggleSidebar($event, \'right\')" class="toggleRightSidebarButton">' +
+'				<span class="glyphicon glyphicon-bell" title="Notifications"></span>' +
+'				<span class="hidden-sm hidden-md hidden-xs"></span>' +
+'			</a>' +
+'		</li>' +
+'	</ul>' +
+'</div>');
+	});
+
+// source: dist/filters/order-object-by.js
+/**
+ * @name keta.filters.OrderObjectBy
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.OrderObjectBy
+ * @description
+ * <p>
+ *   A filter to extract <code>limit</code> elements beginning at <code>offset</code>
+ *   out of an array.
+ * </p>
+ * @example
+ * {{ row | orderObjectBy:['col1', 'col2'] }}
+ * {{ row | orderObjectBy:['col1', 'col2']:true }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.OrderObjectBy'])
+ *     .controller('ExampleController', function($scope) {
+ *         
+ *         // return object values in given order (all other values are dismissed)
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
+ *         
+ *         // return object keys in given order (all other keys are dismissed)
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
+ *         
+ *     });
+ */
+angular.module('keta.filters.OrderObjectBy', [])
+	.filter('orderObjectBy', function() {
+		return function(input, order, returnKey) {
+			
+			if (!angular.isObject(input)) {
+				return input;
+			}
+			
+			returnKey = returnKey || false;
+			
+			var fields = [];
+			
+			// default sort order
+			if (!angular.isDefined(order) || order === null) {
+				angular.forEach(input, function(value, key) {
+					if (key.indexOf('$') !== 0) {
+						fields.push(key);
+					}
+				});
+			} else {
+				fields = order;
+			}
+			
+			// sort by fields
+			var sorted = [];
+			
+			angular.forEach(fields, function(field) {
+				if (angular.isDefined(input[field])) {
+					sorted.push((returnKey) ? field : input[field]);
+				}
+			});
+			
+			return sorted;
+		};
+	});
+
+// source: dist/filters/slice.js
+/**
+ * @name keta.filters.Slice
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.Slice
+ * @description
+ * <p>
+ *   A filter to extract <code>limit</code> elements beginning at <code>offset</code>
+ *   out of an array.
+ * </p>
+ * @example
+ * {{ rows | slice:0:5 }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.Slice'])
+ *     .controller('ExampleController', function($scope) {
+ *         
+ *         // extract 5 elements starting at offset 0
+ *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
+ *         
+ *     });
+ */
+angular.module('keta.filters.Slice', [])
+	.filter('slice', function() {
+		return function(arr, offset, limit) {
+			if (!angular.isDefined(arr) || !angular.isArray(arr)) {
+				arr = [];
+			}
+			if (!angular.isDefined(offset) || !angular.isNumber(offset)) {
+				offset = 0;
+			}
+			if (!angular.isDefined(limit) || !angular.isNumber(limit)) {
+				limit = arr.length;
+			}
+			return arr.slice(offset, offset + limit);
+		};
+	});
+
+// source: dist/filters/unit.js
+/**
+ * @name keta.filters.Unit
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.Unit
+ * @description
+ * <p>
+ *   A filter using SI prefixes to format numeric values.
+ * </p>
+ * @example
+ * {{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.Unit'])
+ *     .controller('ExampleController', function($scope) {
+ *         
+ *         $scope.value = $filter('unit')(1234.56, {unit: 'W', precision: 1, isBytes: false});
+ *         
+ *     });
+ */
+angular.module('keta.filters.Unit', [])
+	.filter('unit', function($filter, ketaSharedConfig) {
+		return function(input, configuration) {
+			
+			var precision = 0,
+				unit = '',
+				isBytes = false;
+			
+			if (angular.isDefined(configuration)) {
+				precision = angular.isNumber(configuration.precision) ? configuration.precision : precision;
+				unit = angular.isDefined(configuration.unit) ? configuration.unit : unit;
+				isBytes = angular.isDefined(configuration.isBytes) ? configuration.isBytes : isBytes;
+			}
+			
+			if (input === 0) {
+				precision = 0;
+			}
+			
+			var sizes = (isBytes) ? ['Bytes', 'KB', 'MB', 'GB', 'TB'] : ['', 'k', 'M', 'G', 'T'];
+			
+			if (unit === ketaSharedConfig.UNITS.EURO ||
+				unit === ketaSharedConfig.UNITS.KILOMETER ||
+				unit === ketaSharedConfig.UNITS.DOLLAR ||
+				unit === ketaSharedConfig.UNITS.POUND) {
+				return $filter('number')(input, precision) + ' ' + unit;
+			}
+			
+			if (angular.isNumber(input)) {
+				var multiplicator = (input < 0) ? -1 : 1;
+				var oneKiloByte = 1024;
+				var oneKilo = 1000;
+				var parseBase = 10;
+				input = input * multiplicator;
+				if (input >= 1) {
+					var i = parseInt(
+						Math.floor(Math.log(input) / Math.log((isBytes) ? oneKiloByte : oneKilo)),
+						parseBase
+					);
+					input = $filter('number')(
+						(input / Math.pow((isBytes) ? oneKiloByte : oneKilo, i)) * multiplicator,
+						precision
+					);
+					input += ' ' + sizes[i];
+				} else {
+					input = $filter('number')(input, precision) + ' ' + sizes[0];
+				}
+				if (!isBytes) {
+					input += unit;
+				}
+			}
+			
+			return input.trim();
+		};
+	});
+
 // source: dist/services/access-token.js
 /**
  * @name keta.services.AccessToken
@@ -2643,5 +4123,106 @@ angular.module('keta.services.Tag', [])
 			return api;
 			
 		};
+		
+	});
+
+// source: dist/shared.js
+/**
+ * @name keta.shared
+ * @author Jan Uhlmann <jan.uhlmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.shared
+ * @description Constants for cross-component relations (e.g. events, translation file namings, ...)
+ */
+
+angular.module('keta.shared', [])
+
+	.constant('ketaSharedConfig', {
+		EVENTS: {
+			TOGGLE_SIDEBAR_LEFT: 'TOGGLE_SIDEBAR_LEFT',
+			TOGGLE_SIDEBAR_RIGHT: 'TOGGLE_SIDEBAR_RIGHT'
+		},
+		STATE: {
+			OK: 'OK',
+			ERROR: 'ERROR',
+			FATAL: 'FATAL'
+		},
+		UNITS: {
+			WATTS: 'W',
+			WATTHOURS: 'Wh',
+			PERCENT: '%',
+			EURO: '€',
+			DOLLAR: '$',
+			POUND: '£',
+			KILOMETER: 'km'
+		},
+		SIDEBAR: {
+			POSITION_LEFT: 'left',
+			POSITION_RIGHT: 'right',
+			CSS_OFFCANVAS: 'offcanvas',
+			CSS_BRAND_BAR: 'brand-bar',
+			TOGGLE_AREA_OFFSET: 5,
+			TRANSCLUDE_OFFSET: 15
+		},
+		WORLD_BAR: {
+			CSS_CONTEXT_SWITCHER: 'context-switcher',
+			ENTRY_CONTEXT_SWITCHER: 'contextSwitcher',
+			ENTRY_CONTEXT_SWITCHER_WORLDS: 'worlds',
+			ENTRY_CONTEXT_SWITCHER_MANAGERS: 'managers',
+			ENTRY_CONTEXT_SWITCHER_APPS: 'apps',
+			ENTRY_USER_MENU: 'userMenu',
+			ENTRY_LANGUAGE_MENU: 'languageMenu'
+		},
+		EXTENDED_TABLE: {
+			COMPONENTS: {
+				TABLE: 'table',
+				FILTER: 'filter',
+				SELECTOR: 'selector',
+				PAGER: 'pager'
+			},
+			OPERATIONS_MODE: {
+				DATA: 'data',
+				VIEW: 'view'
+			},
+			PAGER: {
+				TOTAL: 'total',
+				LIMIT: 'limit',
+				OFFSET: 'offset'
+			}
+		}
+	})
+	
+	/**
+	 * @class ketaSharedFactory
+	 * @propertyOf keta.shared
+	 * @description Shared utility methods
+	 */
+	.factory('ketaSharedFactory', function ketaSharedFactory() {
+		
+		var factory = {};
+		
+		/**
+		 * @name doesPropertyExist
+		 * @function
+		 * @memberOf ketaSharedFactory
+		 * @description This method checks, if a deep property does exist in the given object.
+		 * @param {object} obj object to check property for
+		 * @param {string} prop property given in dot notation
+		 * @returns {boolean}
+		 */
+		factory.doesPropertyExist = function(obj, prop) {
+			var parts = prop.split('.');
+			for (var i = 0, l = parts.length; i < l; i++) {
+				var part = parts[i];
+				if (obj !== null && typeof obj === 'object' && part in obj) {
+					obj = obj[part];
+				} else {
+					return false;
+				}
+			}
+			return true;
+		};
+		
+		return factory;
 		
 	});
