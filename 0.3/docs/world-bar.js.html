@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: directives/world-bar.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+	
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+	
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.3.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="ExtendedTable.html">ExtendedTable</a></li><li><a href="MainMenu.html">MainMenu</a></li><li><a href="Sidebar.html">Sidebar</a></li><li><a href="WorldBar.html">WorldBar</a></li><li><a href="OrderObjectBy.html">OrderObjectBy</a></li><li><a href="Slice.html">Slice</a></li><li><a href="Unit.html">Unit</a></li><li><a href="shared.html">shared</a></li><li><a href="AccessToken_.html">AccessToken</a></li><li><a href="AppContext_.html">AppContext</a></li><li><a href="Device_.html">Device</a></li><li><a href="DeviceEvent_.html">DeviceEvent</a></li><li><a href="DeviceSet_.html">DeviceSet</a></li><li><a href="EventBus_.html">EventBus</a></li><li><a href="EventBusDispatcher_.html">EventBusDispatcher</a></li><li><a href="EventBusManager_.html">EventBusManager</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Tag.html">Tag</a></li><li><a href="TagSet.html">TagSet</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="AccessToken.html">AccessToken</a></li><li><a href="AppContext.html">AppContext</a></li><li><a href="AppContextProvider.html">AppContextProvider</a></li><li><a href="Device.html">Device</a></li><li><a href="DeviceEvent.html">DeviceEvent</a></li><li><a href="DeviceEventInstance.html">DeviceEventInstance</a></li><li><a href="DeviceEventProvider.html">DeviceEventProvider</a></li><li><a href="DeviceInstance.html">DeviceInstance</a></li><li><a href="DeviceProvider.html">DeviceProvider</a></li><li><a href="DeviceSet.html">DeviceSet</a></li><li><a href="DeviceSetInstance.html">DeviceSetInstance</a></li><li><a href="DeviceSetProvider.html">DeviceSetProvider</a></li><li><a href="EventBus.html">EventBus</a></li><li><a href="EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="EventBusDispatcherProvider.html">EventBusDispatcherProvider</a></li><li><a href="EventBusManager.html">EventBusManager</a></li><li><a href="EventBusManagerProvider.html">EventBusManagerProvider</a></li><li><a href="EventBusProvider.html">EventBusProvider</a></li><li><a href="ketaSharedFactory.html">ketaSharedFactory</a></li><li><a href="LoggerConfig.html">LoggerConfig</a></li><li><a href="LoggerDecorator.html">LoggerDecorator</a></li><li><a href="Tag_.html">Tag</a></li><li><a href="TagInstance.html">TagInstance</a></li><li><a href="TagProvider.html">TagProvider</a></li><li><a href="TagSet_.html">TagSet</a></li><li><a href="TagSetInstance.html">TagSetInstance</a></li><li><a href="TagSetProvider.html">TagSetProvider</a></li></ul>
+		</nav>
+	</div>
+	
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: directives/world-bar.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.directives.WorldBar
+ * @author Jan Uhlmann &lt;jan.uhlmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.WorldBar
+ * @description
+ * &lt;p>
+ *   Horizontal bar with multiple menus (world switcher, user navigation, language switcher,
+ *   notification toggle-button).&lt;br>
+ *   All menus (except world switcher) can be hidden by boolean attributes.
+ * &lt;/p>
+ * @example
+ * &lt;div data-world-bar data-configuration="worldBarConfig"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.WorldBar'])
+ *     .controller('ExampleController', function($scope) {
+ * 
+ *         // world bar configuration object
+ *         $scope.worldBarConfig = {
+ *             contextSwitcher: {
+ *                 worlds: {
+ *                     items: [{
+ *                         name: 'Desktop',
+ *                         link: 'https://cloud.mycompany.com'
+ *                     }, {
+ *                         name: 'Market',
+ *                         link: 'https://market.mycompany.com'
+ *                     }, {
+ *                         name: 'Service',
+ *                         link: 'https://service.mycompany.com'
+ *                     }]
+ *                 },
+ *                 apps: {
+ *                     labels: {
+ *                         allApps: 'Alle Apps'
+ *                     },
+ *                     hidden: false,
+ *                     items: [{
+ *                         name: 'Smart Power Control',
+ *                         link: 'https://smartpowercontrol.mycompany.com'
+ *                     }, {
+ *                         name: 'Tag-App',
+ *                         link: 'https://tagapp.mycompany.com'
+ *                     }, {
+ *                         name: 'My Monitor',
+ *                         link: 'https://mymonitor.mycompany.com'
+ *                     }, {
+ *                         name: 'Anoter App',
+ *                         link: 'https://anotherapp.mycompany.com'
+ *                     }]
+ *                 }
+ *             },
+ *             userMenu: {
+ *                 labels: {
+ *                     userProfile: 'Benutzerkonto',
+ *                     logout: 'Logout'
+ *                 },
+ *                 profile: {
+ *                     login: 'max.mustermann',
+ *                     firstName: 'Max',
+ *                     lastName: 'Mustermann'
+ *                 },
+ *                 additionalItems: [{
+ *                     name: 'Share on Facebook',
+ *                     link: 'https://www.facebook.com'
+ *                 }]
+ *             },
+ *             energyManagerMenu: {
+ *                 labels: {
+ *                     allEnergyManagers: 'Alle Energy-Manager'
+ *                 },
+ *                 items: [{
+ *                     name: 'ERC02-000001051',
+ *                     link: 'http://192.168.125.81'
+ *                 }]
+ *             },
+ *             languageMenu: {
+ *                 items: [{
+ *                     name: 'Deutsch',
+ *                     nameShort: 'DE',
+ *                     code: 'de'
+ *                 }, {
+ *                     name: 'English',
+ *                     nameShort: 'EN',
+ *                     code: 'en-UK'
+ *                 }]
+ *             }
+ *         };
+ *     });
+ */
+angular.module('keta.directives.WorldBar',
+	[
+		'keta.shared'
+	])
+	
+	.directive('worldBar', function WorldBarDirective(ketaSharedConfig, $rootScope, $document, ketaSharedFactory) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '=?'
+			},
+			templateUrl: '/components/directives/world-bar.html',
+			link: function(scope, element) {
+				
+				// TODO: instead of configuring full content, configure eventBusId to use to gather data
+				
+				scope.configuration = scope.configuration || {};
+				
+				scope.allAppsLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'contextSwitcher.apps.labels.allApps') ?
+						scope.configuration.contextSwitcher.apps.labels.allApps : 'All Apps';
+
+				scope.allEnergyManagersLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'energyManagerMenu.labels.allEnergyManagers') ?
+						scope.configuration.energyManagerMenu.labels.allEnergyManagers : 'All Energy-Managers';
+
+				scope.userProfileLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.userProfile') ?
+						scope.configuration.userMenu.labels.userProfile : 'User Profile';
+
+				scope.logoutUserLabel =
+					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.logout') ?
+						scope.configuration.userMenu.labels.logout : 'Logout';
+				
+				// type constants used in ng-repeats orderBy filter
+				scope.TYPES = {
+					APPS: 'APPS',
+					ENERGY_MANAGER: 'ENERGY_MANAGER'
+				};
+
+				// limit constants used in ng-repeats limit filter
+				scope.LIMITS = {
+					APPS: 3,
+					ENERGY_MANAGER: 3
+				};
+
+				// order predicates and reverse flags
+				var PREDICATES = {
+					APPS: {
+						field: 'name',
+						reverse: false
+					},
+					ENERGY_MANAGER: {
+						field: 'name',
+						reverse: false
+					}
+				};
+
+				scope.order = function(type) {
+					var field = (angular.isDefined(PREDICATES[type])) ? PREDICATES[type].field : 'name';
+					return function(item) {
+						return (angular.isDefined(item[field])) ? item[field] : '';
+					};
+				};
+
+				scope.reverse = function(type) {
+					return (angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse)) ?
+						PREDICATES[type].reverse : false;
+				};
+
+				var menuReferenceObject = {
+					activeEntry: null,
+					isOpen: false
+				};
+
+				function useFirstEntryAsActive(menuName, subKey) {
+					// use first entry as active entry for demonstration
+					// TODO: replace by real logic to determine active entry
+					if (angular.isDefined(scope.configuration) &&
+						angular.isDefined(scope.configuration[menuName])) {
+						if (angular.isDefined(scope.configuration[menuName].items) &&
+							angular.isDefined(scope.configuration[menuName].items[0])) {
+							scope[menuName].activeEntry = scope.configuration[menuName].items[0];
+						} else if (angular.isDefined(scope.configuration[menuName][subKey]) &&
+							angular.isDefined(scope.configuration[menuName][subKey].items) &&
+							angular.isDefined(scope.configuration[menuName][subKey].items[0])) {
+							scope[menuName].activeEntry = scope.configuration[menuName][subKey].items[0];
+						}
+					}
+				}
+
+				function initMenus() {
+					scope.contextSwitcher = angular.copy(menuReferenceObject);
+					useFirstEntryAsActive(
+						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER,
+						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER_WORLDS
+					);
+					scope.userMenu = angular.copy(menuReferenceObject);
+					scope.energyManagerMenu = angular.copy(menuReferenceObject);
+					scope.settingsMenu = angular.copy(menuReferenceObject);
+					scope.languageMenu = angular.copy(menuReferenceObject);
+					useFirstEntryAsActive(ketaSharedConfig.WORLD_BAR.ENTRY_LANGUAGE_MENU);
+				}
+
+				initMenus();
+
+				scope.toggleSidebar = function($event, position) {
+					$event.stopPropagation();
+					if (position === ketaSharedConfig.SIDEBAR.POSITION_LEFT) {
+						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT);
+					} else if (position === ketaSharedConfig.SIDEBAR.POSITION_RIGHT) {
+						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT);
+					}
+				};
+
+				scope.additionalUserItemsConfigured = function() {
+					return (angular.isDefined(scope.configuration) &&
+						angular.isDefined(scope.configuration.userMenu) &&
+						angular.isDefined(scope.configuration.userMenu.additionalItems) &&
+						scope.configuration.userMenu.additionalItems.length > 0);
+				};
+
+				scope.isOpen = function(menuName) {
+					return (angular.isDefined(scope[menuName])) ? scope[menuName].isOpen : null;
+				};
+
+				scope.isActive = function(menuName, entry) {
+					return (angular.isDefined(scope[menuName]) && (scope[menuName].activeEntry === entry));
+				};
+
+				function closeAllMenus() {
+					scope.contextSwitcher.isOpen = false;
+					scope.userMenu.isOpen = false;
+					scope.energyManagerMenu.isOpen = false;
+					scope.settingsMenu.isOpen = false;
+					scope.languageMenu.isOpen = false;
+				}
+
+				scope.toggleOpenState = function(menuName) {
+					if (angular.isDefined(scope[menuName])) {
+						var currentState = angular.copy(scope[menuName].isOpen);
+						closeAllMenus();
+						if (currentState === scope[menuName].isOpen) {
+							scope[menuName].isOpen = !scope[menuName].isOpen;
+						}
+					}
+				};
+
+				scope.$on('$locationChangeStart', function() {
+					closeAllMenus();
+				});
+
+				// close menus when user clicks anywhere outside
+				$document.bind('click', function(event) {
+					var worldBarHtml = element.html(),
+						targetElementHtml = angular.element(event.target).html();
+					if (worldBarHtml.indexOf(targetElementHtml) !== -1) {
+						return;
+					}
+					closeAllMenus();
+					scope.$digest();
+				});
+			}
+		};
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+	
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
