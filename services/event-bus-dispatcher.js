@@ -35,9 +35,11 @@ angular.module('keta.services.EventBusDispatcher',
 			 */
 			var waitForOpen = function(eventBus, replied, success, error) {
 				
+				var timeout = null;
+				
 				// set timeout
 				if (replied) {
-					$timeout(function() {
+					timeout = $timeout(function() {
 						error();
 					}, eventBus.getConfig().requestTimeout * 1000);
 				}
@@ -56,10 +58,16 @@ angular.module('keta.services.EventBusDispatcher',
 						if (angular.isFunction(onopen)) {
 							onopen();
 						}
+						if (timeout !== null) {
+							$timeout.cancel(timeout);
+						}
 						success();
 					};
 					
 				} else {
+					if (timeout !== null) {
+						$timeout.cancel(timeout);
+					}
 					success();
 				}
 				
