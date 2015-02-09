@@ -12,7 +12,8 @@
  *   All menus (except world switcher) can be hidden by boolean attributes.
  * </p>
  * @example
- * &lt;div data-world-bar data-configuration="worldBarConfig"&gt;&lt;/div&gt;
+ * &lt;div data-world-bar data-configuration="worldBarConfig"
+ *   data-switch-lang-callback="languageSwitched(lang)"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.WorldBar'])
  *     .controller('ExampleController', function($scope) {
@@ -88,6 +89,11 @@
  *                 }]
  *             }
  *         };
+ *
+ *         $rootScope.languageSwitched = function(lang) {
+ *             // execute switch to given language (app-specific task)
+ *             $rootScope.currentLang = lang;
+ *         };
  *     });
  */
 angular.module('keta.directives.WorldBar',
@@ -100,10 +106,17 @@ angular.module('keta.directives.WorldBar',
 			restrict: 'EA',
 			replace: true,
 			scope: {
-				configuration: '=?'
+				configuration: '=?',
+				switchLangCallback: '&'
 			},
 			templateUrl: '/components/directives/world-bar.html',
 			link: function(scope, element) {
+
+				scope.switchLanguage = function(entry) {
+					scope.switchLangCallback({lang: entry.code});
+					scope.languageMenu.activeEntry = entry;
+					closeAllMenus();
+				};
 				
 				// TODO: instead of configuring full content, configure eventBusId to use to gather data
 				
@@ -354,7 +367,7 @@ angular.module('keta.directives.WorldBar')
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
 '					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
-'					<a data-ng-href="{{ entry.code }}">{{ entry.name }}</a>' +
+'					<a href="" data-ng-click="switchLanguage(entry)">{{ entry.name }}</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -388,7 +401,7 @@ angular.module('keta.directives.WorldBar')
 '				<li class="divider" data-ng-if="configuration.languageMenu.items.length"></li>' +
 '				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
 '					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
-'					<a data-ng-href="{{ entry.code }}">{{ entry.name }}</a>' +
+'					<a href="" data-ng-click="switchLanguage(entry)">{{ entry.name }}</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
