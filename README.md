@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.3.1
+
+_Released: 2015-02-09_
+
+* Bugfix for response timeout fired although request was successful
+
 ## Version 0.3.0
 
 _Released: 2015-02-09_
