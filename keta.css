@@ -952,7 +952,7 @@ hr {
   margin-top: 20px;
   margin-bottom: 20px;
   border: 0;
-  border-top: 1px solid #fbfbfb;
+  border-top: 1px solid transparent;
 }
 .sr-only {
   position: absolute;
@@ -2033,12 +2033,8 @@ th {
   font-size: 12px;
   background: #ffffff;
 }
-th.sortable {
-  cursor: pointer;
-}
 .table {
   width: 100%;
-  margin-bottom: 20px;
 }
 .table > thead > tr > th,
 .table > tbody > tr > th,
@@ -2714,11 +2710,13 @@ fieldset[disabled] .btn {
   cursor: not-allowed;
   -webkit-box-shadow: none;
   box-shadow: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
 }
 .btn-default {
   color: #ffffff;
-  background-color: #787878;
-  border-color: #5f5f5f;
+  background-color: #bababa;
+  border-color: #a1a1a1;
 }
 .btn-default:hover,
 .btn-default:focus,
@@ -2727,8 +2725,8 @@ fieldset[disabled] .btn {
 .btn-default.active,
 .open > .dropdown-toggle.btn-default {
   color: #ffffff;
-  background-color: #5f5f5f;
-  border-color: #404040;
+  background-color: #a1a1a1;
+  border-color: #828282;
 }
 .btn-default:active,
 .btn-default.active,
@@ -2753,11 +2751,11 @@ fieldset[disabled] .btn-default:active,
 .btn-default.disabled.active,
 .btn-default[disabled].active,
 fieldset[disabled] .btn-default.active {
-  background-color: #787878;
-  border-color: #5f5f5f;
+  background-color: #bababa;
+  border-color: #a1a1a1;
 }
 .btn-default .badge {
-  color: #787878;
+  color: #bababa;
   background-color: #ffffff;
 }
 .btn-primary {
@@ -2991,6 +2989,7 @@ fieldset[disabled] .btn-danger.active {
   cursor: pointer;
   border-radius: 0;
   text-transform: none;
+  padding: 0px 10px !important;
 }
 .btn-link,
 .btn-link:active,
@@ -3277,9 +3276,7 @@ tbody.collapse.in {
 .btn-toolbar > .btn-group + .btn-group {
   margin-left: 5px;
 }
-.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
-  border-radius: 0;
-  margin-left: 1px;
+.btn-group > .btn:not(.dropdown-toggle) {
   margin-right: 1px;
 }
 .btn-group > .btn:first-child {
@@ -4357,7 +4354,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination > li > a:focus,
 .pagination > li > span:focus {
   color: #9aab2b;
-  background-color: #fbfbfb;
+  background-color: #eeeeee;
   border-color: #dddddd;
 }
 .pagination > .active > a,
@@ -4378,7 +4375,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination > .disabled > a,
 .pagination > .disabled > a:hover,
 .pagination > .disabled > a:focus {
-  color: #ffffff;
+  color: #e1e1e1;
   background-color: #ffffff;
   border-color: #dddddd;
   cursor: not-allowed;
@@ -4433,7 +4430,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pager li > a:hover,
 .pager li > a:focus {
   text-decoration: none;
-  background-color: #fbfbfb;
+  background-color: #eeeeee;
 }
 .pager .next > a,
 .pager .next > span {
@@ -4447,7 +4444,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pager .disabled > a:hover,
 .pager .disabled > a:focus,
 .pager .disabled > span {
-  color: #ffffff;
+  color: #e1e1e1;
   background-color: #ffffff;
   cursor: not-allowed;
 }
@@ -6393,6 +6390,11 @@ h2 .label {
   -ms-user-select: none;
   user-select: none;
 }
+.toggle[disabled],
+.toggle.disabled {
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+}
 .toggle[disabled] .toggle-label,
 .toggle.disabled .toggle-label {
   cursor: not-allowed;
@@ -6882,14 +6884,25 @@ body {
   padding-left: 5px;
   padding-right: 5px;
 }
-.stepper .stepper-input {
+.button-form label {
+  float: left;
+  padding-top: 5px;
+  padding-right: 5px;
+}
+.button-form .stepper-input {
   height: 29px;
   border-left: 0;
   border-right: 0;
   border-radius: 0;
 }
-.stepper .stepper-buttons > .btn {
+.button-form .stepper-buttons > .btn {
   height: 29px;
+}
+.button-form .add-select {
+  height: 29px;
+}
+.button-form select {
+  padding-top: 1px;
 }
 .tags {
   display: inline-block;
@@ -7284,6 +7297,36 @@ a.bg-yellow:hover {
 }
 a.bg-blue:hover {
   background-color: #325a91;
+}
+.table-data .table-pager {
+  text-align: right;
+}
+.table-data .table-info {
+  color: #787878;
+  padding-top: 5px;
+}
+.table-data .table-action {
+  padding: 8px 0px;
+}
+.table-data th.sortable {
+  cursor: pointer;
+}
+.table-data th .unsort span {
+  color: #bababa;
+}
+.table-data th.sort * {
+  color: #acbf30 !important;
+}
+.table-data th span {
+  color: #acbf30;
+}
+.table-data th a,
+.table-data th a:hover {
+  text-decoration: none;
+  color: #363636;
+}
+.table-data th span {
+  padding-left: 3px;
 }
 @font-face {
   font-family: 'Droid Sans';

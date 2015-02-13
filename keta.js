@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.3.0
+ * keta 0.3.2
  */
 
 // source: dist/directives/extended-table.js
@@ -57,9 +57,12 @@
  *             stateDevice: 'FATAL',
  *             deviceClass: 'class-3'
  *         }];
- *
- *         $scope.labelAddColumn = 'add col:';
- *
+ *         
+ *         // object of labels
+ *         $scope.labels = {
+ *             ADD_COLUMN: 'add col:'
+ *         };
+ *         
  *         // array of disabled components (empty by default)
  *         $scope.disabledComponents = [
  *             // the table itself
@@ -191,9 +194,9 @@ angular.module('keta.directives.ExtendedTable',
 				
 				// data as array of objects, keys from first element are taken as headers
 				rows: '=',
-
+				
 				// label prefixed to selector-component
-				labelAddColumn: '=?',
+				labels: '=?',
 				
 				// array of disabled components (empty by default)
 				disabledComponents: '=?',
@@ -236,6 +239,84 @@ angular.module('keta.directives.ExtendedTable',
 				
 			},
 			templateUrl: '/components/directives/extended-table.html',
+			link: function(scope) {
+				
+				// object of labels
+				var defaultLabels = {
+					ADD_COLUMN: 'Add column'
+				};
+				scope.labels = angular.extend(defaultLabels, scope.labels);
+				
+				// headers to save
+				scope.headers =
+					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						scope.rows[0] : {};
+						
+				// disabledComponents
+				scope.disabledComponents = scope.disabledComponents || [
+					scope.COMPONENTS_FILTER,
+					scope.COMPONENTS_SELECTOR,
+					scope.COMPONENTS_PAGER
+				];
+				
+				// switchableColumns
+				scope.switchableColumns = scope.switchableColumns || [];
+				
+				// visibleColumns
+				scope.visibleColumns =
+					scope.visibleColumns ||
+					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						Object.keys(scope.rows[0]) : []);
+				
+				// headerLabelCallback
+				scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
+					return column;
+				};
+				
+				// operationsMode
+				scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
+				
+				// rowSortEnabled
+				scope.rowSortEnabled =
+					(angular.isDefined(scope.rowSortEnabled)) ?
+						scope.rowSortEnabled : false;
+				
+				// rowSortCriteria
+				scope.rowSortCriteria =
+					scope.rowSortCriteria ||
+					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						Object.keys(scope.rows[0])[0] : null);
+				
+				// rowSortOrderAscending
+				scope.rowSortOrderAscending =
+					(angular.isDefined(scope.rowSortOrderAscending)) ?
+						scope.rowSortOrderAscending : true;
+				
+				// actionList
+				scope.actionList = scope.actionList || [];
+				
+				// cellRenderer
+				scope.cellRenderer = scope.cellRenderer || function(row, column) {
+					return angular.isDefined(row[column]) ? row[column] : null;
+				};
+				
+				// columnClassCallback
+				scope.columnClassCallback = scope.columnClassCallback || function() {
+					// parameters: row, column, isHeader
+					return '';
+				};
+				
+				// pager
+				var defaultPager = {};
+				defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+				defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+				defaultPager[scope.PAGER_OFFSET] = 0;
+				scope.pager = scope.pager || defaultPager;
+				
+				// search
+				scope.search = scope.search || null;
+				
+			},
 			controller: function($scope) {
 				
 				// CONSTANTS ---
@@ -263,58 +344,14 @@ angular.module('keta.directives.ExtendedTable',
 					});
 					return found;
 				};
-
-				$scope.labelAddColumn = $scope.labelAddColumn || 'Add column';
-				
-				// CALLBACKS ---
-				
-				// headers to save
-				$scope.headers =
-					(angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
-						$scope.rows[0] : {};
-				
-				// disabledComponents
-				$scope.disabledComponents = $scope.disabledComponents || [
-					$scope.COMPONENTS_FILTER,
-					$scope.COMPONENTS_SELECTOR,
-					$scope.COMPONENTS_PAGER
-				];
 				
 				$scope.isDisabled = function(key) {
 					return inArray($scope.disabledComponents, key);
 				};
 				
-				// switchableColumns
-				$scope.switchableColumns = $scope.switchableColumns || [];
-				
 				$scope.isSwitchable = function(key) {
 					return inArray($scope.switchableColumns, key);
 				};
-				
-				// visibleColumns
-				$scope.visibleColumns =
-					$scope.visibleColumns ||
-					((angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
-						Object.keys($scope.rows[0]) : []);
-				
-				// headerLabelCallback
-				$scope.headerLabelCallback = $scope.headerLabelCallback || function(column) {
-					return column;
-				};
-				
-				// operationsMode
-				$scope.operationsMode = $scope.operationsMode || $scope.OPERATIONS_MODE_VIEW;
-				
-				// rowSortEnabled
-				$scope.rowSortEnabled =
-					(angular.isDefined($scope.rowSortEnabled)) ?
-						$scope.rowSortEnabled : false;
-				
-				// rowSortCriteria
-				$scope.rowSortCriteria =
-					$scope.rowSortCriteria ||
-					((angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) ?
-						Object.keys($scope.rows[0])[0] : null);
 				
 				$scope.isSortCriteria = function(key) {
 					var criteria =
@@ -325,32 +362,6 @@ angular.module('keta.directives.ExtendedTable',
 					}
 					return (key === criteria);
 				};
-				
-				// rowSortOrderAscending
-				$scope.rowSortOrderAscending =
-					(angular.isDefined($scope.rowSortOrderAscending)) ?
-						$scope.rowSortOrderAscending : true;
-				
-				// actionList
-				$scope.actionList = $scope.actionList || [];
-				
-				// cellRenderer
-				$scope.cellRenderer = $scope.cellRenderer || function(row, column) {
-					return angular.isDefined(row[column]) ? row[column] : null;
-				};
-				
-				// columnClassCallback
-				$scope.columnClassCallback = $scope.columnClassCallback || function() {
-					// parameters: row, column, isHeader
-					return '';
-				};
-				
-				// pager
-				var defaultPager = {};
-				defaultPager[$scope.PAGER_TOTAL] = angular.isArray($scope.rows) ? $scope.rows.length : 0;
-				defaultPager[$scope.PAGER_LIMIT] = angular.isArray($scope.rows) ? $scope.rows.length : 0;
-				defaultPager[$scope.PAGER_OFFSET] = 0;
-				$scope.pager = $scope.pager || defaultPager;
 				$scope.pages = [];
 				$scope.currentPage = 0;
 				
@@ -400,9 +411,6 @@ angular.module('keta.directives.ExtendedTable',
 				});
 				
 				resetPager();
-				
-				// search
-				$scope.search = $scope.search || null;
 				
 				// ACTIONS ---
 				
@@ -467,7 +475,7 @@ angular.module('keta.directives.ExtendedTable')
 '	\'keta-extended-table\': true' +
 '}">' +
 '' +
-'	<div class="row">' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || isDisabled(COMPONENTS_SELECTOR)">' +
 '		<div class="col-xs-12 col-sm-6">' +
 '		' +
 '			<!-- FILTER -->' +
@@ -486,7 +494,7 @@ angular.module('keta.directives.ExtendedTable')
 '			<!-- SELECTOR -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
 '				<div class="form-group form-inline pull-right" data-ng-show="selectedColumn !== null">' +
-'					<label for="columnSelector">{{ labelAddColumn }}</label>' +
+'					<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
 '					<select id="columnSelector" class="form-control"' +
 '						data-ng-model="selectedColumn"' +
 '						data-ng-options="' +
@@ -506,91 +514,97 @@ angular.module('keta.directives.ExtendedTable')
 '	</div>' +
 '	' +
 '	<!-- TABLE -->' +
-'	<table class="table table-striped" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
-'		<thead>' +
-'			<tr>' +
-'				<th class="{{columnClassCallback(headers, column, true)}}"' +
-'					data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
-'					data-ng-if="rowSortEnabled">' +
-'					<a class="header" data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
-'					<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
-'						<span class="glyphicon glyphicon-chevron-up"></span>' +
-'					</a>' +
-'					<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
-'						<span class="glyphicon glyphicon-chevron-down"></span>' +
-'					</a>' +
-'					<span data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
-'						class="glyphicon glyphicon-resize-vertical"></span>' +
-'					<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
-'						<span class="glyphicon glyphicon-minus"></span>' +
-'					</a>' +
-'				</th>' +
-'				<th class="{{columnClassCallback(headers, column, true)}}"' +
-'					data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
-'					data-ng-if="!rowSortEnabled">' +
-'					{{headerLabelCallback(column)}}' +
-'					<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
-'						<span class="glyphicon glyphicon-minus"></span>' +
-'					</a>' +
-'				</th>' +
-'				<th data-ng-if="actionList.length">' +
-'					{{headerLabelCallback(\'actions\')}}' +
-'				</th>' +
-'			</tr>' +
-'		</thead>' +
-'		<tbody>' +
-'			<!-- operationsMode: data -->' +
-'			<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
-'				data-ng-repeat="row in rows">' +
-'				<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
-'					class="{{columnClassCallback(row, column, false)}}">' +
-'					<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
-'				</td>' +
-'				<td data-ng-if="actionList.length">' +
-'					<ul class="list-inline list-inline-icons">' +
-'						<li data-ng-repeat="item in actionList">' +
-'							<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
-'								<span class="{{item.icon}}"></span>' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
+'		<div class="col-xs-12">' +
+'			<table class="table table-striped form-group">' +
+'				<thead>' +
+'					<tr>' +
+'						<th class="{{columnClassCallback(headers, column, true)}}"' +
+'							data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'							data-ng-if="rowSortEnabled">' +
+'							<a class="header" data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
+'							<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
+'								<span class="glyphicon glyphicon-chevron-up"></span>' +
 '							</a>' +
-'						</li>' +
-'					</ul>' +
-'				</td>' +
-'			</tr>' +
-'			<!-- operationsMode: view -->' +
-'			<tr data-ng-if="operationsMode === OPERATIONS_MODE_VIEW"' +
-'				data-ng-repeat="' +
-'					row in rows |' +
-'					filter:search |' +
-'					orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'					slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
-'				<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
-'					class="{{columnClassCallback(row, column, false)}}">' +
-'					<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
-'				</td>' +
-'				<td data-ng-if="actionList.length">' +
-'					<ul class="list-inline list-inline-icons">' +
-'						<li data-ng-repeat="item in actionList">' +
-'							<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
-'								<span class="{{item.icon}}"></span>' +
+'							<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
+'								<span class="glyphicon glyphicon-chevron-down"></span>' +
 '							</a>' +
-'						</li>' +
-'					</ul>' +
-'				</td>' +
-'			</tr>' +
-'		</tbody>' +
-'	</table>' +
+'							<span data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
+'								class="glyphicon glyphicon-resize-vertical"></span>' +
+'							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
+'								<span class="glyphicon glyphicon-minus"></span>' +
+'							</a>' +
+'						</th>' +
+'						<th class="{{columnClassCallback(headers, column, true)}}"' +
+'							data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'							data-ng-if="!rowSortEnabled">' +
+'							{{headerLabelCallback(column)}}' +
+'							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
+'								<span class="glyphicon glyphicon-minus"></span>' +
+'							</a>' +
+'						</th>' +
+'						<th data-ng-if="actionList.length">' +
+'							{{headerLabelCallback(\'actions\')}}' +
+'						</th>' +
+'					</tr>' +
+'				</thead>' +
+'				<tbody>' +
+'					<!-- operationsMode: data -->' +
+'					<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
+'						data-ng-repeat="row in rows">' +
+'						<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
+'							class="{{columnClassCallback(row, column, false)}}">' +
+'							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'						</td>' +
+'						<td data-ng-if="row && actionList.length">' +
+'							<ul class="list-inline list-inline-icons">' +
+'								<li data-ng-repeat="item in actionList">' +
+'									<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
+'										<span class="{{item.icon}}"></span>' +
+'									</a>' +
+'								</li>' +
+'							</ul>' +
+'						</td>' +
+'					</tr>' +
+'					<!-- operationsMode: view -->' +
+'					<tr data-ng-if="operationsMode === OPERATIONS_MODE_VIEW"' +
+'						data-ng-repeat="' +
+'							row in rows |' +
+'							filter:search |' +
+'							orderBy:rowSortCriteria:!rowSortOrderAscending |' +
+'							slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
+'						<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
+'							class="{{columnClassCallback(row, column, false)}}">' +
+'							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'						</td>' +
+'						<td data-ng-if="row && actionList.length">' +
+'							<ul class="list-inline list-inline-icons">' +
+'								<li data-ng-repeat="item in actionList">' +
+'									<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
+'										<span class="{{item.icon}}"></span>' +
+'									</a>' +
+'								</li>' +
+'							</ul>' +
+'						</td>' +
+'					</tr>' +
+'				</tbody>' +
+'			</table>' +
+'		</div>' +
+'	</div>' +
 '	' +
 '	<!-- PAGER -->' +
-'	<div data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
-'		<div class="btn-group" role="group">' +
-'			<button type="button"' +
-'				data-ng-repeat="page in pages"' +
-'				data-ng-click="goToPage(page)"' +
-'				data-ng-class="{' +
-'					\'btn\': true,' +
-'					\'btn-default\': true,' +
-'					\'btn-primary\': page === currentPage' +
-'				}">{{page}}</button>' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
+'		<div class="col-xs-12 col-sm-6">' +
+'			<div class="btn-group form-group" role="group">' +
+'				<button type="button"' +
+'					data-ng-repeat="page in pages"' +
+'					data-ng-click="goToPage(page)"' +
+'					data-ng-class="{' +
+'						\'btn\': true,' +
+'						\'btn-default\': true,' +
+'						\'btn-primary\': page === currentPage' +
+'					}">{{page}}</button>' +
+'			</div>' +
 '		</div>' +
 '	</div>' +
 '	' +
