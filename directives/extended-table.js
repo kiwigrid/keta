@@ -236,86 +236,106 @@ angular.module('keta.directives.ExtendedTable',
 			templateUrl: '/components/directives/extended-table.html',
 			link: function(scope) {
 				
-				var update = function() {
-					
-					// object of labels
-					var defaultLabels = {
-						ADD_COLUMN: 'Add column'
-					};
-					scope.labels = angular.extend(defaultLabels, scope.labels);
-					
-					// headers to save
-					scope.headers =
-						(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-							scope.rows[0] : {};
-							
-					// disabledComponents
-					scope.disabledComponents = scope.disabledComponents || [
-						scope.COMPONENTS_FILTER,
-						scope.COMPONENTS_SELECTOR,
-						scope.COMPONENTS_PAGER
-					];
-					
-					// switchableColumns
-					scope.switchableColumns = scope.switchableColumns || [];
-					
-					// visibleColumns
-					scope.visibleColumns =
-						scope.visibleColumns ||
-						((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-							Object.keys(scope.rows[0]) : []);
-					
-					// headerLabelCallback
-					scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
-						return column;
-					};
-					
-					// operationsMode
-					scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
-					
-					// rowSortEnabled
-					scope.rowSortEnabled =
-						(angular.isDefined(scope.rowSortEnabled)) ?
-							scope.rowSortEnabled : false;
-					
-					// rowSortCriteria
-					scope.rowSortCriteria =
-						scope.rowSortCriteria ||
-						((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-							Object.keys(scope.rows[0])[0] : null);
-					
-					// rowSortOrderAscending
-					scope.rowSortOrderAscending =
-						(angular.isDefined(scope.rowSortOrderAscending)) ?
-							scope.rowSortOrderAscending : true;
-					
-					// actionList
-					scope.actionList = scope.actionList || [];
-					
-					// cellRenderer
-					scope.cellRenderer = scope.cellRenderer || function(row, column) {
-						return angular.isDefined(row[column]) ? row[column] : null;
-					};
-					
-					// columnClassCallback
-					scope.columnClassCallback = scope.columnClassCallback || function() {
-						// parameters: row, column, isHeader
-						return '';
-					};
-					
-					// pager
-					var defaultPager = {};
-					defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
-					defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
-					defaultPager[scope.PAGER_OFFSET] = 0;
-					scope.pager = scope.pager || defaultPager;
-					
-					// search
-					scope.search = scope.search || null;
-					
+				// object of labels
+				var defaultLabels = {
+					ADD_COLUMN: 'Add column'
+				};
+				scope.labels = angular.extend(defaultLabels, scope.labels);
+				
+				// headers to save
+				scope.headers =
+					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						scope.rows[0] : {};
+				
+				// disabledComponents
+				scope.disabledComponents = scope.disabledComponents || [
+					scope.COMPONENTS_FILTER,
+					scope.COMPONENTS_SELECTOR,
+					scope.COMPONENTS_PAGER
+				];
+				
+				// switchableColumns
+				scope.switchableColumns = scope.switchableColumns || [];
+				
+				// visibleColumns
+				scope.visibleColumns =
+					scope.visibleColumns ||
+					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						Object.keys(scope.rows[0]) : []);
+				
+				// headerLabelCallback
+				scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
+					return column;
 				};
 				
-				update();
+				// operationsMode
+				scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
+				
+				// rowSortEnabled
+				scope.rowSortEnabled =
+					(angular.isDefined(scope.rowSortEnabled)) ?
+						scope.rowSortEnabled : false;
+				
+				// rowSortCriteria
+				scope.rowSortCriteria =
+					scope.rowSortCriteria ||
+					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+						Object.keys(scope.rows[0])[0] : null);
+				
+				// rowSortOrderAscending
+				scope.rowSortOrderAscending =
+					(angular.isDefined(scope.rowSortOrderAscending)) ?
+						scope.rowSortOrderAscending : true;
+				
+				// actionList
+				scope.actionList = scope.actionList || [];
+				
+				// cellRenderer
+				scope.cellRenderer = scope.cellRenderer || function(row, column) {
+					return angular.isDefined(row[column]) ? row[column] : null;
+				};
+				
+				// columnClassCallback
+				scope.columnClassCallback = scope.columnClassCallback || function() {
+					// parameters: row, column, isHeader
+					return '';
+				};
+				
+				// pager
+				var defaultPager = {};
+				defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+				defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+				defaultPager[scope.PAGER_OFFSET] = 0;
+				scope.pager = scope.pager || defaultPager;
+				
+				// search
+				scope.search = scope.search || null;
+				
+				/**
+				 * update properties without using defaults
+				 */
+				var update = function() {
+					
+					if (angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) {
+						
+						// headers to save
+						if (angular.equals(scope.headers, {})) {
+							scope.headers = scope.rows[0];
+						}
+						
+						// visibleColumns
+						if (angular.equals(scope.visibleColumns, [])) {
+							scope.visibleColumns = Object.keys(scope.rows[0]);
+						}
+						
+						// rowSortCriteria
+						if (scope.rowSortCriteria === null) {
+							scope.rowSortCriteria = Object.keys(scope.rows[0])[0];
+						}
+						
+					}
+					
+				};
 				
 				scope.$watchCollection('rows', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
@@ -380,6 +400,9 @@ angular.module('keta.directives.ExtendedTable',
 							var rows = $scope.rows || [];
 							var rowsLength = $filter('filter')(rows, $scope.search).length;
 							$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
+							if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
+								$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
+							}
 							if ($scope.pager[$scope.PAGER_OFFSET] > rowsLength - 1) {
 								$scope.pager[$scope.PAGER_OFFSET] = 0;
 							}
@@ -404,6 +427,12 @@ angular.module('keta.directives.ExtendedTable',
 						
 					}
 				};
+				
+				$scope.$watch('rows.length', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						resetPager();
+					}
+				});
 				
 				$scope.$watch('pager', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
@@ -559,7 +588,7 @@ angular.module('keta.directives.ExtendedTable')
 '					<!-- operationsMode: data -->' +
 '					<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
 '						data-ng-repeat="row in rows">' +
-'						<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
+'						<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '							class="{{columnClassCallback(row, column, false)}}">' +
 '							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '						</td>' +
