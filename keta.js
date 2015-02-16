@@ -241,80 +241,92 @@ angular.module('keta.directives.ExtendedTable',
 			templateUrl: '/components/directives/extended-table.html',
 			link: function(scope) {
 				
-				// object of labels
-				var defaultLabels = {
-					ADD_COLUMN: 'Add column'
+				var update = function() {
+					
+					// object of labels
+					var defaultLabels = {
+						ADD_COLUMN: 'Add column'
+					};
+					scope.labels = angular.extend(defaultLabels, scope.labels);
+					
+					// headers to save
+					scope.headers =
+						(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+							scope.rows[0] : {};
+							
+					// disabledComponents
+					scope.disabledComponents = scope.disabledComponents || [
+						scope.COMPONENTS_FILTER,
+						scope.COMPONENTS_SELECTOR,
+						scope.COMPONENTS_PAGER
+					];
+					
+					// switchableColumns
+					scope.switchableColumns = scope.switchableColumns || [];
+					
+					// visibleColumns
+					scope.visibleColumns =
+						scope.visibleColumns ||
+						((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+							Object.keys(scope.rows[0]) : []);
+					
+					// headerLabelCallback
+					scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
+						return column;
+					};
+					
+					// operationsMode
+					scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
+					
+					// rowSortEnabled
+					scope.rowSortEnabled =
+						(angular.isDefined(scope.rowSortEnabled)) ?
+							scope.rowSortEnabled : false;
+					
+					// rowSortCriteria
+					scope.rowSortCriteria =
+						scope.rowSortCriteria ||
+						((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+							Object.keys(scope.rows[0])[0] : null);
+					
+					// rowSortOrderAscending
+					scope.rowSortOrderAscending =
+						(angular.isDefined(scope.rowSortOrderAscending)) ?
+							scope.rowSortOrderAscending : true;
+					
+					// actionList
+					scope.actionList = scope.actionList || [];
+					
+					// cellRenderer
+					scope.cellRenderer = scope.cellRenderer || function(row, column) {
+						return angular.isDefined(row[column]) ? row[column] : null;
+					};
+					
+					// columnClassCallback
+					scope.columnClassCallback = scope.columnClassCallback || function() {
+						// parameters: row, column, isHeader
+						return '';
+					};
+					
+					// pager
+					var defaultPager = {};
+					defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+					defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+					defaultPager[scope.PAGER_OFFSET] = 0;
+					scope.pager = scope.pager || defaultPager;
+					
+					// search
+					scope.search = scope.search || null;
+					
 				};
-				scope.labels = angular.extend(defaultLabels, scope.labels);
 				
-				// headers to save
-				scope.headers =
-					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-						scope.rows[0] : {};
-						
-				// disabledComponents
-				scope.disabledComponents = scope.disabledComponents || [
-					scope.COMPONENTS_FILTER,
-					scope.COMPONENTS_SELECTOR,
-					scope.COMPONENTS_PAGER
-				];
+				update();
 				
-				// switchableColumns
-				scope.switchableColumns = scope.switchableColumns || [];
-				
-				// visibleColumns
-				scope.visibleColumns =
-					scope.visibleColumns ||
-					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-						Object.keys(scope.rows[0]) : []);
-				
-				// headerLabelCallback
-				scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
-					return column;
-				};
-				
-				// operationsMode
-				scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
-				
-				// rowSortEnabled
-				scope.rowSortEnabled =
-					(angular.isDefined(scope.rowSortEnabled)) ?
-						scope.rowSortEnabled : false;
-				
-				// rowSortCriteria
-				scope.rowSortCriteria =
-					scope.rowSortCriteria ||
-					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
-						Object.keys(scope.rows[0])[0] : null);
-				
-				// rowSortOrderAscending
-				scope.rowSortOrderAscending =
-					(angular.isDefined(scope.rowSortOrderAscending)) ?
-						scope.rowSortOrderAscending : true;
-				
-				// actionList
-				scope.actionList = scope.actionList || [];
-				
-				// cellRenderer
-				scope.cellRenderer = scope.cellRenderer || function(row, column) {
-					return angular.isDefined(row[column]) ? row[column] : null;
-				};
-				
-				// columnClassCallback
-				scope.columnClassCallback = scope.columnClassCallback || function() {
-					// parameters: row, column, isHeader
-					return '';
-				};
-				
-				// pager
-				var defaultPager = {};
-				defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
-				defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
-				defaultPager[scope.PAGER_OFFSET] = 0;
-				scope.pager = scope.pager || defaultPager;
-				
-				// search
-				scope.search = scope.search || null;
+				scope.$watchCollection('rows', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						update();
+					}
+				});
 				
 			},
 			controller: function($scope) {
