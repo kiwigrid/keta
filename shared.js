@@ -29,6 +29,11 @@ angular.module('keta.shared', [])
 			POUND: '£',
 			KILOMETER: 'km'
 		},
+		DEVICE_CLASSES: {
+			ENERGY_MANAGER: 'com.kiwigrid.devices.em.EnergyManager',
+			LOCATION: 'com.kiwigrid.devices.location.Location',
+			PV_PLANT: 'com.kiwigrid.devices.pvplant.PVPlant'
+		},
 		SIDEBAR: {
 			POSITION_LEFT: 'left',
 			POSITION_RIGHT: 'right',

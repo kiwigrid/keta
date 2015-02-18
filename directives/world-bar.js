@@ -2,154 +2,141 @@
 
 /**
  * @name keta.directives.WorldBar
- * @author Jan Uhlmann <jan.uhlmann@kiwigrid.com>
+ * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.directives.WorldBar
  * @description
  * <p>
- *   Horizontal bar with multiple menus (world switcher, user navigation, language switcher,
- *   notification toggle-button).<br>
- *   All menus (except world switcher) can be hidden by boolean attributes.
+ *   Horizontal navigation bar called Worldbar with multiple menus (Context Switcher, User Menu, Energy Manager Menu,
+ *   Language Menu and Notification Center toggle button).
  * </p>
  * @example
- * &lt;div data-world-bar data-configuration="worldBarConfig"
- *   data-switch-lang-callback="languageSwitched(lang)"&gt;&lt;/div&gt;
+ * &lt;div data-world-bar
+ *     data-event-bus-id="eventBusId"
+ *     data-locales="locales"
+ *     data-current-locale="currentLocale"
+ *     data-labels="labels"
+ *     data-links="links"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.WorldBar'])
  *     .controller('ExampleController', function($scope) {
- * 
- *         // world bar configuration object
- *         $scope.worldBarConfig = {
- *             contextSwitcher: {
- *                 worlds: {
- *                     items: [{
- *                         name: 'Desktop',
- *                         link: 'https://cloud.mycompany.com'
- *                     }, {
- *                         name: 'Market',
- *                         link: 'https://market.mycompany.com'
- *                     }, {
- *                         name: 'Service',
- *                         link: 'https://service.mycompany.com'
- *                     }]
- *                 },
- *                 apps: {
- *                     labels: {
- *                         allApps: 'Alle Apps'
- *                     },
- *                     hidden: false,
- *                     items: [{
- *                         name: 'Smart Power Control',
- *                         link: 'https://smartpowercontrol.mycompany.com'
- *                     }, {
- *                         name: 'Tag-App',
- *                         link: 'https://tagapp.mycompany.com'
- *                     }, {
- *                         name: 'My Monitor',
- *                         link: 'https://mymonitor.mycompany.com'
- *                     }, {
- *                         name: 'Anoter App',
- *                         link: 'https://anotherapp.mycompany.com'
- *                     }]
- *                 }
- *             },
- *             userMenu: {
- *                 labels: {
- *                     userProfile: 'Benutzerkonto',
- *                     logout: 'Logout'
- *                 },
- *                 profile: {
- *                     login: 'max.mustermann',
- *                     firstName: 'Max',
- *                     lastName: 'Mustermann'
- *                 },
- *                 additionalItems: [{
- *                     name: 'Share on Facebook',
- *                     link: 'https://www.facebook.com'
- *                 }]
- *             },
- *             energyManagerMenu: {
- *                 labels: {
- *                     allEnergyManagers: 'Alle Energy-Manager'
- *                 },
- *                 items: [{
- *                     name: 'ERC02-000001051',
- *                     link: 'http://192.168.125.81'
- *                 }]
- *             },
- *             languageMenu: {
- *                 items: [{
- *                     name: 'Deutsch',
- *                     nameShort: 'DE',
- *                     code: 'de'
- *                 }, {
- *                     name: 'English',
- *                     nameShort: 'EN',
- *                     code: 'en-UK'
- *                 }]
- *             }
+ *         
+ *         // id of eventBus instance to use to retrieve data
+ *         $scope.eventBusId = 'kiwibus';
+ *         
+ *         // array of locales to use for language menu
+ *         $scope.locales = [{
+ *             name: 'Deutsch',
+ *             nameShort: 'DE',
+ *             code: 'de'
+ *         }, {
+ *             name: 'English',
+ *             nameShort: 'EN',
+ *             code: 'en'
+ *         }];
+ *         
+ *         // current locale
+ *         $scope.currentLocale = 'de';
+ *         
+ *         // object of labels to use in template
+ *         $scope.labels = {
+ *             ALL_APPS: 'All Apps',
+ *             ENERGY_MANAGER: 'Energy-Manager',
+ *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+ *             USER_PROFILE: 'User Profile',
+ *             USER_LOGOUT: 'Logout'
  *         };
- *
- *         $rootScope.languageSwitched = function(lang) {
- *             // execute switch to given language (app-specific task)
- *             $rootScope.currentLang = lang;
+ *         
+ *         // object of link to use in template
+ *         $scope.links = {
+ *             ALL_APPS: '/#/applications/',
+ *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+ *             USER_PROFILE: '/#/users/profile',
+ *             USER_LOGOUT: '/#/users/logout'
  *         };
+ *         
  *     });
  */
 angular.module('keta.directives.WorldBar',
 	[
-		'keta.shared'
+		'keta.shared',
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager'
 	])
 	
-	.directive('worldBar', function WorldBarDirective(ketaSharedConfig, $rootScope, $document, ketaSharedFactory) {
+	.directive('worldBar', function WorldBarDirective(
+		$rootScope, $document,
+		EventBusDispatcher, EventBusManager, ketaSharedConfig) {
 		return {
 			restrict: 'EA',
 			replace: true,
 			scope: {
-				configuration: '=?',
-				switchLangCallback: '&'
+				
+				// id of eventBus instance to use to retrieve data
+				eventBusId: '=?',
+				
+				// array of locales to use for language menu
+				locales: '=?',
+				
+				// current locale
+				currentLocale: '=?',
+				
+				// object of labels to use in template
+				labels: '=?',
+				
+				// object of link to use in template 
+				links: '=?'
+				
 			},
 			templateUrl: '/components/directives/world-bar.html',
 			link: function(scope, element) {
+				
+				// CONFIG ---
+				
+				// set defaults
+				scope.eventBusId = scope.eventBusId || 'kiwibus';
 
-				scope.switchLanguage = function(entry) {
-					scope.switchLangCallback({lang: entry.code});
-					scope.languageMenu.activeEntry = entry;
-					closeAllMenus();
+				scope.eventBus = EventBusManager.get(scope.eventBusId);
+				
+				scope.locales = scope.locales || [{
+					name: 'English',
+					nameShort: 'EN',
+					code: 'en'
+				}];
+				
+				scope.currentLocale = scope.currentLocale || 'en';
+				
+				var defaultLabels = {
+					ALL_APPS: 'All Apps',
+					ENERGY_MANAGER: 'Energy-Manager',
+					ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+					USER_PROFILE: 'User Profile',
+					USER_LOGOUT: 'Logout'
 				};
+				scope.labels = (angular.isDefined(scope.labels)) ?
+					angular.extend(defaultLabels, scope.labels) : defaultLabels;
 				
-				// TODO: instead of configuring full content, configure eventBusId to use to gather data
-				
-				scope.configuration = scope.configuration || {};
-				
-				scope.allAppsLabel =
-					ketaSharedFactory.doesPropertyExist(scope.configuration, 'contextSwitcher.apps.labels.allApps') ?
-						scope.configuration.contextSwitcher.apps.labels.allApps : 'All Apps';
-
-				scope.allEnergyManagersLabel =
-					ketaSharedFactory.doesPropertyExist(scope.configuration, 'energyManagerMenu.labels.allEnergyManagers') ?
-						scope.configuration.energyManagerMenu.labels.allEnergyManagers : 'All Energy-Managers';
-
-				scope.userProfileLabel =
-					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.userProfile') ?
-						scope.configuration.userMenu.labels.userProfile : 'User Profile';
-
-				scope.logoutUserLabel =
-					ketaSharedFactory.doesPropertyExist(scope.configuration, 'userMenu.labels.logout') ?
-						scope.configuration.userMenu.labels.logout : 'Logout';
+				var defaultLinks = {
+					ALL_APPS: null,
+					ALL_ENERGY_MANAGERS: null,
+					USER_PROFILE: null,
+					USER_LOGOUT: null
+				};
+				scope.links = (angular.isDefined(scope.links)) ?
+					angular.extend(defaultLinks, scope.links) : defaultLinks;
 				
 				// type constants used in ng-repeats orderBy filter
 				scope.TYPES = {
 					APPS: 'APPS',
 					ENERGY_MANAGER: 'ENERGY_MANAGER'
 				};
-
+				
 				// limit constants used in ng-repeats limit filter
 				scope.LIMITS = {
 					APPS: 3,
 					ENERGY_MANAGER: 3
 				};
-
+				
 				// order predicates and reverse flags
 				var PREDICATES = {
 					APPS: {
@@ -161,55 +148,126 @@ angular.module('keta.directives.WorldBar',
 						reverse: false
 					}
 				};
+				
+				// internal menu state management
+				scope.menus = {
+					contextSwitcher: {activeEntry: null, isOpen: false},
+					userMenu: {activeEntry: null, isOpen: false},
+					energyManagerMenu: {activeEntry: null, isOpen: false},
+					settingsMenu: {activeEntry: null, isOpen: false},
+					languageMenu: {activeEntry: null, isOpen: false}
+				};
+				
+				// DATA ---
+				
+				// list of worlds to display in context switcher
+				scope.worlds = [{
+					name: 'Desktop',
+					link: 'https://cloud.mycompany.com'
+				}, {
+					name: 'Market',
+					link: 'https://market.mycompany.com'
+				}, {
+					name: 'Service',
+					link: 'https://service.mycompany.com'
+				}];
 
+				// list of apps to display in context switcher
+				// format: {name: 'My Monitor',	link: 'https://mymonitor.mycompany.com'}
+				scope.apps = [];
+				
+				// query applications
+				// TODO: use keta wrapper
+				if (scope.eventBus !== null) {
+					EventBusDispatcher.send(scope.eventBus, 'applications', {
+						action: 'getApplications'
+					}, function(reply) {
+						if (reply.code === 200) {
+							scope.apps = reply.result.items;
+							scope.$digest();
+						}
+					});
+				}
+
+				// current user
+				scope.user = {};
+				
+				// query current user
+				// TODO: use keta wrapper
+				if (scope.eventBus !== null) {
+					EventBusDispatcher.send(scope.eventBus, 'users', {
+						action: 'getCurrentUser'
+					}, function(reply) {
+						if (reply.code === 200) {
+							scope.user = reply.result;
+							scope.$digest();
+						}
+					});
+				}
+				
+				// list of energy managers in manager list
+				// format: {name: 'ERC02-000001051', link: 'http://192.168.125.81'} 
+				scope.energyManagers = [];
+				
+				// query energy managers
+				// TODO: use keta wrapper
+				if (scope.eventBus !== null) {
+					EventBusDispatcher.send(scope.eventBus, 'devices', {
+						action: 'getDevices',
+						params: {
+							deviceClass: ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER
+						}
+					}, function(reply) {
+						if (reply.code === 200) {
+							var energyManagers = [];
+							angular.forEach(reply.result.items, function(item) {
+								energyManagers.push({
+									name: item.tagValues.IdName.value,
+									link: 'http://' + item.currentAddress
+								});
+							});
+							scope.energyManagers = energyManagers;
+							scope.$digest();
+						}
+					});
+				}
+				
+				// LOGIC ---
+				
+				// order elements by predicate
 				scope.order = function(type) {
 					var field = (angular.isDefined(PREDICATES[type])) ? PREDICATES[type].field : 'name';
 					return function(item) {
 						return (angular.isDefined(item[field])) ? item[field] : '';
 					};
 				};
-
+				
+				// order elements by sort order
 				scope.reverse = function(type) {
 					return (angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse)) ?
 						PREDICATES[type].reverse : false;
 				};
-
-				var menuReferenceObject = {
-					activeEntry: null,
-					isOpen: false
-				};
-
-				function useFirstEntryAsActive(menuName, subKey) {
-					// use first entry as active entry for demonstration
-					// TODO: replace by real logic to determine active entry
-					if (angular.isDefined(scope.configuration) &&
-						angular.isDefined(scope.configuration[menuName])) {
-						if (angular.isDefined(scope.configuration[menuName].items) &&
-							angular.isDefined(scope.configuration[menuName].items[0])) {
-							scope[menuName].activeEntry = scope.configuration[menuName].items[0];
-						} else if (angular.isDefined(scope.configuration[menuName][subKey]) &&
-							angular.isDefined(scope.configuration[menuName][subKey].items) &&
-							angular.isDefined(scope.configuration[menuName][subKey].items[0])) {
-							scope[menuName].activeEntry = scope.configuration[menuName][subKey].items[0];
-						}
+				
+				// statically set first world and first language as active
+				var initActiveEntries = function() {
+					
+					// worlds
+					if (angular.isDefined(scope.worlds[0])) {
+						scope.menus.contextSwitcher.activeEntry = scope.worlds[0];
 					}
-				}
-
-				function initMenus() {
-					scope.contextSwitcher = angular.copy(menuReferenceObject);
-					useFirstEntryAsActive(
-						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER,
-						ketaSharedConfig.WORLD_BAR.ENTRY_CONTEXT_SWITCHER_WORLDS
-					);
-					scope.userMenu = angular.copy(menuReferenceObject);
-					scope.energyManagerMenu = angular.copy(menuReferenceObject);
-					scope.settingsMenu = angular.copy(menuReferenceObject);
-					scope.languageMenu = angular.copy(menuReferenceObject);
-					useFirstEntryAsActive(ketaSharedConfig.WORLD_BAR.ENTRY_LANGUAGE_MENU);
-				}
-
-				initMenus();
-
+					
+					// current locale
+					angular.forEach(scope.locales, function(locale) {
+						if (angular.isDefined(locale.code) && locale.code === scope.currentLocale) {
+							scope.menus.languageMenu.activeEntry = locale;
+						}
+					});
+					
+				};
+				
+				initActiveEntries();
+				
+				// toggle sidebar if button is clicked
 				scope.toggleSidebar = function($event, position) {
 					$event.stopPropagation();
 					if (position === ketaSharedConfig.SIDEBAR.POSITION_LEFT) {
@@ -218,44 +276,48 @@ angular.module('keta.directives.WorldBar',
 						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT);
 					}
 				};
-
-				scope.additionalUserItemsConfigured = function() {
-					return (angular.isDefined(scope.configuration) &&
-						angular.isDefined(scope.configuration.userMenu) &&
-						angular.isDefined(scope.configuration.userMenu.additionalItems) &&
-						scope.configuration.userMenu.additionalItems.length > 0);
-				};
-
+				
+				// check if a given menu is currently open
 				scope.isOpen = function(menuName) {
-					return (angular.isDefined(scope[menuName])) ? scope[menuName].isOpen : null;
+					return (angular.isDefined(scope.menus[menuName])) ? scope.menus[menuName].isOpen : null;
 				};
-
+				
+				// check if a given entry is active to set corresponding css class
 				scope.isActive = function(menuName, entry) {
-					return (angular.isDefined(scope[menuName]) && (scope[menuName].activeEntry === entry));
+					return (angular.isDefined(scope.menus[menuName]) && (scope.menus[menuName].activeEntry === entry));
 				};
-
+				
+				scope.setLocale = function(locale) {
+					scope.currentLocale = locale.code;
+					scope.menus.languageMenu.activeEntry = locale;
+					closeAllMenus();
+				};
+				
+				// close all menus by switching boolean flag isOpen
 				function closeAllMenus() {
-					scope.contextSwitcher.isOpen = false;
-					scope.userMenu.isOpen = false;
-					scope.energyManagerMenu.isOpen = false;
-					scope.settingsMenu.isOpen = false;
-					scope.languageMenu.isOpen = false;
+					scope.menus.contextSwitcher.isOpen = false;
+					scope.menus.userMenu.isOpen = false;
+					scope.menus.energyManagerMenu.isOpen = false;
+					scope.menus.settingsMenu.isOpen = false;
+					scope.menus.languageMenu.isOpen = false;
 				}
-
+				
+				// toggle state of menu
 				scope.toggleOpenState = function(menuName) {
-					if (angular.isDefined(scope[menuName])) {
-						var currentState = angular.copy(scope[menuName].isOpen);
+					if (angular.isDefined(scope.menus[menuName])) {
+						var currentState = angular.copy(scope.menus[menuName].isOpen);
 						closeAllMenus();
-						if (currentState === scope[menuName].isOpen) {
-							scope[menuName].isOpen = !scope[menuName].isOpen;
+						if (currentState === scope.menus[menuName].isOpen) {
+							scope.menus[menuName].isOpen = !scope.menus[menuName].isOpen;
 						}
 					}
 				};
-
+				
+				// close menus when location change starts
 				scope.$on('$locationChangeStart', function() {
 					closeAllMenus();
 				});
-
+				
 				// close menus when user clicks anywhere outside
 				$document.bind('click', function(event) {
 					var worldBarHtml = element.html(),
@@ -266,6 +328,7 @@ angular.module('keta.directives.WorldBar',
 					closeAllMenus();
 					scope.$digest();
 				});
+				
 			}
 		};
 	});
@@ -282,29 +345,25 @@ angular.module('keta.directives.WorldBar')
 '		</li>' +
 '		<li class="dropdown context-switcher" data-ng-class="{ open: isOpen(\'contextSwitcher\') }">' +
 '			<a href="" data-ng-click="toggleOpenState(\'contextSwitcher\')">' +
-'				{{ contextSwitcher.activeEntry.name }}' +
+'				{{ menus.contextSwitcher.activeEntry.name }}' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu">' +
-'				<li data-ng-repeat="entry in configuration.contextSwitcher.worlds.items"' +
+'				<li data-ng-repeat="entry in worlds"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
 '					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
 '				</li>' +
-'				<li class="divider"	data-ng-if="' +
-'					configuration.contextSwitcher.apps.items.length > 0 &&' +
-'					!configuration.contextSwitcher.apps.hidden"></li>' +
-'				<li data-ng-if="!configuration.contextSwitcher.apps.hidden"' +
+'				<li class="divider"	data-ng-if="apps.length > 0"></li>' +
+'				<li data-ng-if="apps.length"' +
 '					data-ng-repeat="' +
-'						entry in configuration.contextSwitcher.apps.items |' +
+'						entry in apps |' +
 '						orderBy:order(TYPES.APPS):reverse(TYPES.APPS) |' +
 '						limitTo:LIMITS.APPS"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
 '					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
 '				</li>' +
-'				<li data-ng-if="' +
-'					configuration.contextSwitcher.apps.items.length > LIMITS.APPS &&' +
-'					!configuration.contextSwitcher.apps.hidden">' +
-'					<a data-ng-href="#/applications">{{ allAppsLabel }}</a>' +
+'				<li data-ng-if="apps.length > LIMITS.APPS && links.ALL_APPS !== null && labels.ALL_APPS !== null">' +
+'					<a data-ng-href="{{ links.ALL_APPS }}">{{ labels.ALL_APPS }} ({{apps.length}})</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -315,59 +374,53 @@ angular.module('keta.directives.WorldBar')
 '			<a href="" data-ng-click="toggleOpenState(\'userMenu\')">' +
 '				<span class="glyphicon glyphicon-user"></span>' +
 '				<span class="hidden-xs hidden-sm hidden-md">' +
-'					{{ configuration.userMenu.profile.firstName }} {{ configuration.userMenu.profile.lastName }}' +
+'					{{ user.givenName }} {{ user.familyName }}' +
 '				</span>' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
-'				<li>' +
-'					<a data-ng-href="/users/profile/{{configuration.userMenu.profile.login}}">{{ userProfileLabel }}</a>' +
+'				<li data-ng-if="links.USER_PROFILE !== null && labels.USER_PROFILE !== null">' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
 '				</li>' +
-'				<li>' +
-'					<a data-ng-href="/users/logout">{{ logoutUserLabel }}</a>' +
-'				</li>' +
-'				<li class="divider" data-ng-if="additionalUserItemsConfigured()"></li>' +
-'				<li data-ng-repeat="entry in configuration.userMenu.additionalItems"' +
-'					data-ng-class="{ active: isActive(\'userMenu\', entry) }">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'				<li data-ng-if="links.USER_LOGOUT !== null && labels.USER_LOGOUT !== null">' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
 '		<li class="dropdown hidden-xs energy-manager-menu" data-ng-class="{ open: isOpen(\'energyManagerMenu\') }"' +
-'			data-ng-if="configuration.energyManagerMenu.items.length">' +
+'			data-ng-if="energyManagers.length">' +
 '			<a href="" data-ng-click="toggleOpenState(\'energyManagerMenu\')">' +
 '				<span class="glyphicon glyphicon-tasks"></span>' +
-'				<span class="hidden-xs hidden-sm hidden-md">' +
-'					Energy-Manager' +
-'				</span>' +
+'				<span class="hidden-xs hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
+'				<span>({{energyManagers.length}})</span>' +
 '				<span class="caret"></span>' +
-'				<span class="badge" data-ng-if="configuration.energyManagerMenu.items.length > 0">' +
-'					{{configuration.energyManagerMenu.items.length}}' +
-'				</span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li data-ng-repeat="' +
-'					entry in configuration.energyManagerMenu.items |' +
+'					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
 '					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
 '				</li>' +
-'				<li>' +
-'					<a data-ng-href="#/devices?class=com.kiwigrid.device.EnergyManager">{{ allEnergyManagersLabel }}</a>' +
+'				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER &&' +
+'					links.ALL_ENERGY_MANAGERS !== null &&' +
+'					labels.ALL_ENERGY_MANAGERS !== null">' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
-'		<li class="dropdown hidden-xs language-menu" data-ng-class="{ open: isOpen(\'languageMenu\') }"' +
-'			data-ng-if="configuration.languageMenu.items.length">' +
+'		<li class="dropdown hidden-xs language-menu"' +
+'			data-ng-class="{open: isOpen(\'languageMenu\')}"' +
+'			data-ng-if="locales.length">' +
 '			<a href="" data-ng-click="toggleOpenState(\'languageMenu\')">' +
-'				<span class="glyphicon glyphicon-flag" title="{{ languageMenu.activeEntry.name }}"></span>' +
-'				<span class="hidden-sm hidden-md hidden-xs">{{ languageMenu.activeEntry.nameShort }}</span>' +
+'				<span class="glyphicon glyphicon-flag" title="{{ menus.languageMenu.activeEntry.name }}"></span>' +
+'				<span class="hidden-sm hidden-md hidden-xs">{{ menus.languageMenu.activeEntry.nameShort }}</span>' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
-'				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
+'				<li data-ng-repeat="entry in locales"' +
 '					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
-'					<a href="" data-ng-click="switchLanguage(entry)">{{ entry.name }}</a>' +
+'					<a href="" data-ng-click="setLocale(entry)">{{ entry.name }}</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -379,29 +432,26 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li>' +
-'					<a data-ng-href="/users/profile/{{configuration.userMenu.profile.login}}">{{ userProfileLabel }}</a>' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
 '				</li>' +
 '				<li>' +
-'					<a data-ng-href="/users/logout">{{ logoutUserLabel }}</a>' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
 '				</li>' +
-'				<li data-ng-repeat="entry in configuration.userMenu.additionalItems"' +
-'					data-ng-class="{ active: isActive(\'userMenu\', entry) }">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
-'				</li>' +
-'				<li class="divider" data-ng-if="configuration.energyManagerMenu.items.length"></li>' +
+'				<li class="divider" data-ng-if="energyManagers.length"></li>' +
 '				<li data-ng-repeat="' +
-'					entry in configuration.energyManagerMenu.items |' +
+'					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
 '					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
 '				</li>' +
-'				<li>' +
-'					<a data-ng-href="#/devices?class=com.kiwigrid.device.EnergyManager">{{ allEnergyManagersLabel }}</a>' +
+'				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER">' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">{{ labels.ALL_ENERGY_MANAGERS }}' +
+'						({{energyManagers.length}})</a>' +
 '				</li>' +
-'				<li class="divider" data-ng-if="configuration.languageMenu.items.length"></li>' +
-'				<li data-ng-repeat="entry in configuration.languageMenu.items"' +
+'				<li class="divider" data-ng-if="locales"></li>' +
+'				<li data-ng-repeat="entry in locales"' +
 '					data-ng-class="{ active: isActive(\'languageMenu\', entry) }">' +
-'					<a href="" data-ng-click="switchLanguage(entry)">{{ entry.name }}</a>' +
+'					<a href="" data-ng-click="setLocale(entry)">{{ entry.name }}</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
