@@ -536,7 +536,9 @@ angular.module('keta.directives.ExtendedTable',
 angular.module('keta.directives.ExtendedTable')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/extended-table.html', '<div data-ng-class="{' +
-'	\'keta-extended-table\': true' +
+'	\'keta-extended-table\': true,' +
+'	\'table-responsive\': true,' +
+'	\'table-data\': true' +
 '}">' +
 '' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || isDisabled(COMPONENTS_SELECTOR)">' +
@@ -583,18 +585,20 @@ angular.module('keta.directives.ExtendedTable')
 '			<table class="table table-striped form-group">' +
 '				<thead>' +
 '					<tr>' +
-'						<th class="{{columnClassCallback(headers, column, true)}}"' +
+'						<th class="{{columnClassCallback(headers, column, true)}} sortable"' +
 '							data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
-'							data-ng-if="rowSortEnabled">' +
-'							<a class="header" data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
+'							data-ng-if="rowSortEnabled"' +
+'							data-ng-class="{sort: isSortCriteria(column)}"' +
+'							data-ng-click="sortBy(column)">' +
+'							<a class="header">{{headerLabelCallback(column)}}</a>' +
 '							<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-chevron-up"></span>' +
+'								<span class="glyphicon glyphicon-sort-by-attributes"></span>' +
 '							</a>' +
 '							<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-chevron-down"></span>' +
+'								<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>' +
 '							</a>' +
 '							<span data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
-'								class="glyphicon glyphicon-resize-vertical"></span>' +
+'								class="glyphicon glyphicon-sort"></span>' +
 '							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
 '								<span class="glyphicon glyphicon-minus"></span>' +
 '							</a>' +
@@ -620,14 +624,16 @@ angular.module('keta.directives.ExtendedTable')
 '							class="{{columnClassCallback(row, column, false)}}">' +
 '							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '						</td>' +
-'						<td data-ng-if="row && actionList.length">' +
-'							<ul class="list-inline list-inline-icons">' +
-'								<li data-ng-repeat="item in actionList">' +
-'									<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
-'										<span class="{{item.icon}}"></span>' +
-'									</a>' +
-'								</li>' +
-'							</ul>' +
+'						<td data-ng-if="row && actionList.length" class="table-action">' +
+'							<div class="btn-group" role="group">' +
+'								<a data-ng-repeat="item in actionList"' +
+'								   role="button"' +
+'								   class="btn-link"' +
+'								   data-ng-href="{{item.getLink(row)}}"' +
+'								   title="{{item.label}}">' +
+'									<span class="{{item.icon}}"></span>' +
+'								</a>' +
+'							</div>' +
 '						</td>' +
 '					</tr>' +
 '					<!-- operationsMode: view -->' +
@@ -641,14 +647,16 @@ angular.module('keta.directives.ExtendedTable')
 '							class="{{columnClassCallback(row, column, false)}}">' +
 '							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '						</td>' +
-'						<td data-ng-if="row && actionList.length">' +
-'							<ul class="list-inline list-inline-icons">' +
-'								<li data-ng-repeat="item in actionList">' +
-'									<a data-ng-href="{{item.getLink(row)}}"	title="{{item.label}}">' +
-'										<span class="{{item.icon}}"></span>' +
-'									</a>' +
-'								</li>' +
-'							</ul>' +
+'						<td data-ng-if="row && actionList.length" class="table-action">' +
+'							<div class="btn-group" role="group">' +
+'								<a data-ng-repeat="item in actionList"' +
+'								   		role="button"' +
+'										class="btn-link"' +
+'										data-ng-href="{{item.getLink(row)}}"' +
+'										title="{{item.label}}">' +
+'									<span class="{{item.icon}}"></span>' +
+'								</a>' +
+'							</div>' +
 '						</td>' +
 '					</tr>' +
 '				</tbody>' +
@@ -1706,9 +1714,10 @@ angular.module('keta.services.AccessToken',
 			 *     });
 			 */
 			refresh: function() {
+				var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
 				return $http({
 					method: 'GET',
-					url: '/refreshAccessToken'
+					url: refreshUrl
 				});
 			}
 		

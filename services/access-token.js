@@ -80,9 +80,10 @@ angular.module('keta.services.AccessToken',
 			 *     });
 			 */
 			refresh: function() {
+				var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
 				return $http({
 					method: 'GET',
-					url: '/refreshAccessToken'
+					url: refreshUrl
 				});
 			}
 		
