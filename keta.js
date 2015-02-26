@@ -555,24 +555,30 @@ angular.module('keta.directives.ExtendedTable')
 '			</div>' +
 '			' +
 '		</div>' +
-'		<div class="col-xs-12 col-sm-6 pull-right">' +
+'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-5 pull-right">' +
 '			' +
 '			<!-- SELECTOR -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
-'				<div class="form-group form-inline pull-right" data-ng-show="selectedColumn !== null">' +
-'					<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
-'					<select id="columnSelector" class="form-control"' +
-'						data-ng-model="selectedColumn"' +
-'						data-ng-options="' +
-'							column as headerLabelCallback(column) for column in switchableColumns |' +
-'							filter:filterColumns">' +
-'					</select>' +
-'					<button type="button" class="btn btn-primary" data-ng-click="addColumn(selectedColumn)">' +
-'						<i class="glyphicon glyphicon-plus"></i>' +
-'					</button>' +
-'				</div>' +
-'				<div class="form-group form-inline pull-right">' +
-'					<span class="form-group-label">&nbsp;</span>' +
+'				<div class="form-inline pull-right" data-ng-show="selectedColumn !== null">' +
+'					<div class="form-group">' +
+'						<div class="button-form">' +
+'							<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
+'							<div class="input-group">' +
+'								<select id="columnSelector"' +
+'										class="add-select form-control"' +
+'										data-ng-model="selectedColumn"' +
+'										data-ng-options="' +
+'										column as headerLabelCallback(column) for column in switchableColumns |' +
+'										filter:filterColumns">' +
+'								</select>' +
+'								<div class="stepper-buttons input-group-btn">' +
+'									<button type="button" class="btn btn-primary" data-ng-click="addColumn(selectedColumn)">' +
+'										<i class="glyphicon glyphicon-plus"></i>' +
+'									</button>' +
+'								</div>' +
+'							</div>' +
+'						</div>' +
+'					</div>' +
 '				</div>' +
 '			</div>' +
 '			' +
@@ -592,13 +598,15 @@ angular.module('keta.directives.ExtendedTable')
 '							data-ng-click="sortBy(column)">' +
 '							<a class="header">{{headerLabelCallback(column)}}</a>' +
 '							<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-sort-by-attributes"></span>' +
+'								<span class="glyphicon glyphicon-sort-by-alphabet"></span>' +
 '							</a>' +
 '							<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>' +
+'								<span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>' +
 '							</a>' +
-'							<span data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
-'								class="glyphicon glyphicon-sort"></span>' +
+'							<a class="unsort"' +
+'								data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null">' +
+'								<span class="glyphicon glyphicon-sort"></span>' +
+'							</a>' +
 '							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
 '								<span class="glyphicon glyphicon-minus"></span>' +
 '							</a>' +
@@ -624,10 +632,9 @@ angular.module('keta.directives.ExtendedTable')
 '							class="{{columnClassCallback(row, column, false)}}">' +
 '							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '						</td>' +
-'						<td data-ng-if="row && actionList.length" class="table-action">' +
+'						<td data-ng-if="row && actionList.length">' +
 '							<div class="btn-group" role="group">' +
 '								<a data-ng-repeat="item in actionList"' +
-'								   role="button"' +
 '								   class="btn-link"' +
 '								   data-ng-href="{{item.getLink(row)}}"' +
 '								   title="{{item.label}}">' +
@@ -647,14 +654,13 @@ angular.module('keta.directives.ExtendedTable')
 '							class="{{columnClassCallback(row, column, false)}}">' +
 '							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '						</td>' +
-'						<td data-ng-if="row && actionList.length" class="table-action">' +
+'						<td data-ng-if="row && actionList.length">' +
 '							<div class="btn-group" role="group">' +
 '								<a data-ng-repeat="item in actionList"' +
-'								   		role="button"' +
 '										class="btn-link"' +
 '										data-ng-href="{{item.getLink(row)}}"' +
 '										title="{{item.label}}">' +
-'									<span class="{{item.icon}}"></span>' +
+'									<span class="{{item.icon}}" aria-hidden="true"></span>' +
 '								</a>' +
 '							</div>' +
 '						</td>' +
@@ -1384,8 +1390,8 @@ angular.module('keta.directives.WorldBar')
 '			data-ng-if="energyManagers.length">' +
 '			<a href="" data-ng-click="toggleOpenState(\'energyManagerMenu\')">' +
 '				<span class="glyphicon glyphicon-tasks"></span>' +
-'				<span class="hidden-xs hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
-'				<span>({{energyManagers.length}})</span>' +
+'				<span class="hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
+'				<span class="hidden-sm hidden-md">({{energyManagers.length}})</span>' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +

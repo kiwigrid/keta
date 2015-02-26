@@ -391,8 +391,8 @@ angular.module('keta.directives.WorldBar')
 '			data-ng-if="energyManagers.length">' +
 '			<a href="" data-ng-click="toggleOpenState(\'energyManagerMenu\')">' +
 '				<span class="glyphicon glyphicon-tasks"></span>' +
-'				<span class="hidden-xs hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
-'				<span>({{energyManagers.length}})</span>' +
+'				<span class="hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
+'				<span class="hidden-sm hidden-md">({{energyManagers.length}})</span>' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +

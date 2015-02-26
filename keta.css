@@ -952,7 +952,7 @@ hr {
   margin-top: 20px;
   margin-bottom: 20px;
   border: 0;
-  border-top: 1px solid transparent;
+  border-top: 1px solid #f4f0e7;
 }
 .sr-only {
   position: absolute;
@@ -2599,7 +2599,6 @@ select[multiple].input-lg {
 @media (min-width: 768px) {
   .form-inline .form-group {
     display: inline-block;
-    margin-bottom: 0;
     vertical-align: middle;
   }
   .form-inline .form-control {
@@ -3049,6 +3048,9 @@ input[type="submit"].btn-block,
 input[type="reset"].btn-block,
 input[type="button"].btn-block {
   width: 100%;
+}
+table .btn-group .btn-link {
+  text-decoration: none;
 }
 .fade {
   opacity: 0;
@@ -4002,7 +4004,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 @media (min-width: 768px) {
   .navbar-form .form-group {
     display: inline-block;
-    margin-bottom: 0;
     vertical-align: middle;
   }
   .navbar-form .form-control {
@@ -4301,7 +4302,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 }
 .breadcrumb {
   padding: 8px 15px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   list-style: none;
   background-color: transparent;
   border-radius: 2px;
@@ -4310,7 +4311,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   display: inline-block;
 }
 .breadcrumb > li + li:before {
-  content: ">\00a0";
+  content: "»\00a0";
   padding: 0 5px;
   color: #363636;
 }
@@ -5017,13 +5018,12 @@ a.list-group-item-danger.active:focus {
 .panel-body {
   padding: 15px;
   background-color: #ffffff;
-  height: 277px;
+  height: 100%;
 }
 .panel-heading {
   padding: 8px 15px;
   border-top-right-radius: -1;
   border-top-left-radius: -1;
-  text-transform: uppercase;
 }
 .panel-heading > .dropdown .dropdown-toggle {
   color: inherit;
@@ -5349,12 +5349,11 @@ a.list-group-item-danger.active:focus {
 .panel-lg .panel-body {
   height: 437px;
 }
+.panel-md .panel-body {
+  height: 277px;
+}
 .panel-sm .panel-body {
   height: 117px;
-}
-.panel-auto-height .panel-body {
-  max-height: 100%;
-  height: 100%;
 }
 @media (max-width: 768px) {
   .panel .panel-body {
@@ -6256,10 +6255,17 @@ button.close {
  */
 body {
   padding-top: 120px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+}
+.glyphicon {
+  top: 2px;
+}
+.panel h1,
+.panel h2,
+.panel h3,
+.panel h4,
+.panel h5,
+.panel h6 {
+  margin: 0;
 }
 .brand {
   height: 56px;
@@ -6368,6 +6374,9 @@ h2 .label {
 .table th.state.state-success,
 .table td.state.state-success {
   background-color: #7b9340;
+}
+.breadcrumb {
+  padding: 0;
 }
 .login .modal-footer {
   text-align: left;
@@ -6914,7 +6923,6 @@ body {
   margin-top: 5px;
 }
 .tags .tag {
-  height: 20px;
   display: inline-block;
   position: relative;
   margin-right: 4px;
@@ -6934,7 +6942,8 @@ body {
   padding-top: 2px;
 }
 .tags .label {
-  margin: 0;
+  margin: 3px 1px;
+  padding: 3px 10px 1px 10px;
 }
 .tags input[type="text"] {
   border: none;
@@ -7305,8 +7314,9 @@ a.bg-blue:hover {
   color: #787878;
   padding-top: 5px;
 }
-.table-data .table-action {
-  padding: 8px 0px;
+.table-data .table-condensed th:last-child,
+.table-data .table-condensed td:last-child {
+  padding: 6px 0px;
 }
 .table-data th.sortable {
   cursor: pointer;
