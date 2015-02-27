@@ -508,9 +508,7 @@ angular.module('keta.directives.ExtendedTable',
 angular.module('keta.directives.ExtendedTable')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/extended-table.html', '<div data-ng-class="{' +
-'	\'keta-extended-table\': true,' +
-'	\'table-responsive\': true,' +
-'	\'table-data\': true' +
+'	\'keta-extended-table\': true' +
 '}">' +
 '' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || isDisabled(COMPONENTS_SELECTOR)">' +
@@ -537,9 +535,9 @@ angular.module('keta.directives.ExtendedTable')
 '							<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
 '							<div class="input-group">' +
 '								<select id="columnSelector"' +
-'										class="add-select form-control"' +
-'										data-ng-model="selectedColumn"' +
-'										data-ng-options="' +
+'									class="add-select form-control"' +
+'									data-ng-model="selectedColumn"' +
+'									data-ng-options="' +
 '										column as headerLabelCallback(column) for column in switchableColumns |' +
 '										filter:filterColumns">' +
 '								</select>' +
@@ -560,7 +558,7 @@ angular.module('keta.directives.ExtendedTable')
 '	<!-- TABLE -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
 '		<div class="col-xs-12">' +
-'			<table class="table table-striped form-group">' +
+'			<table class="table table-data table-responsive table-striped form-group">' +
 '				<thead>' +
 '					<tr>' +
 '						<th class="{{columnClassCallback(headers, column, true)}} sortable"' +
