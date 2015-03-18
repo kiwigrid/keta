@@ -79,9 +79,8 @@
     
         
             <div class="description"><p>
-  Horizontal bar with multiple menus (world switcher, user navigation, language switcher,
-  notification toggle-button).<br>
-  All menus (except world switcher) can be hidden by boolean attributes.
+  Horizontal navigation bar called Worldbar with multiple menus (Context Switcher, User Menu, Energy Manager Menu,
+  Language Menu and Notification Center toggle button).
 </p></div>
         
         
@@ -101,7 +100,7 @@
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul class="list-unstyled">
-            <li>Jan Uhlmann &lt;jan.uhlmann (at) kiwigrid.com&gt;</li>
+            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
         </ul>
     </dd>
     
@@ -133,82 +132,50 @@
         
             <h3>Examples</h3>
             
-    <pre class="prettyprint"><code>&lt;div data-world-bar data-configuration="worldBarConfig"&gt;&lt;/div&gt;</code></pre>
+    <pre class="prettyprint"><code>&lt;div data-world-bar
+    data-event-bus-id="eventBusId"
+    data-locales="locales"
+    data-current-locale="currentLocale"
+    data-labels="labels"
+    data-links="links"&gt;&lt;/div&gt;</code></pre>
 
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.directives.WorldBar'])
      .controller('ExampleController', function($scope) {
- 
-         // world bar configuration object
-         $scope.worldBarConfig = {
-            contextSwitcher: {
-                worlds: {
-                    items: [{
-                        name: 'Desktop',
-                        link: 'https://cloud.mycompany.com'
-                    }, {
-                        name: 'Market',
-                        link: 'https://market.mycompany.com'
-                    }, {
-                        name: 'Service',
-                        link: 'https://service.mycompany.com'
-                    }]
-                },
-                apps: {
-                    labels: {
-                        allApps: 'Alle Apps'
-                    },
-                    hidden: false,
-                    items: [{
-                        name: 'Smart Power Control',
-                        link: 'https://smartpowercontrol.mycompany.com'
-                    }, {
-                        name: 'Tag-App',
-                        link: 'https://tagapp.mycompany.com'
-                    }, {
-                        name: 'My Monitor',
-                        link: 'https://mymonitor.mycompany.com'
-                    }, {
-                        name: 'Anoter App',
-                        link: 'https://anotherapp.mycompany.com'
-                    }]
-                }
-            },
-            userMenu: {
-                labels: {
-                    userProfile: 'Benutzerkonto',
-                    logout: 'Logout'
-                },
-                profile: {
-                    login: 'max.mustermann',
-                    firstName: 'Max',
-                    lastName: 'Mustermann'
-                },
-                additionalItems: [{
-                    name: 'Share on Facebook',
-                    link: 'https://www.facebook.com'
-                }]
-            },
-            energyManagerMenu: {
-                labels: {
-                    allEnergyManagers: 'Alle Energy-Manager'
-                },
-                items: [{
-                    name: 'ERC02-000001051',
-                    link: 'http://192.168.125.81'
-                }]
-            },
-            languageMenu: {
-                items: [{
-                    name: 'Deutsch',
-                    nameShort: 'DE',
-                    code: 'de'
-                }, {
-                    name: 'English',
-                    nameShort: 'EN',
-                    code: 'en-UK'
-                }]
-            }
+         
+        // id of eventBus instance to use to retrieve data
+        $scope.eventBusId = 'kiwibus';
+        
+         // array of locales to use for language menu
+         $scope.locales = [{
+            name: 'Deutsch',
+            nameShort: 'DE',
+            code: 'de'
+        }, {
+            name: 'English',
+            nameShort: 'EN',
+            code: 'en'
+        }];
+        
+        // current locale
+        $scope.currentLocale = 'de';
+        
+        // object of labels to use in template
+        $scope.labels = {
+            ALL_APPS: 'All Apps',
+            ENERGY_MANAGER: 'Energy-Manager',
+            ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+            USER_PROFILE: 'User Profile',
+            USER_LOGOUT: 'Logout'
         };
+        
+        // object of link to use in template
+        $scope.links = {
+            ALL_APPS: '/#/applications/',
+            ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+            USER_PROFILE: '/#/users/profile',
+            USER_LOGOUT: '/#/users/logout'
+        };
+        
     });</code></pre>
 
         

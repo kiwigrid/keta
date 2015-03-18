@@ -173,9 +173,12 @@
             stateDevice: 'FATAL',
             deviceClass: 'class-3'
         }];
-
-        $scope.labelAddColumn = 'add col:';
-
+        
+        // object of labels
+        $scope.labels = {
+            ADD_COLUMN: 'add col:'
+        };
+        
         // array of disabled components (empty by default)
         $scope.disabledComponents = [
             // the table itself
