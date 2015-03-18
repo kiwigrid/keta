@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.3.3
+
+_Released: 2015-03-18_
+
+* Added `Device.getDeviceClasses` method
+* Updated CSS parts
+
 ## Version 0.3.2
 
 _Released: 2015-02-13_

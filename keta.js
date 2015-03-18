@@ -24,7 +24,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.2
+ * keta 0.3.3
  */
 
 // source: dist/directives/extended-table.js
@@ -2578,7 +2578,35 @@ angular.module('keta.services.Device',
 					deferred.reject(message);
 					return deferred.promise;
 				};
-				
+
+				/**
+				 * @class findDeviceClass
+				 * @propertyOf Device
+				 * @description Searches the given object recursively downwards for the key
+				 * <code>deviceClass</code> (on current level and inside of the <code>superclasses</code>-array.)
+				 * The found data is stored in a flat array of objects beginning with the most specific deviceClass.
+				 * @param {Object} deviceModel The deviceModel in the current tree-level.
+				 * @param {Array} deviceClassesArray All devices classes found in the parent object-tree.
+				 * @returns {Array} deviceClassesArray
+				 */
+				var findDeviceClass = function(deviceModel, deviceClassesArray) {
+					if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
+						var parts = deviceModel.deviceClass.split('~');
+						deviceClassesArray.push({
+							deviceClass: parts[0],
+							version: parts[1]
+						});
+						if (angular.isDefined(deviceModel.superclasses) &&
+							angular.isArray(deviceModel.superclasses) &&
+							deviceModel.superclasses.length > 0) {
+							angular.forEach(deviceModel.superclasses, function(superclass) {
+								findDeviceClass(superclass, deviceClassesArray);
+							});
+						}
+					}
+					return deviceClassesArray;
+				};
+
 				/**
 				 * @name update
 				 * @function
@@ -2691,9 +2719,49 @@ angular.module('keta.services.Device',
 						}
 					});
 				};
-				
+
+				/**
+				 * @name getDeviceClasses
+				 * @function deviceClasses
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
+				 *   <code>version</code> as separate keys.
+				 *   The first entry is the most specific icon class followed by its superclasses (if there are any).
+				 *   The highest array-index represents the most general device-class for this device.
+				 * </p>
+				 * <p>
+				 *   The returned array can be used to map the device-class to a device-icon.<br>
+				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
+				 *   So every application can use another mapping if the default-one is not suitable.
+				 * </p>
+				 * @return {Array} deviceClasses
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             deviceModel: {
+				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
+				 *                 superclasses: [{
+				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
+				 *                     superclasses: []
+				 *                 }]
+				 *             }
+				 *         });
+				 *         var deviceClassesArray = device.getDeviceClasses();
+				 *     });
+				 */
+				that.getDeviceClasses = function() {
+					var deviceClasses = [];
+					if (angular.isDefined(that.deviceModel)) {
+						deviceClasses = findDeviceClass(that.deviceModel, deviceClasses);
+					}
+					return deviceClasses;
+				};
 			};
-			
+
 			/**
 			 * @class Device
 			 * @propertyOf DeviceProvider
@@ -4356,6 +4424,20 @@ angular.module('keta.shared', [])
 				LIMIT: 'limit',
 				OFFSET: 'offset'
 			}
+		},
+		DEVICE_ICON_MAP: {
+			'com.kiwigrid.devices.batteryconverter.BatteryConverter': 'kiwigrid-device-icon-battery-converter',
+			'com.kiwigrid.devices.plug.Plug': 'kiwigrid-device-icon-plug',
+			'com.kiwigrid.devices.powermeter.PowerMeter': 'kiwigrid-device-icon-plug',
+			'com.kiwigrid.devices.windturbine.WindTurbine': 'kiwigrid-device-icon-wind-turbine',
+			'com.kiwigrid.devices.sensor.TemperatureSensor': 'kiwigrid-device-icon-temperature-sensor',
+			'com.kiwigrid.devices.inverter.Inverter': 'kiwigrid-device-icon-inverter',
+			'com.kiwigrid.devices.heatpump.HeatPump': 'kiwigrid-device-icon-smart-heat-pump',
+			'com.kiwigrid.devices.microchp.MicroChpSystem': 'kiwigrid-device-icon-micro-combined-heat-pump',
+			'com.kiwigrid.devices.ripplecontrolreceiver.RippleControlReceiver':
+				'kiwigrid-device-icon-ripple-control-receiver',
+			'com.kiwigrid.devices.smartheatpumps.SmartHeatPumps': 'kiwigrid-device-icon-smart-heat-pump',
+			'com.kiwigrid.devices.pvplant.PVPlant': 'kiwigrid-device-icon-pv-plant'
 		}
 	})
 	
