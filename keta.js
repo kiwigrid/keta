@@ -24,7 +24,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.3
+ * keta 0.3.4
  */
 
 // source: dist/directives/extended-table.js
@@ -48,6 +48,8 @@ angular.module('keta', [
  *     data-label-add-column="labelAddColumn"
  *     data-disabledComponents="disabledComponents"
  *     data-switchable-columns="switchableColumns"
+ *     data-group-by-property="groupByProperty"
+ *     data-order-by-property="orderByProperty"
  *     data-visible-columns="visibleColumns"
  *     data-header-label-callback="headerLabelCallback"
  *     data-operations-mode="operationsMode"
@@ -58,11 +60,12 @@ angular.module('keta', [
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
  *     data-pager="pager"
- *     data-search="search"&gt;&lt;/div&gt;
+ *     data-search="search"
+ *     data-search-results="searchResults"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.ExtendedTable'])
  *     .controller('ExampleController', function($scope, ketaSharedConfig) {
- *         
+ * 
  *         // data as array of objects, keys from first element are taken as headers
  *         $scope.rows = [{
  *             guid: 'guid-1',
@@ -80,12 +83,12 @@ angular.module('keta', [
  *             stateDevice: 'FATAL',
  *             deviceClass: 'class-3'
  *         }];
- *         
+ *
  *         // object of labels
  *         $scope.labels = {
  *             ADD_COLUMN: 'add col:'
  *         };
- *         
+ *
  *         // array of disabled components (empty by default)
  *         $scope.disabledComponents = [
  *             // the table itself
@@ -97,16 +100,25 @@ angular.module('keta', [
  *             // a pager to navigate through paged data
  *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER
  *         ];
- *         
+ *
  *         // array of switchable columns (empty by default)
- *         // together with selector component the given columns can be remove from
+ *         // together with selector component the given columns can be removed from
  *         // table and added to table afterwards
- *         $scope.switchableColumns = ['deviceClass'];
- *         
+ *         // to support grouping in select field an array of objects is required (match is compared by id property)
+ *         $scope.switchableColumns = [{
+ *             id: 'deviceClass'
+ *         }];
+ *
+ *         // property to group selector by
+ *         $scope.groupByProperty = 'column.deviceName';
+ *
+ *         // property to order selector by
+ *         $scope.orderByProperty = 'tagName';
+ *
  *         // array of visible columns (full by default)
  *         // use this property to filter out columns like primary keys
  *         $scope.visibleColumns = ['idName', 'stateDevice', 'deviceClass'];
- *         
+ *
  *         // callback method to specify header labels (instead of using auto-generated ones)
  *         $scope.headerLabelCallback = function(column) {
  *             var mappings = {
@@ -116,22 +128,22 @@ angular.module('keta', [
  *             };
  *             return (angular.isDefined(mappings[column])) ? mappings[column] : column;
  *         };
- *         
+ *
  *         // operations mode ("view" for frontend or "data" for backend)
  *         // by defining operations mode as "view" the directive itself manages sorting,
  *         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
  *         // dataset by querying a backend, you have to use "data"
  *         $scope.operationsMode = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
- *         
+ *
  *         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
  *         $scope.rowSortEnabled = true;
- *         
+ *
  *         // criteria to sort for as string
  *         $scope.rowSortCriteria = 'idName';
- *         
+ *
  *         // boolean flag to determine if sort order is ascending (true by default)
  *         $scope.rowSortOrderAscending = true;
- *         
+ *
  *         // array of actions to render for each row
  *         // getLink method will be used to construct a link with the help of the row object,
  *         // label is used as value for title-tag,
@@ -149,7 +161,7 @@ angular.module('keta', [
  *             label: 'Remove',
  *             icon: 'glyphicon glyphicon-remove'
  *         }];
- *         
+ *
  *         // callback method to render each cell individually
  *         // with the help of this method you can overwrite default cell rendering behavior,
  *         // e.g. suppressing output for stateDevice property
@@ -160,7 +172,7 @@ angular.module('keta', [
  *             }
  *             return value;
  *         };
- *         
+ *
  *         // callback method to return class attribute for each column
  *         // in this example together with cellRenderer the deviceState column is
  *         // expressed as just a table data element with css classes
@@ -180,7 +192,7 @@ angular.module('keta', [
  *             }
  *             return columnClass;
  *         };
- *         
+ *
  *         // object for pager configuration (total, limit, offset)
  *         // with this configuration object you are able to manage paging
  *         // total is the total number of rows in the dataset
@@ -191,15 +203,19 @@ angular.module('keta', [
  *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT] = 5;
  *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET] = 0;
  *         $scope.pager = pager;
- *         
+ *
  *         // search term to filter the table
  *         // as two-way-binded property this variable contains the search string
  *         // typed by the user in the frontend and can therefor be used for querying
  *         // the backend, if watched here additionally
  *         $scope.search = null;
- *         
+ *
+ *         // array of search results e.g. for usage in headlines
+ *         // defaults to $scope.rows, typically not set directly by controller
+ *         //$scope.searchResults = $scope.rows;
+ *
  *     });
- * 
+ *
  */
 angular.module('keta.directives.ExtendedTable',
 	[
@@ -208,278 +224,344 @@ angular.module('keta.directives.ExtendedTable',
 		'keta.filters.OrderObjectBy',
 		'keta.filters.Slice'
 	])
-	
+
 	.directive('extendedTable', function ExtendedTableDirective($compile, $filter, ketaSharedConfig) {
 		return {
 			restrict: 'EA',
 			replace: true,
 			scope: {
-				
+
 				// data as array of objects, keys from first element are taken as headers
 				rows: '=',
-				
+
 				// label prefixed to selector-component
 				labels: '=?',
-				
+
 				// array of disabled components (empty by default)
 				disabledComponents: '=?',
-				
+
 				// array of switchable columns (empty by default)
 				switchableColumns: '=?',
-				
+
+				// property to group selector by
+				groupByProperty: '=?',
+
+				// property to order selector by
+				orderByProperty: '=?',
+
 				// array of visible columns (full by default)
 				visibleColumns: '=?',
-				
+
 				// callback method to specify header labels (instead of using auto-generated ones)
 				headerLabelCallback: '=?',
-				
+
 				// operations mode ("view" for frontend or "data" for backend)
 				operationsMode: '=?',
-				
+
 				// boolean flag to enable or disable row sorting in frontend
 				rowSortEnabled: '=?',
-				
+
 				// criteria to sort for as string
 				rowSortCriteria: '=?',
-				
+
 				// boolean flag to enable ascending sort order for rows
 				rowSortOrderAscending: '=?',
-				
+
 				// array of actions to render for each row
 				actionList: '=?',
-				
+
 				// callback method to render each cell individually
 				cellRenderer: '=?',
-				
+
 				// callback method to return class attribute for each column
 				columnClassCallback: '=?',
-				
+
 				// object for pager configuration (total, limit, offset)
 				pager: '=?',
-				
+
 				// search term to filter the table
-				search: '=?'
-				
+				search: '=?',
+
+				// array of search results
+				searchResults: '=?'
+
 			},
 			templateUrl: '/components/directives/extended-table.html',
 			link: function(scope) {
-				
+
+				// rows
+				scope.rows =
+					(angular.isDefined(scope.rows) && angular.isArray(scope.rows)) ?
+						scope.rows : [];
+
 				// object of labels
 				var defaultLabels = {
-					ADD_COLUMN: 'Add column'
+					SEARCH: 'Search',
+					ADD_COLUMN: 'Add column',
+					REMOVE_COLUMN: 'Remove column',
+					SORT: 'Sort',
+					NO_ENTRIES: 'No entries'
 				};
 				scope.labels = angular.extend(defaultLabels, scope.labels);
-				
+
 				// headers to save
 				scope.headers =
 					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
 						scope.rows[0] : {};
-				
+
 				// disabledComponents
 				scope.disabledComponents = scope.disabledComponents || [
 					scope.COMPONENTS_FILTER,
 					scope.COMPONENTS_SELECTOR,
 					scope.COMPONENTS_PAGER
 				];
-				
+
 				// switchableColumns
 				scope.switchableColumns = scope.switchableColumns || [];
-				
+				scope.resetSelectedColumn();
+
+				// groupByProperty
+				scope.groupByProperty = scope.groupByProperty || null;
+
+				// orderByProperty
+				scope.orderByProperty = scope.orderByProperty || '';
+
 				// visibleColumns
 				scope.visibleColumns =
 					scope.visibleColumns ||
 					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
 						Object.keys(scope.rows[0]) : []);
-				
+
 				// headerLabelCallback
 				scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
 					return column;
 				};
-				
+
 				// operationsMode
 				scope.operationsMode = scope.operationsMode || scope.OPERATIONS_MODE_VIEW;
-				
+
 				// rowSortEnabled
 				scope.rowSortEnabled =
 					(angular.isDefined(scope.rowSortEnabled)) ?
 						scope.rowSortEnabled : false;
-				
+
 				// rowSortCriteria
 				scope.rowSortCriteria =
 					scope.rowSortCriteria ||
 					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
 						Object.keys(scope.rows[0])[0] : null);
-				
+
 				// rowSortOrderAscending
 				scope.rowSortOrderAscending =
 					(angular.isDefined(scope.rowSortOrderAscending)) ?
 						scope.rowSortOrderAscending : true;
-				
+
 				// actionList
 				scope.actionList = scope.actionList || [];
-				
+
 				// cellRenderer
 				scope.cellRenderer = scope.cellRenderer || function(row, column) {
 					return angular.isDefined(row[column]) ? row[column] : null;
 				};
-				
+
 				// columnClassCallback
 				scope.columnClassCallback = scope.columnClassCallback || function() {
 					// parameters: row, column, isHeader
 					return '';
 				};
-				
+
 				// pager
 				var defaultPager = {};
-				defaultPager[scope.PAGER_TOTAL] = angular.isArray(scope.rows) ? scope.rows.length : 0;
-				defaultPager[scope.PAGER_LIMIT] = angular.isArray(scope.rows) ? scope.rows.length : 0;
+				defaultPager[scope.PAGER_TOTAL] = scope.rows.length;
+				defaultPager[scope.PAGER_LIMIT] = scope.rows.length;
 				defaultPager[scope.PAGER_OFFSET] = 0;
-				scope.pager = scope.pager || defaultPager;
-				
+				scope.pager = angular.extend(defaultPager, scope.pager);
+				scope.resetPager();
+
 				// search
 				scope.search = scope.search || null;
-				
-				/**
-				 * update properties without using defaults
-				 */
-				var update = function() {
-					
-					if (angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) {
-						
-						// headers to save
-						if (angular.equals(scope.headers, {})) {
-							scope.headers = scope.rows[0];
-						}
-						
-						// visibleColumns
-						if (angular.equals(scope.visibleColumns, [])) {
-							scope.visibleColumns = Object.keys(scope.rows[0]);
-						}
-						
-						// rowSortCriteria
-						if (scope.rowSortCriteria === null) {
-							scope.rowSortCriteria = Object.keys(scope.rows[0])[0];
-						}
-						
-					}
-					
-				};
-				
-				scope.$watchCollection('rows', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						update();
-					}
-				});
-				
+
+				// array of search results
+				scope.searchResults = scope.searchResults || scope.rows;
+
 			},
 			controller: function($scope) {
-				
+
 				// CONSTANTS ---
-				
+
 				$scope.COMPONENTS_FILTER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.FILTER;
 				$scope.COMPONENTS_SELECTOR = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.SELECTOR;
 				$scope.COMPONENTS_TABLE = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.TABLE;
 				$scope.COMPONENTS_PAGER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER;
-				
+
 				$scope.OPERATIONS_MODE_DATA = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.DATA;
 				$scope.OPERATIONS_MODE_VIEW = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
-				
+
 				$scope.PAGER_TOTAL = ketaSharedConfig.EXTENDED_TABLE.PAGER.TOTAL;
 				$scope.PAGER_LIMIT = ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT;
 				$scope.PAGER_OFFSET = ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET;
-				
+
+				// VARIABLES ---
+
+				$scope.pages = [];
+				$scope.currentPage = 0;
+				$scope.selectedColumn = null;
+
 				// HELPER ---
-				
-				var inArray = function(array, key) {
+
+				// update properties without using defaults
+				var update = function() {
+
+					if (angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) {
+
+						// headers to save
+						if (angular.equals($scope.headers, {})) {
+							$scope.headers = $scope.rows[0];
+						}
+
+						// visibleColumns
+						if (angular.equals($scope.visibleColumns, [])) {
+							$scope.visibleColumns = Object.keys($scope.rows[0]);
+						}
+
+						// rowSortCriteria
+						if ($scope.rowSortCriteria === null) {
+							$scope.rowSortCriteria = Object.keys($scope.rows[0])[0];
+						}
+
+					} else {
+						$scope.headers = {};
+						$scope.visibleColumns = [];
+						$scope.rowSortCriteria = null;
+					}
+
+				};
+
+				// check if element exists in array
+				var inArray = function(array, element) {
 					var found = false;
 					angular.forEach(array, function(item) {
-						if (item === key) {
+						if (item === element) {
 							found = true;
 						}
 					});
 					return found;
 				};
-				
+
+				// reset pager object regarding filtered rows
+				$scope.resetPager = function() {
+
+					// update pager
+					if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
+						var rowsLength = $filter('filter')($scope.rows, $scope.search).length;
+						$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
+						if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
+							$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
+						}
+						if ($scope.pager[$scope.PAGER_OFFSET] > rowsLength - 1) {
+							$scope.pager[$scope.PAGER_OFFSET] = 0;
+						}
+					}
+
+					// determine array of pages
+					if (angular.isNumber($scope.pager[$scope.PAGER_TOTAL]) &&
+						angular.isNumber($scope.pager[$scope.PAGER_LIMIT])) {
+						$scope.pages = [];
+						var numOfPages = Math.ceil($scope.pager[$scope.PAGER_TOTAL] / $scope.pager[$scope.PAGER_LIMIT]);
+						for (var i = 0; i < numOfPages; i++) {
+							$scope.pages.push(i + 1);
+						}
+					}
+
+					// determine current page
+					if (angular.isNumber($scope.pager[$scope.PAGER_LIMIT]) &&
+						angular.isNumber($scope.pager[$scope.PAGER_OFFSET])) {
+						$scope.currentPage =
+							Math.floor($scope.pager[$scope.PAGER_OFFSET] / $scope.pager[$scope.PAGER_LIMIT]) + 1;
+					}
+
+				};
+
+				// reset selected column
+				$scope.resetSelectedColumn = function() {
+					var possibleColumns = $filter('filter')($scope.switchableColumns, function(column) {
+						return !inArray($scope.visibleColumns, column.id);
+					});
+					var stillPossible = false;
+					angular.forEach(possibleColumns, function(column) {
+						if (column.id === $scope.selectedColumn) {
+							stillPossible = true;
+						}
+					});
+					if (!stillPossible) {
+						possibleColumns = $filter('orderBy')(possibleColumns, $scope.orderByProperty);
+						$scope.selectedColumn = (angular.isDefined(possibleColumns[0])) ? possibleColumns[0].id : null;
+					}
+				};
+
+				// INIT ---
+
+				// $scope.resetPager();
+				// $scope.resetSelectedColumn();
+
+				// WATCHER ---
+
+				$scope.$watch('rows', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						update();
+						$scope.resetPager();
+					}
+				}, true);
+
+				$scope.$watch('rows.length', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						$scope.resetPager();
+					}
+				});
+
+				$scope.$watch('pager', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						$scope.resetPager();
+					}
+				}, true);
+
+				$scope.$watch('search', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						$scope.resetPager();
+						$scope.searchResults = $filter('filter')($scope.rows, $scope.searchIn);
+					}
+				});
+
+				$scope.$watch('switchableColumns', function(newValue, oldValue) {
+					if (newValue !== null && newValue !== oldValue) {
+						$scope.resetSelectedColumn();
+					}
+				}, true);
+
+				// ACTIONS ---
+
 				$scope.isDisabled = function(key) {
 					return inArray($scope.disabledComponents, key);
 				};
-				
+
 				$scope.isSwitchable = function(key) {
-					return inArray($scope.switchableColumns, key);
+					var switchable = false;
+					angular.forEach($scope.switchableColumns, function(column) {
+						if (column.id === key) {
+							switchable = true;
+						}
+					});
+					return switchable;
 				};
-				
+
 				$scope.isSortCriteria = function(key) {
-					var criteria =
-						(angular.isDefined($scope.rowSortCriteria)) ?
-							$scope.rowSortCriteria : null;
-					if (criteria !== null && (criteria[0] === '+' || criteria[0] === '-')) {
-						criteria = criteria.substr(1);
-					}
-					return (key === criteria);
+					return ($scope.rowSortCriteria !== null) ? (key === $scope.rowSortCriteria) : false;
 				};
-				$scope.pages = [];
-				$scope.currentPage = 0;
-				
-				var resetPager = function() {
-					if (angular.isDefined($scope.pager) && ($scope.pager !== null)) {
-						
-						// update pager
-						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
-							var rows = $scope.rows || [];
-							var rowsLength = $filter('filter')(rows, $scope.search).length;
-							$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
-							if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
-								$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
-							}
-							if ($scope.pager[$scope.PAGER_OFFSET] > rowsLength - 1) {
-								$scope.pager[$scope.PAGER_OFFSET] = 0;
-							}
-						}
-						
-						// determine array of pages
-						if (angular.isNumber($scope.pager[$scope.PAGER_TOTAL]) &&
-							angular.isNumber($scope.pager[$scope.PAGER_LIMIT])) {
-							$scope.pages = [];
-							var numOfPages = Math.ceil($scope.pager[$scope.PAGER_TOTAL] / $scope.pager[$scope.PAGER_LIMIT]);
-							for (var i = 0; i < numOfPages; i++) {
-								$scope.pages.push(i + 1);
-							}
-						}
-						
-						// determine current page
-						if (angular.isNumber($scope.pager[$scope.PAGER_LIMIT]) &&
-							angular.isNumber($scope.pager[$scope.PAGER_OFFSET])) {
-							$scope.currentPage =
-								Math.floor($scope.pager[$scope.PAGER_OFFSET] / $scope.pager[$scope.PAGER_LIMIT]) + 1;
-						}
-						
-					}
-				};
-				
-				$scope.$watch('rows.length', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						resetPager();
-					}
-				});
-				
-				$scope.$watch('pager', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						resetPager();
-					}
-				}, true);
-				
-				$scope.$watch('search', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						resetPager();
-					}
-				});
-				
-				resetPager();
-				
-				// ACTIONS ---
-				
+
 				$scope.sortBy = function(column) {
-					if ($scope.rowSortEnabled && $scope.headerLabelCallback(column) !== null) {
+					if ($scope.rowSortEnabled &&
+						$scope.headerLabelCallback(column) !== null &&
+						$scope.headerLabelCallback(column) !== '') {
 						if ($scope.rowSortCriteria === column) {
 							$scope.rowSortOrderAscending = !$scope.rowSortOrderAscending;
 						} else {
@@ -487,31 +569,46 @@ angular.module('keta.directives.ExtendedTable',
 						}
 					}
 				};
-				
-				$scope.selectedColumn = null;
-				
-				var resetSelectedColumn = function() {
-					var possibleColumns = $filter('filter')($scope.switchableColumns, $scope.filterColumns);
-					if (!inArray(possibleColumns, $scope.selectedColumn)) {
-						$scope.selectedColumn = (angular.isDefined(possibleColumns[0])) ? possibleColumns[0] : null;
+
+				$scope.searchIn = function(row) {
+					if (!angular.isDefined($scope.search) || ($scope.search === null) || ($scope.search === '')) {
+						return true;
+					} else {
+						var match = false;
+						angular.forEach($scope.visibleColumns, function(column) {
+							if (angular.isDefined(row[column]) && row[column] !== null) {
+
+								if (angular.isObject(row[column]) && !angular.isArray(row[column])) {
+									var deepMatch = false;
+									angular.forEach(row[column], function(prop) {
+										if (String(prop).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
+											deepMatch = true;
+										}
+									});
+									if (deepMatch === true) {
+										match = true;
+									}
+								} else {
+									if (String(row[column]).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
+										match = true;
+									}
+								}
+
+							}
+						});
+						return match;
 					}
 				};
-				
-				$scope.$watch('switchableColumns.length', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						resetSelectedColumn();
-					}
-				});
-				
+
 				$scope.filterColumns = function(column) {
-					return !inArray($scope.visibleColumns, column);
+					return !inArray($scope.visibleColumns, column.id);
 				};
-				
+
 				$scope.addColumn = function(column) {
 					$scope.visibleColumns.push(column);
-					resetSelectedColumn();
+					$scope.resetSelectedColumn();
 				};
-				
+
 				$scope.removeColumn = function(column) {
 					var columns = [];
 					angular.forEach($scope.visibleColumns, function(col) {
@@ -520,14 +617,14 @@ angular.module('keta.directives.ExtendedTable',
 						}
 					});
 					$scope.visibleColumns = columns;
-					resetSelectedColumn();
+					$scope.resetSelectedColumn();
 				};
-				
+
 				$scope.goToPage = function(page) {
 					$scope.pager[$scope.PAGER_OFFSET] = $scope.pager[$scope.PAGER_LIMIT] * (page - 1);
-					resetPager();
+					$scope.resetPager();
 				};
-				
+
 			}
 		};
 	});
@@ -539,35 +636,47 @@ angular.module('keta.directives.ExtendedTable')
 '	\'keta-extended-table\': true' +
 '}">' +
 '' +
-'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || isDisabled(COMPONENTS_SELECTOR)">' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || !isDisabled(COMPONENTS_SELECTOR)">' +
 '		<div class="col-xs-12 col-sm-6">' +
-'		' +
+'' +
 '			<!-- FILTER -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
 '				<div class="form-group form-inline">' +
 '					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
-'						<input type="text" class="form-control" placeholder="Search" data-ng-model="search">' +
+'						<input type="text" class="form-control" placeholder="{{ labels.SEARCH }}" data-ng-model="search">' +
 '						<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>' +
 '					</div>' +
 '				</div>' +
 '			</div>' +
-'			' +
+'' +
 '		</div>' +
 '		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-5 pull-right">' +
-'			' +
+'' +
 '			<!-- SELECTOR -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
-'				<div class="form-inline pull-right" data-ng-show="selectedColumn !== null">' +
+'				<div class="form-group pull-right" data-ng-show="selectedColumn !== null">' +
 '					<div class="form-group">' +
 '						<div class="button-form">' +
 '							<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
 '							<div class="input-group">' +
 '								<select id="columnSelector"' +
 '									class="add-select form-control"' +
-'									data-ng-model="selectedColumn"' +
+'									data-ng-if="groupByProperty !== null"' +
+'									data-ng-model="$parent.selectedColumn"' +
 '									data-ng-options="' +
-'										column as headerLabelCallback(column) for column in switchableColumns |' +
-'										filter:filterColumns">' +
+'										column.id as headerLabelCallback(column.id)' +
+'											group by {{groupByProperty}} for column in switchableColumns |' +
+'										filter:filterColumns |' +
+'										orderBy:orderByProperty">' +
+'								</select>' +
+'								<select id="columnSelector"' +
+'									class="add-select form-control"' +
+'									data-ng-if="groupByProperty === null"' +
+'									data-ng-model="$parent.selectedColumn"' +
+'									data-ng-options="' +
+'										column.id as headerLabelCallback(column.id) for column in switchableColumns |' +
+'										filter:filterColumns |' +
+'										orderBy:orderByProperty">' +
 '								</select>' +
 '								<div class="stepper-buttons input-group-btn">' +
 '									<button type="button" class="btn btn-primary" data-ng-click="addColumn(selectedColumn)">' +
@@ -579,99 +688,113 @@ angular.module('keta.directives.ExtendedTable')
 '					</div>' +
 '				</div>' +
 '			</div>' +
-'			' +
+'' +
 '		</div>' +
 '	</div>' +
-'	' +
+'' +
 '	<!-- TABLE -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
 '		<div class="col-xs-12">' +
-'			<table class="table table-data table-responsive table-striped form-group">' +
-'				<thead>' +
-'					<tr>' +
-'						<th class="{{columnClassCallback(headers, column, true)}} sortable"' +
-'							data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
-'							data-ng-if="rowSortEnabled"' +
-'							data-ng-class="{sort: isSortCriteria(column)}"' +
-'							data-ng-click="sortBy(column)">' +
-'							<a class="header">{{headerLabelCallback(column)}}</a>' +
-'							<a data-ng-if="isSortCriteria(column) && rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-sort-by-alphabet"></span>' +
-'							</a>' +
-'							<a data-ng-if="isSortCriteria(column) && !rowSortOrderAscending">' +
-'								<span class="glyphicon glyphicon-sort-by-alphabet-alt"></span>' +
-'							</a>' +
-'							<a class="unsort"' +
-'								data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null">' +
-'								<span class="glyphicon glyphicon-sort"></span>' +
-'							</a>' +
-'							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
-'								<span class="glyphicon glyphicon-minus"></span>' +
-'							</a>' +
-'						</th>' +
-'						<th class="{{columnClassCallback(headers, column, true)}}"' +
-'							data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
-'							data-ng-if="!rowSortEnabled">' +
-'							{{headerLabelCallback(column)}}' +
-'							<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)">' +
-'								<span class="glyphicon glyphicon-minus"></span>' +
-'							</a>' +
-'						</th>' +
-'						<th data-ng-if="actionList.length">' +
-'							{{headerLabelCallback(\'actions\')}}' +
-'						</th>' +
-'					</tr>' +
-'				</thead>' +
-'				<tbody>' +
-'					<!-- operationsMode: data -->' +
-'					<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
-'						data-ng-repeat="row in rows">' +
-'						<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
-'							class="{{columnClassCallback(row, column, false)}}">' +
-'							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
-'						</td>' +
-'						<td data-ng-if="row && actionList.length">' +
-'							<div class="btn-group" role="group">' +
-'								<a data-ng-repeat="item in actionList"' +
-'								   class="btn-link"' +
-'								   data-ng-href="{{item.getLink(row)}}"' +
-'								   title="{{item.label}}">' +
-'									<span class="{{item.icon}}"></span>' +
-'								</a>' +
-'							</div>' +
-'						</td>' +
-'					</tr>' +
-'					<!-- operationsMode: view -->' +
-'					<tr data-ng-if="operationsMode === OPERATIONS_MODE_VIEW"' +
-'						data-ng-repeat="' +
-'							row in rows |' +
-'							filter:search |' +
-'							orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'							slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
-'						<td data-ng-repeat="column in row |	orderObjectBy:visibleColumns:true"' +
-'							class="{{columnClassCallback(row, column, false)}}">' +
-'							<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
-'						</td>' +
-'						<td data-ng-if="row && actionList.length">' +
-'							<div class="btn-group" role="group">' +
-'								<a data-ng-repeat="item in actionList"' +
+'			<div class="table-responsive">' +
+'				<table class="table table-striped form-group">' +
+'					<thead>' +
+'						<tr>' +
+'							<th class="{{columnClassCallback(headers, column, true)}} sortable"' +
+'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-if="rowSortEnabled"' +
+'								data-ng-class="{sort: isSortCriteria(column)}">' +
+'								<a class="header" title="{{ labels.SORT }}"' +
+'								   data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
+'								<a class="sort" title="{{ labels.SORT }}"' +
+'								   data-ng-if="isSortCriteria(column) && rowSortOrderAscending"' +
+'								   data-ng-click="sortBy(column)"><span' +
+'									class="glyphicon glyphicon-sort-by-alphabet"></span></a>' +
+'								<a class="sort" title="{{ labels.SORT }}"' +
+'								   data-ng-if="isSortCriteria(column) && !rowSortOrderAscending"' +
+'								   data-ng-click="sortBy(column)"><span' +
+'									class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a>' +
+'								<a class="unsort" title="{{ labels.SORT }}"' +
+'									data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
+'									data-ng-click="sortBy(column)"><span' +
+'									class="glyphicon glyphicon-sort"></span></a>' +
+'								<a class="operation" title="{{ labels.REMOVE_COLUMN }}"' +
+'								   data-ng-if="isSwitchable(column)"' +
+'								   data-ng-click="removeColumn(column)"><span' +
+'									class="glyphicon glyphicon-minus-sign"></span></a>' +
+'							</th>' +
+'							<th class="{{columnClassCallback(headers, column, true)}}"' +
+'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-if="!rowSortEnabled">' +
+'								{{headerLabelCallback(column)}}' +
+'								<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)"><span' +
+'									class="glyphicon glyphicon-minus-sign"></span></a>' +
+'							</th>' +
+'							<th data-ng-if="actionList.length">' +
+'								{{headerLabelCallback(\'actions\')}}' +
+'							</th>' +
+'						</tr>' +
+'					</thead>' +
+'					<tbody>' +
+'						<!-- operationsMode: data -->' +
+'						<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
+'							data-ng-repeat="row in rows">' +
+'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'								class="{{columnClassCallback(row, column, false)}}">' +
+'								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'							</td>' +
+'							<td data-ng-if="row && actionList.length">' +
+'								<div class="btn-group" role="group">' +
+'									<a data-ng-repeat="item in actionList"' +
 '										class="btn-link"' +
 '										data-ng-href="{{item.getLink(row)}}"' +
 '										title="{{item.label}}">' +
-'									<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'								</a>' +
-'							</div>' +
-'						</td>' +
-'					</tr>' +
-'				</tbody>' +
-'			</table>' +
+'										<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'									</a>' +
+'								</div>' +
+'							</td>' +
+'						</tr>' +
+'						<!-- operationsMode: view -->' +
+'						<tr data-ng-if="operationsMode === OPERATIONS_MODE_VIEW"' +
+'							data-ng-repeat="' +
+'								row in rows |' +
+'								filter:searchIn |' +
+'								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
+'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
+'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'								class="{{columnClassCallback(row, column, false)}}">' +
+'								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
+'							</td>' +
+'							<td data-ng-if="row && actionList.length">' +
+'								<div class="btn-group" role="group">' +
+'									<a data-ng-repeat="item in actionList"' +
+'										class="btn-link"' +
+'										data-ng-href="{{item.getLink(row)}}"' +
+'										title="{{item.label}}">' +
+'										<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'									</a>' +
+'								</div>' +
+'							</td>' +
+'						</tr>' +
+'						<tr data-ng-if="' +
+'							operationsMode === OPERATIONS_MODE_VIEW &&' +
+'							(rows |' +
+'								filter:searchIn |' +
+'								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
+'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
+'							<td colspan="{{(rows[0] | orderObjectBy:visibleColumns:true).length + 1}}">' +
+'								{{ labels.NO_ENTRIES }}' +
+'							</td>' +
+'						</tr>' +
+'					</tbody>' +
+'				</table>' +
+'			</div>' +
 '		</div>' +
 '	</div>' +
-'	' +
+'' +
 '	<!-- PAGER -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
 '		<div class="col-xs-12 col-sm-6">' +
-'			<div class="btn-group form-group" role="group">' +
+'			<div class="btn-group form-group" role="group" data-ng-if="pages.length > 1">' +
 '				<button type="button"' +
 '					data-ng-repeat="page in pages"' +
 '					data-ng-click="goToPage(page)"' +
@@ -683,8 +806,9 @@ angular.module('keta.directives.ExtendedTable')
 '			</div>' +
 '		</div>' +
 '	</div>' +
-'	' +
-'</div>');
+'' +
+'</div>' +
+'');
 	});
 
 // source: dist/directives/main-menu.js
@@ -703,7 +827,7 @@ angular.module('keta.directives.ExtendedTable')
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu'])
  *     .controller('ExampleController', function($scope) {
- *         
+ * 
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
  *             items: [{
@@ -729,7 +853,7 @@ angular.module('keta.directives.ExtendedTable')
  *             }],
  *             compactMode: false
  *         };
- *         
+ *
  *     });
  */
 angular.module('keta.directives.MainMenu', [])
@@ -742,9 +866,10 @@ angular.module('keta.directives.MainMenu', [])
 			},
 			templateUrl: '/components/directives/main-menu.html',
 			link: function(scope) {
+
 				scope.compactMode = (angular.isDefined(scope.configuration.compactMode)) ?
 					scope.configuration.compactMode : false;
-	
+
 				function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {
 					for (var i = 1; i < currentMenuLevelParts.length; i++) {
 						if (currentMenuLevelParts[i] !== locationLevelParts[i]) {
@@ -753,38 +878,38 @@ angular.module('keta.directives.MainMenu', [])
 					}
 					return activeFlag;
 				}
-				
+
 				scope.isActive = function(menuEntry) {
 					var currentMenuLevelParts = menuEntry.link.split('/');
 					var locationLevelParts = $location.path().split('/');
 					var isActive = true;
-	
+
 					if (scope.compactMode === true) {
 						return currentMenuLevelParts[1] === locationLevelParts[1];
 					}
-					
+
 					// Menu-entries with sub-entries have another active-class
 					// to visualize the breadcrumb-path (in normal menu mode, see function isActiveParent)
 					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
 						return false;
 					}
-					
+
 					isActive = checkPaths(currentMenuLevelParts, locationLevelParts, isActive);
 					return isActive;
 				};
-				
+
 				scope.isActiveParent = function(menuEntry) {
 					var currentMenuLevelParts = menuEntry.link.split('/');
 					var locationLevelParts = $location.path().split('/');
 					var isActiveParent = false;
-					
+
 					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
 						isActiveParent = true;
 						isActiveParent = checkPaths(currentMenuLevelParts, locationLevelParts, isActiveParent);
 					}
 					return isActiveParent;
 				};
-				
+
 				scope.checkExpand = function(menuEntry, $event) {
 					// trigger expand-functionality only when navigation is shown in tablet/desktop mode
 					if (scope.compactMode === false) {
@@ -807,7 +932,7 @@ angular.module('keta.directives.MainMenu', [])
 						}
 					}
 				};
-				
+
 			}
 		};
 	});
@@ -1013,14 +1138,15 @@ angular.module('keta.directives.Sidebar')
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
  *     data-labels="labels"
- *     data-links="links"&gt;&lt;/div&gt;
+ *     data-links="links"
+ *     data-worlds="worlds"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.WorldBar'])
  *     .controller('ExampleController', function($scope) {
- *         
+ * 
  *         // id of eventBus instance to use to retrieve data
  *         $scope.eventBusId = 'kiwibus';
- *         
+ *
  *         // array of locales to use for language menu
  *         $scope.locales = [{
  *             name: 'Deutsch',
@@ -1031,10 +1157,10 @@ angular.module('keta.directives.Sidebar')
  *             nameShort: 'EN',
  *             code: 'en'
  *         }];
- *         
+ *
  *         // current locale
  *         $scope.currentLocale = 'de';
- *         
+ *
  *         // object of labels to use in template
  *         $scope.labels = {
  *             ALL_APPS: 'All Apps',
@@ -1043,7 +1169,7 @@ angular.module('keta.directives.Sidebar')
  *             USER_PROFILE: 'User Profile',
  *             USER_LOGOUT: 'Logout'
  *         };
- *         
+ *
  *         // object of link to use in template
  *         $scope.links = {
  *             ALL_APPS: '/#/applications/',
@@ -1051,7 +1177,19 @@ angular.module('keta.directives.Sidebar')
  *             USER_PROFILE: '/#/users/profile',
  *             USER_LOGOUT: '/#/users/logout'
  *         };
- *         
+ *
+ *         // array of worlds to display in world switcher
+ *         $scope.worlds = [{
+ *             label: 'Desktop',
+ *             link: 'https://cloud.mycompany.com'
+ *         }, {
+ *             label: 'Market',
+ *             link: 'https://market.mycompany.com'
+ *         }, {
+ *             label: 'Service',
+ *             link: 'https://service.mycompany.com'
+ *         }];
+ *
  *     });
  */
 angular.module('keta.directives.WorldBar',
@@ -1060,7 +1198,7 @@ angular.module('keta.directives.WorldBar',
 		'keta.services.EventBusDispatcher',
 		'keta.services.EventBusManager'
 	])
-	
+
 	.directive('worldBar', function WorldBarDirective(
 		$rootScope, $document,
 		EventBusDispatcher, EventBusManager, ketaSharedConfig) {
@@ -1068,41 +1206,44 @@ angular.module('keta.directives.WorldBar',
 			restrict: 'EA',
 			replace: true,
 			scope: {
-				
+
 				// id of eventBus instance to use to retrieve data
 				eventBusId: '=?',
-				
+
 				// array of locales to use for language menu
 				locales: '=?',
-				
+
 				// current locale
 				currentLocale: '=?',
-				
+
 				// object of labels to use in template
 				labels: '=?',
-				
-				// object of link to use in template 
-				links: '=?'
-				
+
+				// object of link to use in template
+				links: '=?',
+
+				// array of worlds with label and link
+				worlds: '=?'
+
 			},
 			templateUrl: '/components/directives/world-bar.html',
 			link: function(scope, element) {
-				
+
 				// CONFIG ---
-				
+
 				// set defaults
 				scope.eventBusId = scope.eventBusId || 'kiwibus';
 
 				scope.eventBus = EventBusManager.get(scope.eventBusId);
-				
+
 				scope.locales = scope.locales || [{
 					name: 'English',
 					nameShort: 'EN',
 					code: 'en'
 				}];
-				
+
 				scope.currentLocale = scope.currentLocale || 'en';
-				
+
 				var defaultLabels = {
 					ALL_APPS: 'All Apps',
 					ENERGY_MANAGER: 'Energy-Manager',
@@ -1112,7 +1253,7 @@ angular.module('keta.directives.WorldBar',
 				};
 				scope.labels = (angular.isDefined(scope.labels)) ?
 					angular.extend(defaultLabels, scope.labels) : defaultLabels;
-				
+
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
@@ -1121,19 +1262,21 @@ angular.module('keta.directives.WorldBar',
 				};
 				scope.links = (angular.isDefined(scope.links)) ?
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
-				
+
+				scope.worlds = scope.worlds || [];
+
 				// type constants used in ng-repeats orderBy filter
 				scope.TYPES = {
 					APPS: 'APPS',
 					ENERGY_MANAGER: 'ENERGY_MANAGER'
 				};
-				
+
 				// limit constants used in ng-repeats limit filter
 				scope.LIMITS = {
 					APPS: 3,
 					ENERGY_MANAGER: 3
 				};
-				
+
 				// order predicates and reverse flags
 				var PREDICATES = {
 					APPS: {
@@ -1145,7 +1288,7 @@ angular.module('keta.directives.WorldBar',
 						reverse: false
 					}
 				};
-				
+
 				// internal menu state management
 				scope.menus = {
 					contextSwitcher: {activeEntry: null, isOpen: false},
@@ -1154,33 +1297,38 @@ angular.module('keta.directives.WorldBar',
 					settingsMenu: {activeEntry: null, isOpen: false},
 					languageMenu: {activeEntry: null, isOpen: false}
 				};
-				
+
 				// DATA ---
-				
-				// list of worlds to display in context switcher
-				scope.worlds = [{
-					name: 'Desktop',
-					link: 'https://cloud.mycompany.com'
-				}, {
-					name: 'Market',
-					link: 'https://market.mycompany.com'
-				}, {
-					name: 'Service',
-					link: 'https://service.mycompany.com'
-				}];
 
 				// list of apps to display in context switcher
 				// format: {name: 'My Monitor',	link: 'https://mymonitor.mycompany.com'}
 				scope.apps = [];
-				
+
 				// query applications
 				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
-					EventBusDispatcher.send(scope.eventBus, 'applications', {
-						action: 'getApplications'
+					EventBusDispatcher.send(scope.eventBus, 'apps', {
+						action: 'getAppInfos'
 					}, function(reply) {
-						if (reply.code === 200) {
-							scope.apps = reply.result.items;
+						if (angular.isDefined(reply.code) && (reply.code === 200) &&
+							angular.isDefined(reply.result) &&
+							angular.isDefined(reply.result.items)) {
+
+							angular.forEach(reply.result.items, function(app) {
+
+								// inject name
+								app.name = (angular.isDefined(app.names[scope.currentLocale])) ?
+									app.names[scope.currentLocale] : null;
+
+								// reset entryUri to null if empty
+								if (angular.isDefined(app.entryUri) && (app.entryUri === '')) {
+									app.entryUri = null;
+								}
+
+								scope.apps.push(app);
+
+							});
+
 							scope.$digest();
 						}
 					});
@@ -1188,49 +1336,70 @@ angular.module('keta.directives.WorldBar',
 
 				// current user
 				scope.user = {};
-				
+
 				// query current user
 				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
-					EventBusDispatcher.send(scope.eventBus, 'users', {
+					EventBusDispatcher.send(scope.eventBus, 'userservice', {
 						action: 'getCurrentUser'
 					}, function(reply) {
-						if (reply.code === 200) {
+						if (angular.isDefined(reply.code) && (reply.code === 200) &&
+							angular.isDefined(reply.result)) {
 							scope.user = reply.result;
 							scope.$digest();
 						}
 					});
 				}
-				
+
 				// list of energy managers in manager list
-				// format: {name: 'ERC02-000001051', link: 'http://192.168.125.81'} 
+				// format: {name: 'ERC02-000001051', link: 'http://192.168.125.81'}
 				scope.energyManagers = [];
-				
+
 				// query energy managers
 				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
 					EventBusDispatcher.send(scope.eventBus, 'devices', {
 						action: 'getDevices',
 						params: {
-							deviceClass: ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER
+							filter: {
+								deviceClasses: [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
+							},
+							projection: {
+								tagValues: {
+									IdName: 1,
+									SettingsNetworkMap: 1
+								}
+							}
 						}
 					}, function(reply) {
-						if (reply.code === 200) {
+						if (angular.isDefined(reply.code) && (reply.code === 200) &&
+							angular.isDefined(reply.result) &&
+							angular.isDefined(reply.result.items)) {
+
 							var energyManagers = [];
 							angular.forEach(reply.result.items, function(item) {
-								energyManagers.push({
-									name: item.tagValues.IdName.value,
-									link: 'http://' + item.currentAddress
-								});
+								var emIP =
+									(angular.isDefined(item.tagValues) &&
+									angular.isDefined(item.tagValues.SettingsNetworkMap) &&
+									angular.isDefined(item.tagValues.SettingsNetworkMap.value) &&
+									angular.isDefined(item.tagValues.SettingsNetworkMap.value.ipv4)) ?
+									item.tagValues.SettingsNetworkMap.value.ipv4 : null;
+								if (emIP !== null) {
+									energyManagers.push({
+										name: item.tagValues.IdName.value,
+										link: 'http://' + emIP
+									});
+								}
 							});
 							scope.energyManagers = energyManagers;
+
 							scope.$digest();
 						}
 					});
 				}
-				
+
 				// LOGIC ---
-				
+
 				// order elements by predicate
 				scope.order = function(type) {
 					var field = (angular.isDefined(PREDICATES[type])) ? PREDICATES[type].field : 'name';
@@ -1238,32 +1407,32 @@ angular.module('keta.directives.WorldBar',
 						return (angular.isDefined(item[field])) ? item[field] : '';
 					};
 				};
-				
+
 				// order elements by sort order
 				scope.reverse = function(type) {
 					return (angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse)) ?
 						PREDICATES[type].reverse : false;
 				};
-				
+
 				// statically set first world and first language as active
 				var initActiveEntries = function() {
-					
+
 					// worlds
 					if (angular.isDefined(scope.worlds[0])) {
 						scope.menus.contextSwitcher.activeEntry = scope.worlds[0];
 					}
-					
+
 					// current locale
 					angular.forEach(scope.locales, function(locale) {
 						if (angular.isDefined(locale.code) && locale.code === scope.currentLocale) {
 							scope.menus.languageMenu.activeEntry = locale;
 						}
 					});
-					
+
 				};
-				
+
 				initActiveEntries();
-				
+
 				// toggle sidebar if button is clicked
 				scope.toggleSidebar = function($event, position) {
 					$event.stopPropagation();
@@ -1273,23 +1442,23 @@ angular.module('keta.directives.WorldBar',
 						$rootScope.$broadcast(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT);
 					}
 				};
-				
+
 				// check if a given menu is currently open
 				scope.isOpen = function(menuName) {
 					return (angular.isDefined(scope.menus[menuName])) ? scope.menus[menuName].isOpen : null;
 				};
-				
+
 				// check if a given entry is active to set corresponding css class
 				scope.isActive = function(menuName, entry) {
 					return (angular.isDefined(scope.menus[menuName]) && (scope.menus[menuName].activeEntry === entry));
 				};
-				
+
 				scope.setLocale = function(locale) {
 					scope.currentLocale = locale.code;
 					scope.menus.languageMenu.activeEntry = locale;
 					closeAllMenus();
 				};
-				
+
 				// close all menus by switching boolean flag isOpen
 				function closeAllMenus() {
 					scope.menus.contextSwitcher.isOpen = false;
@@ -1298,7 +1467,7 @@ angular.module('keta.directives.WorldBar',
 					scope.menus.settingsMenu.isOpen = false;
 					scope.menus.languageMenu.isOpen = false;
 				}
-				
+
 				// toggle state of menu
 				scope.toggleOpenState = function(menuName) {
 					if (angular.isDefined(scope.menus[menuName])) {
@@ -1309,12 +1478,12 @@ angular.module('keta.directives.WorldBar',
 						}
 					}
 				};
-				
+
 				// close menus when location change starts
 				scope.$on('$locationChangeStart', function() {
 					closeAllMenus();
 				});
-				
+
 				// close menus when user clicks anywhere outside
 				$document.bind('click', function(event) {
 					var worldBarHtml = element.html(),
@@ -1325,7 +1494,7 @@ angular.module('keta.directives.WorldBar',
 					closeAllMenus();
 					scope.$digest();
 				});
-				
+
 			}
 		};
 	});
@@ -1354,10 +1523,11 @@ angular.module('keta.directives.WorldBar')
 '				<li data-ng-if="apps.length"' +
 '					data-ng-repeat="' +
 '						entry in apps |' +
+'						filter:{entryUri: \'!null\'} |' +
 '						orderBy:order(TYPES.APPS):reverse(TYPES.APPS) |' +
 '						limitTo:LIMITS.APPS"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.entryUri }}">{{ entry.names[currentLocale] }}</a>' +
 '				</li>' +
 '				<li data-ng-if="apps.length > LIMITS.APPS && links.ALL_APPS !== null && labels.ALL_APPS !== null">' +
 '					<a data-ng-href="{{ links.ALL_APPS }}">{{ labels.ALL_APPS }} ({{apps.length}})</a>' +
@@ -1388,8 +1558,8 @@ angular.module('keta.directives.WorldBar')
 '			data-ng-if="energyManagers.length">' +
 '			<a href="" data-ng-click="toggleOpenState(\'energyManagerMenu\')">' +
 '				<span class="glyphicon glyphicon-tasks"></span>' +
-'				<span class="hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
-'				<span class="hidden-sm hidden-md">({{energyManagers.length}})</span>' +
+'				<span class="hidden-xs hidden-sm hidden-md">{{ labels.ENERGY_MANAGER }}</span>' +
+'				<span>({{energyManagers.length}})</span>' +
 '				<span class="caret"></span>' +
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
@@ -1402,7 +1572,9 @@ angular.module('keta.directives.WorldBar')
 '				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER &&' +
 '					links.ALL_ENERGY_MANAGERS !== null &&' +
 '					labels.ALL_ENERGY_MANAGERS !== null">' +
-'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})</a>' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">' +
+'						{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})' +
+'					</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -1459,7 +1631,8 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '		</li>' +
 '	</ul>' +
-'</div>');
+'</div>' +
+'');
 	});
 
 // source: dist/filters/order-object-by.js
@@ -2516,95 +2689,86 @@ angular.module('keta.services.Device',
 		'keta.services.EventBusManager',
 		'keta.services.Logger'
 	])
-	
+
 	/**
 	 * @class DeviceProvider
 	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
 	.provider('Device', function DeviceProvider() {
-		
+
 		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
-			
+
+			// find device class recursively
+			var findDeviceClass = function(deviceModel, deviceClassesArray) {
+				if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
+					var parts = deviceModel.deviceClass.split('~');
+					deviceClassesArray.push({
+						deviceClass: parts[0],
+						version: parts[1]
+					});
+					if (angular.isDefined(deviceModel.superclasses) &&
+						angular.isArray(deviceModel.superclasses) &&
+						deviceModel.superclasses.length > 0) {
+						angular.forEach(deviceModel.superclasses, function(superclass) {
+							findDeviceClass(superclass, deviceClassesArray);
+						});
+					}
+				}
+				return deviceClassesArray;
+			};
+
 			/**
 			 * @class DeviceInstance
 			 * @propertyOf Device
 			 * @description Device Instance
 			 */
 			var DeviceInstance = function(givenEventBus, properties) {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// save EventBus instance
 				var eventBus = givenEventBus;
-				
+
 				// populate properties
 				angular.forEach(properties, function(value, key) {
 					that[key] = value;
-					
+
 					// save copy under $pristine
 					if (!angular.isDefined(that.$pristine)) {
 						that.$pristine = {};
 					}
-					
+
 					that.$pristine[key] = angular.copy(value);
 				});
-				
+
 				// send message and return promise
 				var sendMessage = function(message) {
 					var deferred = $q.defer();
-					
+
 					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
-						
+
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
 							$log.request([message, reply], $log.ADVANCED_FORMATTER);
 						}
-						
+
 						if (reply.code === 200) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
 						}
-						
+
 					});
-					
+
 					return deferred.promise;
 				};
-				
+
 				var returnRejectedPromise = function(message) {
 					var deferred = $q.defer();
 					deferred.reject(message);
 					return deferred.promise;
-				};
-
-				/**
-				 * @class findDeviceClass
-				 * @propertyOf Device
-				 * @description Searches the given object recursively downwards for the key
-				 * <code>deviceClass</code> (on current level and inside of the <code>superclasses</code>-array.)
-				 * The found data is stored in a flat array of objects beginning with the most specific deviceClass.
-				 * @param {Object} deviceModel The deviceModel in the current tree-level.
-				 * @param {Array} deviceClassesArray All devices classes found in the parent object-tree.
-				 * @returns {Array} deviceClassesArray
-				 */
-				var findDeviceClass = function(deviceModel, deviceClassesArray) {
-					if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
-						var parts = deviceModel.deviceClass.split('~');
-						deviceClassesArray.push({
-							deviceClass: parts[0],
-							version: parts[1]
-						});
-						if (angular.isDefined(deviceModel.superclasses) &&
-							angular.isArray(deviceModel.superclasses) &&
-							deviceModel.superclasses.length > 0) {
-							angular.forEach(deviceModel.superclasses, function(superclass) {
-								findDeviceClass(superclass, deviceClassesArray);
-							});
-						}
-					}
-					return deviceClassesArray;
 				};
 
 				/**
@@ -2645,12 +2809,12 @@ angular.module('keta.services.Device',
 				 *     });
 				 */
 				that.update = function() {
-					
+
 					// collect changes in tagValues property
 					var changes = {
 						tagValues: {}
 					};
-					
+
 					angular.forEach(that.tagValues, function(tagValue, tagName) {
 						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
@@ -2658,10 +2822,10 @@ angular.module('keta.services.Device',
 							changes.tagValues[tagName].oca = tagValue.oca;
 						}
 					});
-					
+
 					if (Object.keys(changes.tagValues).length) {
 						var deferred = $q.defer();
-						
+
 						sendMessage({
 							action: 'updateDevice',
 							params: {
@@ -2669,23 +2833,23 @@ angular.module('keta.services.Device',
 							},
 							body: changes
 						}).then(function(reply) {
-							
+
 							// update $pristine copies after success
 							angular.forEach(that.$pristine, function(value, key) {
 								that.$pristine[key] = angular.copy(that[key]);
 							});
-							
+
 							deferred.resolve(reply);
 						}, function(reply) {
 							deferred.reject(reply);
 						});
-						
+
 						return deferred.promise;
 					} else {
 						return returnRejectedPromise('No changes found');
 					}
 				};
-				
+
 				/**
 				 * @name delete
 				 * @function
@@ -2720,46 +2884,6 @@ angular.module('keta.services.Device',
 					});
 				};
 
-				/**
-				 * @name getDeviceClasses
-				 * @function deviceClasses
-				 * @memberOf DeviceInstance
-				 * @description
-				 * <p>
-				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
-				 *   <code>version</code> as separate keys.
-				 *   The first entry is the most specific icon class followed by its superclasses (if there are any).
-				 *   The highest array-index represents the most general device-class for this device.
-				 * </p>
-				 * <p>
-				 *   The returned array can be used to map the device-class to a device-icon.<br>
-				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
-				 *   So every application can use another mapping if the default-one is not suitable.
-				 * </p>
-				 * @return {Array} deviceClasses
-				 * @example
-				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
-				 *             guid: 'guid',
-				 *             deviceModel: {
-				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
-				 *                 superclasses: [{
-				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
-				 *                     superclasses: []
-				 *                 }]
-				 *             }
-				 *         });
-				 *         var deviceClassesArray = device.getDeviceClasses();
-				 *     });
-				 */
-				that.getDeviceClasses = function() {
-					var deviceClasses = [];
-					if (angular.isDefined(that.deviceModel)) {
-						deviceClasses = findDeviceClass(that.deviceModel, deviceClasses);
-					}
-					return deviceClasses;
-				};
 			};
 
 			/**
@@ -2768,7 +2892,7 @@ angular.module('keta.services.Device',
 			 * @description Device Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf Device
@@ -2796,14 +2920,55 @@ angular.module('keta.services.Device',
 				 */
 				create: function(eventBus, properties) {
 					return new DeviceInstance(eventBus, properties);
+				},
+
+				/**
+				 * @function
+				 * @memberOf Device
+				 * @description
+				 * <p>
+				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
+				 *   <code>version</code> as separate keys.
+				 *   The first entry is the most specific class followed by its superclasses (if there are any).
+				 *   The highest array-index represents the most general device-class for this device.
+				 * </p>
+				 * <p>
+				 *   The returned array can be used to map the device-class to a device-icon.<br>
+				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
+				 *   So every application can use another mapping if the default-one is not suitable.
+				 * </p>
+				 * @param {DeviceInstance} device Device to get device classes from
+				 * @return {Array} deviceClasses
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             deviceModel: {
+				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
+				 *                 superclasses: [{
+				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
+				 *                     superclasses: []
+				 *                 }]
+				 *             }
+				 *         });
+				 *         var deviceClassesArray = Device.getDeviceClasses(device);
+				 *     });
+				 */
+				getDeviceClasses: function(device) {
+					var deviceClasses = [];
+					if (angular.isDefined(device.deviceModel)) {
+						deviceClasses = findDeviceClass(device.deviceModel, deviceClasses);
+					}
+					return deviceClasses;
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
 
 // source: dist/services/event-bus-dispatcher.js
@@ -2818,16 +2983,16 @@ angular.module('keta.services.EventBusDispatcher',
 	[
 		'keta.services.AccessToken'
 	])
-	
+
 	/**
 	 * @class EventBusDispatcherProvider
 	 * @propertyOf keta.services.EventBusDispatcher
 	 * @description EventBusDispatcher Provider
 	 */
 	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
-		
+
 		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
-			
+
 			/**
 			 * @private
 			 * @memberOf EventBusDispatcher
@@ -2841,25 +3006,25 @@ angular.module('keta.services.EventBusDispatcher',
 			 * @param {Function} error Error handler to call when EventBus could not be opened within timeout
 			 */
 			var waitForOpen = function(eventBus, replied, success, error) {
-				
+
 				var timeout = null;
-				
+
 				// set timeout
 				if (replied) {
 					timeout = $timeout(function() {
 						error();
 					}, eventBus.getConfig().requestTimeout * 1000);
 				}
-				
+
 				// wait if readyState isn't open
 				if (eventBus.getInstance().readyState() !== 1) {
-					
+
 					// save current onopen
 					var onopen = null;
 					if (angular.isFunction(eventBus.getInstance().onopen)) {
 						onopen = eventBus.getInstance().onopen;
 					}
-					
+
 					// wait for open state
 					eventBus.getInstance().onopen = function() {
 						if (angular.isFunction(onopen)) {
@@ -2870,23 +3035,21 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 						success();
 					};
-					
+
 				} else {
-					if (timeout !== null) {
-						$timeout.cancel(timeout);
-					}
+					$timeout.cancel(timeout);
 					success();
 				}
-				
+
 			};
-			
+
 			/**
 			 * @class EventBusDispatcher
 			 * @propertyOf EventBusDispatcherProvider
 			 * @description EventBusDispatcher Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -2903,7 +3066,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CONNECTING: 0,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -2937,7 +3100,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CLOSING: 2,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -2954,7 +3117,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CLOSED: 3,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -2971,7 +3134,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_OK: 200,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -2988,7 +3151,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_OK: 'OK',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3005,7 +3168,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_BAD_REQUEST: 400,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3022,7 +3185,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3039,7 +3202,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_UNAUTHORIZED: 401,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3056,7 +3219,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3073,7 +3236,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_NOT_FOUND: 404,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3090,7 +3253,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3107,7 +3270,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3124,7 +3287,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3141,7 +3304,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3158,7 +3321,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3175,7 +3338,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3192,7 +3355,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3209,7 +3372,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -3226,7 +3389,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3260,10 +3423,10 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				send: function(eventBus, address, message, replyHandler) {
-					
+
 					// inject access token
 					message.accessToken = AccessToken.get();
-					
+
 					var handler = function(reply) {
 						if (reply && reply.code === 419) {
 							// refresh access token
@@ -3283,7 +3446,7 @@ angular.module('keta.services.EventBusDispatcher',
 							}
 						}
 					};
-					
+
 					// call stub method
 					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
 						waitForOpen(eventBus, true, function() {
@@ -3297,9 +3460,9 @@ angular.module('keta.services.EventBusDispatcher',
 					} else {
 						eventBus.getInstance().send(address, message, handler);
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3322,16 +3485,16 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				publish: function(eventBus, address, message) {
-					
+
 					// inject access token and call stub method
 					message.accessToken = AccessToken.get();
-					
+
 					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().publish(address, message);
 					});
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3355,7 +3518,7 @@ angular.module('keta.services.EventBusDispatcher',
 						eventBus.getInstance().registerHandler(address, handler);
 					});
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3379,7 +3542,7 @@ angular.module('keta.services.EventBusDispatcher',
 						eventBus.getInstance().unregisterHandler(address, handler);
 					});
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3397,7 +3560,7 @@ angular.module('keta.services.EventBusDispatcher',
 				close: function(eventBus) {
 					eventBus.getInstance().close();
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3416,7 +3579,7 @@ angular.module('keta.services.EventBusDispatcher',
 				readyState: function(eventBus) {
 					return eventBus.getInstance().readyState();
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -3441,13 +3604,13 @@ angular.module('keta.services.EventBusDispatcher',
 								(a === 'y' ? (b & BIT_SHIFT | BIT_HALF) : (b | 0)).toString(HEX_RANGE);
 						});
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
 
 // source: dist/services/event-bus-manager.js

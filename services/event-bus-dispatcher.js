@@ -11,16 +11,16 @@ angular.module('keta.services.EventBusDispatcher',
 	[
 		'keta.services.AccessToken'
 	])
-	
+
 	/**
 	 * @class EventBusDispatcherProvider
 	 * @propertyOf keta.services.EventBusDispatcher
 	 * @description EventBusDispatcher Provider
 	 */
 	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
-		
+
 		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
-			
+
 			/**
 			 * @private
 			 * @memberOf EventBusDispatcher
@@ -34,25 +34,25 @@ angular.module('keta.services.EventBusDispatcher',
 			 * @param {Function} error Error handler to call when EventBus could not be opened within timeout
 			 */
 			var waitForOpen = function(eventBus, replied, success, error) {
-				
+
 				var timeout = null;
-				
+
 				// set timeout
 				if (replied) {
 					timeout = $timeout(function() {
 						error();
 					}, eventBus.getConfig().requestTimeout * 1000);
 				}
-				
+
 				// wait if readyState isn't open
 				if (eventBus.getInstance().readyState() !== 1) {
-					
+
 					// save current onopen
 					var onopen = null;
 					if (angular.isFunction(eventBus.getInstance().onopen)) {
 						onopen = eventBus.getInstance().onopen;
 					}
-					
+
 					// wait for open state
 					eventBus.getInstance().onopen = function() {
 						if (angular.isFunction(onopen)) {
@@ -63,23 +63,21 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 						success();
 					};
-					
+
 				} else {
-					if (timeout !== null) {
-						$timeout.cancel(timeout);
-					}
+					$timeout.cancel(timeout);
 					success();
 				}
-				
+
 			};
-			
+
 			/**
 			 * @class EventBusDispatcher
 			 * @propertyOf EventBusDispatcherProvider
 			 * @description EventBusDispatcher Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -96,7 +94,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CONNECTING: 0,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -130,7 +128,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CLOSING: 2,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -147,7 +145,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				STATE_CLOSED: 3,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -164,7 +162,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_OK: 200,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -181,7 +179,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_OK: 'OK',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -198,7 +196,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_BAD_REQUEST: 400,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -215,7 +213,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -232,7 +230,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_UNAUTHORIZED: 401,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -249,7 +247,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -266,7 +264,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_NOT_FOUND: 404,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -283,7 +281,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -300,7 +298,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -317,7 +315,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -334,7 +332,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -351,7 +349,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -368,7 +366,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -385,7 +383,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -402,7 +400,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
-				
+
 				/**
 				 * @const
 				 * @memberOf EventBusDispatcher
@@ -419,7 +417,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -453,10 +451,10 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				send: function(eventBus, address, message, replyHandler) {
-					
+
 					// inject access token
 					message.accessToken = AccessToken.get();
-					
+
 					var handler = function(reply) {
 						if (reply && reply.code === 419) {
 							// refresh access token
@@ -476,7 +474,7 @@ angular.module('keta.services.EventBusDispatcher',
 							}
 						}
 					};
-					
+
 					// call stub method
 					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
 						waitForOpen(eventBus, true, function() {
@@ -490,9 +488,9 @@ angular.module('keta.services.EventBusDispatcher',
 					} else {
 						eventBus.getInstance().send(address, message, handler);
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -515,16 +513,16 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				publish: function(eventBus, address, message) {
-					
+
 					// inject access token and call stub method
 					message.accessToken = AccessToken.get();
-					
+
 					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().publish(address, message);
 					});
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -548,7 +546,7 @@ angular.module('keta.services.EventBusDispatcher',
 						eventBus.getInstance().registerHandler(address, handler);
 					});
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -572,7 +570,7 @@ angular.module('keta.services.EventBusDispatcher',
 						eventBus.getInstance().unregisterHandler(address, handler);
 					});
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -590,7 +588,7 @@ angular.module('keta.services.EventBusDispatcher',
 				close: function(eventBus) {
 					eventBus.getInstance().close();
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -609,7 +607,7 @@ angular.module('keta.services.EventBusDispatcher',
 				readyState: function(eventBus) {
 					return eventBus.getInstance().readyState();
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf EventBusDispatcher
@@ -634,11 +632,11 @@ angular.module('keta.services.EventBusDispatcher',
 								(a === 'y' ? (b & BIT_SHIFT | BIT_HALF) : (b | 0)).toString(HEX_RANGE);
 						});
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});

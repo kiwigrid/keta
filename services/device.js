@@ -13,95 +13,86 @@ angular.module('keta.services.Device',
 		'keta.services.EventBusManager',
 		'keta.services.Logger'
 	])
-	
+
 	/**
 	 * @class DeviceProvider
 	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
 	.provider('Device', function DeviceProvider() {
-		
+
 		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
-			
+
+			// find device class recursively
+			var findDeviceClass = function(deviceModel, deviceClassesArray) {
+				if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
+					var parts = deviceModel.deviceClass.split('~');
+					deviceClassesArray.push({
+						deviceClass: parts[0],
+						version: parts[1]
+					});
+					if (angular.isDefined(deviceModel.superclasses) &&
+						angular.isArray(deviceModel.superclasses) &&
+						deviceModel.superclasses.length > 0) {
+						angular.forEach(deviceModel.superclasses, function(superclass) {
+							findDeviceClass(superclass, deviceClassesArray);
+						});
+					}
+				}
+				return deviceClassesArray;
+			};
+
 			/**
 			 * @class DeviceInstance
 			 * @propertyOf Device
 			 * @description Device Instance
 			 */
 			var DeviceInstance = function(givenEventBus, properties) {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// save EventBus instance
 				var eventBus = givenEventBus;
-				
+
 				// populate properties
 				angular.forEach(properties, function(value, key) {
 					that[key] = value;
-					
+
 					// save copy under $pristine
 					if (!angular.isDefined(that.$pristine)) {
 						that.$pristine = {};
 					}
-					
+
 					that.$pristine[key] = angular.copy(value);
 				});
-				
+
 				// send message and return promise
 				var sendMessage = function(message) {
 					var deferred = $q.defer();
-					
+
 					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
-						
+
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
 							$log.request([message, reply], $log.ADVANCED_FORMATTER);
 						}
-						
+
 						if (reply.code === 200) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
 						}
-						
+
 					});
-					
+
 					return deferred.promise;
 				};
-				
+
 				var returnRejectedPromise = function(message) {
 					var deferred = $q.defer();
 					deferred.reject(message);
 					return deferred.promise;
-				};
-
-				/**
-				 * @class findDeviceClass
-				 * @propertyOf Device
-				 * @description Searches the given object recursively downwards for the key
-				 * <code>deviceClass</code> (on current level and inside of the <code>superclasses</code>-array.)
-				 * The found data is stored in a flat array of objects beginning with the most specific deviceClass.
-				 * @param {Object} deviceModel The deviceModel in the current tree-level.
-				 * @param {Array} deviceClassesArray All devices classes found in the parent object-tree.
-				 * @returns {Array} deviceClassesArray
-				 */
-				var findDeviceClass = function(deviceModel, deviceClassesArray) {
-					if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
-						var parts = deviceModel.deviceClass.split('~');
-						deviceClassesArray.push({
-							deviceClass: parts[0],
-							version: parts[1]
-						});
-						if (angular.isDefined(deviceModel.superclasses) &&
-							angular.isArray(deviceModel.superclasses) &&
-							deviceModel.superclasses.length > 0) {
-							angular.forEach(deviceModel.superclasses, function(superclass) {
-								findDeviceClass(superclass, deviceClassesArray);
-							});
-						}
-					}
-					return deviceClassesArray;
 				};
 
 				/**
@@ -142,12 +133,12 @@ angular.module('keta.services.Device',
 				 *     });
 				 */
 				that.update = function() {
-					
+
 					// collect changes in tagValues property
 					var changes = {
 						tagValues: {}
 					};
-					
+
 					angular.forEach(that.tagValues, function(tagValue, tagName) {
 						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
@@ -155,10 +146,10 @@ angular.module('keta.services.Device',
 							changes.tagValues[tagName].oca = tagValue.oca;
 						}
 					});
-					
+
 					if (Object.keys(changes.tagValues).length) {
 						var deferred = $q.defer();
-						
+
 						sendMessage({
 							action: 'updateDevice',
 							params: {
@@ -166,23 +157,23 @@ angular.module('keta.services.Device',
 							},
 							body: changes
 						}).then(function(reply) {
-							
+
 							// update $pristine copies after success
 							angular.forEach(that.$pristine, function(value, key) {
 								that.$pristine[key] = angular.copy(that[key]);
 							});
-							
+
 							deferred.resolve(reply);
 						}, function(reply) {
 							deferred.reject(reply);
 						});
-						
+
 						return deferred.promise;
 					} else {
 						return returnRejectedPromise('No changes found');
 					}
 				};
-				
+
 				/**
 				 * @name delete
 				 * @function
@@ -217,46 +208,6 @@ angular.module('keta.services.Device',
 					});
 				};
 
-				/**
-				 * @name getDeviceClasses
-				 * @function deviceClasses
-				 * @memberOf DeviceInstance
-				 * @description
-				 * <p>
-				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
-				 *   <code>version</code> as separate keys.
-				 *   The first entry is the most specific icon class followed by its superclasses (if there are any).
-				 *   The highest array-index represents the most general device-class for this device.
-				 * </p>
-				 * <p>
-				 *   The returned array can be used to map the device-class to a device-icon.<br>
-				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
-				 *   So every application can use another mapping if the default-one is not suitable.
-				 * </p>
-				 * @return {Array} deviceClasses
-				 * @example
-				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
-				 *             guid: 'guid',
-				 *             deviceModel: {
-				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
-				 *                 superclasses: [{
-				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
-				 *                     superclasses: []
-				 *                 }]
-				 *             }
-				 *         });
-				 *         var deviceClassesArray = device.getDeviceClasses();
-				 *     });
-				 */
-				that.getDeviceClasses = function() {
-					var deviceClasses = [];
-					if (angular.isDefined(that.deviceModel)) {
-						deviceClasses = findDeviceClass(that.deviceModel, deviceClasses);
-					}
-					return deviceClasses;
-				};
 			};
 
 			/**
@@ -265,7 +216,7 @@ angular.module('keta.services.Device',
 			 * @description Device Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf Device
@@ -293,12 +244,53 @@ angular.module('keta.services.Device',
 				 */
 				create: function(eventBus, properties) {
 					return new DeviceInstance(eventBus, properties);
+				},
+
+				/**
+				 * @function
+				 * @memberOf Device
+				 * @description
+				 * <p>
+				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
+				 *   <code>version</code> as separate keys.
+				 *   The first entry is the most specific class followed by its superclasses (if there are any).
+				 *   The highest array-index represents the most general device-class for this device.
+				 * </p>
+				 * <p>
+				 *   The returned array can be used to map the device-class to a device-icon.<br>
+				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
+				 *   So every application can use another mapping if the default-one is not suitable.
+				 * </p>
+				 * @param {DeviceInstance} device Device to get device classes from
+				 * @return {Array} deviceClasses
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             deviceModel: {
+				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
+				 *                 superclasses: [{
+				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
+				 *                     superclasses: []
+				 *                 }]
+				 *             }
+				 *         });
+				 *         var deviceClassesArray = Device.getDeviceClasses(device);
+				 *     });
+				 */
+				getDeviceClasses: function(device) {
+					var deviceClasses = [];
+					if (angular.isDefined(device.deviceModel)) {
+						deviceClasses = findDeviceClass(device.deviceModel, deviceClasses);
+					}
+					return deviceClasses;
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
