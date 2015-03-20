@@ -137,14 +137,15 @@
     data-locales="locales"
     data-current-locale="currentLocale"
     data-labels="labels"
-    data-links="links"&gt;&lt;/div&gt;</code></pre>
+    data-links="links"
+    data-worlds="worlds"&gt;&lt;/div&gt;</code></pre>
 
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.directives.WorldBar'])
      .controller('ExampleController', function($scope) {
-         
+ 
         // id of eventBus instance to use to retrieve data
         $scope.eventBusId = 'kiwibus';
-        
+
          // array of locales to use for language menu
          $scope.locales = [{
             name: 'Deutsch',
@@ -155,10 +156,10 @@
             nameShort: 'EN',
             code: 'en'
         }];
-        
+
         // current locale
         $scope.currentLocale = 'de';
-        
+
         // object of labels to use in template
         $scope.labels = {
             ALL_APPS: 'All Apps',
@@ -167,7 +168,7 @@
             USER_PROFILE: 'User Profile',
             USER_LOGOUT: 'Logout'
         };
-        
+
         // object of link to use in template
         $scope.links = {
             ALL_APPS: '/#/applications/',
@@ -175,7 +176,19 @@
             USER_PROFILE: '/#/users/profile',
             USER_LOGOUT: '/#/users/logout'
         };
-        
+
+        // array of worlds to display in world switcher
+        $scope.worlds = [{
+            label: 'Desktop',
+            link: 'https://cloud.mycompany.com'
+        }, {
+            label: 'Market',
+            link: 'https://market.mycompany.com'
+        }, {
+            label: 'Service',
+            link: 'https://service.mycompany.com'
+        }];
+
     });</code></pre>
 
         

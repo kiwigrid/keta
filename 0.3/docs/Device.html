@@ -120,7 +120,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="device.js.html">services/device.js</a>, <a href="device.js.html#line260">line 260</a>
+        <a href="device.js.html">services/device.js</a>, <a href="device.js.html#line213">line 213</a>
     </li></ul></dd>
     
     
@@ -163,7 +163,7 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <ul class="list-unstyled"><li><a href="#create"><span class="type-signature">&lt;static> </span>create<span class="signature">(eventBus, properties)</span><span class="type-signature"> &rarr; {<a href="DeviceInstance.html">DeviceInstance</a>}</span></a></li></ul>
+        <ul class="list-unstyled"><li><a href="#create"><span class="type-signature">&lt;static> </span>create<span class="signature">(eventBus, properties)</span><span class="type-signature"> &rarr; {<a href="DeviceInstance.html">DeviceInstance</a>}</span></a></li><li><a href="#getDeviceClasses"><span class="type-signature">&lt;static> </span>getDeviceClasses<span class="signature">(device)</span><span class="type-signature"> &rarr; {Array}</span></a></li></ul>
         
         <dl class="methods">
             
@@ -282,7 +282,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="device.js.html">services/device.js</a>, <a href="device.js.html#line292">line 292</a>
+        <a href="device.js.html">services/device.js</a>, <a href="device.js.html#line245">line 245</a>
     </li></ul></dd>
     
     
@@ -332,6 +332,166 @@
                 }
             }
         });
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getDeviceClasses"><span class="type-signature">&lt;static> </span>getDeviceClasses<span class="signature">(device)</span><span class="type-signature"> &rarr; {Array}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns a device-classes array of objects containing the <code>deviceClass</code> and
+  <code>version</code> as separate keys.
+  The first entry is the most specific class followed by its superclasses (if there are any).
+  The highest array-index represents the most general device-class for this device.
+</p>
+<p>
+  The returned array can be used to map the device-class to a device-icon.<br>
+  A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
+  So every application can use another mapping if the default-one is not suitable.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>device</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="DeviceInstance.html">DeviceInstance</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Device to get device classes from</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="device.js.html">services/device.js</a>, <a href="device.js.html#line282">line 282</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">Array</span>
+
+
+	
+	
+    deviceClasses
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.Device'])
+    .controller('ExampleController', function(Device) {
+        var device = Device.create({
+            guid: 'guid',
+            deviceModel: {
+                deviceClass: 'specificDeviceClass~1.1.0.3',
+                superclasses: [{
+                    deviceClass: 'generalDeviceClass~1.1.0.3',
+                    superclasses: []
+                }]
+            }
+        });
+        var deviceClassesArray = Device.getDeviceClasses(device);
     });</code></pre>
 
     

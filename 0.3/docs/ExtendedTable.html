@@ -141,6 +141,8 @@
     data-label-add-column="labelAddColumn"
     data-disabledComponents="disabledComponents"
     data-switchable-columns="switchableColumns"
+    data-group-by-property="groupByProperty"
+    data-order-by-property="orderByProperty"
     data-visible-columns="visibleColumns"
     data-header-label-callback="headerLabelCallback"
     data-operations-mode="operationsMode"
@@ -151,11 +153,12 @@
     data-cell-renderer="cellRenderer"
     data-column-class-callback="columnClassCallback"
     data-pager="pager"
-    data-search="search"&gt;&lt;/div&gt;</code></pre>
+    data-search="search"
+    data-search-results="searchResults"&gt;&lt;/div&gt;</code></pre>
 
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.directives.ExtendedTable'])
      .controller('ExampleController', function($scope, ketaSharedConfig) {
-         
+ 
         // data as array of objects, keys from first element are taken as headers
         $scope.rows = [{
             guid: 'guid-1',
@@ -173,12 +176,12 @@
             stateDevice: 'FATAL',
             deviceClass: 'class-3'
         }];
-        
+
         // object of labels
         $scope.labels = {
             ADD_COLUMN: 'add col:'
         };
-        
+
         // array of disabled components (empty by default)
         $scope.disabledComponents = [
             // the table itself
@@ -190,16 +193,25 @@
             // a pager to navigate through paged data
             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER
         ];
-        
+
         // array of switchable columns (empty by default)
-        // together with selector component the given columns can be remove from
+        // together with selector component the given columns can be removed from
         // table and added to table afterwards
-        $scope.switchableColumns = ['deviceClass'];
-        
+        // to support grouping in select field an array of objects is required (match is compared by id property)
+        $scope.switchableColumns = [{
+            id: 'deviceClass'
+        }];
+
+        // property to group selector by
+        $scope.groupByProperty = 'column.deviceName';
+
+        // property to order selector by
+        $scope.orderByProperty = 'tagName';
+
         // array of visible columns (full by default)
         // use this property to filter out columns like primary keys
         $scope.visibleColumns = ['idName', 'stateDevice', 'deviceClass'];
-        
+
         // callback method to specify header labels (instead of using auto-generated ones)
         $scope.headerLabelCallback = function(column) {
             var mappings = {
@@ -209,22 +221,22 @@
             };
             return (angular.isDefined(mappings[column])) ? mappings[column] : column;
         };
-        
+
         // operations mode ("view" for frontend or "data" for backend)
         // by defining operations mode as "view" the directive itself manages sorting,
         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
         // dataset by querying a backend, you have to use "data"
         $scope.operationsMode = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
-        
+
         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
         $scope.rowSortEnabled = true;
-        
+
         // criteria to sort for as string
         $scope.rowSortCriteria = 'idName';
-        
+
         // boolean flag to determine if sort order is ascending (true by default)
         $scope.rowSortOrderAscending = true;
-        
+
         // array of actions to render for each row
         // getLink method will be used to construct a link with the help of the row object,
         // label is used as value for title-tag,
@@ -242,7 +254,7 @@
             label: 'Remove',
             icon: 'glyphicon glyphicon-remove'
         }];
-        
+
         // callback method to render each cell individually
         // with the help of this method you can overwrite default cell rendering behavior,
         // e.g. suppressing output for stateDevice property
@@ -253,7 +265,7 @@
             }
             return value;
         };
-        
+
         // callback method to return class attribute for each column
         // in this example together with cellRenderer the deviceState column is
         // expressed as just a table data element with css classes
@@ -273,7 +285,7 @@
             }
             return columnClass;
         };
-        
+
         // object for pager configuration (total, limit, offset)
         // with this configuration object you are able to manage paging
         // total is the total number of rows in the dataset
@@ -284,13 +296,17 @@
         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT] = 5;
         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET] = 0;
         $scope.pager = pager;
-        
+
         // search term to filter the table
         // as two-way-binded property this variable contains the search string
         // typed by the user in the frontend and can therefor be used for querying
         // the backend, if watched here additionally
         $scope.search = null;
-        
+
+        // array of search results e.g. for usage in headlines
+        // defaults to $scope.rows, typically not set directly by controller
+        //$scope.searchResults = $scope.rows;
+
      });</code></pre>
 
         
