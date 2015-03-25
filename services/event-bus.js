@@ -8,21 +8,21 @@
  * @description EventBus Provider
  */
 angular.module('keta.services.EventBus', [])
-	
+
 	/**
 	 * @class EventBusProvider
 	 * @propertyOf keta.services.EventBus
 	 * @description EventBus Provider
 	 */
 	.provider('EventBus', function EventBusProvider() {
-	
+
 		/**
 		 * @class EventBus
 		 * @propertyOf keta.services.EventBus
 		 * @description EventBus Instance
 		 */
 		var EventBus = function EventBus(givenConfig) {
-			
+
 			/**
 			 * @private
 			 * @description Default config for EventBus instances.
@@ -36,7 +36,7 @@ angular.module('keta.services.EventBus', [])
 				autoUnregister: true,
 				requestTimeout: 10
 			};
-			
+
 			/**
 			 * @name getDefaultConfig
 			 * @function
@@ -55,13 +55,13 @@ angular.module('keta.services.EventBus', [])
 			this.getDefaultConfig = function() {
 				return DEFAULT_CONFIG;
 			};
-			
+
 			/**
 			 * @private
 			 * @description Effective config as merge result of given and default config.
 			 */
 			var config = angular.extend({}, DEFAULT_CONFIG, givenConfig);
-			
+
 			/**
 			 * @name getConfig
 			 * @function
@@ -80,13 +80,13 @@ angular.module('keta.services.EventBus', [])
 			this.getConfig = function() {
 				return config;
 			};
-			
+
 			/**
 			 * @private
 			 * @description Internal reference to vertx.EventBus instance.
 			 */
 			var eb = null;
-			
+
 			/**
 			 * @name getInstance
 			 * @function
@@ -105,31 +105,31 @@ angular.module('keta.services.EventBus', [])
 			this.getInstance = function() {
 				return eb;
 			};
-			
+
 			// init vertx.EventBus
 			var init = function() {
-				
+
 				// instantiate vertx.EventBus
 				eb = new vertx.EventBus(config.url);
-				
+
 				// add onclose handler
 				eb.onclose = function() {
-					
+
 					// reconnect if enabled
 					if (config.reconnect) {
 						window.setTimeout(function() {
 							init();
 						}, config.reconnectTimeout * 1000);
 					}
-					
+
 				};
-			
+
 			};
-			
+
 			init();
-			
+
 		};
-		
+
 		/**
 		 * @name create
 		 * @function
@@ -155,7 +155,7 @@ angular.module('keta.services.EventBus', [])
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
 		 *     .config(function(EventBusProvider) {
-		 *         
+		 *
 		 *         // create with custom config
 		 *         // in this case it's exactly the default config
 		 *         var eventBus = EventBusProvider.create({
@@ -167,13 +167,13 @@ angular.module('keta.services.EventBus', [])
 		 *             autoUnregister: true,
 		 *             requestTimeout: 10
 		 *         });
-		 *         
+		 *
 		 *     });
 		 */
 		this.create = function(config) {
 			return new EventBus(config);
 		};
-		
+
 		this.$get = function EventBusService() {};
-		
+
 	});

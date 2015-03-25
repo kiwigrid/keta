@@ -10,42 +10,39 @@
 angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
-		'keta.services.DeviceEvent',
-		'keta.services.EventBusDispatcher',
-		'keta.services.EventBusManager',
-		'keta.services.Logger'
+		'keta.services.DeviceEvent'
 	])
-	
+
 	/**
 	 * @class DeviceSetProvider
 	 * @propertyOf keta.services.DeviceSet
 	 * @description DeviceSet Provider
 	 */
 	.provider('DeviceSet', function DeviceSetProvider() {
-		
+
 		this.$get = function DeviceSetService(
 			$q, $rootScope, $log,
 			Device, DeviceEvent, EventBusDispatcher, EventBusManager) {
-			
+
 			/**
 			 * @class DeviceSetInstance
 			 * @propertyOf DeviceSetProvider
 			 * @description DeviceSet Instance
 			 */
 			var DeviceSetInstance = function(givenEventBus) {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// save EventBus instance
 				var eventBus = givenEventBus;
-				
+
 				// internal params object
 				var params = {};
-				
+
 				// internal set object
 				var set = {};
-				
+
 				/**
 				 * @name filter
 				 * @function
@@ -77,7 +74,7 @@ angular.module('keta.services.DeviceSet',
 					params.filter = filter;
 					return that;
 				};
-				
+
 				/**
 				 * @name project
 				 * @function
@@ -112,7 +109,7 @@ angular.module('keta.services.DeviceSet',
 					params.projection = projection;
 					return that;
 				};
-				
+
 				/**
 				 * @name sort
 				 * @function
@@ -144,7 +141,7 @@ angular.module('keta.services.DeviceSet',
 					params.sorting = sorting;
 					return that;
 				};
-				
+
 				/**
 				 * @name paginate
 				 * @function
@@ -184,7 +181,7 @@ angular.module('keta.services.DeviceSet',
 					}
 					return that;
 				};
-				
+
 				/**
 				 * @name live
 				 * @function
@@ -209,23 +206,23 @@ angular.module('keta.services.DeviceSet',
 				 *             });
 				 */
 				that.live = function() {
-					
+
 					// generate UUID
 					var liveHandlerUUID = 'CLIENT_' + EventBusDispatcher.generateUUID();
-					
+
 					// register handler under created UUID
 					EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
-						
+
 						// process event using sync
 						api.sync(set, DeviceEvent.create(event.type, event.value));
-						
+
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
 							$log.event([event], $log.ADVANCED_FORMATTER);
 						}
-						
+
 					});
-					
+
 					// register device set listener
 					EventBusDispatcher.send(eventBus, 'devices', {
 						action: 'registerDeviceSetListener',
@@ -247,10 +244,10 @@ angular.module('keta.services.DeviceSet',
 							}, reply], $log.ADVANCED_FORMATTER);
 						}
 					});
-					
+
 					return that;
 				};
-				
+
 				/**
 				 * @name query
 				 * @function
@@ -276,7 +273,7 @@ angular.module('keta.services.DeviceSet',
 				 */
 				that.query = function() {
 					var deferred = $q.defer();
-					
+
 					EventBusDispatcher.send(eventBus, 'devices', {
 						action: 'getDevices',
 						params: params
@@ -284,9 +281,9 @@ angular.module('keta.services.DeviceSet',
 						if (reply) {
 							// inject used params
 							reply.params = params;
-							
+
 							if (reply.code === 200) {
-								
+
 								// create DeviceInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
@@ -297,7 +294,7 @@ angular.module('keta.services.DeviceSet',
 								} else {
 									set = {};
 								}
-								
+
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
 									$log.request([{
@@ -305,10 +302,10 @@ angular.module('keta.services.DeviceSet',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
 								}
-								
+
 								deferred.resolve(reply);
 								$rootScope.$digest();
-								
+
 							} else {
 								deferred.reject(reply);
 							}
@@ -316,19 +313,19 @@ angular.module('keta.services.DeviceSet',
 							deferred.reject('Something bad happened. Got no reply.');
 						}
 					});
-					
+
 					return deferred.promise;
 				};
-				
+
 			};
-			
+
 			/**
 			 * @class DeviceSet
 			 * @propertyOf DeviceSetProvider
 			 * @description DeviceSet Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -347,7 +344,7 @@ angular.module('keta.services.DeviceSet',
 				create: function(eventBus) {
 					return new DeviceSetInstance(eventBus);
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -370,14 +367,17 @@ angular.module('keta.services.DeviceSet',
 				 */
 				indexOf: function(set, device) {
 					var index = -1;
-					angular.forEach(set.result.items, function(item, key) {
-						if (item.guid === device.guid) {
-							index = key;
-						}
-					});
+					if (angular.isDefined(set.result) &&
+						angular.isDefined(set.result.items)) {
+						angular.forEach(set.result.items, function(item, key) {
+							if (item.guid === device.guid) {
+								index = key;
+							}
+						});
+					}
 					return index;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -400,7 +400,7 @@ angular.module('keta.services.DeviceSet',
 				length: function(set) {
 					return (angular.isDefined(set.result.items)) ? set.result.items.length : 0;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -424,7 +424,7 @@ angular.module('keta.services.DeviceSet',
 				get: function(set, index) {
 					return (angular.isDefined(set.result.items[index])) ? set.result.items[index] : null;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -446,7 +446,7 @@ angular.module('keta.services.DeviceSet',
 				getAll: function(set) {
 					return (angular.isDefined(set.result.items)) ? set.result.items : [];
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -471,9 +471,9 @@ angular.module('keta.services.DeviceSet',
 				 *     });
 				 */
 				sync: function(set, event) {
-					
+
 					var modified = false;
-					
+
 					if (event.getType() === DeviceEvent.CREATED) {
 						set.result.items.push(event.getDevice());
 						modified = true;
@@ -487,18 +487,18 @@ angular.module('keta.services.DeviceSet',
 							modified = true;
 						}
 					}
-					
+
 					// trigger scope digest if anything was modified and not automatically triggered
 					if (modified && !$rootScope.$$phase) {
 						$rootScope.$apply();
 					}
-					
+
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});

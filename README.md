@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.3.5
+
+_Released: 2015-03-25_
+
+* Bugfix for toggle sidebar out of other directives
+
 ## Version 0.3.4
 
 _Released: 2015-03-20_

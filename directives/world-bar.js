@@ -58,13 +58,13 @@
  *
  *         // array of worlds to display in world switcher
  *         $scope.worlds = [{
- *             label: 'Desktop',
+ *             name: 'Desktop',
  *             link: 'https://cloud.mycompany.com'
  *         }, {
- *             label: 'Market',
+ *             name: 'Market',
  *             link: 'https://market.mycompany.com'
  *         }, {
- *             label: 'Service',
+ *             name: 'Service',
  *             link: 'https://service.mycompany.com'
  *         }];
  *
@@ -334,23 +334,23 @@ angular.module('keta.directives.WorldBar',
 				scope.setLocale = function(locale) {
 					scope.currentLocale = locale.code;
 					scope.menus.languageMenu.activeEntry = locale;
-					closeAllMenus();
+					scope.closeAllMenus();
 				};
 
 				// close all menus by switching boolean flag isOpen
-				function closeAllMenus() {
+				scope.closeAllMenus = function closeAllMenus() {
 					scope.menus.contextSwitcher.isOpen = false;
 					scope.menus.userMenu.isOpen = false;
 					scope.menus.energyManagerMenu.isOpen = false;
 					scope.menus.settingsMenu.isOpen = false;
 					scope.menus.languageMenu.isOpen = false;
-				}
+				};
 
 				// toggle state of menu
 				scope.toggleOpenState = function(menuName) {
 					if (angular.isDefined(scope.menus[menuName])) {
 						var currentState = angular.copy(scope.menus[menuName].isOpen);
-						closeAllMenus();
+						scope.closeAllMenus();
 						if (currentState === scope.menus[menuName].isOpen) {
 							scope.menus[menuName].isOpen = !scope.menus[menuName].isOpen;
 						}
@@ -359,7 +359,7 @@ angular.module('keta.directives.WorldBar',
 
 				// close menus when location change starts
 				scope.$on('$locationChangeStart', function() {
-					closeAllMenus();
+					scope.closeAllMenus();
 				});
 
 				// close menus when user clicks anywhere outside
@@ -369,7 +369,7 @@ angular.module('keta.directives.WorldBar',
 					if (worldBarHtml.indexOf(targetElementHtml) !== -1) {
 						return;
 					}
-					closeAllMenus();
+					scope.closeAllMenus();
 					scope.$digest();
 				});
 
@@ -395,7 +395,7 @@ angular.module('keta.directives.WorldBar')
 '			<ul class="dropdown-menu">' +
 '				<li data-ng-repeat="entry in worlds"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">{{ entry.name }}</a>' +
 '				</li>' +
 '				<li class="divider"	data-ng-if="apps.length > 0"></li>' +
 '				<li data-ng-if="apps.length"' +
@@ -405,10 +405,14 @@ angular.module('keta.directives.WorldBar')
 '						orderBy:order(TYPES.APPS):reverse(TYPES.APPS) |' +
 '						limitTo:LIMITS.APPS"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
-'					<a data-ng-href="{{ entry.entryUri }}">{{ entry.names[currentLocale] }}</a>' +
+'					<a data-ng-href="{{ entry.entryUri }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.names[currentLocale] }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="apps.length > LIMITS.APPS && links.ALL_APPS !== null && labels.ALL_APPS !== null">' +
-'					<a data-ng-href="{{ links.ALL_APPS }}">{{ labels.ALL_APPS }} ({{apps.length}})</a>' +
+'					<a data-ng-href="{{ links.ALL_APPS }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.ALL_APPS }} ({{apps.length}})' +
+'					</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -425,10 +429,14 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li data-ng-if="links.USER_PROFILE !== null && labels.USER_PROFILE !== null">' +
-'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_PROFILE }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="links.USER_LOGOUT !== null && labels.USER_LOGOUT !== null">' +
-'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_LOGOUT }}' +
+'					</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -445,12 +453,14 @@ angular.module('keta.directives.WorldBar')
 '					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.name }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER &&' +
 '					links.ALL_ENERGY_MANAGERS !== null &&' +
 '					labels.ALL_ENERGY_MANAGERS !== null">' +
-'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}" data-ng-click="closeAllMenus()">' +
 '						{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})' +
 '					</a>' +
 '				</li>' +
@@ -479,21 +489,28 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li>' +
-'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_PROFILE }}' +
+'					</a>' +
 '				</li>' +
 '				<li>' +
-'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_LOGOUT }}' +
+'					</a>' +
 '				</li>' +
 '				<li class="divider" data-ng-if="energyManagers.length"></li>' +
 '				<li data-ng-repeat="' +
 '					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.name }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">{{ labels.ALL_ENERGY_MANAGERS }}' +
-'						({{energyManagers.length}})</a>' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})' +
+'					</a>' +
 '				</li>' +
 '				<li class="divider" data-ng-if="locales"></li>' +
 '				<li data-ng-repeat="entry in locales"' +

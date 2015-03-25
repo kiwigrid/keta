@@ -24,7 +24,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.4
+ * keta 0.3.5
  */
 
 // source: dist/directives/extended-table.js
@@ -822,11 +822,16 @@ angular.module('keta.directives.ExtendedTable')
  *   Main menu with marking of currently active menu-entry. The menu can be nested (maximum 3 levels) with automatic
  *   expand/fold functionality.
  * </p>
+ * <p>
+ *   The optional property toggleBroadcast is used to execute events from the $rootScope. For example
+ *   if the menu is inside an opened sidebar the event is used to close
+ *   the sidebar (if the current path-route is the same as in the clicked link).
+ * </p>
  * @example
  * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
  * @example
- * angular.module('exampleApp', ['keta.directives.MainMenu'])
- *     .controller('ExampleController', function($scope) {
+ * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
+ *     .controller('ExampleController', function($scope, ketaSharedConfig) {
  * 
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
@@ -851,13 +856,14 @@ angular.module('keta.directives.ExtendedTable')
  *                     }]
  *                 }]
  *             }],
- *             compactMode: false
+ *             compactMode: false,
+ *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
  *         };
  *
  *     });
  */
 angular.module('keta.directives.MainMenu', [])
-	.directive('mainMenu', function MainMenuDirective($location) {
+	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -911,6 +917,12 @@ angular.module('keta.directives.MainMenu', [])
 				};
 
 				scope.checkExpand = function(menuEntry, $event) {
+					// close sidebar when route-links (of current route and menu-entry) are equal
+					if ($location.path() === menuEntry.link &&
+						angular.isDefined(scope.configuration.toggleBroadcast)) {
+						$event.stopPropagation();
+						$rootScope.$broadcast(scope.configuration.toggleBroadcast);
+					}
 					// trigger expand-functionality only when navigation is shown in tablet/desktop mode
 					if (scope.compactMode === false) {
 						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
@@ -1180,13 +1192,13 @@ angular.module('keta.directives.Sidebar')
  *
  *         // array of worlds to display in world switcher
  *         $scope.worlds = [{
- *             label: 'Desktop',
+ *             name: 'Desktop',
  *             link: 'https://cloud.mycompany.com'
  *         }, {
- *             label: 'Market',
+ *             name: 'Market',
  *             link: 'https://market.mycompany.com'
  *         }, {
- *             label: 'Service',
+ *             name: 'Service',
  *             link: 'https://service.mycompany.com'
  *         }];
  *
@@ -1456,23 +1468,23 @@ angular.module('keta.directives.WorldBar',
 				scope.setLocale = function(locale) {
 					scope.currentLocale = locale.code;
 					scope.menus.languageMenu.activeEntry = locale;
-					closeAllMenus();
+					scope.closeAllMenus();
 				};
 
 				// close all menus by switching boolean flag isOpen
-				function closeAllMenus() {
+				scope.closeAllMenus = function closeAllMenus() {
 					scope.menus.contextSwitcher.isOpen = false;
 					scope.menus.userMenu.isOpen = false;
 					scope.menus.energyManagerMenu.isOpen = false;
 					scope.menus.settingsMenu.isOpen = false;
 					scope.menus.languageMenu.isOpen = false;
-				}
+				};
 
 				// toggle state of menu
 				scope.toggleOpenState = function(menuName) {
 					if (angular.isDefined(scope.menus[menuName])) {
 						var currentState = angular.copy(scope.menus[menuName].isOpen);
-						closeAllMenus();
+						scope.closeAllMenus();
 						if (currentState === scope.menus[menuName].isOpen) {
 							scope.menus[menuName].isOpen = !scope.menus[menuName].isOpen;
 						}
@@ -1481,7 +1493,7 @@ angular.module('keta.directives.WorldBar',
 
 				// close menus when location change starts
 				scope.$on('$locationChangeStart', function() {
-					closeAllMenus();
+					scope.closeAllMenus();
 				});
 
 				// close menus when user clicks anywhere outside
@@ -1491,7 +1503,7 @@ angular.module('keta.directives.WorldBar',
 					if (worldBarHtml.indexOf(targetElementHtml) !== -1) {
 						return;
 					}
-					closeAllMenus();
+					scope.closeAllMenus();
 					scope.$digest();
 				});
 
@@ -1517,7 +1529,7 @@ angular.module('keta.directives.WorldBar')
 '			<ul class="dropdown-menu">' +
 '				<li data-ng-repeat="entry in worlds"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">{{ entry.name }}</a>' +
 '				</li>' +
 '				<li class="divider"	data-ng-if="apps.length > 0"></li>' +
 '				<li data-ng-if="apps.length"' +
@@ -1527,10 +1539,14 @@ angular.module('keta.directives.WorldBar')
 '						orderBy:order(TYPES.APPS):reverse(TYPES.APPS) |' +
 '						limitTo:LIMITS.APPS"' +
 '					data-ng-class="{ active: isActive(\'contextSwitcher\', entry) }">' +
-'					<a data-ng-href="{{ entry.entryUri }}">{{ entry.names[currentLocale] }}</a>' +
+'					<a data-ng-href="{{ entry.entryUri }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.names[currentLocale] }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="apps.length > LIMITS.APPS && links.ALL_APPS !== null && labels.ALL_APPS !== null">' +
-'					<a data-ng-href="{{ links.ALL_APPS }}">{{ labels.ALL_APPS }} ({{apps.length}})</a>' +
+'					<a data-ng-href="{{ links.ALL_APPS }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.ALL_APPS }} ({{apps.length}})' +
+'					</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -1547,10 +1563,14 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li data-ng-if="links.USER_PROFILE !== null && labels.USER_PROFILE !== null">' +
-'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_PROFILE }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="links.USER_LOGOUT !== null && labels.USER_LOGOUT !== null">' +
-'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_LOGOUT }}' +
+'					</a>' +
 '				</li>' +
 '			</ul>' +
 '		</li>' +
@@ -1567,12 +1587,14 @@ angular.module('keta.directives.WorldBar')
 '					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.name }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER &&' +
 '					links.ALL_ENERGY_MANAGERS !== null &&' +
 '					labels.ALL_ENERGY_MANAGERS !== null">' +
-'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}" data-ng-click="closeAllMenus()">' +
 '						{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})' +
 '					</a>' +
 '				</li>' +
@@ -1601,21 +1623,28 @@ angular.module('keta.directives.WorldBar')
 '			</a>' +
 '			<ul class="dropdown-menu dropdown-menu-right">' +
 '				<li>' +
-'					<a data-ng-href="{{ links.USER_PROFILE }}">{{ labels.USER_PROFILE }}</a>' +
+'					<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_PROFILE }}' +
+'					</a>' +
 '				</li>' +
 '				<li>' +
-'					<a data-ng-href="{{ links.USER_LOGOUT }}">{{ labels.USER_LOGOUT }}</a>' +
+'					<a data-ng-href="{{ links.USER_LOGOUT }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.USER_LOGOUT }}' +
+'					</a>' +
 '				</li>' +
 '				<li class="divider" data-ng-if="energyManagers.length"></li>' +
 '				<li data-ng-repeat="' +
 '					entry in energyManagers |' +
 '					orderBy:order(TYPES.ENERGY_MANAGER):reverse(TYPES.ENERGY_MANAGER) |' +
 '					limitTo:LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ entry.link }}">{{ entry.name }}</a>' +
+'					<a data-ng-href="{{ entry.link }}" data-ng-click="closeAllMenus()">' +
+'						{{ entry.name }}' +
+'					</a>' +
 '				</li>' +
 '				<li data-ng-if="energyManagers.length > LIMITS.ENERGY_MANAGER">' +
-'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}">{{ labels.ALL_ENERGY_MANAGERS }}' +
-'						({{energyManagers.length}})</a>' +
+'					<a data-ng-href="{{ links.ALL_ENERGY_MANAGERS }}" data-ng-click="closeAllMenus()">' +
+'						{{ labels.ALL_ENERGY_MANAGERS }} ({{energyManagers.length}})' +
+'					</a>' +
 '				</li>' +
 '				<li class="divider" data-ng-if="locales"></li>' +
 '				<li data-ng-repeat="entry in locales"' +
@@ -2182,42 +2211,39 @@ angular.module('keta.services.DeviceEvent', [])
 angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
-		'keta.services.DeviceEvent',
-		'keta.services.EventBusDispatcher',
-		'keta.services.EventBusManager',
-		'keta.services.Logger'
+		'keta.services.DeviceEvent'
 	])
-	
+
 	/**
 	 * @class DeviceSetProvider
 	 * @propertyOf keta.services.DeviceSet
 	 * @description DeviceSet Provider
 	 */
 	.provider('DeviceSet', function DeviceSetProvider() {
-		
+
 		this.$get = function DeviceSetService(
 			$q, $rootScope, $log,
 			Device, DeviceEvent, EventBusDispatcher, EventBusManager) {
-			
+
 			/**
 			 * @class DeviceSetInstance
 			 * @propertyOf DeviceSetProvider
 			 * @description DeviceSet Instance
 			 */
 			var DeviceSetInstance = function(givenEventBus) {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// save EventBus instance
 				var eventBus = givenEventBus;
-				
+
 				// internal params object
 				var params = {};
-				
+
 				// internal set object
 				var set = {};
-				
+
 				/**
 				 * @name filter
 				 * @function
@@ -2249,7 +2275,7 @@ angular.module('keta.services.DeviceSet',
 					params.filter = filter;
 					return that;
 				};
-				
+
 				/**
 				 * @name project
 				 * @function
@@ -2284,7 +2310,7 @@ angular.module('keta.services.DeviceSet',
 					params.projection = projection;
 					return that;
 				};
-				
+
 				/**
 				 * @name sort
 				 * @function
@@ -2316,7 +2342,7 @@ angular.module('keta.services.DeviceSet',
 					params.sorting = sorting;
 					return that;
 				};
-				
+
 				/**
 				 * @name paginate
 				 * @function
@@ -2356,7 +2382,7 @@ angular.module('keta.services.DeviceSet',
 					}
 					return that;
 				};
-				
+
 				/**
 				 * @name live
 				 * @function
@@ -2381,23 +2407,23 @@ angular.module('keta.services.DeviceSet',
 				 *             });
 				 */
 				that.live = function() {
-					
+
 					// generate UUID
 					var liveHandlerUUID = 'CLIENT_' + EventBusDispatcher.generateUUID();
-					
+
 					// register handler under created UUID
 					EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
-						
+
 						// process event using sync
 						api.sync(set, DeviceEvent.create(event.type, event.value));
-						
+
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
 							$log.event([event], $log.ADVANCED_FORMATTER);
 						}
-						
+
 					});
-					
+
 					// register device set listener
 					EventBusDispatcher.send(eventBus, 'devices', {
 						action: 'registerDeviceSetListener',
@@ -2419,10 +2445,10 @@ angular.module('keta.services.DeviceSet',
 							}, reply], $log.ADVANCED_FORMATTER);
 						}
 					});
-					
+
 					return that;
 				};
-				
+
 				/**
 				 * @name query
 				 * @function
@@ -2448,7 +2474,7 @@ angular.module('keta.services.DeviceSet',
 				 */
 				that.query = function() {
 					var deferred = $q.defer();
-					
+
 					EventBusDispatcher.send(eventBus, 'devices', {
 						action: 'getDevices',
 						params: params
@@ -2456,9 +2482,9 @@ angular.module('keta.services.DeviceSet',
 						if (reply) {
 							// inject used params
 							reply.params = params;
-							
+
 							if (reply.code === 200) {
-								
+
 								// create DeviceInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
@@ -2469,7 +2495,7 @@ angular.module('keta.services.DeviceSet',
 								} else {
 									set = {};
 								}
-								
+
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
 									$log.request([{
@@ -2477,10 +2503,10 @@ angular.module('keta.services.DeviceSet',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
 								}
-								
+
 								deferred.resolve(reply);
 								$rootScope.$digest();
-								
+
 							} else {
 								deferred.reject(reply);
 							}
@@ -2488,19 +2514,19 @@ angular.module('keta.services.DeviceSet',
 							deferred.reject('Something bad happened. Got no reply.');
 						}
 					});
-					
+
 					return deferred.promise;
 				};
-				
+
 			};
-			
+
 			/**
 			 * @class DeviceSet
 			 * @propertyOf DeviceSetProvider
 			 * @description DeviceSet Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2519,7 +2545,7 @@ angular.module('keta.services.DeviceSet',
 				create: function(eventBus) {
 					return new DeviceSetInstance(eventBus);
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2542,14 +2568,17 @@ angular.module('keta.services.DeviceSet',
 				 */
 				indexOf: function(set, device) {
 					var index = -1;
-					angular.forEach(set.result.items, function(item, key) {
-						if (item.guid === device.guid) {
-							index = key;
-						}
-					});
+					if (angular.isDefined(set.result) &&
+						angular.isDefined(set.result.items)) {
+						angular.forEach(set.result.items, function(item, key) {
+							if (item.guid === device.guid) {
+								index = key;
+							}
+						});
+					}
 					return index;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2572,7 +2601,7 @@ angular.module('keta.services.DeviceSet',
 				length: function(set) {
 					return (angular.isDefined(set.result.items)) ? set.result.items.length : 0;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2596,7 +2625,7 @@ angular.module('keta.services.DeviceSet',
 				get: function(set, index) {
 					return (angular.isDefined(set.result.items[index])) ? set.result.items[index] : null;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2618,7 +2647,7 @@ angular.module('keta.services.DeviceSet',
 				getAll: function(set) {
 					return (angular.isDefined(set.result.items)) ? set.result.items : [];
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceSet
@@ -2643,9 +2672,9 @@ angular.module('keta.services.DeviceSet',
 				 *     });
 				 */
 				sync: function(set, event) {
-					
+
 					var modified = false;
-					
+
 					if (event.getType() === DeviceEvent.CREATED) {
 						set.result.items.push(event.getDevice());
 						modified = true;
@@ -2659,20 +2688,20 @@ angular.module('keta.services.DeviceSet',
 							modified = true;
 						}
 					}
-					
+
 					// trigger scope digest if anything was modified and not automatically triggered
 					if (modified && !$rootScope.$$phase) {
 						$rootScope.$apply();
 					}
-					
+
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
 
 // source: dist/services/device.js
@@ -3884,21 +3913,21 @@ angular.module('keta.services.EventBusManager', [])
  * @description EventBus Provider
  */
 angular.module('keta.services.EventBus', [])
-	
+
 	/**
 	 * @class EventBusProvider
 	 * @propertyOf keta.services.EventBus
 	 * @description EventBus Provider
 	 */
 	.provider('EventBus', function EventBusProvider() {
-	
+
 		/**
 		 * @class EventBus
 		 * @propertyOf keta.services.EventBus
 		 * @description EventBus Instance
 		 */
 		var EventBus = function EventBus(givenConfig) {
-			
+
 			/**
 			 * @private
 			 * @description Default config for EventBus instances.
@@ -3912,7 +3941,7 @@ angular.module('keta.services.EventBus', [])
 				autoUnregister: true,
 				requestTimeout: 10
 			};
-			
+
 			/**
 			 * @name getDefaultConfig
 			 * @function
@@ -3931,13 +3960,13 @@ angular.module('keta.services.EventBus', [])
 			this.getDefaultConfig = function() {
 				return DEFAULT_CONFIG;
 			};
-			
+
 			/**
 			 * @private
 			 * @description Effective config as merge result of given and default config.
 			 */
 			var config = angular.extend({}, DEFAULT_CONFIG, givenConfig);
-			
+
 			/**
 			 * @name getConfig
 			 * @function
@@ -3956,13 +3985,13 @@ angular.module('keta.services.EventBus', [])
 			this.getConfig = function() {
 				return config;
 			};
-			
+
 			/**
 			 * @private
 			 * @description Internal reference to vertx.EventBus instance.
 			 */
 			var eb = null;
-			
+
 			/**
 			 * @name getInstance
 			 * @function
@@ -3981,31 +4010,31 @@ angular.module('keta.services.EventBus', [])
 			this.getInstance = function() {
 				return eb;
 			};
-			
+
 			// init vertx.EventBus
 			var init = function() {
-				
+
 				// instantiate vertx.EventBus
 				eb = new vertx.EventBus(config.url);
-				
+
 				// add onclose handler
 				eb.onclose = function() {
-					
+
 					// reconnect if enabled
 					if (config.reconnect) {
 						window.setTimeout(function() {
 							init();
 						}, config.reconnectTimeout * 1000);
 					}
-					
+
 				};
-			
+
 			};
-			
+
 			init();
-			
+
 		};
-		
+
 		/**
 		 * @name create
 		 * @function
@@ -4031,7 +4060,7 @@ angular.module('keta.services.EventBus', [])
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
 		 *     .config(function(EventBusProvider) {
-		 *         
+		 *
 		 *         // create with custom config
 		 *         // in this case it's exactly the default config
 		 *         var eventBus = EventBusProvider.create({
@@ -4043,15 +4072,15 @@ angular.module('keta.services.EventBus', [])
 		 *             autoUnregister: true,
 		 *             requestTimeout: 10
 		 *         });
-		 *         
+		 *
 		 *     });
 		 */
 		this.create = function(config) {
 			return new EventBus(config);
 		};
-		
+
 		this.$get = function EventBusService() {};
-		
+
 	});
 
 // source: dist/services/logger.js

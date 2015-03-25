@@ -10,11 +10,16 @@
  *   Main menu with marking of currently active menu-entry. The menu can be nested (maximum 3 levels) with automatic
  *   expand/fold functionality.
  * </p>
+ * <p>
+ *   The optional property toggleBroadcast is used to execute events from the $rootScope. For example
+ *   if the menu is inside an opened sidebar the event is used to close
+ *   the sidebar (if the current path-route is the same as in the clicked link).
+ * </p>
  * @example
  * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
  * @example
- * angular.module('exampleApp', ['keta.directives.MainMenu'])
- *     .controller('ExampleController', function($scope) {
+ * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
+ *     .controller('ExampleController', function($scope, ketaSharedConfig) {
  * 
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
@@ -39,13 +44,14 @@
  *                     }]
  *                 }]
  *             }],
- *             compactMode: false
+ *             compactMode: false,
+ *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
  *         };
  *
  *     });
  */
 angular.module('keta.directives.MainMenu', [])
-	.directive('mainMenu', function MainMenuDirective($location) {
+	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -99,6 +105,12 @@ angular.module('keta.directives.MainMenu', [])
 				};
 
 				scope.checkExpand = function(menuEntry, $event) {
+					// close sidebar when route-links (of current route and menu-entry) are equal
+					if ($location.path() === menuEntry.link &&
+						angular.isDefined(scope.configuration.toggleBroadcast)) {
+						$event.stopPropagation();
+						$rootScope.$broadcast(scope.configuration.toggleBroadcast);
+					}
 					// trigger expand-functionality only when navigation is shown in tablet/desktop mode
 					if (scope.compactMode === false) {
 						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
