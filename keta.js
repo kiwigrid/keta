@@ -24,7 +24,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.5
+ * keta 0.3.6
  */
 
 // source: dist/directives/extended-table.js
@@ -695,7 +695,7 @@ angular.module('keta.directives.ExtendedTable')
 '	<!-- TABLE -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
 '		<div class="col-xs-12">' +
-'			<div class="table-responsive">' +
+'			<div class="table-responsive table-data">' +
 '				<table class="table table-striped form-group">' +
 '					<thead>' +
 '						<tr>' +

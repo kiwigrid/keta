@@ -2341,8 +2341,8 @@ output {
 .form-control {
   display: block;
   width: 100%;
-  height: 30px;
-  padding: 4px 10px;
+  height: 27px;
+  padding: 0 10px;
   font-size: 14px;
   line-height: 1.42857143;
   color: #363636;
@@ -2385,7 +2385,7 @@ input[type="search"] {
   -webkit-appearance: none;
 }
 input[type="date"] {
-  line-height: 30px;
+  line-height: 27px;
 }
 .form-group {
   margin-bottom: 15px;
@@ -2482,16 +2482,16 @@ select[multiple].input-lg {
   position: relative;
 }
 .has-feedback .form-control {
-  padding-right: 37.5px;
+  padding-right: 33.75px;
 }
 .has-feedback .form-control-feedback {
   position: absolute;
   top: 25px;
   right: 0;
   display: block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 27px;
+  height: 27px;
+  line-height: 27px;
   text-align: center;
   color: #bababa;
 }
@@ -2600,6 +2600,7 @@ select[multiple].input-lg {
   .form-inline .form-group {
     display: inline-block;
     vertical-align: middle;
+    margin-bottom: 0;
   }
   .form-inline .form-control {
     display: inline-block;
@@ -3288,10 +3289,17 @@ tbody.collapse.in {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
-.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .btn,
 .btn-group > .dropdown-toggle:not(:first-child) {
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.btn-group > .btn:last-child {
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
 }
 .btn-group > .btn-group {
   float: left;
@@ -3998,13 +4006,14 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-bottom: 1px solid transparent;
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 11.5px;
+  margin-bottom: 11.5px;
 }
 @media (min-width: 768px) {
   .navbar-form .form-group {
     display: inline-block;
     vertical-align: middle;
+    margin-bottom: 0;
   }
   .navbar-form .form-control {
     display: inline-block;
@@ -4065,8 +4074,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-bottom-left-radius: 0;
 }
 .navbar-btn {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 11.5px;
+  margin-bottom: 11.5px;
 }
 .navbar-btn.btn-sm {
   margin-top: 10px;
@@ -6394,6 +6403,60 @@ h2 .label {
     width: 370px;
   }
 }
+a.app:focus,
+a.app:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+.app {
+  padding: 10px;
+  background: #ffffff;
+  margin: 0 12px 12px 0;
+  border: 1px solid #d5d5d5;
+  display: inline-block;
+}
+.app:hover {
+  border-color: #9aab2b;
+}
+.app.app-more .app-body {
+  text-align: center;
+  line-height: 110px;
+  font-size: 28px;
+}
+.app .app-body {
+  margin-bottom: 0;
+  position: relative;
+  height: 120px;
+  width: 140px;
+  overflow: hidden;
+  display: block;
+}
+.app .app-body .app-icon {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+.app .app-title {
+  color: #333;
+  display: block;
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app .app-author {
+  color: #bababa;
+  font-size: 12px;
+}
+.app .app-footer {
+  display: block;
+  border-top: 1px solid #d5d5d5;
+  padding: 5px 5px 0;
+}
 .toggle {
   position: relative;
   display: inline-block;
@@ -6645,15 +6708,28 @@ h2 .label {
   }
 }
 .navbar.navbar-level-1 {
-  background: #acbf30;
+  background: #ffffff;
+  border-top: 3px solid #acbf30;
   top: 0;
-}
-.navbar.navbar-level-1 span {
   padding: 12px;
+}
+.navbar.navbar-level-1 .container-fluid > span {
+  display: table-cell;
+}
+.navbar.navbar-level-1 span.world,
+.navbar.navbar-level-1 a.navbar-logo {
+  display: inline-block;
+  vertical-align: middle;
+}
+.navbar.navbar-level-1 span.logo-left {
   color: #363636;
   font-size: 18px;
   display: block;
   text-transform: uppercase;
+}
+.navbar.navbar-level-1 span.world {
+  padding-left: 10px;
+  color: #787878;
 }
 .navbar.navbar-level-2 .dropdown {
   max-width: 220px;
@@ -6887,6 +6963,9 @@ body {
 }
 .pager .pager-buttons > .btn {
   height: 29px;
+}
+.pager.max-width {
+  max-width: 200px;
 }
 .process-bar .steps .col-xs-3:first-child {
   padding-right: 5px;
@@ -7326,22 +7405,19 @@ a.bg-blue:hover {
 .table-data th.sortable {
   cursor: pointer;
 }
-.table-data th .unsort span {
-  color: #bababa;
-}
-.table-data th.sort * {
-  color: #acbf30 !important;
+.table-data th.sort a {
+  color: #acbf30;
 }
 .table-data th span {
   color: #acbf30;
+  padding-left: 3px;
 }
-.table-data th a,
-.table-data th a:hover {
+.table-data th a {
   text-decoration: none;
   color: #363636;
 }
-.table-data th span {
-  padding-left: 3px;
+.table-data th a:hover span {
+  color: #9aab2b;
 }
 @font-face {
   font-family: "kiwigrid-device-icons";
