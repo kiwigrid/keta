@@ -24,7 +24,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.6
+ * keta 0.3.7
  */
 
 // source: dist/directives/extended-table.js

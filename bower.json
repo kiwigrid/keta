@@ -1,15 +1,7 @@
 {
   "name": "keta",
   "main": "./keta.js",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "libs",
-    "test",
-    "tests"
-  ],
-  "version": "0.3.6",
+  "version": "0.3.7",
   "homepage": "https://github.com/kiwigrid/keta",
   "authors": [
     "Marco Lehmann <marco.lehmann@kiwigrid.com> (https://github.com/m99coder)",
