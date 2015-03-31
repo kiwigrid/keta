@@ -1,6 +1,39 @@
 {
   "name": "keta",
-  "private": true,
   "main": "./keta.js",
-  "ignore": []
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "libs",
+    "test",
+    "tests"
+  ],
+  "version": "0.3.6",
+  "homepage": "https://github.com/kiwigrid/keta",
+  "authors": [
+	"Marco Lehmann <marco.lehmann@kiwigrid.com> (https://github.com/m99coder)",
+	"Jens Struwe <jens.struwe@kiwigrid.com> (https://github.com/kakenbok)",
+	"Jan Uhlmann <jan.uhlmann@kiwigrid.com> (https://github.com/keshix)"
+  ],
+  "description": "Frontend Components for Kiwigrid Platform based AngularJS Apps",
+  "keywords": [
+    "keta",
+    "Library",
+    "Kiwigrid",
+    "Platform",
+    "AngularJS",
+    "Apps",
+    "Vert.x",
+    "EventBus"
+  ],
+  "license": "MIT",
+  "dependencies": {
+	"angular": "1.3.12",
+	"angular-route": "1.3.12",
+	"angular-cookies": "1.3.12",
+	"angular-sanitize": "1.3.12",
+	"sockjs": "0.3.4",
+	"vertxbus": "v2.1"
+  }
 }
