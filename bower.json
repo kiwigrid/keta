@@ -2,6 +2,7 @@
   "name": "keta",
   "main": "./keta.js",
   "version": "0.3.7",
+  "ignore": [],
   "homepage": "https://github.com/kiwigrid/keta",
   "authors": [
     "Marco Lehmann <marco.lehmann@kiwigrid.com> (https://github.com/m99coder)",
