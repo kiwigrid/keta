@@ -276,7 +276,7 @@ angular.module('keta.services.DeviceSet',
 						}, function(reply) {
 							// log if in debug mode
 							if (EventBusManager.inDebugMode()) {
-								$log.request([{
+								$log.request(['deviceservice', {
 									action: 'registerDeviceSetListener',
 									body: {
 										deviceFilter: params.filter,
@@ -312,7 +312,7 @@ angular.module('keta.services.DeviceSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['deviceservice', {
 										action: 'getDevices',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);

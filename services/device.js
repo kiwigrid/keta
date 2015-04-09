@@ -78,7 +78,7 @@ angular.module('keta.services.Device',
 
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
-							$log.request([message, reply], $log.ADVANCED_FORMATTER);
+							$log.request(['deviceservice', message, reply], $log.ADVANCED_FORMATTER);
 						}
 
 						if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {

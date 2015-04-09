@@ -32,7 +32,7 @@ angular.module('keta.services.User',
 
 					// log if in debug mode
 					if (EventBusManager.inDebugMode()) {
-						$log.request([message, reply], $log.ADVANCED_FORMATTER);
+						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
 					if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
@@ -230,7 +230,7 @@ angular.module('keta.services.User',
 								if (!angular.equals(objChanges, {})) {
 									changes[key] = value;
 								}
-							} else if (cleanedUser[key] !== cleanedUserOriginal[key]) {
+							} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
 								changes[key] = value;
 							}
 						}

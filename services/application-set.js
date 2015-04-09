@@ -237,7 +237,7 @@ angular.module('keta.services.ApplicationSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['appservice', {
 										action: 'getUserApplications',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);

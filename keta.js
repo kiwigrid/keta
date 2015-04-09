@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.8
+ * keta 0.3.9
  */
 
 // source: dist/directives/extended-table.js
@@ -2271,7 +2271,7 @@ angular.module('keta.services.ApplicationSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['appservice', {
 										action: 'getUserApplications',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
@@ -2997,7 +2997,7 @@ angular.module('keta.services.DeviceSet',
 						}, function(reply) {
 							// log if in debug mode
 							if (EventBusManager.inDebugMode()) {
-								$log.request([{
+								$log.request(['deviceservice', {
 									action: 'registerDeviceSetListener',
 									body: {
 										deviceFilter: params.filter,
@@ -3033,7 +3033,7 @@ angular.module('keta.services.DeviceSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['deviceservice', {
 										action: 'getDevices',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
@@ -3332,7 +3332,7 @@ angular.module('keta.services.Device',
 
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
-							$log.request([message, reply], $log.ADVANCED_FORMATTER);
+							$log.request(['deviceservice', message, reply], $log.ADVANCED_FORMATTER);
 						}
 
 						if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
@@ -5349,7 +5349,7 @@ angular.module('keta.services.UserSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['userservice', {
 										action: 'getUsers',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
@@ -5551,7 +5551,7 @@ angular.module('keta.services.User',
 
 					// log if in debug mode
 					if (EventBusManager.inDebugMode()) {
-						$log.request([message, reply], $log.ADVANCED_FORMATTER);
+						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
 					if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
@@ -5749,7 +5749,7 @@ angular.module('keta.services.User',
 								if (!angular.equals(objChanges, {})) {
 									changes[key] = value;
 								}
-							} else if (cleanedUser[key] !== cleanedUserOriginal[key]) {
+							} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
 								changes[key] = value;
 							}
 						}

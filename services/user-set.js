@@ -225,7 +225,7 @@ angular.module('keta.services.UserSet',
 
 								// log if in debug mode
 								if (EventBusManager.inDebugMode()) {
-									$log.request([{
+									$log.request(['userservice', {
 										action: 'getUsers',
 										params: params
 									}, reply], $log.ADVANCED_FORMATTER);
