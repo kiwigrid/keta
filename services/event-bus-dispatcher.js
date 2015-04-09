@@ -3,10 +3,11 @@
 /**
  * @name keta.services.EventBusDispatcher
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBusDispatcher
  * @description EventBusDispatcher Provider
  */
+
 angular.module('keta.services.EventBusDispatcher',
 	[
 		'keta.services.AccessToken'
@@ -32,6 +33,7 @@ angular.module('keta.services.EventBusDispatcher',
 			 * @param {boolean} replied Is message replied, so that we have to check for timeout?
 			 * @param {Function} success Success handler to call when EventBus is in open state
 			 * @param {Function} error Error handler to call when EventBus could not be opened within timeout
+			 * @returns {void} returns nothing
 			 */
 			var waitForOpen = function(eventBus, replied, success, error) {
 
@@ -437,6 +439,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @param {string} address unique address on EventBus instance
 				 * @param {object} message message object to send
 				 * @param {function} replyHandler handler to process reply
+				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
 				 *     .controller('ExampleController', function(EventBusDispatcher) {
@@ -468,10 +471,8 @@ angular.module('keta.services.EventBusDispatcher',
 							}, function() {
 								$window.location.reload();
 							});
-						} else {
-							if (angular.isFunction(replyHandler)) {
-								replyHandler(reply);
-							}
+						} else if (angular.isFunction(replyHandler)) {
+							replyHandler(reply);
 						}
 					};
 
@@ -501,6 +502,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @param {EventBus} eventBus EventBus instance
 				 * @param {string} address unique address on EventBus instance
 				 * @param {object} message message object to send
+				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
 				 *     .controller('ExampleController', function(EventBusDispatcher) {
@@ -533,6 +535,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @param {EventBus} eventBus EventBus instance
 				 * @param {string} address unique address on EventBus instance
 				 * @param {function} handler handler to process messages coming in from EventBus instance
+				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
 				 *     .controller('ExampleController', function(EventBusDispatcher) {
@@ -557,6 +560,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @param {EventBus} eventBus EventBus instance
 				 * @param {string} address unique address on EventBus instance
 				 * @param {function} handler handler to process messages coming in from EventBus instance
+				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
 				 *     .controller('ExampleController', function(EventBusDispatcher) {
@@ -579,6 +583,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 *   Closes connection to specified EventBus instance.
 				 * </p>
 				 * @param {EventBus} eventBus EventBus instance
+				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
 				 *     .controller('ExampleController', function(EventBusDispatcher) {
@@ -628,8 +633,8 @@ angular.module('keta.services.EventBusDispatcher',
 					var BIT_SHIFT = 3;
 					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 						.replace(/[xy]/g, function(a, b) {
-							return b = Math.random() * HEX_RANGE,
-								(a === 'y' ? (b & BIT_SHIFT | BIT_HALF) : (b | 0)).toString(HEX_RANGE);
+							b = Math.random() * HEX_RANGE;
+							return (a === 'y' ? b & BIT_SHIFT | BIT_HALF : b | 0).toString(HEX_RANGE);
 						});
 				}
 

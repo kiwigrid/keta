@@ -3,26 +3,30 @@
 /**
  * @name keta.services.Logger
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Logger
  * @description Logger Decorator
  */
+
+/*eslint no-console:0*/
+
 angular.module('keta.services.Logger', [])
-	
+
 	/**
 	 * @class LoggerConfig
 	 * @propertyOf keta.services.Logger
 	 * @description Logger Config
 	 */
 	.config(function LoggerConfig($provide) {
-		
+
 		/**
 		 * @class LoggerDecorator
 		 * @propertyOf LoggerConfig
 		 * @description Logger Decorator
+		 * @param {Object} $delegate delegated implementation
 		 */
 		$provide.decorator('$log', function LoggerDecorator($delegate) {
-			
+
 			/**
 			 * @name ADVANCED_FORMATTER
 			 * @function
@@ -32,7 +36,7 @@ angular.module('keta.services.Logger', [])
 			 *   Formats a message in an advanced, colored manner.
 			 * </p>
 			 * @param {Array} messages Messages as array
-			 * @returns {string}
+			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.Logger'])
 			 *     .controller('ExampleController', function($log) {
@@ -40,24 +44,24 @@ angular.module('keta.services.Logger', [])
 			 *     });
 			 */
 			$delegate.ADVANCED_FORMATTER = function(messages) {
-				
+
 				if (!angular.isArray(messages)) {
 					messages = [messages];
 				}
-				
+
 				var output = '%c[' + new Date().toISOString() + ']\n%c';
 				angular.forEach(messages, function(message) {
-					output+= JSON.stringify(message, null, '\t') + '\n';
+					output += JSON.stringify(message, null, '\t') + '\n';
 				});
-				
+
 				console.log(
 					output,
 					'color:#acbf2f;font-weight:bold;',
 					'color:#333;font-weight:normal;'
 				);
-				
+
 			};
-			
+
 			/**
 			 * @name request
 			 * @function
@@ -69,21 +73,22 @@ angular.module('keta.services.Logger', [])
 			 * </p>
 			 * @param {Array} messages Messages to log
 			 * @param {function} [formatter] Formatter to use
+			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.Logger'])
 			 *     .controller('ExampleController', function($log) {
-			 *         
+			 *
 			 *         // use no formatter
 			 *         $log.request([request, response]);
-			 *         
+			 *
 			 *         // use ADVANCED_FORMATTER
 			 *         $log.request([request, response], $log.ADVANCED_FORMATTER);
-			 *         
+			 *
 			 *         // use custom formatter
 			 *         $log.request([request, response], function(messages) {
 			 *             // custom logging
 			 *         });
-			 *         
+			 *
 			 *     });
 			 */
 			$delegate.request = function(messages, formatter) {
@@ -93,7 +98,7 @@ angular.module('keta.services.Logger', [])
 					console.log(messages);
 				}
 			};
-			
+
 			/**
 			 * @name event
 			 * @function
@@ -105,29 +110,30 @@ angular.module('keta.services.Logger', [])
 			 * </p>
 			 * @param {Array} messages Messages to log
 			 * @param {function} [formatter] Formatter to use
+			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.Logger'])
 			 *     .controller('ExampleController', function($log) {
-			 *         
+			 *
 			 *         // use no formatter
 			 *         $log.event(event);
-			 *         
+			 *
 			 *         // use ADVANCED_FORMATTER
 			 *         $log.event(event, $log.ADVANCED_FORMATTER);
-			 *         
+			 *
 			 *         // use custom formatter
 			 *         $log.event(event, function(messages) {
 			 *             // custom logging
 			 *         });
-			 *         
+			 *
 			 *     });
 			 */
 			$delegate.event = function(messages, formatter) {
 				$delegate.request(messages, formatter);
 			};
-			
+
 			return $delegate;
-			
+
 		});
-		
+
 	});

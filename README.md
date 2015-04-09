@@ -10,6 +10,21 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.8
+
+_Released: 2015-04-09_
+
+* Added wrapper for applications
+* Added wrapper for users
+* Several bug fixes
+* Clean up
+
+## Version 0.3.7
+
+_Released: 2015-03-31_
+
+* Added Bower support
+
 ### Version 0.3.6
 
 _Released: 2015-03-26_

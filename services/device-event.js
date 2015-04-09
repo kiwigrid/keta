@@ -3,34 +3,37 @@
 /**
  * @name keta.services.DeviceEvent
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.DeviceEvent
  * @description DeviceEvent Provider
  */
+
 angular.module('keta.services.DeviceEvent', [])
-	
+
 	/**
 	 * @class DeviceEventProvider
 	 * @propertyOf keta.services.DeviceEvent
 	 * @description DeviceEvent Provider
 	 */
 	.provider('DeviceEvent', function DeviceEventProvider() {
-		
+
 		this.$get = function DeviceEventService() {
-			
+
 			/**
 			 * @class DeviceEventInstance
 			 * @propertyOf DeviceEvent
 			 * @description DeviceEvent Instance
+			 * @param {string} givenType DeviceEvent type
+			 * @param {DeviceInstance} givenDevice DeviceInstance to be affected by event
 			 */
 			var DeviceEventInstance = function(givenType, givenDevice) {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// internal DeviceEvent type
 				var type = givenType;
-				
+
 				/**
 				 * @name getType
 				 * @function
@@ -39,7 +42,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 * <p>
 				 *   Returns type of DeviceEvent.
 				 * </p>
-				 * @return {string} type
+				 * @returns {string} type
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
 				 *     .controller('ExampleController', function(Device, DeviceEvent) {
@@ -53,10 +56,10 @@ angular.module('keta.services.DeviceEvent', [])
 				that.getType = function() {
 					return type;
 				};
-				
+
 				// internal DeviceEvent device
 				var device = givenDevice;
-				
+
 				/**
 				 * @name getDevice
 				 * @function
@@ -65,7 +68,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 * <p>
 				 *   Returns device of DeviceEvent.
 				 * </p>
-				 * @return {DeviceInstance} device
+				 * @returns {DeviceInstance} device
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
 				 *     .controller('ExampleController', function(Device, DeviceEvent) {
@@ -79,16 +82,16 @@ angular.module('keta.services.DeviceEvent', [])
 				that.getDevice = function() {
 					return device;
 				};
-				
+
 			};
-			
+
 			/**
 			 * @class DeviceEvent
 			 * @propertyOf DeviceEventProvider
 			 * @description DeviceEvent Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @const
 				 * @memberOf DeviceEvent
@@ -105,7 +108,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 *     });
 				 */
 				CREATED: 'CREATED',
-				
+
 				/**
 				 * @const
 				 * @memberOf DeviceEvent
@@ -122,7 +125,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 *     });
 				 */
 				UPDATED: 'UPDATED',
-				
+
 				/**
 				 * @const
 				 * @memberOf DeviceEvent
@@ -139,7 +142,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 *     });
 				 */
 				DELETED: 'DELETED',
-				
+
 				/**
 				 * @function
 				 * @memberOf DeviceEvent
@@ -149,7 +152,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @param {string} type DeviceEvent type
 				 * @param {DeviceInstance} device Device instance
-				 * @returns {DeviceEventInstance}
+				 * @returns {DeviceEventInstance} DeviceEventInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
 				 *     .controller('ExampleController', function(Device, DeviceEvent) {
@@ -169,11 +172,11 @@ angular.module('keta.services.DeviceEvent', [])
 				create: function(type, device) {
 					return new DeviceEventInstance(type, device);
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});

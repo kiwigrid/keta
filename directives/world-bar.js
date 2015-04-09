@@ -20,13 +20,13 @@
  *     data-worlds="worlds"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.WorldBar'])
- *     .controller('ExampleController', function($scope) {
- * 
+ *     .controller('ExampleController', function($scope) {
+ *
  *         // id of eventBus instance to use to retrieve data
  *         $scope.eventBusId = 'kiwibus';
  *
- *         // array of locales to use for language menu
- *         $scope.locales = [{
+ *         // array of locales to use for language menu
+ *         $scope.locales = [{
  *             name: 'Deutsch',
  *             nameShort: 'DE',
  *             code: 'de'
@@ -70,16 +70,23 @@
  *
  *     });
  */
+
 angular.module('keta.directives.WorldBar',
 	[
 		'keta.shared',
 		'keta.services.EventBusDispatcher',
-		'keta.services.EventBusManager'
+		'keta.services.EventBusManager',
+		'keta.services.ApplicationSet',
+		'keta.services.DeviceSet',
+		'keta.services.UserSet'
 	])
 
 	.directive('worldBar', function WorldBarDirective(
 		$rootScope, $document,
-		EventBusDispatcher, EventBusManager, ketaSharedConfig) {
+		EventBusDispatcher, EventBusManager,
+		Application, ApplicationSet, Device, DeviceSet, User, UserSet,
+		ketaSharedConfig) {
+
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -129,7 +136,7 @@ angular.module('keta.directives.WorldBar',
 					USER_PROFILE: 'User Profile',
 					USER_LOGOUT: 'Logout'
 				};
-				scope.labels = (angular.isDefined(scope.labels)) ?
+				scope.labels = angular.isDefined(scope.labels) ?
 					angular.extend(defaultLabels, scope.labels) : defaultLabels;
 
 				var defaultLinks = {
@@ -138,7 +145,7 @@ angular.module('keta.directives.WorldBar',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
-				scope.links = (angular.isDefined(scope.links)) ?
+				scope.links = angular.isDefined(scope.links) ?
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
 
 				scope.worlds = scope.worlds || [];
@@ -183,50 +190,45 @@ angular.module('keta.directives.WorldBar',
 				scope.apps = [];
 
 				// query applications
-				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
-					EventBusDispatcher.send(scope.eventBus, 'apps', {
-						action: 'getAppInfos'
-					}, function(reply) {
-						if (angular.isDefined(reply.code) && (reply.code === 200) &&
-							angular.isDefined(reply.result) &&
-							angular.isDefined(reply.result.items)) {
 
-							angular.forEach(reply.result.items, function(app) {
+					ApplicationSet.create(scope.eventBus)
+						.query()
+						.then(function(reply) {
+							if (angular.isDefined(reply.result) &&
+								angular.isDefined(reply.result.items)) {
 
-								// inject name
-								app.name = (angular.isDefined(app.names[scope.currentLocale])) ?
-									app.names[scope.currentLocale] : null;
+								angular.forEach(reply.result.items, function(app) {
 
-								// reset entryUri to null if empty
-								if (angular.isDefined(app.entryUri) && (app.entryUri === '')) {
-									app.entryUri = null;
-								}
+									// inject name
+									app.name = angular.isDefined(app.names[scope.currentLocale]) ?
+										app.names[scope.currentLocale] : null;
 
-								scope.apps.push(app);
+									// reset entryUri to null if empty
+									if (angular.isDefined(app.entryUri) && app.entryUri === '') {
+										app.entryUri = null;
+									}
 
-							});
+									scope.apps.push(app);
 
-							scope.$digest();
-						}
-					});
+								});
+
+							}
+						});
+
 				}
 
 				// current user
 				scope.user = {};
 
 				// query current user
-				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
-					EventBusDispatcher.send(scope.eventBus, 'userservice', {
-						action: 'getCurrentUser'
-					}, function(reply) {
-						if (angular.isDefined(reply.code) && (reply.code === 200) &&
-							angular.isDefined(reply.result)) {
-							scope.user = reply.result;
-							scope.$digest();
-						}
-					});
+
+					User.getCurrent(scope.eventBus)
+						.then(function(reply) {
+							scope.user = reply;
+						});
+
 				}
 
 				// list of energy managers in manager list
@@ -234,61 +236,58 @@ angular.module('keta.directives.WorldBar',
 				scope.energyManagers = [];
 
 				// query energy managers
-				// TODO: use keta wrapper
 				if (scope.eventBus !== null) {
-					EventBusDispatcher.send(scope.eventBus, 'devices', {
-						action: 'getDevices',
-						params: {
-							filter: {
-								deviceClasses: [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
-							},
-							projection: {
-								tagValues: {
-									IdName: 1,
-									SettingsNetworkMap: 1
-								}
+
+					DeviceSet.create(scope.eventBus)
+						.filter({
+							deviceClasses: [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
+						})
+						.project({
+							tagValues: {
+								IdName: 1,
+								SettingsNetworkMap: 1
 							}
-						}
-					}, function(reply) {
-						if (angular.isDefined(reply.code) && (reply.code === 200) &&
-							angular.isDefined(reply.result) &&
-							angular.isDefined(reply.result.items)) {
+						})
+						.query()
+						.then(function(reply) {
+							if (angular.isDefined(reply.result) &&
+								angular.isDefined(reply.result.items)) {
 
-							var energyManagers = [];
-							angular.forEach(reply.result.items, function(item) {
-								var emIP =
-									(angular.isDefined(item.tagValues) &&
-									angular.isDefined(item.tagValues.SettingsNetworkMap) &&
-									angular.isDefined(item.tagValues.SettingsNetworkMap.value) &&
-									angular.isDefined(item.tagValues.SettingsNetworkMap.value.ipv4)) ?
-									item.tagValues.SettingsNetworkMap.value.ipv4 : null;
-								if (emIP !== null) {
-									energyManagers.push({
-										name: item.tagValues.IdName.value,
-										link: 'http://' + emIP
-									});
-								}
-							});
-							scope.energyManagers = energyManagers;
+								var energyManagers = [];
+								angular.forEach(reply.result.items, function(item) {
+									var emIP =
+										angular.isDefined(item.tagValues) &&
+										angular.isDefined(item.tagValues.SettingsNetworkMap) &&
+										angular.isDefined(item.tagValues.SettingsNetworkMap.value) &&
+										angular.isDefined(item.tagValues.SettingsNetworkMap.value.ipv4) ?
+											item.tagValues.SettingsNetworkMap.value.ipv4 : null;
+									if (emIP !== null) {
+										energyManagers.push({
+											name: item.tagValues.IdName.value,
+											link: 'http://' + emIP
+										});
+									}
+								});
+								scope.energyManagers = energyManagers;
 
-							scope.$digest();
-						}
-					});
+							}
+						});
+
 				}
 
 				// LOGIC ---
 
 				// order elements by predicate
 				scope.order = function(type) {
-					var field = (angular.isDefined(PREDICATES[type])) ? PREDICATES[type].field : 'name';
+					var field = angular.isDefined(PREDICATES[type]) ? PREDICATES[type].field : 'name';
 					return function(item) {
-						return (angular.isDefined(item[field])) ? item[field] : '';
+						return angular.isDefined(item[field]) ? item[field] : '';
 					};
 				};
 
 				// order elements by sort order
 				scope.reverse = function(type) {
-					return (angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse)) ?
+					return angular.isDefined(PREDICATES[type]) && angular.isDefined(PREDICATES[type].reverse) ?
 						PREDICATES[type].reverse : false;
 				};
 
@@ -323,12 +322,12 @@ angular.module('keta.directives.WorldBar',
 
 				// check if a given menu is currently open
 				scope.isOpen = function(menuName) {
-					return (angular.isDefined(scope.menus[menuName])) ? scope.menus[menuName].isOpen : null;
+					return angular.isDefined(scope.menus[menuName]) ? scope.menus[menuName].isOpen : null;
 				};
 
 				// check if a given entry is active to set corresponding css class
 				scope.isActive = function(menuName, entry) {
-					return (angular.isDefined(scope.menus[menuName]) && (scope.menus[menuName].activeEntry === entry));
+					return angular.isDefined(scope.menus[menuName]) && scope.menus[menuName].activeEntry === entry;
 				};
 
 				scope.setLocale = function(locale) {
@@ -375,6 +374,7 @@ angular.module('keta.directives.WorldBar',
 
 			}
 		};
+
 	});
 
 // prepopulate template cache

@@ -3,10 +3,11 @@
 /**
  * @name keta.services.EventBus
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBus
  * @description EventBus Provider
  */
+
 angular.module('keta.services.EventBus', [])
 
 	/**
@@ -20,6 +21,7 @@ angular.module('keta.services.EventBus', [])
 		 * @class EventBus
 		 * @propertyOf keta.services.EventBus
 		 * @description EventBus Instance
+		 * @param {Object} givenConfig Config to use for EventBus
 		 */
 		var EventBus = function EventBus(givenConfig) {
 
@@ -139,7 +141,7 @@ angular.module('keta.services.EventBus', [])
 		 *   Creates an EventBus instance with given config, which is merged with the default config.
 		 * </p>
 		 * @param {Object} config config to use in created EventBus instance
-		 * @returns {EventBus}
+		 * @returns {EventBus} EventBus created
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
 		 *     .config(function(EventBusProvider) {

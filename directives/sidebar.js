@@ -12,11 +12,12 @@
  * @example
  * &lt;div data-sidebar data-configuration="{position: 'left', label: 'Fold'}"&gt;&lt;/div&gt;
  */
+
 angular.module('keta.directives.Sidebar',
 	[
 		'keta.shared'
 	])
-	
+
 	.directive('sidebar', function SidebarDirective($document, ketaSharedConfig) {
 		return {
 			restrict: 'EA',
@@ -27,18 +28,18 @@ angular.module('keta.directives.Sidebar',
 			templateUrl: '/components/directives/sidebar.html',
 			transclude: true,
 			link: function(scope, element) {
-				
+
 				// set default values
 				scope.configuration.position =
 					angular.isDefined(scope.configuration.position) ?
 						scope.configuration.position :
 						ketaSharedConfig.SIDEBAR.POSITION_LEFT;
-				
+
 				// flag for showing toggle area in sidebar
 				scope.showToggleArea = angular.isDefined(scope.configuration.label);
 				scope.toggleAreaTop = 0;
 				scope.transcludeTop = 0;
-				
+
 				// get body element to toggle css classes
 				var bodyElem = angular.element(document).find('body');
 
@@ -51,19 +52,21 @@ angular.module('keta.directives.Sidebar',
 				scope.$on('$locationChangeStart', function() {
 					bodyElem.removeClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
 				});
-				
+
 				// if sidebars are toggled from outside toggle css class on body element
 				var toggleBodyClass = function(position) {
 					if (scope.configuration.position === position) {
-						bodyElem.toggleClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+						bodyElem.toggleClass(
+							ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position
+						);
 					}
 				};
-				
+
 				// sidebar left
 				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT, function() {
 					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_LEFT);
 				});
-				
+
 				// sidebar right
 				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT, function() {
 					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_RIGHT);
@@ -75,15 +78,17 @@ angular.module('keta.directives.Sidebar',
 					// determine brand bar height
 					var brandBarElem = bodyElem[0].getElementsByClassName(ketaSharedConfig.SIDEBAR.CSS_BRAND_BAR);
 					var brandBarHeight = angular.isDefined(brandBarElem[0]) ? brandBarElem[0].clientHeight : 0;
-					
+
 					scope.toggleAreaTop = brandBarHeight + ketaSharedConfig.SIDEBAR.TOGGLE_AREA_OFFSET;
 					scope.transcludeTop = ketaSharedConfig.SIDEBAR.TRANSCLUDE_OFFSET;
-					
+
 				}
-				
+
 				// close on click outside
 				$document.bind('click', function(event) {
-					if (bodyElem.hasClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position)) {
+					if (bodyElem.hasClass(
+							ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position
+						)) {
 						var sideBarHtml = element.html(),
 							targetElementHtml = angular.element(event.target).html();
 						if (sideBarHtml.indexOf(targetElementHtml) !== -1) {
@@ -92,7 +97,7 @@ angular.module('keta.directives.Sidebar',
 						scope.toggleSideBar();
 					}
 				});
-				
+
 			}
 		};
 	});

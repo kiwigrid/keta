@@ -14,13 +14,14 @@
  * {{ rows | slice:0:5 }}
  * @example
  * angular.module('exampleApp', ['keta.filters.Slice'])
- *     .controller('ExampleController', function($scope) {
- *         
+ *     .controller('ExampleController', function($scope) {
+ *
  *         // extract 5 elements starting at offset 0
  *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
- *         
- *     });
+ *
+ *     });
  */
+
 angular.module('keta.filters.Slice', [])
 	.filter('slice', function() {
 		return function(arr, offset, limit) {

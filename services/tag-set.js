@@ -3,40 +3,41 @@
 /**
  * @name keta.services.TagSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.TagSet
  * @description TagSet Provider
  */
+
 angular.module('keta.services.TagSet',
 	[
 		'keta.services.Tag'
 	])
-	
+
 	/**
 	 * @class TagSetProvider
 	 * @propertyOf keta.services.TagSet
 	 * @description TagSet Provider
 	 */
 	.provider('TagSet', function TagSetProvider() {
-		
+
 		this.$get = function TagSetService() {
-			
+
 			/**
 			 * @class TagSetInstance
 			 * @propertyOf TagSetProvider
 			 * @description TagSet Instance
 			 */
 			var TagSetInstance = function() {
-				
+
 				// keep reference
 				var that = this;
-				
+
 				// internal array of tags
 				var tags = [];
-				
+
 				// internal map of tags
 				var tagsAsHierarchy = {};
-				
+
 				/**
 				 * @name getTags
 				 * @function
@@ -56,7 +57,7 @@ angular.module('keta.services.TagSet',
 				that.getTags = function() {
 					return tags;
 				};
-				
+
 				/**
 				 * @name getTagsAsHierarchy
 				 * @function
@@ -78,7 +79,7 @@ angular.module('keta.services.TagSet',
 				that.getTagsAsHierarchy = function() {
 					return tagsAsHierarchy;
 				};
-				
+
 				/**
 				 * @name add
 				 * @function
@@ -88,7 +89,8 @@ angular.module('keta.services.TagSet',
 				 *   Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
 				 *   In this case nothing will be changed.
 				 * </p>
-				 * @returns {TagSetInstance}
+				 * @param {TagInstance} tag Tag to add
+				 * @returns {TagSetInstance} TagSetInstance with added TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
 				 *     .controller('ExampleController', function(TagSet) {
@@ -112,7 +114,7 @@ angular.module('keta.services.TagSet',
 					}
 					return that;
 				};
-				
+
 				/**
 				 * @name remove
 				 * @function
@@ -122,7 +124,8 @@ angular.module('keta.services.TagSet',
 				 *   Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
 				 *   Otherwise nothing will be changed.
 				 * </p>
-				 * @returns {TagSetInstance}
+				 * @param {TagInstance} tag Tag to remove
+				 * @returns {TagSetInstance} TagSetInstance with removed TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
 				 *     .controller('ExampleController', function(TagSet) {
@@ -146,17 +149,17 @@ angular.module('keta.services.TagSet',
 						tags.splice(tags.indexOf(tag), 1);
 					}
 					return that;
-				}; 
-				
+				};
+
 			};
-			
+
 			/**
 			 * @class TagSet
 			 * @propertyOf TagSetProvider
 			 * @description TagSet Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf TagSet
@@ -164,7 +167,7 @@ angular.module('keta.services.TagSet',
 				 * <p>
 				 *   Creates a TagSetInstance.
 				 * </p>
-				 * @returns {TagSetInstance}
+				 * @returns {TagSetInstance} TagSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
 				 *     .controller('ExampleController', function(TagSet) {
@@ -174,11 +177,11 @@ angular.module('keta.services.TagSet',
 				create: function() {
 					return new TagSetInstance();
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});

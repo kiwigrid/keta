@@ -36,8 +36,8 @@
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.ExtendedTable'])
- *     .controller('ExampleController', function($scope, ketaSharedConfig) {
- * 
+ *     .controller('ExampleController', function($scope, ketaSharedConfig) {
+ *
  *         // data as array of objects, keys from first element are taken as headers
  *         $scope.rows = [{
  *             guid: 'guid-1',
@@ -186,9 +186,10 @@
  *         // defaults to $scope.rows, typically not set directly by controller
  *         //$scope.searchResults = $scope.rows;
  *
- *     });
+ *     });
  *
  */
+
 angular.module('keta.directives.ExtendedTable',
 	[
 		'ngSanitize',
@@ -263,7 +264,7 @@ angular.module('keta.directives.ExtendedTable',
 
 				// rows
 				scope.rows =
-					(angular.isDefined(scope.rows) && angular.isArray(scope.rows)) ?
+					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ?
 						scope.rows : [];
 
 				// object of labels
@@ -278,7 +279,7 @@ angular.module('keta.directives.ExtendedTable',
 
 				// headers to save
 				scope.headers =
-					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+					angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0]) ?
 						scope.rows[0] : {};
 
 				// disabledComponents
@@ -301,7 +302,7 @@ angular.module('keta.directives.ExtendedTable',
 				// visibleColumns
 				scope.visibleColumns =
 					scope.visibleColumns ||
-					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0]) ?
 						Object.keys(scope.rows[0]) : []);
 
 				// headerLabelCallback
@@ -314,18 +315,18 @@ angular.module('keta.directives.ExtendedTable',
 
 				// rowSortEnabled
 				scope.rowSortEnabled =
-					(angular.isDefined(scope.rowSortEnabled)) ?
+					angular.isDefined(scope.rowSortEnabled) ?
 						scope.rowSortEnabled : false;
 
 				// rowSortCriteria
 				scope.rowSortCriteria =
 					scope.rowSortCriteria ||
-					((angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0])) ?
+					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0]) ?
 						Object.keys(scope.rows[0])[0] : null);
 
 				// rowSortOrderAscending
 				scope.rowSortOrderAscending =
-					(angular.isDefined(scope.rowSortOrderAscending)) ?
+					angular.isDefined(scope.rowSortOrderAscending) ?
 						scope.rowSortOrderAscending : true;
 
 				// actionList
@@ -467,7 +468,7 @@ angular.module('keta.directives.ExtendedTable',
 					});
 					if (!stillPossible) {
 						possibleColumns = $filter('orderBy')(possibleColumns, $scope.orderByProperty);
-						$scope.selectedColumn = (angular.isDefined(possibleColumns[0])) ? possibleColumns[0].id : null;
+						$scope.selectedColumn = angular.isDefined(possibleColumns[0]) ? possibleColumns[0].id : null;
 					}
 				};
 
@@ -527,7 +528,7 @@ angular.module('keta.directives.ExtendedTable',
 				};
 
 				$scope.isSortCriteria = function(key) {
-					return ($scope.rowSortCriteria !== null) ? (key === $scope.rowSortCriteria) : false;
+					return $scope.rowSortCriteria !== null ? key === $scope.rowSortCriteria : false;
 				};
 
 				$scope.sortBy = function(column) {
@@ -543,33 +544,30 @@ angular.module('keta.directives.ExtendedTable',
 				};
 
 				$scope.searchIn = function(row) {
-					if (!angular.isDefined($scope.search) || ($scope.search === null) || ($scope.search === '')) {
+					if (!angular.isDefined($scope.search) || $scope.search === null || $scope.search === '') {
 						return true;
-					} else {
-						var match = false;
-						angular.forEach($scope.visibleColumns, function(column) {
-							if (angular.isDefined(row[column]) && row[column] !== null) {
-
-								if (angular.isObject(row[column]) && !angular.isArray(row[column])) {
-									var deepMatch = false;
-									angular.forEach(row[column], function(prop) {
-										if (String(prop).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
-											deepMatch = true;
-										}
-									});
-									if (deepMatch === true) {
-										match = true;
-									}
-								} else {
-									if (String(row[column]).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
-										match = true;
-									}
-								}
-
-							}
-						});
-						return match;
 					}
+					var match = false;
+					angular.forEach($scope.visibleColumns, function(column) {
+						if (angular.isDefined(row[column]) && row[column] !== null) {
+
+							if (angular.isObject(row[column]) && !angular.isArray(row[column])) {
+								var deepMatch = false;
+								angular.forEach(row[column], function(prop) {
+									if (String(prop).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
+										deepMatch = true;
+									}
+								});
+								if (deepMatch === true) {
+									match = true;
+								}
+							} else if (String(row[column]).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
+								match = true;
+							}
+
+						}
+					});
+					return match;
 				};
 
 				$scope.filterColumns = function(column) {

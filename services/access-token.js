@@ -3,30 +3,31 @@
 /**
  * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.AccessToken
  * @description AccessToken Factory
  */
+
 angular.module('keta.services.AccessToken',
 	[
 		'keta.services.AppContext'
 	])
-	
+
 	/**
 	 * @class AccessToken
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
 	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
-		
+
 		/**
 		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
 		var accessToken = AppContext.get('oauth.accessToken');
-		
+
 		var api = {
-			
+
 			/**
 			 * @function
 			 * @memberOf AccessToken
@@ -41,12 +42,13 @@ angular.module('keta.services.AccessToken',
 			get: function() {
 				return accessToken;
 			},
-			
+
 			/**
 			 * @function
 			 * @memberOf AccessToken
 			 * @description Set access token.
 			 * @param {string} token new access token
+			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
 			 *     .controller('ExampleController', function(AccessToken) {
@@ -63,7 +65,7 @@ angular.module('keta.services.AccessToken',
 			 * @function
 			 * @memberOf ketaAccessToken
 			 * @description Refresh access token by requesting backend.
-			 * @returns {promise}
+			 * @returns {promise} Promise which is resolved when query is returned
 			 * @example
 			 * angular.module('exampleApp', [])
 			 *     .controller('ExampleController', function(ketaAccessToken) {
@@ -86,9 +88,9 @@ angular.module('keta.services.AccessToken',
 					url: refreshUrl
 				});
 			}
-		
+
 		};
-		
+
 		return api;
-		
+
 	});

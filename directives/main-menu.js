@@ -19,10 +19,10 @@
  * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
- *     .controller('ExampleController', function($scope, ketaSharedConfig) {
- * 
- *         // menu object to use as input for directive
- *         $scope.menuConfiguration = {
+ *     .controller('ExampleController', function($scope, ketaSharedConfig) {
+ *
+ *         // menu object to use as input for directive
+ *         $scope.menuConfiguration = {
  *             items: [{
  *                 name: 'Dashboard',
  *                 link: '/dashboard',
@@ -48,8 +48,9 @@
  *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
  *         };
  *
- *     });
+ *     });
  */
+
 angular.module('keta.directives.MainMenu', [])
 	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
 		return {
@@ -61,17 +62,17 @@ angular.module('keta.directives.MainMenu', [])
 			templateUrl: '/components/directives/main-menu.html',
 			link: function(scope) {
 
-				scope.compactMode = (angular.isDefined(scope.configuration.compactMode)) ?
+				scope.compactMode = angular.isDefined(scope.configuration.compactMode) ?
 					scope.configuration.compactMode : false;
 
-				function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {
+				var checkPaths = function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {
 					for (var i = 1; i < currentMenuLevelParts.length; i++) {
 						if (currentMenuLevelParts[i] !== locationLevelParts[i]) {
 							activeFlag = false;
 						}
 					}
 					return activeFlag;
-				}
+				};
 
 				scope.isActive = function(menuEntry) {
 					var currentMenuLevelParts = menuEntry.link.split('/');
@@ -84,7 +85,7 @@ angular.module('keta.directives.MainMenu', [])
 
 					// Menu-entries with sub-entries have another active-class
 					// to visualize the breadcrumb-path (in normal menu mode, see function isActiveParent)
-					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+					if (angular.isArray(menuEntry.items) && menuEntry.items.length > 0) {
 						return false;
 					}
 
@@ -97,7 +98,7 @@ angular.module('keta.directives.MainMenu', [])
 					var locationLevelParts = $location.path().split('/');
 					var isActiveParent = false;
 
-					if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+					if (angular.isArray(menuEntry.items) && menuEntry.items.length > 0) {
 						isActiveParent = true;
 						isActiveParent = checkPaths(currentMenuLevelParts, locationLevelParts, isActiveParent);
 					}
@@ -113,23 +114,21 @@ angular.module('keta.directives.MainMenu', [])
 					}
 					// trigger expand-functionality only when navigation is shown in tablet/desktop mode
 					if (scope.compactMode === false) {
-						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
+						if (angular.isArray(menuEntry.items) && menuEntry.items.length > 0) {
 							// prevent route-redirect when clicking an expand-menu-entry
 							$event.preventDefault();
-							if (angular.isUndefined(menuEntry.expanded) || (menuEntry.expanded === false)) {
+							if (angular.isUndefined(menuEntry.expanded) || menuEntry.expanded === false) {
 								menuEntry.expanded = true;
 							} else {
 								menuEntry.expanded = !menuEntry.expanded;
 							}
 						}
 					// compact mode
-					} else {
-						if (angular.isArray(menuEntry.items) && (menuEntry.items.length > 0)) {
-							// Redirect to first sub-entry because the parent-route should
-							// not be accessible directly.
-							$event.preventDefault();
-							$location.path(menuEntry.items[0].link);
-						}
+					} else if (angular.isArray(menuEntry.items) && menuEntry.items.length > 0) {
+						// Redirect to first sub-entry because the parent-route should
+						// not be accessible directly.
+						$event.preventDefault();
+						$location.path(menuEntry.items[0].link);
 					}
 				};
 

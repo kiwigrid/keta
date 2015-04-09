@@ -3,10 +3,11 @@
 /**
  * @name keta.services.Device
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Device
  * @description Device Provider
  */
+
 angular.module('keta.services.Device',
 	[
 		'keta.services.EventBusDispatcher',
@@ -46,6 +47,8 @@ angular.module('keta.services.Device',
 			 * @class DeviceInstance
 			 * @propertyOf Device
 			 * @description Device Instance
+			 * @param {EventBus} givenEventBus eventBus to use for DeviceInstance
+			 * @param {Object} properties Properties to inject into DeviceInstance
 			 */
 			var DeviceInstance = function(givenEventBus, properties) {
 
@@ -71,14 +74,14 @@ angular.module('keta.services.Device',
 				var sendMessage = function(message) {
 					var deferred = $q.defer();
 
-					EventBusDispatcher.send(eventBus, 'devices', message, function(reply) {
+					EventBusDispatcher.send(eventBus, 'deviceservice', message, function(reply) {
 
 						// log if in debug mode
 						if (EventBusManager.inDebugMode()) {
 							$log.request([message, reply], $log.ADVANCED_FORMATTER);
 						}
 
-						if (reply.code === 200) {
+						if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
@@ -96,7 +99,7 @@ angular.module('keta.services.Device',
 				};
 
 				/**
-				 * @name update
+				 * @name $update
 				 * @function
 				 * @memberOf DeviceInstance
 				 * @description
@@ -106,7 +109,7 @@ angular.module('keta.services.Device',
 				 * <p>
 				 *   Only value changes in <code>tagValues</code> property will be recognized as changes.
 				 * </p>
-				 * @return {promise} promise
+				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
 				 *     .controller('ExampleController', function(Device) {
@@ -122,7 +125,7 @@ angular.module('keta.services.Device',
 				 *             }
 				 *         });
 				 *         device.tagValues.IdName.value = 'Modified Device';
-				 *         device.update()
+				 *         device.$update()
 				 *             .then(function(reply) {
 				 *                 // success handler
 				 *                 // ...
@@ -132,7 +135,7 @@ angular.module('keta.services.Device',
 				 *             });
 				 *     });
 				 */
-				that.update = function() {
+				that.$update = function() {
 
 					// collect changes in tagValues property
 					var changes = {
@@ -140,7 +143,8 @@ angular.module('keta.services.Device',
 					};
 
 					angular.forEach(that.tagValues, function(tagValue, tagName) {
-						if (!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
+						if (!angular.isDefined(that.$pristine.tagValues[tagName]) ||
+							!angular.equals(that.tagValues[tagName].value, that.$pristine.tagValues[tagName].value)) {
 							changes.tagValues[tagName] = {};
 							changes.tagValues[tagName].value = tagValue.value;
 							changes.tagValues[tagName].oca = tagValue.oca;
@@ -151,7 +155,7 @@ angular.module('keta.services.Device',
 						var deferred = $q.defer();
 
 						sendMessage({
-							action: 'updateDevice',
+							action: 'mergeDevice',
 							params: {
 								deviceId: that.guid
 							},
@@ -169,27 +173,26 @@ angular.module('keta.services.Device',
 						});
 
 						return deferred.promise;
-					} else {
-						return returnRejectedPromise('No changes found');
 					}
+					return returnRejectedPromise('No changes found');
 				};
 
 				/**
-				 * @name delete
+				 * @name $delete
 				 * @function
 				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Deletes a remote DeviceInstance from local one the method is called on.
 				 * </p>
-				 * @return {promise} promise
+				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
 				 *     .controller('ExampleController', function(Device) {
 				 *         var device = Device.create({
 				 *             guid: 'guid'
 				 *         });
-				 *         device.delete()
+				 *         device.$delete()
 				 *             .then(function(reply) {
 				 *                 // success handler
 				 *                 // ...
@@ -199,7 +202,7 @@ angular.module('keta.services.Device',
 				 *             });
 				 *     });
 				 */
-				that.delete = function() {
+				that.$delete = function() {
 					return sendMessage({
 						action: 'deleteDevice',
 						params: {
@@ -226,7 +229,7 @@ angular.module('keta.services.Device',
 				 * </p>
 				 * @param {EventBus} eventBus EventBus instance to use for communication
 				 * @param {Object} properties Properties to set upon DeviceInstance creation
-				 * @returns {DeviceInstance}
+				 * @returns {DeviceInstance} DeviceInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
 				 *     .controller('ExampleController', function(Device) {
@@ -262,7 +265,7 @@ angular.module('keta.services.Device',
 				 *   So every application can use another mapping if the default-one is not suitable.
 				 * </p>
 				 * @param {DeviceInstance} device Device to get device classes from
-				 * @return {Array} deviceClasses
+				 * @returns {Array} deviceClasses
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
 				 *     .controller('ExampleController', function(Device) {

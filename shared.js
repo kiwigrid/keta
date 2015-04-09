@@ -83,16 +83,16 @@ angular.module('keta.shared', [])
 			'com.kiwigrid.devices.pvplant.PVPlant': 'kiwigrid-device-icon-pv-plant'
 		}
 	})
-	
+
 	/**
 	 * @class ketaSharedFactory
 	 * @propertyOf keta.shared
 	 * @description Shared utility methods
 	 */
 	.factory('ketaSharedFactory', function ketaSharedFactory() {
-		
+
 		var factory = {};
-		
+
 		/**
 		 * @name doesPropertyExist
 		 * @function
@@ -100,7 +100,7 @@ angular.module('keta.shared', [])
 		 * @description This method checks, if a deep property does exist in the given object.
 		 * @param {object} obj object to check property for
 		 * @param {string} prop property given in dot notation
-		 * @returns {boolean}
+		 * @returns {boolean} true if property exists
 		 */
 		factory.doesPropertyExist = function(obj, prop) {
 			var parts = prop.split('.');
@@ -114,7 +114,7 @@ angular.module('keta.shared', [])
 			}
 			return true;
 		};
-		
+
 		return factory;
-		
+
 	});

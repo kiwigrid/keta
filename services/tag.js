@@ -3,31 +3,33 @@
 /**
  * @name keta.services.Tag
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Tag
  * @description Tag Provider
  */
+
 angular.module('keta.services.Tag', [])
-	
+
 	/**
 	 * @class TagProvider
 	 * @propertyOf keta.services.Tag
 	 * @description Tag Provider
 	 */
 	.provider('Tag', function TagProvider() {
-		
+
 		this.$get = function TagService() {
-			
+
 			/**
 			 * @class TagInstance
 			 * @propertyOf TagSetProvider
 			 * @description Tag Instance
+			 * @param {Object} properties Properties to inject into TagInstance
 			 */
 			var TagInstance = function(properties) {
-				
+
 				// guid of device tag belongs to
-				var guid = (angular.isDefined(properties.guid)) ? properties.guid : null;
-				
+				var guid = angular.isDefined(properties.guid) ? properties.guid : null;
+
 				/**
 				 * @name getGuid
 				 * @function
@@ -51,10 +53,10 @@ angular.module('keta.services.Tag', [])
 				this.getGuid = function() {
 					return guid;
 				};
-				
+
 				// tag name
-				var name = (angular.isDefined(properties.name)) ? properties.name : null;
-				
+				var name = angular.isDefined(properties.name) ? properties.name : null;
+
 				/**
 				 * @name getName
 				 * @function
@@ -78,12 +80,12 @@ angular.module('keta.services.Tag', [])
 				this.getName = function() {
 					return name;
 				};
-				
+
 				// sample rate
 				var sampleRate =
-					(angular.isDefined(properties.sampleRate) && (properties.sampleRate >= 5)) ?
+					angular.isDefined(properties.sampleRate) && properties.sampleRate >= 5 ?
 						properties.sampleRate : null;
-				
+
 				/**
 				 * @name getSampleRate
 				 * @function
@@ -107,16 +109,16 @@ angular.module('keta.services.Tag', [])
 				this.getSampleRate = function() {
 					return sampleRate;
 				};
-				
+
 			};
-			
+
 			/**
 			 * @class Tag
 			 * @propertyOf TagProvider
 			 * @description Tag Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf Tag
@@ -124,7 +126,8 @@ angular.module('keta.services.Tag', [])
 				 * <p>
 				 *   Creates a TagInstance.
 				 * </p>
-				 * @returns {TagInstance}
+				 * @param {Object} properties Properties to inject into TagInstance
+				 * @returns {TagInstance} TagInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
 				 *     .controller('ExampleController', function(Tag) {
@@ -138,11 +141,11 @@ angular.module('keta.services.Tag', [])
 				create: function(properties) {
 					return new TagInstance(properties);
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});

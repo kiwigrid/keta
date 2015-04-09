@@ -3,25 +3,26 @@
 /**
  * @name keta.services.AppContext
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014
+ * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.AppContext
  * @description AppContext Provider
  */
+
 angular.module('keta.services.AppContext', [])
-	
+
 	/**
 	 * @class AppContextProvider
 	 * @propertyOf keta.services.AppContext
 	 * @description App Context Provider
 	 */
 	.provider('AppContext', function AppContextProvider() {
-		
+
 		/**
 		 * @private
 		 * @description Internal representation of app context from global namespace injected by context.js.
 		 */
-		var appContext = (angular.isDefined(window.appContext)) ? window.appContext : {};
-		
+		var appContext = angular.isDefined(window.appContext) ? window.appContext : {};
+
 		/**
 		 * @name get
 		 * @function
@@ -32,7 +33,7 @@ angular.module('keta.services.AppContext', [])
 		 *   object properties with hierarchy.
 		 * </p>
 		 * @param {string} key key to retrieve from app context
-		 * @returns {*}
+		 * @returns {*} Object extracted from AppContext
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.AppContext'])
 		 *     .config(function(AppContextProvider) {
@@ -51,16 +52,16 @@ angular.module('keta.services.AppContext', [])
 			}
 			return obj;
 		};
-		
+
 		this.$get = function AppContextService() {
-			
+
 			/**
 			 * @class AppContext
 			 * @propertyOf AppContextProvider
 			 * @description AppContext Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @function
 				 * @memberOf AppContext
@@ -78,11 +79,11 @@ angular.module('keta.services.AppContext', [])
 				 *     });
 				 */
 				get: this.get
-			
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
