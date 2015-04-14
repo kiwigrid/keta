@@ -131,12 +131,30 @@
         
             <h3>Examples</h3>
             
-    <pre class="prettyprint"><code>{{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}</code></pre>
+    <pre class="prettyprint"><code>{{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
+
+Number: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
+Unit: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}</code></pre>
 
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.Unit'])
     .controller('ExampleController', function($scope) {
 
-        $scope.value = $filter('unit')(1234.56, {unit: 'W', precision: 1, isBytes: false});
+        // use unit filter to return formatted number value
+        // $scope.value equals string '1.2 kW'
+        $scope.value = $filter('unit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false
+        });
+
+        // use unit filter to return object for number formatting
+        // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
+        $scope.valueSeparated = $filter('unit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false,
+            separate: true
+        });
 
     });</code></pre>
 
