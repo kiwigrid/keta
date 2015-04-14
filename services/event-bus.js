@@ -34,8 +34,6 @@ angular.module('keta.services.EventBus', [])
 				url: 'https://localhost:10443/kiwibus',
 				reconnect: true,
 				reconnectTimeout: 5,
-				autoConnect: false,
-				autoUnregister: true,
 				requestTimeout: 10
 			};
 
@@ -165,8 +163,6 @@ angular.module('keta.services.EventBus', [])
 		 *             url: 'https://localhost:10443/kiwibus',
 		 *             reconnect: true,
 		 *             reconnectTimeout: 5,
-		 *             autoConnect: false,
-		 *             autoUnregister: true,
 		 *             requestTimeout: 10
 		 *         });
 		 *

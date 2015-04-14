@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.10
+
+_Released: 2015-04-14_
+
+* More configuration possibilities for unit filter
+* Bugfix for unit filter rounding numbers which change SI prefix
+
 ## Version 0.3.9
 
 _Released: 2015-04-09_
