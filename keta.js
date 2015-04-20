@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * keta 0.2.11
+ * keta 0.2.15
  */
 
 // source: components/services/access-token.js
@@ -187,45 +187,45 @@ angular.module('keta.servicesAppContext', [])
  * @description Device Provider
  */
 angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLogger'])
-	
+
 	/**
 	 * @class ketaDeviceProvider
 	 * @propertyOf keta.servicesDevice
 	 * @description Device Provider
 	 */
 	.provider('ketaDevice', function() {
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Service name used in log messages for instance.
 		 */
 		var SERVICE_NAME = 'ketaDevice';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Service endpoint for messages.
 		 */
-		var SERVICE_ENDPOINT = 'devices';
-		
+		var SERVICE_ENDPOINT = 'deviceservice';
+
 		/**
 		 * @const
 		 * @private
 		 * @description Error message if no GUID was found in given device object.
 		 */
 		var ERROR_NO_GUID = 'No guid found in device object';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Return code if item was not found.
 		 */
 		var ERROR_ITEM_NOT_FOUND = -1;
-		
+
 		// return service API
 		this.$get = function($rootScope, $q, $location, ketaEventBus, ketaLogger) {
-			
+
 			/**
 			 * @private
 			 * @function
@@ -241,7 +241,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 					deviceOne.guid === deviceTwo.guid;
 				return matches;
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -251,19 +251,19 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 			 * @returns {number} index index of item or ERROR_ITEM_NOT_FOUND if not found
 			 */
 			var indexOfItem = function(item, list) {
-				
+
 				var index = ERROR_ITEM_NOT_FOUND;
-				
+
 				// filter objects and return index if match was found
 				angular.forEach(list, function(object, idx) {
 					if ((index === ERROR_ITEM_NOT_FOUND) && equals(item, object)) {
 						index = idx;
 					}
 				});
-				
+
 				return index;
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -272,72 +272,72 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 			 * @param {object[]} devices device list to apply event to
 			 */
 			var processEvent = function(message, devices) {
-				
+
 				if (angular.isDefined(message.type) &&
 					angular.isDefined(message.value) &&
 					angular.isDefined(message.value.guid)) {
-					
+
 					// save pristine copy of item
 					var device = message.value;
 					device.$$pristine = angular.copy(device);
-					
+
 					if (message.type === ketaEventBus.EVENT_CREATED) {
-						
+
 						devices.push(device);
-						
+
 						ketaLogger.debug(
 							SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" created',
 							device
 						);
-						
+
 						// enforce digest cycle
 						$rootScope.$apply();
-						
+
 					} else {
-					
+
 						// get index of item to apply event to
 						var index = indexOfItem(device, devices);
-						
+
 						if (index !== ERROR_ITEM_NOT_FOUND) {
-							
+
 							if (message.type === ketaEventBus.EVENT_UPDATED) {
-								
+
 								angular.extend(devices[index], device);
-								
+
 								ketaLogger.debug(
 									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" updated',
 									device
 								);
-								
+
 							}
-							
+
 							if (message.type === ketaEventBus.EVENT_DELETED) {
-								
+
 								devices.splice(index, 1);
-								
+
 								ketaLogger.debug(
 									SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" deleted',
 									device
 								);
-								
+
 							}
-							
+
 							// enforce digest cycle
 							$rootScope.$apply();
-							
+
 						} else {
 							ketaLogger.warning(
 								SERVICE_NAME + ':processEvent » device with guid "' + device.guid + '" not found',
 								device
 							);
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -347,24 +347,24 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 			 * @returns {promise}
 			 */
 			var processAction = function(message, registerListener) {
-				
+
 				var deferred = $q.defer();
-				
+
 				ketaEventBus.send(SERVICE_ENDPOINT, message, function(response) {
 					if (angular.isDefined(response.code) &&
 						angular.isDefined(response.result) &&
 						response.code === ketaEventBus.RESPONSE_CODE_OK) {
-						
+
 						// register device set listener
 						if (registerListener) {
-							
+
 							// generate UUID for listener
 							var listenerUUID = 'CLIENT_' + ketaEventBus.generateUUID() + '_deviceSetListener';
-							
+
 							// set device filter and projection
 							var deviceFilter = {};
 							var deviceProjection = {};
-							
+
 							if (angular.isDefined(message.params) && (message.params !== null)) {
 								if (angular.isDefined(message.params.filter)) {
 									deviceFilter = message.params.filter;
@@ -373,18 +373,18 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 									deviceProjection = message.params.projection;
 								}
 							}
-							
+
 							// register handler for replyAddress
 							ketaEventBus.registerBusHandler(listenerUUID, function(message) {
 								processEvent(message, response.result.items);
 							});
-							
+
 							// register listener for given address
 							ketaEventBus.send(SERVICE_ENDPOINT, {
 								action: 'registerDeviceSetListener',
 								body: {
 									deviceFilter: deviceFilter,
-									deviceProjection: deviceProjection,
+									projection: deviceProjection,
 									replyAddress: listenerUUID
 								}
 							}, function(response) {
@@ -395,17 +395,17 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 									);
 								}
 							});
-							
+
 							// save listener UUID in result
 							response.result.$$listenerUUID = listenerUUID;
-							
+
 							// save pristine copy of each item
 							angular.forEach(response.result.items, function(item) {
 								item.$$pristine = angular.copy(item);
 							});
-							
+
 						}
-						
+
 						if (angular.isDefined(response.result.items)) {
 							deferred.resolve(response.result);
 						} else {
@@ -420,7 +420,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 								deferred.reject('Failed');
 							}
 						}
-						
+
 					} else {
 						if (angular.isDefined(response.message)) {
 							deferred.reject(response.message);
@@ -431,11 +431,11 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 				}, function(error) {
 					deferred.reject(error);
 				});
-				
+
 				return deferred.promise;
-				
+
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -453,7 +453,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 				}
 				return deferred.promise;
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -463,9 +463,9 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 			 * @returns {object|boolean}
 			 */
 			var getChanges = function(prevTags, currentTags) {
-				
+
 				var changes = {};
-				
+
 				angular.forEach(currentTags, function(tag, name) {
 					if (!angular.isDefined(prevTags[name]) ||
 						!angular.equals(prevTags[name].value, tag.value)) {
@@ -475,10 +475,10 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						};
 					}
 				});
-				
+
 				return (!angular.equals(changes, {})) ? changes : false;
 			};
-			
+
 			/**
 			 * @private
 			 * @function
@@ -496,21 +496,21 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 					return true;
 				}
 			};
-			
+
 			/**
 			 * @class ketaDeviceService
 			 * @propertyOf ketaDeviceProvider
 			 * @description Device Service
 			 */
 			var api = {
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaDeviceService
 				 * @description Error message if no GUID was found in given device object.
 				 */
 				ERROR_NO_GUID: ERROR_NO_GUID,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaDeviceService
@@ -578,7 +578,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						body: null
 					}, flag);
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaDeviceService
@@ -599,24 +599,24 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 				 *     });
 				 */
 				update: function(device) {
-					
+
 					// check if guid property exists in device
 					var valid = checkIfGuidExists(device);
-					
+
 					if (valid === true) {
-						
+
 						// get original device object
 						var originalDevice = angular.copy(device.$$pristine);
-						
+
 						// get updated device object
 						var updatedDevice = angular.copy(device);
 						delete updatedDevice.$$pristine;
-						
+
 						var changes = getChanges(originalDevice.tagValues, updatedDevice.tagValues);
-						
+
 						if (changes) {
 							return processAction({
-								action: 'updateDevice',
+								action: 'mergeDevice',
 								params: {
 									deviceId: device.guid
 								},
@@ -627,13 +627,13 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						} else {
 							return responsePromise(device, true);
 						}
-						
+
 					} else {
 						return valid;
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaDeviceService
@@ -649,10 +649,10 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 				 *     });
 				 */
 				'delete': function(device) {
-					
+
 					// check if guid property exists in device
 					var valid = checkIfGuidExists(device);
-					
+
 					if (valid === true) {
 						return processAction({
 							action: 'deleteDevice',
@@ -665,13 +665,13 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 						return valid;
 					}
 				}
-				
+
 			};
-			
+
 			return api;
-			
+
 		};
-		
+
 	});
 
 // source: components/services/event-bus.js
