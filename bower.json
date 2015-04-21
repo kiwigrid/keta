@@ -1,7 +1,7 @@
 {
   "name": "keta",
   "main": "./keta.js",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "ignore": [],
   "homepage": "https://github.com/kiwigrid/keta",
   "authors": [

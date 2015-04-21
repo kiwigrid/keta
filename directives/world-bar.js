@@ -240,7 +240,9 @@ angular.module('keta.directives.WorldBar',
 
 					DeviceSet.create(scope.eventBus)
 						.filter({
-							deviceClasses: [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
+							'deviceModel.deviceClass': {
+								'$in': [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
+							}
 						})
 						.project({
 							tagValues: {

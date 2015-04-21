@@ -24,25 +24,6 @@ angular.module('keta.services.Device',
 
 		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
 
-			// find device class recursively
-			var findDeviceClass = function(deviceModel, deviceClassesArray) {
-				if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
-					var parts = deviceModel.deviceClass.split('~');
-					deviceClassesArray.push({
-						deviceClass: parts[0],
-						version: parts[1]
-					});
-					if (angular.isDefined(deviceModel.superclasses) &&
-						angular.isArray(deviceModel.superclasses) &&
-						deviceModel.superclasses.length > 0) {
-						angular.forEach(deviceModel.superclasses, function(superclass) {
-							findDeviceClass(superclass, deviceClassesArray);
-						});
-					}
-				}
-				return deviceClassesArray;
-			};
-
 			/**
 			 * @class DeviceInstance
 			 * @propertyOf Device
@@ -162,10 +143,17 @@ angular.module('keta.services.Device',
 							body: changes
 						}).then(function(reply) {
 
-							// update $pristine copies after success
-							angular.forEach(that.$pristine, function(value, key) {
-								that.$pristine[key] = angular.copy(that[key]);
-							});
+							// update $pristine copies of succeeded tag values
+							if (angular.isDefined(reply.result) &&
+								angular.isDefined(reply.result.value) &&
+								angular.isDefined(reply.result.value.tagValues)) {
+								angular.forEach(reply.result.value.tagValues, function(tag) {
+									if (angular.isDefined(that.tagValues[tag.tagName])) {
+										that.$pristine.tagValues[tag.tagName] =
+											angular.copy(that.tagValues[tag.tagName]);
+									}
+								});
+							}
 
 							deferred.resolve(reply);
 						}, function(reply) {
@@ -247,47 +235,6 @@ angular.module('keta.services.Device',
 				 */
 				create: function(eventBus, properties) {
 					return new DeviceInstance(eventBus, properties);
-				},
-
-				/**
-				 * @function
-				 * @memberOf Device
-				 * @description
-				 * <p>
-				 *   Returns a device-classes array of objects containing the <code>deviceClass</code> and
-				 *   <code>version</code> as separate keys.
-				 *   The first entry is the most specific class followed by its superclasses (if there are any).
-				 *   The highest array-index represents the most general device-class for this device.
-				 * </p>
-				 * <p>
-				 *   The returned array can be used to map the device-class to a device-icon.<br>
-				 *   A default-mapping is provided by <code>ketaSharedConfig.DEVICE_ICON_MAP</code>.
-				 *   So every application can use another mapping if the default-one is not suitable.
-				 * </p>
-				 * @param {DeviceInstance} device Device to get device classes from
-				 * @returns {Array} deviceClasses
-				 * @example
-				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
-				 *             guid: 'guid',
-				 *             deviceModel: {
-				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
-				 *                 superclasses: [{
-				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
-				 *                     superclasses: []
-				 *                 }]
-				 *             }
-				 *         });
-				 *         var deviceClassesArray = Device.getDeviceClasses(device);
-				 *     });
-				 */
-				getDeviceClasses: function(device) {
-					var deviceClasses = [];
-					if (angular.isDefined(device.deviceModel)) {
-						deviceClasses = findDeviceClass(device.deviceModel, deviceClasses);
-					}
-					return deviceClasses;
 				}
 
 			};

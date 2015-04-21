@@ -10,6 +10,14 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.11
+
+_Released: 2015-04-21_
+
+* Updated World Bar directive to be compatible with new API
+* Bugfix for Unit filter with input: 0 and separate: true
+* Removed getDeviceClasses method in Device wrapper
+
 ## Version 0.3.10
 
 _Released: 2015-04-14_

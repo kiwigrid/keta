@@ -9,6 +9,38 @@
  * <p>
  *   A filter using SI prefixes to format numeric values.
  * </p>
+ * <p>
+ *   The filter takes a couple of parameters to configure it. <code>unit</code> defines the unit
+ *   as string to append to formatted value (e.g. <code>'W'</code>, defaults to empty string).
+ *   <code>precision</code> defines the number of digits to appear after the decimal point as integer
+ *   (e.g. <code>2</code>, defaults to <code>0</code>). <code>precisionRanges</code> defines used
+ *   precision in a more flexible way by defining an array of precisions with <code>min</code> (included)
+ *   and/or <code>max</code> (excluded) value. <code>isBytes</code> is a boolean flag to
+ *   specify if the given number is bytes and therefor 1024-based (defaults to <code>false</code>).
+ *   <code>separate</code> is a boolean flag (defaults to <code>false</code>) which defines whether
+ *   to return a single string or an object with separated values <code>numberFormatted</code> (String),
+ *   <code>numberRaw</code> (Number) and <code>unit</code> (String).
+ * </p>
+ * <p>
+ *   If <code>precisionRanges</code> is set to:
+ * </p>
+ * <pre>[
+ *     {max: 1000, precision: 0},
+ *     {min: 1000, precision: 1}
+ * ]</pre>
+ * <p>
+ *   numeric values which are less than 1000 are formatted with a precision of 0, as numeric values
+ *   equal or greater than 1000 are formatted with a precision of 1.
+ * </p>
+ * <p>
+ *   If <code>separate</code> is set to <code>true</code> the filter returns an object in the
+ *   following manner if for instance German is the current locale:
+ * </p>
+ * <pre>{
+ *     numberFormatted: '1,546',
+ *     numberRaw: 1.546,
+ *     unit: 'kW'
+ * }</pre>
  * @example
  * {{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
  *
@@ -28,11 +60,26 @@
  *
  *         // use unit filter to return object for number formatting
  *         // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
+ *         // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
+ *         // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
  *         $scope.valueSeparated = $filter('unit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false,
  *             separate: true
+ *         });
+ *
+ *         // use unit filter with precision ranges
+ *         // for the example below all values which are less than 1000 are formatted with a precision of 0
+ *         // and all values equal or greater than 1000 are formatted with a precision of 1
+ *         $scope.valueRanges = $filter('unit')(1234.56, {
+ *             unit: 'W',
+ *             precision: 1,
+ *             precisionRanges: [
+ *                 {max: 1000, precision: 0},
+ *                 {min: 1000, precision: 1}
+ *             ],
+ *             isBytes: false
  *         });
  *
  *     });
@@ -45,8 +92,6 @@ angular.module('keta.filters.Unit', [])
 			if (!angular.isNumber(input)) {
 				return input;
 			}
-
-			// TODO: precision for ranges (with defaults)
 
 			var precision = 0,
 				precisionRanges = [],
@@ -123,6 +168,7 @@ angular.module('keta.filters.Unit', [])
 			var oneKilo = 1000;
 			var parseBase = 10;
 			input *= multiplicator;
+
 			if (input >= 1) {
 
 				var i = parseInt(
@@ -146,8 +192,15 @@ angular.module('keta.filters.Unit', [])
 						(sizes[i] !== '' ? ' ' + sizes[i] : '');
 
 			} else {
-				input = $filter('number')(input, precision);
+
+				separated.numberFormatted = $filter('number')(input, precision);
+				separated.numberRaw = input;
+				separated.unit = unit;
+
+				input = separated.numberFormatted;
+
 			}
+
 			if (!isBytes && unit !== '') {
 				input += input.indexOf(' ') === -1 ? ' ' + unit : unit;
 			}
