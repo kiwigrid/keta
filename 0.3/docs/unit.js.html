@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.10
+			Version 0.3.11
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.10" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.10" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.11" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.11" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.10" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.10" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.11" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.11" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -76,6 +76,38 @@
  * &lt;p>
  *   A filter using SI prefixes to format numeric values.
  * &lt;/p>
+ * &lt;p>
+ *   The filter takes a couple of parameters to configure it. &lt;code>unit&lt;/code> defines the unit
+ *   as string to append to formatted value (e.g. &lt;code>'W'&lt;/code>, defaults to empty string).
+ *   &lt;code>precision&lt;/code> defines the number of digits to appear after the decimal point as integer
+ *   (e.g. &lt;code>2&lt;/code>, defaults to &lt;code>0&lt;/code>). &lt;code>precisionRanges&lt;/code> defines used
+ *   precision in a more flexible way by defining an array of precisions with &lt;code>min&lt;/code> (included)
+ *   and/or &lt;code>max&lt;/code> (excluded) value. &lt;code>isBytes&lt;/code> is a boolean flag to
+ *   specify if the given number is bytes and therefor 1024-based (defaults to &lt;code>false&lt;/code>).
+ *   &lt;code>separate&lt;/code> is a boolean flag (defaults to &lt;code>false&lt;/code>) which defines whether
+ *   to return a single string or an object with separated values &lt;code>numberFormatted&lt;/code> (String),
+ *   &lt;code>numberRaw&lt;/code> (Number) and &lt;code>unit&lt;/code> (String).
+ * &lt;/p>
+ * &lt;p>
+ *   If &lt;code>precisionRanges&lt;/code> is set to:
+ * &lt;/p>
+ * &lt;pre>[
+ *     {max: 1000, precision: 0},
+ *     {min: 1000, precision: 1}
+ * ]&lt;/pre>
+ * &lt;p>
+ *   numeric values which are less than 1000 are formatted with a precision of 0, as numeric values
+ *   equal or greater than 1000 are formatted with a precision of 1.
+ * &lt;/p>
+ * &lt;p>
+ *   If &lt;code>separate&lt;/code> is set to &lt;code>true&lt;/code> the filter returns an object in the
+ *   following manner if for instance German is the current locale:
+ * &lt;/p>
+ * &lt;pre>{
+ *     numberFormatted: '1,546',
+ *     numberRaw: 1.546,
+ *     unit: 'kW'
+ * }&lt;/pre>
  * @example
  * {{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
  *
@@ -95,11 +127,26 @@
  *
  *         // use unit filter to return object for number formatting
  *         // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
+ *         // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
+ *         // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
  *         $scope.valueSeparated = $filter('unit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false,
  *             separate: true
+ *         });
+ *
+ *         // use unit filter with precision ranges
+ *         // for the example below all values which are less than 1000 are formatted with a precision of 0
+ *         // and all values equal or greater than 1000 are formatted with a precision of 1
+ *         $scope.valueRanges = $filter('unit')(1234.56, {
+ *             unit: 'W',
+ *             precision: 1,
+ *             precisionRanges: [
+ *                 {max: 1000, precision: 0},
+ *                 {min: 1000, precision: 1}
+ *             ],
+ *             isBytes: false
  *         });
  *
  *     });
@@ -188,6 +235,7 @@ angular.module('keta.filters.Unit', [])
 			var oneKilo = 1000;
 			var parseBase = 10;
 			input *= multiplicator;
+
 			if (input >= 1) {
 
 				var i = parseInt(
@@ -211,8 +259,15 @@ angular.module('keta.filters.Unit', [])
 						(sizes[i] !== '' ? ' ' + sizes[i] : '');
 
 			} else {
-				input = $filter('number')(input, precision);
+
+				separated.numberFormatted = $filter('number')(input, precision);
+				separated.numberRaw = input;
+				separated.unit = unit;
+
+				input = separated.numberFormatted;
+
 			}
+
 			if (!isBytes && unit !== '') {
 				input += input.indexOf(' ') === -1 ? ' ' + unit : unit;
 			}

@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.10
+			Version 0.3.11
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.10" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.10" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.11" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.11" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.10" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.10" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.11" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.11" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -90,25 +90,6 @@ angular.module('keta.services.Device',
 	.provider('Device', function DeviceProvider() {
 
 		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
-
-			// find device class recursively
-			var findDeviceClass = function(deviceModel, deviceClassesArray) {
-				if (angular.isDefined(deviceModel) && angular.isDefined(deviceModel.deviceClass)) {
-					var parts = deviceModel.deviceClass.split('~');
-					deviceClassesArray.push({
-						deviceClass: parts[0],
-						version: parts[1]
-					});
-					if (angular.isDefined(deviceModel.superclasses) &&
-						angular.isArray(deviceModel.superclasses) &&
-						deviceModel.superclasses.length > 0) {
-						angular.forEach(deviceModel.superclasses, function(superclass) {
-							findDeviceClass(superclass, deviceClassesArray);
-						});
-					}
-				}
-				return deviceClassesArray;
-			};
 
 			/**
 			 * @class DeviceInstance
@@ -229,10 +210,17 @@ angular.module('keta.services.Device',
 							body: changes
 						}).then(function(reply) {
 
-							// update $pristine copies after success
-							angular.forEach(that.$pristine, function(value, key) {
-								that.$pristine[key] = angular.copy(that[key]);
-							});
+							// update $pristine copies of succeeded tag values
+							if (angular.isDefined(reply.result) &&
+								angular.isDefined(reply.result.value) &&
+								angular.isDefined(reply.result.value.tagValues)) {
+								angular.forEach(reply.result.value.tagValues, function(tag) {
+									if (angular.isDefined(that.tagValues[tag.tagName])) {
+										that.$pristine.tagValues[tag.tagName] =
+											angular.copy(that.tagValues[tag.tagName]);
+									}
+								});
+							}
 
 							deferred.resolve(reply);
 						}, function(reply) {
@@ -314,47 +302,6 @@ angular.module('keta.services.Device',
 				 */
 				create: function(eventBus, properties) {
 					return new DeviceInstance(eventBus, properties);
-				},
-
-				/**
-				 * @function
-				 * @memberOf Device
-				 * @description
-				 * &lt;p>
-				 *   Returns a device-classes array of objects containing the &lt;code>deviceClass&lt;/code> and
-				 *   &lt;code>version&lt;/code> as separate keys.
-				 *   The first entry is the most specific class followed by its superclasses (if there are any).
-				 *   The highest array-index represents the most general device-class for this device.
-				 * &lt;/p>
-				 * &lt;p>
-				 *   The returned array can be used to map the device-class to a device-icon.&lt;br>
-				 *   A default-mapping is provided by &lt;code>ketaSharedConfig.DEVICE_ICON_MAP&lt;/code>.
-				 *   So every application can use another mapping if the default-one is not suitable.
-				 * &lt;/p>
-				 * @param {DeviceInstance} device Device to get device classes from
-				 * @returns {Array} deviceClasses
-				 * @example
-				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
-				 *             guid: 'guid',
-				 *             deviceModel: {
-				 *                 deviceClass: 'specificDeviceClass~1.1.0.3',
-				 *                 superclasses: [{
-				 *                     deviceClass: 'generalDeviceClass~1.1.0.3',
-				 *                     superclasses: []
-				 *                 }]
-				 *             }
-				 *         });
-				 *         var deviceClassesArray = Device.getDeviceClasses(device);
-				 *     });
-				 */
-				getDeviceClasses: function(device) {
-					var deviceClasses = [];
-					if (angular.isDefined(device.deviceModel)) {
-						deviceClasses = findDeviceClass(device.deviceModel, deviceClasses);
-					}
-					return deviceClasses;
 				}
 
 			};
