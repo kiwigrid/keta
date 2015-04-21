@@ -21,7 +21,7 @@ angular.module('keta.servicesTag', ['keta.servicesEventBus', 'keta.servicesLogge
 		 * @private
 		 * @description Service endpoint for messages.
 		 */
-		var SERVICE_ENDPOINT = 'devices';
+		var SERVICE_ENDPOINT = 'deviceservice';
 
 		/**
 		 * @const

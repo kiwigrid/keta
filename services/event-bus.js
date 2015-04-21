@@ -8,209 +8,209 @@
  * @description Event Bus Service
  */
 angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servicesLogger'])
-	
+
 	/**
 	 * @class ketaEventBusProvider
 	 * @propertyOf keta.servicesEventBus
 	 * @description Event Bus Provider wrapping Vert.x event bus
 	 */
 	.provider('ketaEventBus', function() {
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Service name used in log messages for instance.
 		 */
 		var SERVICE_NAME = 'ketaEventBus';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Connecting state constant.
 		 */
 		var STATE_CONNECTING = 0;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Open state constant.
 		 */
 		var STATE_OPEN = 1;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Closing state constant.
 		 */
 		var STATE_CLOSING = 2;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Closed state constant.
 		 */
 		var STATE_CLOSED = 3;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Unknown state constant.
 		 */
 		var STATE_UNKNOWN = 4;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description State labels.
 		 */
 		var STATE_LABELS = {};
-		
+
 		STATE_LABELS[STATE_CONNECTING] = 'connecting';
 		STATE_LABELS[STATE_OPEN] = 'open';
 		STATE_LABELS[STATE_CLOSING] = 'closing';
 		STATE_LABELS[STATE_CLOSED] = 'closed';
 		STATE_LABELS[STATE_UNKNOWN] = 'unknown';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Multiplicator to transform milli units to units.
 		 */
 		var MILLI_MULTIPLICATOR = 1000;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Created event id.
 		 */
 		var EVENT_CREATED = 'CREATED';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Updated event id.
 		 */
 		var EVENT_UPDATED = 'UPDATED';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Deleted event id.
 		 */
 		var EVENT_DELETED = 'DELETED';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Failed event id.
 		 */
 		var EVENT_FAILED = 'FAILED';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if everything is fine.
 		 */
 		var RESPONSE_CODE_OK = 200;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if an API call was malformed.
 		 */
 		var RESPONSE_CODE_BAD_REQUEST = 400;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if something wasn't found.
 		 */
 		var RESPONSE_CODE_NOT_FOUND = 404;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if request timed out.
 		 */
 		var RESPONSE_CODE_TIMEOUT = 408;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if auth token expired.
 		 */
 		var RESPONSE_CODE_AUTH_TOKEN_EXPIRED = 419;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if something unexpected happened.
 		 */
 		var RESPONSE_CODE_INTERNAL_SERVER_ERROR = 500;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Response code if event bus isn't open.
 		 */
 		var RESPONSE_CODE_SERVICE_UNAVAILABLE = 503;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for web socket URL.
 		 */
 		var DEFAULT_SOCKET_URL = 'https://localhost:10443/kiwibus';
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for auto connect.
 		 */
 		var DEFAULT_AUTO_CONNECT = false;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for auto unregister.
 		 */
 		var DEFAULT_AUTO_UNREGISTER = true;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for reconnect.
 		 */
 		var DEFAULT_RECONNECT = true;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for reconnect timeout in seconds.
 		 */
 		var DEFAULT_RECONNECT_TIMEOUT = 10;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for mock mode.
 		 */
 		var DEFAULT_MOCK_MODE = false;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for debug mode.
 		 */
 		var DEFAULT_DEBUG_MODE = false;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Default value for send method timeout in seconds.
 		 */
 		var DEFAULT_SEND_TIMEOUT = 10;
-		
+
 		/**
 		 * @const
 		 * @private
@@ -236,7 +236,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 			debugMode: DEFAULT_DEBUG_MODE,
 			sendTimeout: DEFAULT_SEND_TIMEOUT
 		};
-		
+
 		/**
 		 * @const
 		 * @private
@@ -248,94 +248,94 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 			responses: {},
 			handlers: {}
 		};
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Stubbed Vert.x event bus instance.
 		 */
 		var eventBus = null;
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Internal stack of on open handlers.
 		 */
 		var onOpenHandlers = {};
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Internal stack of on close handlers.
 		 */
 		var onCloseHandlers = {};
-		
+
 		/**
 		 * @const
 		 * @private
 		 * @description Internal stack of registered bus handlers.
 		 */
 		var busHandlers = {};
-		
+
 		// CONFIG
 		// ------
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for web socket URL.
 		 */
 		this.DEFAULT_SOCKET_URL = DEFAULT_SOCKET_URL;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for auto connect.
 		 */
 		this.DEFAULT_AUTO_CONNECT = DEFAULT_AUTO_CONNECT;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for auto unregister.
 		 */
 		this.DEFAULT_AUTO_UNREGISTER = DEFAULT_AUTO_UNREGISTER;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for reconnect.
 		 */
 		this.DEFAULT_RECONNECT = DEFAULT_RECONNECT;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for reconnect timeout in seconds.
 		 */
 		this.DEFAULT_RECONNECT_TIMEOUT = DEFAULT_RECONNECT_TIMEOUT;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for mock mode.
 		 */
 		this.DEFAULT_MOCK_MODE = DEFAULT_MOCK_MODE;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for debug mode.
 		 */
 		this.DEFAULT_DEBUG_MODE = DEFAULT_DEBUG_MODE;
-		
+
 		/**
 		 * @const
 		 * @memberOf ketaEventBusProvider
 		 * @description Default value for send method timeout in seconds.
 		 */
 		this.DEFAULT_SEND_TIMEOUT = DEFAULT_SEND_TIMEOUT;
-		
+
 		/**
 		 * @name setSocketURL
 		 * @function
@@ -351,7 +351,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.setSocketURL = function(url) {
 			config.socketURL = (angular.isString(url) ? String(url) : DEFAULT_SOCKET_URL);
 		};
-		
+
 		/**
 		 * @name enableAutoConnect
 		 * @function
@@ -367,7 +367,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.enableAutoConnect = function(enabled) {
 			config.autoConnect = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
 		};
-		
+
 		/**
 		 * @name enableAutoUnregister
 		 * @function
@@ -383,7 +383,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.enableAutoUnregister = function(enabled) {
 			config.autoUnregister = ((enabled === true || enabled === false) ? Boolean(enabled) : true);
 		};
-		
+
 		/**
 		 * @name enableReconnect
 		 * @function
@@ -399,7 +399,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.enableReconnect = function(enabled) {
 			config.reconnect = ((enabled === true || enabled === false) ? Boolean(enabled) : true);
 		};
-		
+
 		/**
 		 * @name setReconnectTimeout
 		 * @function
@@ -417,7 +417,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				(angular.isDefined(timeout) && angular.isNumber(timeout) && (timeout > 0)) ?
 					timeout : DEFAULT_RECONNECT_TIMEOUT;
 		};
-		
+
 		/**
 		 * @name enableMockMode
 		 * @function
@@ -433,7 +433,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.enableMockMode = function(enabled) {
 			config.mockMode = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
 		};
-		
+
 		/**
 		 * @name enableDebugMode
 		 * @function
@@ -449,7 +449,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.enableDebugMode = function(enabled) {
 			config.debugMode = ((enabled === true || enabled === false) ? Boolean(enabled) : false);
 		};
-		
+
 		/**
 		 * @name addMockResponse
 		 * @function
@@ -467,7 +467,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		 * @example
 		 * angular.module('exampleApp', [])
 		 *     .config(function(ketaEventBusProvider) {
-		 *     
+		 *
 		 *         // return static list of devices
 		 *         ketaEventBusProvider.addMockResponse('devices:getDevices', function(request) {
 		 *             return {
@@ -480,12 +480,12 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		 *                 status: 'ok'
 		 *             };
 		 *         });
-		 *         
+		 *
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', [])
 		 *     .config(function(ketaEventBusProvider) {
-		 *     
+		 *
 		 *         // use request body and return it unmodified
 		 *         ketaEventBusProvider.addMockResponse('devices:createDevice', function(request) {
 		 *             return {
@@ -495,7 +495,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		 *                 status: 'ok'
 		 *             };
 		 *         });
-		 *         
+		 *
 		 *     });
 		 */
 		this.addMockResponse = function(id, callback) {
@@ -503,7 +503,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				mocked.responses[id] = callback;
 			}
 		};
-		
+
 		/**
 		 * @name setSendTimeout
 		 * @function
@@ -521,7 +521,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				(angular.isDefined(timeout) && angular.isNumber(timeout) && (timeout > 0)) ?
 					timeout : DEFAULT_SEND_TIMEOUT;
 		};
-		
+
 		/**
 		 * @name getConfig
 		 * @function
@@ -537,7 +537,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getConfig = function() {
 			return config;
 		};
-		
+
 		/**
 		 * @name getMocked
 		 * @function
@@ -553,7 +553,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getMocked = function() {
 			return mocked;
 		};
-		
+
 		/**
 		 * @name getEventBus
 		 * @function
@@ -569,7 +569,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getEventBus = function() {
 			return eventBus;
 		};
-		
+
 		/**
 		 * @name getOnOpenHandlers
 		 * @function
@@ -585,7 +585,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getOnOpenHandlers = function() {
 			return onOpenHandlers;
 		};
-		
+
 		/**
 		 * @name getOnCloseHandlers
 		 * @function
@@ -601,7 +601,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getOnCloseHandlers = function() {
 			return onCloseHandlers;
 		};
-		
+
 		/**
 		 * @name getBusHandlers
 		 * @function
@@ -617,49 +617,49 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 		this.getBusHandlers = function() {
 			return busHandlers;
 		};
-		
+
 		// RUN
 		// ---
-		
+
 		// keep reference
 		var that = this;
-		
+
 		// return service API
 		this.$get = function($rootScope, $location, $timeout, $window, ketaAccessToken, ketaAppContext, ketaLogger) {
-			
+
 			// refresh default socket url
 			var busUrl = ketaAppContext.get('bus.url');
 			config.socketURL = (busUrl !== null) ? busUrl : DEFAULT_SOCKET_URL;
-			
+
 			// Internal open handler, which calls all registered on open handlers.
 			var openHandler = function() {
-				
+
 				// update internal socket state
 				config.socketState = STATE_OPEN;
-				
+
 				// loop on open handlers
 				angular.forEach(onOpenHandlers, function(handler) {
 					if (angular.isFunction(handler)) {
 						handler();
 					}
 				});
-				
+
 			};
-			
+
 			// Internal close handler, which calls all registered on close handlers and
 			// automatically tries to reconnect if configured
 			var closeHandler = function() {
-				
+
 				// update internal socket state
 				config.socketState = STATE_CLOSED;
-				
+
 				// loop on close handlers
 				angular.forEach(onCloseHandlers, function(handler) {
 					if (angular.isFunction(handler)) {
 						handler();
 					}
 				});
-				
+
 				// TODO: make this a singleton
 				// reconnect
 				if (config.reconnect) {
@@ -667,26 +667,26 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						stub.open();
 					}, config.reconnectTimeout * MILLI_MULTIPLICATOR);
 				}
-				
+
 			};
-			
+
 			// matches mock handler by requested action and send corresponding event message
 			var matchMockHandler = function(message, response) {
-				
+
 				// check mocked handlers
 				angular.forEach(mocked.handlers, function(handlerConfig, id) {
 					angular.forEach(handlerConfig.actions, function(action) {
 						if (action === message.action) {
-							
+
 							ketaLogger.debug(
 								action + ' matched for handler ' + id,
 								message,
 								response
 							);
-							
+
 							// build event message type
 							var type = '';
-							
+
 							if (message.action.indexOf('create') === 0) {
 								type = EVENT_CREATED;
 							}
@@ -696,154 +696,154 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 							if (message.action.indexOf('delete') === 0) {
 								type = EVENT_DELETED;
 							}
-							
+
 							handlerConfig.handler({
 								type: type,
 								value: response.result
 							});
-							
+
 						}
 					});
 				});
-				
+
 			};
-			
+
 			// unregister all bus handlers and listeners upon route changes
 			$rootScope.$on('$routeChangeStart', function() {
-				
+
 				// unregister all bus handlers
 				angular.forEach(busHandlers, function(handler, uuid) {
 					stub.unregisterBusHandler(uuid, handler);
 				});
-				
+
 				// clear internal stack
 				busHandlers = {};
-				
+
 				// unregister all listeners
-				stub.send('devices', {
+				stub.send('deviceservice', {
 					action: 'unregisterAllListeners',
 					body: null
 				});
-				
+
 				// unregister all event handler
 				if (config.autoUnregister) {
-					
+
 					// on open handler
 					angular.forEach(onOpenHandlers, function(handler, uuid) {
 						stub.unregisterEventHandler(stub.EVENT_ON_OPEN, uuid);
 					});
-					
+
 					// on close handler
 					angular.forEach(onCloseHandlers, function(handler, uuid) {
 						stub.unregisterEventHandler(stub.EVENT_ON_CLOSE, uuid);
 					});
-					
+
 					// clear internal stacks
 					onOpenHandlers = {};
 					onCloseHandlers = {};
-					
+
 				}
-				
+
 			});
-			
+
 			/**
 			 * @class ketaEventBusService
 			 * @propertyOf ketaEventBusProvider
 			 * @description Event Bus Service wrapping Vert.x event bus
 			 */
 			var stub = {
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description On open event id.
 				 */
 				EVENT_ON_OPEN: 'onOpen',
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description On close event id.
 				 */
 				EVENT_ON_CLOSE: 'onClose',
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Created event id.
 				 */
 				EVENT_CREATED: EVENT_CREATED,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Updated event id.
 				 */
 				EVENT_UPDATED: EVENT_UPDATED,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Deleted event id.
 				 */
 				EVENT_DELETED: EVENT_DELETED,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Failed event id.
 				 */
 				EVENT_FAILED: EVENT_FAILED,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if everything is fine.
 				 */
 				RESPONSE_CODE_OK: RESPONSE_CODE_OK,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if an API call was malformed.
 				 */
 				RESPONSE_CODE_BAD_REQUEST: RESPONSE_CODE_BAD_REQUEST,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if something wasn't found.
 				 */
 				RESPONSE_CODE_NOT_FOUND: RESPONSE_CODE_NOT_FOUND,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if request timed out.
 				 */
 				RESPONSE_CODE_TIMEOUT: RESPONSE_CODE_TIMEOUT,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if auth token expired.
 				 */
 				RESPONSE_CODE_AUTH_TOKEN_EXPIRED: RESPONSE_CODE_AUTH_TOKEN_EXPIRED,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if something unexpected happened.
 				 */
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: RESPONSE_CODE_INTERNAL_SERVER_ERROR,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description Response code if event bus isn't open.
 				 */
 				RESPONSE_CODE_SERVICE_UNAVAILABLE: RESPONSE_CODE_SERVICE_UNAVAILABLE,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -858,7 +858,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				getSocketURL: function() {
 					return config.socketURL;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -874,7 +874,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				getSocketState: function() {
 					return config.socketState;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -893,7 +893,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 					return (angular.isDefined(STATE_LABELS[config.socketState])) ?
 						STATE_LABELS[config.socketState] : STATE_LABELS[STATE_UNKNOWN];
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -915,7 +915,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				autoConnectEnabled: function() {
 					return config.autoConnect;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -937,7 +937,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				autoUnregisterEnabled: function() {
 					return config.autoUnregister;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -959,7 +959,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				reconnectEnabled: function() {
 					return config.reconnect;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -974,7 +974,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				getReconnectTimeout: function() {
 					return config.reconnectTimeout;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -996,7 +996,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				mockModeEnabled: function() {
 					return config.mockMode;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1018,7 +1018,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				debugModeEnabled: function() {
 					return config.debugMode;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1031,7 +1031,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getConfig: that.getConfig,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1044,7 +1044,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getMocked: that.getMocked,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1057,7 +1057,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getEventBus: that.getEventBus,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1070,7 +1070,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getOnOpenHandlers: that.getOnOpenHandlers,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1083,7 +1083,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getOnCloseHandlers: that.getOnCloseHandlers,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1096,40 +1096,40 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getBusHandlers: that.getBusHandlers,
-				
+
 				// VERT.X EVENT BUS STUB
 				// ---------------------
-				
+
 				// socket states
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description State while connecting to web socket.
 				 */
 				STATE_CONNECTING: STATE_CONNECTING,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description State while web socket is open.
 				 */
 				STATE_OPEN: STATE_OPEN,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description State while closing web socket.
 				 */
 				STATE_CLOSING: STATE_CLOSING,
-				
+
 				/**
 				 * @const
 				 * @memberOf ketaEventBusService
 				 * @description State while web socket is closed.
 				 */
 				STATE_CLOSED: STATE_CLOSED,
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1158,36 +1158,36 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				open: function() {
-					
+
 					if (config.socketState === STATE_CLOSED) {
-						
+
 						ketaLogger.info(SERVICE_NAME + '.open', stub.getConfig());
-						
+
 						if (!config.mockMode) {
-							
+
 							// establish web socket
 							eventBus = new vertx.EventBus(config.socketURL);
-							
+
 							// register on open handler
 							eventBus.onopen = openHandler;
-							
+
 							// register on close handler
 							eventBus.onclose = closeHandler;
-							
+
 						} else {
-							
+
 							// set internal state to open
 							config.socketState = STATE_OPEN;
-							
+
 							// call open handler
 							openHandler();
-							
+
 						}
-						
+
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1206,26 +1206,26 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				close: function() {
-					
+
 					if (config.socketState === STATE_OPEN) {
 						if (!config.mockMode) {
-							
+
 							// close web socket
 							stub.getEventBus().close();
-							
+
 						} else {
-							
+
 							// set internal state to closed
 							config.socketState = STATE_CLOSED;
-							
+
 							// call close handler
 							closeHandler();
-							
+
 						}
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1244,16 +1244,16 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				getState: function() {
-					
+
 					var state = stub.getSocketState();
-					
+
 					if (!config.mockMode && stub.getEventBus()) {
 						state = stub.getEventBus().readyState();
 					}
-					
+
 					return state;
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1287,48 +1287,48 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				send: function(address, message, responseHandler) {
-					
+
 					ketaLogger.debug(
 						SERVICE_NAME + '.send » request to ' + address + ':' + message.action,
 						message
 					);
-					
+
 					if (config.socketState === STATE_OPEN) {
 						if (!config.mockMode) {
-							
+
 							// inject access token
 							message.accessToken = ketaAccessToken.get();
-							
+
 							var requestReturned = false;
-							
+
 							// start timeout
 							$timeout(function() {
 								if (!requestReturned && angular.isFunction(responseHandler)) {
-									
+
 									ketaLogger.error(
 										SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' timed out',
 										message
 									);
-									
+
 									requestReturned = true;
 									responseHandler({
 										code: stub.RESPONSE_CODE_TIMEOUT,
 										message: 'Response for ' + address + ':' + message.action + ' timed out'
 									});
-									
+
 								}
 							}, config.sendTimeout * MILLI_MULTIPLICATOR);
-							
+
 							// send message
 							stub.getEventBus().send(address, message, function(reply) {
-								
+
 								if (!requestReturned && reply) {
-									
+
 									requestReturned = true;
-									
+
 									if (angular.isDefined(reply.code)) {
 										if (reply.code === stub.RESPONSE_CODE_AUTH_TOKEN_EXPIRED) {
-											
+
 											// access token expired
 											ketaAccessToken.refresh().then(function(response) {
 												if (angular.isDefined(response.data.accessToken)) {
@@ -1338,97 +1338,97 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 											}, function() {
 												$window.location.reload();
 											});
-											
+
 										} else {
-											
+
 											ketaLogger.debug(
 												SERVICE_NAME + '.send « response from ' + address + ':' + message.action,
 												message,
 												reply
 											);
-											
+
 											// non-interceptable response code (200, 401, ...)
 											if (angular.isFunction(responseHandler)) {
 												responseHandler(reply);
 											}
-											
+
 										}
 									} else {
-										
+
 										ketaLogger.error(
 											SERVICE_NAME + '.send « response for ' + address + ':' + message.action + ' was "Bad request"',
 											message
 										);
-										
+
 										responseHandler({
 											code: stub.RESPONSE_CODE_BAD_REQUEST,
 											message: 'Bad request'
 										});
-										
+
 									}
-									
+
 								}
-								
+
 							});
-							
+
 						} else {
-							
+
 							if (angular.isDefined(message.action) &&
 								angular.isDefined(mocked.responses[address + ':' + message.action])) {
-								
+
 								// get reply
 								var reply = mocked.responses[address + ':' + message.action](message);
-								
+
 								ketaLogger.debug(
 									SERVICE_NAME + '.send « response (mocked) from ' + address + ':' + message.action,
 									message,
 									reply
 								);
-								
+
 								// send mocked reply
 								if (angular.isFunction(responseHandler)) {
 									responseHandler(reply);
 								}
-								
+
 								// check mocked handlers
 								matchMockHandler(message, reply);
-								
+
 							} else {
-								
+
 								// if no mocked response was found send a 404 reply
 								ketaLogger.warning(
 									SERVICE_NAME + '.send « no mocked response for ' + address + ':' + message.action + ' found',
 									message
 								);
-								
+
 								if (angular.isFunction(responseHandler)) {
 									responseHandler({
 										code: stub.RESPONSE_CODE_NOT_FOUND,
 										message: 'No mocked response for ' + address + ':' + message.action + ' found'
 									});
 								}
-								
+
 							}
-							
+
 						}
 					} else {
-						
+
 						ketaLogger.error(
 							SERVICE_NAME + '.send « request to ' + address + ':' + message.action + ' denied. EventBus not open.',
 							message
 						);
-						
+
 						if (angular.isFunction(responseHandler)) {
 							responseHandler({
 								code: stub.RESPONSE_CODE_SERVICE_UNAVAILABLE,
 								message: 'EventBus not open'
 							});
 						}
-						
+
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1454,21 +1454,21 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 *     });
 				 */
 				publish: function(address, message) {
-					
+
 					ketaLogger.debug(
 						SERVICE_NAME + '.publish » request to ' + address + ':' + message.action,
 						message
 					);
-					
+
 					if (config.socketState === STATE_OPEN) {
 						if (!config.mockMode && stub.getEventBus()) {
-							
+
 							// inject access token
 							message.accessToken = ketaAccessToken.get();
-							
+
 							// send message
 							stub.getEventBus().publish(address, message);
-							
+
 						}
 					} else {
 						ketaLogger.error(
@@ -1476,9 +1476,9 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 							message
 						);
 					}
-					
+
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1505,43 +1505,43 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
+				 *
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *     
+				 *
 				 *         // register bus handler with disabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
 				 *             ketaLogger.info('ketaEventBus device set listener', message);
 				 *         });
-				 *         
+				 *
 				 *     });
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .config(function(EventBusProvider) {
-				 *     
+				 *
 				 *         // enable mock mode
 				 *         EventBusProvider.enableMockMode(true);
-				 *         
+				 *
 				 *     })
 				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
+				 *
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *     
+				 *
 				 *         // register bus handler with enabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
 				 *             ketaLogger.info('ketaEventBus device set listener', message);
 				 *         }, ['createDevice', 'updateDevice', 'deleteDevice']);
-				 *         
+				 *
 				 *     });
 				 */
 				registerBusHandler: function(uuid, handler, actions) {
-					
+
 					ketaLogger.debug(
 						SERVICE_NAME + '.registerBusHandler » request for ' + uuid,
 						actions
 					);
-						
+
 					if (config.socketState === STATE_OPEN) {
 						if (!config.mockMode && stub.getEventBus()) {
 							stub.getEventBus().registerHandler(uuid, handler);
@@ -1570,7 +1570,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						);
 					}
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1587,28 +1587,28 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
+				 *
 				 *         // generate handler uuid
 				 *         var listenerUUID = ketaEventBus.generateUUID();
-				 *         
+				 *
 				 *         // register bus handler with disabled mock mode
 				 *         ketaEventBus.registerBusHandler(listenerUUID, function(message) {
 				 *             ketaLogger.info('ketaEventBus device set listener registered', message);
 				 *         });
-				 *     
+				 *
 				 *         // unregister bus handler with disabled mock mode
 				 *         ketaEventBus.unregisterBusHandler(listenerUUID, function(message) {
 				 *             ketaLogger.info('ketaEventBus device set listener unregistered', message);
 				 *         });
-				 *         
+				 *
 				 *     });
 				 */
 				unregisterBusHandler: function(uuid, handler) {
-					
+
 					ketaLogger.debug(
 						SERVICE_NAME + '.unregisterBusHandler » request for ' + uuid
 					);
-						
+
 					if (config.socketState === STATE_OPEN) {
 						if (!config.mockMode && stub.getEventBus() && angular.isDefined(busHandlers[uuid])) {
 							stub.getEventBus().unregisterHandler(uuid, handler);
@@ -1633,7 +1633,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						);
 					}
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1650,21 +1650,21 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
+				 *
 				 *         // generate handler uuids
 				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
 				 *         var onCloseHandlerUUID = ketaEventBus.generateUUID();
-				 *         
+				 *
 				 *         // register on open handler
 				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
 				 *             ketaLogger.info('ketaEventBus open');
 				 *         });
-				 *     
+				 *
 				 *         // register on close handler
 				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
 				 *             ketaLogger.info('ketaEventBus closed');
 				 *         });
-				 *         
+				 *
 				 *     });
 				 */
 				registerEventHandler: function(event, uuid, handler) {
@@ -1679,7 +1679,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						}
 					}
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1695,23 +1695,23 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 				 * @example
 				 * angular.module('exampleApp')
 				 *     .controller('exampleController', function(ketaEventBus, ketaLogger) {
-				 *     
+				 *
 				 *         // generate handler uuids
 				 *         var onOpenHandlerUUID = ketaEventBus.generateUUID();
 				 *         var onCloseHandlerUUID = ketaEventBus.generateUUID();
-				 *         
+				 *
 				 *         // register on open handler
 				 *         ketaEventBus.registerOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID, function() {
 				 *             ketaLogger.info('ketaEventBus open');
 				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_OPEN, onOpenHandlerUUID);
 				 *         });
-				 *     
+				 *
 				 *         // register on close handler
 				 *         ketaEventBus.registerOnCloseHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID, function() {
 				 *             ketaLogger.info('ketaEventBus closed');
 				 *             ketaEventBus.unregisterOnOpenHandler(ketaEventBus.EVENT_ON_CLOSE, onCloseHandlerUUID);
 				 *         });
-				 *         
+				 *
 				 *     });
 				 */
 				unregisterEventHandler: function(event, uuid) {
@@ -1726,7 +1726,7 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 						}
 					}
 				},
-				
+
 				/**
 				 * @function
 				 * @memberOf ketaEventBusService
@@ -1747,14 +1747,14 @@ angular.module('keta.servicesEventBus', ['keta.servicesAccessToken', 'keta.servi
 							return b = Math.random() * 16, (a === 'y' ? (b & 3 | 8) : (b | 0)).toString(16); // buddy ignore:line
 						});
 				}
-				
+
 			};
-			
+
 			if (config.autoConnect) {
 				stub.open();
 			}
-			
+
 			return stub;
 		};
-		
+
 	});
