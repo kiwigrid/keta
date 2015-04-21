@@ -204,7 +204,7 @@ angular.module('keta.servicesDevice', ['keta.servicesEventBus', 'keta.servicesLo
 							ketaEventBus.send(SERVICE_ENDPOINT, {
 								action: 'registerDeviceSetListener',
 								body: {
-									deviceFilter: deviceFilter,
+									filter: deviceFilter,
 									projection: deviceProjection,
 									replyAddress: listenerUUID
 								}
