@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.11
+ * keta 0.3.12
  */
 
 // source: dist/directives/extended-table.js
@@ -3129,8 +3129,8 @@ angular.module('keta.services.DeviceSet',
 						EventBusDispatcher.send(eventBus, 'deviceservice', {
 							action: 'registerDeviceSetListener',
 							body: {
-								deviceFilter: params.filter,
-								deviceProjection: params.projection,
+								filter: params.filter,
+								projection: params.projection,
 								replyAddress: liveHandlerUUID
 							}
 						}, function(reply) {
@@ -3139,8 +3139,8 @@ angular.module('keta.services.DeviceSet',
 								$log.request(['deviceservice', {
 									action: 'registerDeviceSetListener',
 									body: {
-										deviceFilter: params.filter,
-										deviceProjection: params.projection,
+										filter: params.filter,
+										projection: params.projection,
 										replyAddress: liveHandlerUUID
 									}
 								}, reply], $log.ADVANCED_FORMATTER);

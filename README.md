@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.12
+
+_Released: 2015-04-23_
+
+* Bugfix for automatically registered device set listener
+
 ## Version 0.3.11
 
 _Released: 2015-04-21_
