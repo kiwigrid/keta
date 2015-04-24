@@ -79,26 +79,6 @@ angular.module('keta.services.User',
 					that.$pristine[key] = angular.copy(value);
 				});
 
-				// find changes in depth
-				var findDeepChanges = function(obj1, obj2) {
-					var changes = {};
-					angular.forEach(obj1, function(value, key) {
-						if (angular.isObject(value) && !angular.isArray(value)) {
-							if (!angular.isDefined(obj2[key])) {
-								obj2[key] = {};
-							}
-							var deepChanges = findDeepChanges(obj1[key], obj2[key]);
-							if (!angular.equals(deepChanges, {})) {
-								changes[key] = {};
-								angular.extend(changes[key], deepChanges);
-							}
-						} else if (!angular.equals(obj1[key], obj2[key])) {
-							changes[key] = value;
-						}
-					});
-					return changes;
-				};
-
 				/**
 				 * @name $create
 				 * @function
@@ -207,32 +187,25 @@ angular.module('keta.services.User',
 					var changes = {};
 
 					angular.forEach(cleanedUser, function(value, key) {
-						var objChanges = {};
 						if (key === 'properties') {
-							if (!angular.isDefined(cleanedUserOriginal[key])) {
-								cleanedUserOriginal[key] = {};
+							if (!angular.isDefined(cleanedUserOriginal.properties)) {
+								cleanedUserOriginal.properties = {};
 							}
-							objChanges = findDeepChanges(cleanedUser[key], cleanedUserOriginal[key]);
-							if (!angular.equals(objChanges, {})) {
-								angular.forEach(objChanges, function(propValue, propKey) {
+							angular.forEach(value, function(propValue, propKey) {
+								if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
+									!angular.equals(
+										cleanedUser.properties[propKey],
+										cleanedUserOriginal.properties[propKey]
+									)
+								) {
 									if (!angular.isDefined(changes.properties)) {
 										changes.properties = {};
 									}
-									changes.properties[propKey] = cleanedUser.properties[propKey];
-								});
-							}
-						} else {
-							if (!angular.isDefined(cleanedUserOriginal[key])) {
-								cleanedUserOriginal[key] = {};
-							}
-							if (angular.isObject(value) && !angular.isArray(value)) {
-								objChanges = findDeepChanges(cleanedUser[key], cleanedUserOriginal[key]);
-								if (!angular.equals(objChanges, {})) {
-									changes[key] = value;
+									changes.properties[propKey] = propValue;
 								}
-							} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
-								changes[key] = value;
-							}
+							});
+						} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
+							changes[key] = value;
 						}
 					});
 

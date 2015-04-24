@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.13
+
+_Released: 2015-04-24_
+
+* Bugfix for change detection in user wrapper
+
 ## Version 0.3.12
 
 _Released: 2015-04-23_
