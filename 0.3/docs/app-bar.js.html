@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.14
+			Version 0.3.15
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.14" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.14" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.15" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.15" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.14" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.14" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.15" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.15" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -74,17 +74,86 @@
  * @module keta.directives.AppBar
  * @description
  * &lt;p>
- *   AppBar Directive
+ *   Horizontal navigation bar called AppBar with multiple menus (World Switcher, User Menu, Energy Manager Menu,
+ *   Language Menu, Settings Menu and Notification Center toggle button).
  * &lt;/p>
  * @example
  * &lt;div data-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
+ *     data-current-locale="currentLocale"
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
- *     data-display-modes="displayModes"&gt;&lt;/div&gt;
- * &lt;/div&gt;
+ *     data-display-mode="displayMode"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.AppBar'])
+ *     .controller('ExampleController', function($scope) {
+ *
+ *         // id of eventBus instance to use to retrieve data
+ *         $scope.eventBusId = 'kiwibus';
+ *
+ *         // array of locales to use for language menu
+ *         $scope.locales = [{
+ *             name: 'Deutsch',
+ *             nameShort: 'DE',
+ *             code: 'de'
+ *         }, {
+ *             name: 'English',
+ *             nameShort: 'EN',
+ *             code: 'en'
+ *         }];
+ *
+ *         // current locale
+ *         $scope.currentLocale = 'de';
+ *
+ *         // object of labels to use in template
+ *         $scope.labels = {
+ *             ALL_APPS: 'All Apps',
+ *             ENERGY_MANAGER: 'Energy-Manager',
+ *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+ *             USER_PROFILE: 'User Profile',
+ *             USER_LOGOUT: 'Logout'
+ *         };
+ *
+ *         // object of link to use in template
+ *         $scope.links = {
+ *             ALL_APPS: '/#/applications/',
+ *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+ *             USER_PROFILE: '/#/users/profile',
+ *             USER_LOGOUT: '/#/users/logout'
+ *         };
+ *
+ *         // array of worlds to display in world switcher
+ *         $scope.worlds = [{
+ *             name: 'Desktop',
+ *             link: 'https://cloud.mycompany.com'
+ *         }, {
+ *             name: 'Market',
+ *             link: 'https://market.mycompany.com'
+ *         }, {
+ *             name: 'Service',
+ *             link: 'https://service.mycompany.com'
+ *         }];
+ *
+ *         // object to configure display modes at size xxs, xs, sm, md, and lg or all sizes
+ *         $scope.displayModes: {
+ *             worldSwitcher: {
+ *                 all: 'hidden'
+ *             },
+ *             notificationMenu: {
+ *                 all: 'hidden'
+ *             },
+ *             mainMenu: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'none',
+ *                 md: 'none',
+ *                 lg: 'full',
+ *                 all: 'none'
+ *             }
+ *         };
+ *     });
  */
 
 angular.module('keta.directives.AppBar',

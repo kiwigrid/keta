@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.14
+			Version 0.3.15
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.14" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.14" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.15" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.15" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.14" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.14" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.15" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.15" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -234,7 +234,7 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <ul class="list-unstyled"><li><a href="#$create"><span class="type-signature">&lt;static> </span>$create<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#$delete"><span class="type-signature">&lt;static> </span>$delete<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#$update"><span class="type-signature">&lt;static> </span>$update<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li></ul>
+        <ul class="list-unstyled"><li><a href="#$create"><span class="type-signature">&lt;static> </span>$create<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#$delete"><span class="type-signature">&lt;static> </span>$delete<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#$reset"><span class="type-signature">&lt;static> </span>$reset<span class="signature">()</span><span class="type-signature"> &rarr; {undefined}</span></a></li><li><a href="#$update"><span class="type-signature">&lt;static> </span>$update<span class="signature">()</span><span class="type-signature"> &rarr; {promise}</span></a></li></ul>
         
         <dl class="methods">
             
@@ -389,7 +389,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="user.js.html">services/user.js</a>, <a href="user.js.html#line242">line 242</a>
+        <a href="user.js.html">services/user.js</a>, <a href="user.js.html#line243">line 243</a>
     </li></ul></dd>
     
     
@@ -443,6 +443,130 @@
             }, function(reply) {
                 // error handler
                 // ...
+            });
+
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="$reset"><span class="type-signature">&lt;static> </span>$reset<span class="signature">()</span><span class="type-signature"> &rarr; {undefined}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Resets a UserInstance to it's $pristine state.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="user.js.html">services/user.js</a>, <a href="user.js.html#line280">line 280</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">undefined</span>
+
+
+	
+	
+    nothing
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.User'])
+    .controller('ExampleController', function(User) {
+
+        var user = User.create({
+            userId: 'john.doe',
+            channel: 'channel',
+            givenName: 'John',
+            familyName: 'Doe',
+            email: 'john.doe@test.com',
+            address: {
+                street: 'Main Street',
+                number: '100 E',
+                city: 'Phoenix',
+                country: 'USA',
+                zip: '85123'
+            },
+            properties: {
+                position: 'left'
+            }
+        });
+
+        user.email = 'john.doe@kiwigrid.com';
+        delete user.properties.position;
+
+        user.$update()
+            .then(function(reply) {
+                // success handler
+                // ...
+            }, function(reply) {
+                // error handler
+                user.$reset();
             });
 
     });</code></pre>
