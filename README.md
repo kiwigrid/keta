@@ -10,6 +10,14 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.14
+
+_Released: 2015-05-20_
+
+* New App Bar Directive, World Bar Directive was removed
+* Extended AccessToken service with encode and decode methods
+* CSS Updates
+
 ## Version 0.3.13
 
 _Released: 2015-04-24_

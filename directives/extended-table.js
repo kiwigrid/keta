@@ -116,22 +116,31 @@
  *         // boolean flag to determine if sort order is ascending (true by default)
  *         $scope.rowSortOrderAscending = true;
  *
- *         // array of actions to render for each row
+ *         // Array of actions to render for each row.
  *         // getLink method will be used to construct a link with the help of the row object,
  *         // label is used as value for title-tag,
- *         // icon is used as icon-class for visualizing the action
+ *         // icon is used as icon-class for visualizing the action.
+ *         // runAction is a callback-function that will be executed when the user clicks on
+ *         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
+  *        // with the value 'action'.
+  *        // type can have the values 'link' (a normal link with href-attribute will be rendered) or
+  *        // 'action' (a link with ng-click attribute to execute a callback will be rendered).
+  *        // For simplicity the type-property can be left out. In this case the directive renders
+  *        // a normal link-tag (same as type 'link').
  *         $scope.actionList = [{
  *             getLink: function(row) {
  *                 return 'edit/' + row.guid;
  *             },
  *             label: 'Edit',
- *             icon: 'glyphicon glyphicon-pencil'
+ *             icon: 'glyphicon glyphicon-pencil',
+ *             type: ketaSharedConfig.EXTENDED_TABLE.ACTION_LIST_TYPE.LINK
  *         }, {
- *             getLink: function(row) {
- *                 return 'remove/' + row.guid;
+ *             runAction: function(row) {
+ *                 console.log('action called with ', row);
  *             },
  *             label: 'Remove',
  *             icon: 'glyphicon glyphicon-remove'
+ *             type: ketaSharedConfig.EXTENDED_TABLE.ACTION_LIST_TYPE.ACTION
  *         }];
  *
  *         // callback method to render each cell individually
@@ -714,12 +723,21 @@ angular.module('keta.directives.ExtendedTable')
 '							</td>' +
 '							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
-'									<a data-ng-repeat="item in actionList"' +
-'										class="btn-link"' +
-'										data-ng-href="{{item.getLink(row)}}"' +
-'										title="{{item.label}}">' +
-'										<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'									</a>' +
+'									<span data-ng-repeat="item in actionList">' +
+'										<a class="btn-link"' +
+'											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-if="!item.type || item.type === \'link\'"' +
+'											title="{{item.label}}">' +
+'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'										</a>' +
+'										<a class="btn-link"' +
+'											href=""' +
+'											data-ng-click="item.runAction(row)"' +
+'											data-ng-if="item.type === \'action\'"' +
+'											title="{{item.label}}">' +
+'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'										</a>' +
+'									</span>' +
 '								</div>' +
 '							</td>' +
 '						</tr>' +
@@ -736,12 +754,21 @@ angular.module('keta.directives.ExtendedTable')
 '							</td>' +
 '							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
-'									<a data-ng-repeat="item in actionList"' +
-'										class="btn-link"' +
-'										data-ng-href="{{item.getLink(row)}}"' +
-'										title="{{item.label}}">' +
-'										<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'									</a>' +
+'									<span data-ng-repeat="item in actionList">' +
+'										<a class="btn-link"' +
+'												data-ng-href="{{item.getLink(row)}}"' +
+'												data-ng-if="!item.type || item.type === \'link\'"' +
+'												title="{{item.label}}">' +
+'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'										</a>' +
+'										<a class="btn-link"' +
+'												href=""' +
+'												data-ng-click="item.runAction(row)"' +
+'												data-ng-if="item.type === \'action\'"' +
+'												title="{{item.label}}">' +
+'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
+'										</a>' +
+'									</span>' +
 '								</div>' +
 '							</td>' +
 '						</tr>' +

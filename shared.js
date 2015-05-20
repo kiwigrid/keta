@@ -66,6 +66,10 @@ angular.module('keta.shared', [])
 				TOTAL: 'total',
 				LIMIT: 'limit',
 				OFFSET: 'offset'
+			},
+			ACTION_LIST_TYPE: {
+				LINK: 'link',
+				ACTION: 'action'
 			}
 		},
 		DEVICE_ICON_MAP: {

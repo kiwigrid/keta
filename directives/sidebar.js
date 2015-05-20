@@ -91,7 +91,8 @@ angular.module('keta.directives.Sidebar',
 						)) {
 						var sideBarHtml = element.html(),
 							targetElementHtml = angular.element(event.target).html();
-						if (sideBarHtml.indexOf(targetElementHtml) !== -1) {
+
+						if (sideBarHtml.indexOf(targetElementHtml) !== -1 && targetElementHtml.length !== 0) {
 							return;
 						}
 						scope.toggleSideBar();
