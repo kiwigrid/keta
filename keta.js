@@ -28,28 +28,97 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.14
+ * keta 0.3.15
  */
 
 // source: dist/directives/app-bar.js
 /**
- * @name keta.directives.Navigation
+ * @name keta.directives.AppBar
  * @author Vincent Romanus <vincent.romanus@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
- * @module keta.directives.Navigation
+ * @module keta.directives.AppBar
  * @description
  * <p>
- * Navigation Directive
+ *   Horizontal navigation bar called AppBar with multiple menus (World Switcher, User Menu, Energy Manager Menu,
+ *   Language Menu, Settings Menu and Notification Center toggle button).
  * </p>
  * @example
- * &lt;div 	data-app-bar
- * 		data-event-bus-id="eventBusId"
- *		data-locales="locales"
- *		data-labels="labels"
- *		data-links="links"
- *		data-worlds="worlds"
- *		data-display-modes="displayModes"&gt;&lt;/div&gt;
- * &lt;/div&gt;
+ * &lt;div data-app-bar
+ *     data-event-bus-id="eventBusId"
+ *     data-locales="locales"
+ *     data-current-locale="currentLocale"
+ *     data-labels="labels"
+ *     data-links="links"
+ *     data-worlds="worlds"
+ *     data-display-mode="displayMode"&gt;&lt;/div&gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.AppBar'])
+ *     .controller('ExampleController', function($scope) {
+ *
+ *         // id of eventBus instance to use to retrieve data
+ *         $scope.eventBusId = 'kiwibus';
+ *
+ *         // array of locales to use for language menu
+ *         $scope.locales = [{
+ *             name: 'Deutsch',
+ *             nameShort: 'DE',
+ *             code: 'de'
+ *         }, {
+ *             name: 'English',
+ *             nameShort: 'EN',
+ *             code: 'en'
+ *         }];
+ *
+ *         // current locale
+ *         $scope.currentLocale = 'de';
+ *
+ *         // object of labels to use in template
+ *         $scope.labels = {
+ *             ALL_APPS: 'All Apps',
+ *             ENERGY_MANAGER: 'Energy-Manager',
+ *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+ *             USER_PROFILE: 'User Profile',
+ *             USER_LOGOUT: 'Logout'
+ *         };
+ *
+ *         // object of link to use in template
+ *         $scope.links = {
+ *             ALL_APPS: '/#/applications/',
+ *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+ *             USER_PROFILE: '/#/users/profile',
+ *             USER_LOGOUT: '/#/users/logout'
+ *         };
+ *
+ *         // array of worlds to display in world switcher
+ *         $scope.worlds = [{
+ *             name: 'Desktop',
+ *             link: 'https://cloud.mycompany.com'
+ *         }, {
+ *             name: 'Market',
+ *             link: 'https://market.mycompany.com'
+ *         }, {
+ *             name: 'Service',
+ *             link: 'https://service.mycompany.com'
+ *         }];
+ *
+ *         // object to configure display modes at size xxs, xs, sm, md, and lg or all sizes
+ *         $scope.displayModes: {
+ *             worldSwitcher: {
+ *                 all: 'hidden'
+ *             },
+ *             notificationMenu: {
+ *                 all: 'hidden'
+ *             },
+ *             mainMenu: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'none',
+ *                 md: 'none',
+ *                 lg: 'full',
+ *                 all: 'none'
+ *             }
+ *         };
+ *     });
  */
 
 angular.module('keta.directives.AppBar',
@@ -3853,6 +3922,56 @@ angular.module('keta.services.Device',
 					});
 				};
 
+				/**
+				 * @name $reset
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Resets a DeviceInstance to it's $pristine state.
+				 * </p>
+				 * @returns {undefined} nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         device.tagValues.IdName.value = 'Modified Device';
+				 *         device.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 device.$reset();
+				 *             });
+				 *     });
+				 */
+				that.$reset = function() {
+
+					// remove everything beside methods and $pristine copy
+					angular.forEach(that, function(value, key) {
+						if (!angular.isFunction(value) && key !== '$pristine') {
+							delete that[key];
+						}
+					});
+
+					// add copies of $pristine values
+					angular.forEach(that.$pristine, function(value, key) {
+						that[key] = angular.copy(value);
+					});
+
+				};
+
 			};
 
 			/**
@@ -6042,6 +6161,7 @@ angular.module('keta.services.User',
 					delete cleanedUser.$create;
 					delete cleanedUser.$update;
 					delete cleanedUser.$delete;
+					delete cleanedUser.$reset;
 
 					// collect changes
 					// changes on second level are not merged and therefor objects have to be transmitted in full
@@ -6136,6 +6256,67 @@ angular.module('keta.services.User',
 							userId: that.userId
 						}
 					});
+				};
+
+				/**
+				 * @name $reset
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * <p>
+				 *   Resets a UserInstance to it's $pristine state.
+				 * </p>
+				 * @returns {undefined} nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'john.doe',
+				 *             channel: 'channel',
+				 *             givenName: 'John',
+				 *             familyName: 'Doe',
+				 *             email: 'john.doe@test.com',
+				 *             address: {
+				 *                 street: 'Main Street',
+				 *                 number: '100 E',
+				 *                 city: 'Phoenix',
+				 *                 country: 'USA',
+				 *                 zip: '85123'
+				 *             },
+				 *             properties: {
+				 *                 position: 'left'
+				 *             }
+				 *         });
+				 *
+				 *         user.email = 'john.doe@kiwigrid.com';
+				 *         delete user.properties.position;
+				 *
+				 *         user.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 user.$reset();
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$reset = function() {
+
+					// remove everything beside methods and $pristine copy
+					angular.forEach(that, function(value, key) {
+						if (!angular.isFunction(value) && key !== '$pristine') {
+							delete that[key];
+						}
+					});
+
+					// add copies of $pristine values
+					angular.forEach(that.$pristine, function(value, key) {
+						that[key] = angular.copy(value);
+					});
+
 				};
 
 			};

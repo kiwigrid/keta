@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.15
+
+_Released: 2015-05-20_
+
+* Added $reset method to device and user instance
+* Added documentation for app bar directive
+
 ## Version 0.3.14
 
 _Released: 2015-05-20_

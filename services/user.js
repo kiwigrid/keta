@@ -180,6 +180,7 @@ angular.module('keta.services.User',
 					delete cleanedUser.$create;
 					delete cleanedUser.$update;
 					delete cleanedUser.$delete;
+					delete cleanedUser.$reset;
 
 					// collect changes
 					// changes on second level are not merged and therefor objects have to be transmitted in full
@@ -274,6 +275,67 @@ angular.module('keta.services.User',
 							userId: that.userId
 						}
 					});
+				};
+
+				/**
+				 * @name $reset
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * <p>
+				 *   Resets a UserInstance to it's $pristine state.
+				 * </p>
+				 * @returns {undefined} nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'john.doe',
+				 *             channel: 'channel',
+				 *             givenName: 'John',
+				 *             familyName: 'Doe',
+				 *             email: 'john.doe@test.com',
+				 *             address: {
+				 *                 street: 'Main Street',
+				 *                 number: '100 E',
+				 *                 city: 'Phoenix',
+				 *                 country: 'USA',
+				 *                 zip: '85123'
+				 *             },
+				 *             properties: {
+				 *                 position: 'left'
+				 *             }
+				 *         });
+				 *
+				 *         user.email = 'john.doe@kiwigrid.com';
+				 *         delete user.properties.position;
+				 *
+				 *         user.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 user.$reset();
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$reset = function() {
+
+					// remove everything beside methods and $pristine copy
+					angular.forEach(that, function(value, key) {
+						if (!angular.isFunction(value) && key !== '$pristine') {
+							delete that[key];
+						}
+					});
+
+					// add copies of $pristine values
+					angular.forEach(that.$pristine, function(value, key) {
+						that[key] = angular.copy(value);
+					});
+
 				};
 
 			};

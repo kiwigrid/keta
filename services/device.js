@@ -199,6 +199,56 @@ angular.module('keta.services.Device',
 					});
 				};
 
+				/**
+				 * @name $reset
+				 * @function
+				 * @memberOf DeviceInstance
+				 * @description
+				 * <p>
+				 *   Resets a DeviceInstance to it's $pristine state.
+				 * </p>
+				 * @returns {undefined} nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Device'])
+				 *     .controller('ExampleController', function(Device) {
+				 *         var device = Device.create({
+				 *             guid: 'guid',
+				 *             tagValues: {
+				 *                 IdName: {
+				 *                     name: 'IdName',
+				 *                     value: 'Device',
+				 *                     oca: 0,
+				 *                     timestamp: 123456789
+				 *                 }
+				 *             }
+				 *         });
+				 *         device.tagValues.IdName.value = 'Modified Device';
+				 *         device.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 device.$reset();
+				 *             });
+				 *     });
+				 */
+				that.$reset = function() {
+
+					// remove everything beside methods and $pristine copy
+					angular.forEach(that, function(value, key) {
+						if (!angular.isFunction(value) && key !== '$pristine') {
+							delete that[key];
+						}
+					});
+
+					// add copies of $pristine values
+					angular.forEach(that.$pristine, function(value, key) {
+						that[key] = angular.copy(value);
+					});
+
+				};
+
 			};
 
 			/**
