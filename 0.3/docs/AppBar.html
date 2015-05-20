@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Class: ketaSharedFactory</title>
+	<title>keta – Docs – Module: AppBar</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,7 +58,7 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Class: ketaSharedFactory</h1>
+		<h1 class="page-title">Module: AppBar</h1>
 		
 
 
@@ -67,7 +67,7 @@
     
 <header>
     <h2>
-    ketaSharedFactory
+    AppBar
     </h2>
     
 </header>  
@@ -78,26 +78,12 @@
     
     
         
-<dt>
-    <h3 class="name" id="ketaSharedFactory"><span class="type-signature"></span>new ketaSharedFactory<span class="signature">()</span><span class="type-signature"></span></h3>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Shared utility methods
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
+            <div class="description"><p>
+  AppBar Directive
+</p></div>
+        
+        
+        
 <dl class="details">
     
         
@@ -110,7 +96,17 @@
     
     
     
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul class="list-unstyled">
+            <li>Vincent Romanus &lt;vincent.romanus (at) kiwigrid.com&gt;</li>
+        </ul>
+    </dd>
     
+    
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
     
     
     
@@ -120,7 +116,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="shared.js.html">shared.js</a>, <a href="shared.js.html#line91">line 91</a>
+        <a href="app-bar.js.html">directives/app-bar.js</a>, <a href="app-bar.js.html#line3">line 3</a>
     </li></ul></dd>
     
     
@@ -131,20 +127,20 @@
     
 </dl>
 
-    
-    
+        
+        
+            <h3>Example</h3>
+            
+    <pre class="prettyprint"><code>&lt;div data-app-bar
+    data-event-bus-id="eventBusId"
+    data-locales="locales"
+    data-labels="labels"
+    data-links="links"
+    data-worlds="worlds"
+    data-display-modes="displayModes"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        
     
     </div>
     
@@ -160,167 +156,6 @@
     
     
     
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <ul class="list-unstyled"><li><a href="#doesPropertyExist"><span class="type-signature">&lt;static> </span>doesPropertyExist<span class="signature">(obj, prop)</span><span class="type-signature"> &rarr; {boolean}</span></a></li></ul>
-        
-        <dl class="methods">
-            
-<dt>
-    <h3 class="name" id="doesPropertyExist"><span class="type-signature">&lt;static> </span>doesPropertyExist<span class="signature">(obj, prop)</span><span class="type-signature"> &rarr; {boolean}</span></h3>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        This method checks, if a deep property does exist in the given object.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="table">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>obj</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">object to check property for</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>prop</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">property given in dot notation</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="shared.js.html">shared.js</a>, <a href="shared.js.html#line100">line 100</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-	
-		
-<span class="param-type">boolean</span>
-
-
-	
-	
-    true if property exists
-    
-</div>
-        
-    
-    
-</dd>
-
-        </dl>
     
     
     
