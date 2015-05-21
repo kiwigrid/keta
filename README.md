@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.17
+
+_Released: 2015-05-21_
+
+* Changed syntax for display modes in App Bar Directive
+
 ## Version 0.3.16
 
 _Released: 2015-05-21_

@@ -7143,18 +7143,6 @@ button.close {
     margin-left: 91.66666666666666%;
   }
 }
-.hidden-xxs {
-  display: block !important;
-}
-tr.hidden-xxs {
-  display: table-row !important;
-}
-th.hidden-xxs {
-  display: table-cell !important;
-}
-th.hidden-xxs td.hidden-xxs {
-  display: table-cell !important;
-}
 @media (max-width: 385px) {
   .hidden-xxs {
     display: none !important;
@@ -7465,6 +7453,9 @@ td.visible-xxs {
 .navbar-level-2 {
   margin-bottom: 20px;
 }
+.navbar-level-2 .navbar-label {
+  padding-left: 0.25em;
+}
 .navbar-level-2 .nav > li {
   min-width: 50px;
 }
@@ -7499,6 +7490,7 @@ td.visible-xxs {
 html,
 body {
   overflow-x: hidden;
+  height: 100%;
 }
 /*TRANSITION*/
 .navbar,
@@ -7511,9 +7503,12 @@ body {
   transition: left 0.25s ease-out, right 0.25s ease-out;
 }
 .content {
+  width: 100%;
+  padding: 0 20px 20px 20px;
+}
+.content-with-shortcuts {
   left: 70px;
   width: calc(100% - 70px);
-  padding: 0 20px 20px 20px;
 }
 .alert {
   font-size: 12px;
