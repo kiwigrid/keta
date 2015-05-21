@@ -134,7 +134,7 @@ angular.module('keta.directives.MainMenu')
 '	<div data-ng-show="titleCallback()" class="sidebar-title">' +
 '		<span>{{titleCallback()}}</span>' +
 '	</div>' +
-'	<ul class="nav nav-pills nav-stacked nav-extendedketa-main-menu">' +
+'	<ul class="nav nav-pills nav-stacked keta-main-menu">' +
 '		<li data-ng-repeat="entry in configuration.items"' +
 '			data-ng-class="{' +
 '				\'active\': isActive(entry),' +
@@ -178,5 +178,6 @@ angular.module('keta.directives.MainMenu')
 '			</ul>' +
 '		</li>' +
 '	</ul>' +
-'</div>');
+'</div>' +
+'');
 	});

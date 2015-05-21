@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.16
+
+_Released: 2015-05-21_
+
+* Fixed some issues with App Bar Directive
+
 ## Version 0.3.15
 
 _Released: 2015-05-20_

@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.15
+ * keta 0.3.16
  */
 
 // source: dist/directives/app-bar.js
@@ -50,7 +50,7 @@ angular.module('keta', [
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
- *     data-display-mode="displayMode"&gt;&lt;/div&gt;
+ *     data-display-modes="displayModes"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.AppBar'])
  *     .controller('ExampleController', function($scope) {
@@ -158,6 +158,7 @@ angular.module('keta.directives.AppBar',
 				displayModes: '=?'
 
 			},
+			transclude: true,
 			templateUrl: '/components/directives/app-bar.html',
 			link: function(scope, element) {
 
@@ -373,14 +374,14 @@ angular.module('keta.directives.AppBar',
 
 					// query energy managers
 					// format: {name: 'ERC02-000001051', link: 'http://192.168.125.81'}
-					if (eventBus !== null && angular.isDefined(scope.user.login)) {
+					if (eventBus !== null && angular.isDefined(scope.user.userId)) {
 
 						DeviceSet.create(eventBus)
 							.filter({
 								'deviceModel.deviceClass': {
 									'$in': [ketaSharedConfig.DEVICE_CLASSES.ENERGY_MANAGER]
 								},
-								owner: scope.user.login
+								owner: scope.user.userId
 							})
 							.project({
 								tagValues: {
@@ -492,6 +493,7 @@ angular.module('keta.directives.AppBar',
 				};
 
 				scope.setLocale = function(locale) {
+					$rootScope.currentLocale = locale.code;
 					scope.currentLocale = locale.code;
 					scope.menus.languageMenu.activeEntry = locale;
 					scope.closeAllMenus();
@@ -546,9 +548,7 @@ angular.module('keta.directives.AppBar')
 '	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
 '		<div class="container-fluid">' +
 '			<div class="pull-left">' +
-'				<a class="navbar-logo" href="#">' +
-'					<span class="logo-left"></span>' +
-'				</a>' +
+'				<div data-ng-transclude></div>' +
 '			</div>' +
 '			<div class="dropdown pull-right"' +
 '			     data-ng-show="worlds.length > 0"' +
@@ -635,7 +635,7 @@ angular.module('keta.directives.AppBar')
 '				    data-ng-class="getClasses(\'languageMenu\')">' +
 '					<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(\'languageMenu\')">' +
 '						<span class="glyphicon glyphicon-flag" title="{{ menus.languageMenu.activeEntry.nameShort }}"></span>' +
-'						<span data-ng-class="getClasses(\'languageMenu\', \'label\')">{{ menus.languageMenu.activeEntry.code }}</span>' +
+'						<span data-ng-class="getClasses(\'languageMenu\', \'label\')">{{ menus.languageMenu.activeEntry.nameShort }}</span>' +
 '						<span class="caret"></span>' +
 '					</a>' +
 '					<ul class="dropdown-menu">' +
@@ -1642,7 +1642,7 @@ angular.module('keta.directives.MainMenu')
 '	<div data-ng-show="titleCallback()" class="sidebar-title">' +
 '		<span>{{titleCallback()}}</span>' +
 '	</div>' +
-'	<ul class="nav nav-pills nav-stacked nav-extendedketa-main-menu">' +
+'	<ul class="nav nav-pills nav-stacked keta-main-menu">' +
 '		<li data-ng-repeat="entry in configuration.items"' +
 '			data-ng-class="{' +
 '				\'active\': isActive(entry),' +
@@ -1686,7 +1686,8 @@ angular.module('keta.directives.MainMenu')
 '			</ul>' +
 '		</li>' +
 '	</ul>' +
-'</div>');
+'</div>' +
+'');
 	});
 
 // source: dist/directives/sidebar.js
