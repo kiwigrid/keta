@@ -435,7 +435,8 @@ angular.module('keta.directives.ExtendedTable',
 
 					// update pager
 					if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
-						var rowsLength = $filter('filter')($scope.rows, $scope.search).length;
+						var rowsLength = $scope.search !== null ?
+							$filter('filter')($scope.rows, $scope.search).length : $scope.rows.length;
 						$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
 						if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
 							$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
@@ -481,11 +482,6 @@ angular.module('keta.directives.ExtendedTable',
 					}
 				};
 
-				// INIT ---
-
-				// $scope.resetPager();
-				// $scope.resetSelectedColumn();
-
 				// WATCHER ---
 
 				$scope.$watch('rows', function(newValue, oldValue) {
@@ -494,12 +490,6 @@ angular.module('keta.directives.ExtendedTable',
 						$scope.resetPager();
 					}
 				}, true);
-
-				$scope.$watch('rows.length', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						$scope.resetPager();
-					}
-				});
 
 				$scope.$watch('pager', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {

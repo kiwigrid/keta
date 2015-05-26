@@ -42,6 +42,7 @@
  *
  *         // object of labels to use in template
  *         $scope.labels = {
+ *             APP_TITLE: 'Application',
  *             ALL_APPS: 'All Apps',
  *             ENERGY_MANAGER: 'Energy-Manager',
  *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
@@ -229,7 +230,7 @@ angular.module('keta.directives.AppBar',
 						// if it's an object, merge
 						if (value in defaultObject && typeof customObject[value] === 'object' && value !== null) {
 							result[value] = mergeObjects(customObject[value], defaultObject[value]);
-						// add it to result
+							// add it to result
 						} else {
 							result[value] = customObject[value];
 						}
@@ -249,20 +250,17 @@ angular.module('keta.directives.AppBar',
 
 				// default container height
 				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT,
-					container,
-					navbarFirst,
-					navbarSecond,
-					navbarFirstHeight,
-					navbarSecondHeight,
-					navbarSecondMarginBottom;
+					container = element,
+				// navbar-level-1
+					navbarFirst = container.children()[0],
+				// navbar-level-2
+					navbarSecond = container.children()[1],
+					navbarFirstHeight = 0,
+					navbarSecondHeight = 0,
+					navbarSecondMarginBottom = 0;
 
 				// triggers after rendering
 				$timeout(function() {
-					container = angular.element(element);
-					// navbar-level-1
-					navbarFirst = container.children()[0];
-					// navbar-level-2
-					navbarSecond = container.children()[1];
 					navbarFirstHeight = navbarFirst.offsetHeight;
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(

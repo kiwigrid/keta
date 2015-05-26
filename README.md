@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.18
+
+_Released: 2015-05-26_
+
+* Fixed App Bar affix behavior
+* Fixed Extended Table row filter
+
 ## Version 0.3.17
 
 _Released: 2015-05-21_

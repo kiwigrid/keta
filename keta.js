@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.17
+ * keta 0.3.18
  */
 
 // source: dist/directives/app-bar.js
@@ -74,6 +74,7 @@ angular.module('keta', [
  *
  *         // object of labels to use in template
  *         $scope.labels = {
+ *             APP_TITLE: 'Application',
  *             ALL_APPS: 'All Apps',
  *             ENERGY_MANAGER: 'Energy-Manager',
  *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
@@ -261,7 +262,7 @@ angular.module('keta.directives.AppBar',
 						// if it's an object, merge
 						if (value in defaultObject && typeof customObject[value] === 'object' && value !== null) {
 							result[value] = mergeObjects(customObject[value], defaultObject[value]);
-						// add it to result
+							// add it to result
 						} else {
 							result[value] = customObject[value];
 						}
@@ -281,20 +282,17 @@ angular.module('keta.directives.AppBar',
 
 				// default container height
 				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT,
-					container,
-					navbarFirst,
-					navbarSecond,
-					navbarFirstHeight,
-					navbarSecondHeight,
-					navbarSecondMarginBottom;
+					container = element,
+				// navbar-level-1
+					navbarFirst = container.children()[0],
+				// navbar-level-2
+					navbarSecond = container.children()[1],
+					navbarFirstHeight = 0,
+					navbarSecondHeight = 0,
+					navbarSecondMarginBottom = 0;
 
 				// triggers after rendering
 				$timeout(function() {
-					container = angular.element(element);
-					// navbar-level-1
-					navbarFirst = container.children()[0];
-					// navbar-level-2
-					navbarSecond = container.children()[1];
 					navbarFirstHeight = navbarFirst.offsetHeight;
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
@@ -1163,7 +1161,8 @@ angular.module('keta.directives.ExtendedTable',
 
 					// update pager
 					if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
-						var rowsLength = $filter('filter')($scope.rows, $scope.search).length;
+						var rowsLength = $scope.search !== null ?
+							$filter('filter')($scope.rows, $scope.search).length : $scope.rows.length;
 						$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
 						if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
 							$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
@@ -1209,11 +1208,6 @@ angular.module('keta.directives.ExtendedTable',
 					}
 				};
 
-				// INIT ---
-
-				// $scope.resetPager();
-				// $scope.resetSelectedColumn();
-
 				// WATCHER ---
 
 				$scope.$watch('rows', function(newValue, oldValue) {
@@ -1222,12 +1216,6 @@ angular.module('keta.directives.ExtendedTable',
 						$scope.resetPager();
 					}
 				}, true);
-
-				$scope.$watch('rows.length', function(newValue, oldValue) {
-					if (newValue !== null && newValue !== oldValue) {
-						$scope.resetPager();
-					}
-				});
 
 				$scope.$watch('pager', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
