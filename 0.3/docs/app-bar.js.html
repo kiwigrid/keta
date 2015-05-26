@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.17
+			Version 0.3.18
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.17" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.17" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.18" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.18" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.17" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.17" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.18" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.18" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -109,6 +109,7 @@
  *
  *         // object of labels to use in template
  *         $scope.labels = {
+ *             APP_TITLE: 'Application',
  *             ALL_APPS: 'All Apps',
  *             ENERGY_MANAGER: 'Energy-Manager',
  *             ALL_ENERGY_MANAGERS: 'All Energy-Managers',
@@ -296,7 +297,7 @@ angular.module('keta.directives.AppBar',
 						// if it's an object, merge
 						if (value in defaultObject && typeof customObject[value] === 'object' && value !== null) {
 							result[value] = mergeObjects(customObject[value], defaultObject[value]);
-						// add it to result
+							// add it to result
 						} else {
 							result[value] = customObject[value];
 						}
@@ -316,20 +317,17 @@ angular.module('keta.directives.AppBar',
 
 				// default container height
 				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT,
-					container,
-					navbarFirst,
-					navbarSecond,
-					navbarFirstHeight,
-					navbarSecondHeight,
-					navbarSecondMarginBottom;
+					container = element,
+				// navbar-level-1
+					navbarFirst = container.children()[0],
+				// navbar-level-2
+					navbarSecond = container.children()[1],
+					navbarFirstHeight = 0,
+					navbarSecondHeight = 0,
+					navbarSecondMarginBottom = 0;
 
 				// triggers after rendering
 				$timeout(function() {
-					container = angular.element(element);
-					// navbar-level-1
-					navbarFirst = container.children()[0];
-					// navbar-level-2
-					navbarSecond = container.children()[1];
 					navbarFirstHeight = navbarFirst.offsetHeight;
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
