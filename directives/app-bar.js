@@ -121,6 +121,9 @@ angular.module('keta.directives.AppBar',
 				// array of locales to use for language menu
 				locales: '=?',
 
+				// current locale
+				currentLocale: '=?',
+
 				// object of labels to use in template
 				labels: '=?',
 
@@ -488,7 +491,6 @@ angular.module('keta.directives.AppBar',
 				};
 
 				scope.setLocale = function(locale) {
-					$rootScope.currentLocale = locale.code;
 					scope.currentLocale = locale.code;
 					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].activeEntry = locale;
 					scope.closeAllMenus();

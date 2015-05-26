@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.19
+
+_Released: 2015-05-26_
+
+* Fixed App Bar current locale configuration
+
 ## Version 0.3.18
 
 _Released: 2015-05-26_
