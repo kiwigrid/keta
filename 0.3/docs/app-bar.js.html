@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.18
+			Version 0.3.19
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.18" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.18" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.19" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.19" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.18" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.18" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.19" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.19" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -187,6 +187,9 @@ angular.module('keta.directives.AppBar',
 
 				// array of locales to use for language menu
 				locales: '=?',
+
+				// current locale
+				currentLocale: '=?',
 
 				// object of labels to use in template
 				labels: '=?',
@@ -555,7 +558,6 @@ angular.module('keta.directives.AppBar',
 				};
 
 				scope.setLocale = function(locale) {
-					$rootScope.currentLocale = locale.code;
 					scope.currentLocale = locale.code;
 					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].activeEntry = locale;
 					scope.closeAllMenus();
