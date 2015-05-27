@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.19
+			Version 0.3.20
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.19" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.19" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.20" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.20" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.19" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.19" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.20" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.20" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -109,14 +109,29 @@ angular.module('keta.shared', [])
 			TOGGLE_AREA_OFFSET: 5,
 			TRANSCLUDE_OFFSET: 15
 		},
-		WORLD_BAR: {
-			CSS_CONTEXT_SWITCHER: 'context-switcher',
-			ENTRY_CONTEXT_SWITCHER: 'contextSwitcher',
-			ENTRY_CONTEXT_SWITCHER_WORLDS: 'worlds',
-			ENTRY_CONTEXT_SWITCHER_MANAGERS: 'managers',
-			ENTRY_CONTEXT_SWITCHER_APPS: 'apps',
-			ENTRY_USER_MENU: 'userMenu',
-			ENTRY_LANGUAGE_MENU: 'languageMenu'
+		APP_BAR: {
+			ELEMENTS: {
+				WORLD_SWITCHER: 'worldSwitcher',
+				MENU_BAR_TOGGLE: 'menuBarToggle',
+				NOTIFICATION_BAR_TOGGLE: 'notificationBarToggle',
+				APP_TITLE: 'appTitle',
+				USER_MENU: 'userMenu',
+				LANGUAGE_MENU: 'languageMenu',
+				ENERGY_MANAGER_MENU: 'energyManagerMenu',
+				COMPACT_MENU: 'compactMenu'
+			},
+			SIZES: {
+				XXS: 'xxs',
+				XS: 'xs',
+				SM: 'sm',
+				MD: 'md',
+				LG: 'lg'
+			},
+			STATES: {
+				HIDDEN: 'hidden',
+				FULL: 'full',
+				COMPACT: 'compact'
+			}
 		},
 		EXTENDED_TABLE: {
 			COMPONENTS: {
