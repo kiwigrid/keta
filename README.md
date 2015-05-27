@@ -10,6 +10,14 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.20
+
+_Released: 2015-05-27_
+
+* Fixed App Bar current locale usage
+* Added App Bar app title link configuration option
+* Added App Bar element, size and state constants to ketaShared
+
 ## Version 0.3.19
 
 _Released: 2015-05-26_

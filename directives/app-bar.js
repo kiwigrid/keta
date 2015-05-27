@@ -7,8 +7,8 @@
  * @module keta.directives.AppBar
  * @description
  * <p>
- *   Horizontal navigation bar called AppBar with multiple menus (World Switcher, User Menu, Energy Manager Menu,
- *   Language Menu, Settings Menu and Notification Center toggle button).
+ *   Horizontal navigation bar called AppBar with multiple menus (World Switcher, Menu Bar Toggle, Notification Bar
+ *   Toggle, App Title, User Menu, Language Menu and Energy Manager Menu).
  * </p>
  * @example
  * &lt;div data-app-bar
@@ -54,6 +54,7 @@
  *         $scope.links = {
  *             ALL_APPS: '/#/applications/',
  *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+ *             APP_ROOT: '/#/landing-page',
  *             USER_PROFILE: '/#/users/profile',
  *             USER_LOGOUT: '/#/users/logout'
  *         };
@@ -152,34 +153,12 @@ angular.module('keta.directives.AppBar',
 				scope.eventBusId = scope.eventBusId || 'kiwibus';
 				var eventBus = EventBusManager.get(scope.eventBusId);
 
-				var STATES = {
-					// set hidden class
-					HIDDEN: 'hidden',
-					// set visible class
-					FULL: 'full',
-					// set hidden class for label
-					COMPACT: 'compact'
-				};
-
-				var SIZES = {
-					XXS: 'xxs',
-					XS: 'xs',
-					SM: 'sm',
-					MD: 'md',
-					LG: 'lg'
-				};
+				var STATES = ketaSharedConfig.APP_BAR.STATES;
+				var SIZES = ketaSharedConfig.APP_BAR.SIZES;
 
 				var DEFAULT_CONTAINER_HEIGHT = 120;
 
-				scope.MENU_ELEMENTS = {
-					WORLD_SWITCHER: 'worldSwitcher',
-					MENU_BAR_TOGGLE: 'menuBarToggle',
-					NOTIFICATION_BAR_TOGGLE: 'notificationBarToggle',
-					USER_MENU: 'userMenu',
-					LANGUAGE_MENU: 'languageMenu',
-					ENERGY_MANAGER_MENU: 'energyManagerMenu',
-					COMPACT_MENU: 'compactMenu'
-				};
+				scope.MENU_ELEMENTS = ketaSharedConfig.APP_BAR.ELEMENTS;
 
 				var DECIMAL_RADIX = 10,
 					HIDDEN_CLASS_PREFIX = 'hidden-',
@@ -205,6 +184,7 @@ angular.module('keta.directives.AppBar',
 				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.MENU_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.APP_TITLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.USER_MENU] = sizesDefaultState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU] = sizesDefaultState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.LANGUAGE_MENU] = sizesDefaultState;
@@ -275,13 +255,13 @@ angular.module('keta.directives.AppBar',
 				});
 
 				var defaultLabels = {
-					APP_TITLE: 'Application',
 					ALL_APPS: 'All Apps',
-					ENERGY_MANAGER: 'Energy-Manager',
 					ALL_ENERGY_MANAGERS: 'All Energy-Managers',
+					APP_TITLE: 'Application',
+					ENERGY_MANAGER: 'Energy-Manager',
+					NOTIFICATIONS: 'Notifications',
 					USER_PROFILE: 'User Profile',
-					USER_LOGOUT: 'Logout',
-					NOTIFICATIONS: 'Notifications'
+					USER_LOGOUT: 'Logout'
 				};
 
 				scope.labels = angular.isDefined(scope.labels) ?
@@ -290,6 +270,7 @@ angular.module('keta.directives.AppBar',
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
+					APP_ROOT: '#/',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
@@ -413,6 +394,16 @@ angular.module('keta.directives.AppBar',
 					}
 				};
 
+				var getActiveLangEntry = function getActiveLangEntry() {
+					var activeLangEntry = scope.locales[0] || {};
+					angular.forEach(scope.locales, function(value) {
+						if (value.code === scope.currentLocale) {
+							activeLangEntry = value;
+						}
+					});
+					return activeLangEntry;
+				};
+
 				var updateMenus = function() {
 					scope.menus = {};
 					scope.menus[scope.MENU_ELEMENTS.COMPACT_MENU] = {isOpen: false};
@@ -421,7 +412,7 @@ angular.module('keta.directives.AppBar',
 					scope.menus[scope.MENU_ELEMENTS.USER_MENU] = {isOpen: false};
 					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU] = {
 						isOpen: false,
-						activeEntry: scope.locales[0] || {}
+						activeEntry: getActiveLangEntry()
 					};
 				};
 				updateMenus();
@@ -565,15 +556,18 @@ angular.module('keta.directives.AppBar')
 '	<nav class="navbar navbar-default navbar-level-2" data-ng-class="{\'navbar-fixed-top\': scrollOverNavbarFirst}" role="navigation">' +
 '		<div class="container-fluid">' +
 '' +
-'			<ul class="nav navbar-nav" data-ng-class="getClasses(MENU_ELEMENTS.MENU_BAR_TOGGLE)">' +
-'				<li class="menu-navbar">' +
+'			<ul class="nav navbar-nav">' +
+'				<li class="menu-navbar" data-ng-class="getClasses(MENU_ELEMENTS.MENU_BAR_TOGGLE)">' +
 '					<a href="" data-ng-click="toggleSidebar($event, \'left\')">' +
 '						<span class="glyphicon glyphicon-align-justify"></span>' +
 '					</a>' +
 '				</li>' +
+'				<li data-ng-class="getClasses(MENU_ELEMENTS.APP_TITLE)">' +
+'					<a data-ng-if="links.APP_ROOT !== null" class="application-title"' +
+'					   data-ng-href="{{ links.APP_ROOT }}">{{ labels.APP_TITLE }}</a>' +
+'					<span data-ng-if="links.APP_ROOT === null" class="application-title">{{ labels.APP_TITLE }}</span>' +
+'				</li>' +
 '			</ul>' +
-'' +
-'			<span class="application-title">{{ labels.APP_TITLE }}</span>' +
 '' +
 '			<ul class="nav navbar-nav navbar-right">' +
 '' +

@@ -42,14 +42,29 @@ angular.module('keta.shared', [])
 			TOGGLE_AREA_OFFSET: 5,
 			TRANSCLUDE_OFFSET: 15
 		},
-		WORLD_BAR: {
-			CSS_CONTEXT_SWITCHER: 'context-switcher',
-			ENTRY_CONTEXT_SWITCHER: 'contextSwitcher',
-			ENTRY_CONTEXT_SWITCHER_WORLDS: 'worlds',
-			ENTRY_CONTEXT_SWITCHER_MANAGERS: 'managers',
-			ENTRY_CONTEXT_SWITCHER_APPS: 'apps',
-			ENTRY_USER_MENU: 'userMenu',
-			ENTRY_LANGUAGE_MENU: 'languageMenu'
+		APP_BAR: {
+			ELEMENTS: {
+				WORLD_SWITCHER: 'worldSwitcher',
+				MENU_BAR_TOGGLE: 'menuBarToggle',
+				NOTIFICATION_BAR_TOGGLE: 'notificationBarToggle',
+				APP_TITLE: 'appTitle',
+				USER_MENU: 'userMenu',
+				LANGUAGE_MENU: 'languageMenu',
+				ENERGY_MANAGER_MENU: 'energyManagerMenu',
+				COMPACT_MENU: 'compactMenu'
+			},
+			SIZES: {
+				XXS: 'xxs',
+				XS: 'xs',
+				SM: 'sm',
+				MD: 'md',
+				LG: 'lg'
+			},
+			STATES: {
+				HIDDEN: 'hidden',
+				FULL: 'full',
+				COMPACT: 'compact'
+			}
 		},
 		EXTENDED_TABLE: {
 			COMPONENTS: {
