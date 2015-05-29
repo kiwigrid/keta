@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 ## Changelog
 
+## Version 0.3.21
+
+_Released: 2015-05-29_
+
+* Optimized main menu icon configuration
+
 ## Version 0.3.20
 
 _Released: 2015-05-27_

@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.20
+ * keta 0.3.21
  */
 
 // source: dist/directives/app-bar.js
@@ -1663,7 +1663,7 @@ angular.module('keta.directives.MainMenu')
 '			}">' +
 '			<a data-ng-href="#{{ entry.link }}" data-ng-click="checkExpand(entry, $event)"' +
 '			   title="{{ entry.name }}">' +
-'				<span class="glyphicon glyphicon-{{ entry.icon }}"></span>' +
+'				<span class="{{ entry.icon }}"></span>' +
 '				<span class="list-item">{{ entry.name }}</span>' +
 '				<span class="expander glyphicon"' +
 '				      data-ng-if="entry.items"' +
@@ -1677,7 +1677,7 @@ angular.module('keta.directives.MainMenu')
 '						\'active-parent\': isActiveParent(entryLevel2)' +
 '					}">' +
 '					<a data-ng-href="#{{ entryLevel2.link }}" data-ng-click="checkExpand(entryLevel2, $event)">' +
-'						<span data-ng-if="entryLevel2.icon" class="glyphicon glyphicon-{{ entryLevel2.icon }}"></span>' +
+'						<span data-ng-if="entryLevel2.icon" class="{{ entryLevel2.icon }}"></span>' +
 '						<span data-ng-if="!entryLevel2.icon" class="no-glyphicon"></span>' +
 '						<span>{{ entryLevel2.name }}</span>' +
 '						<span class="expander glyphicon"' +
@@ -1689,7 +1689,7 @@ angular.module('keta.directives.MainMenu')
 '						<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
 '							data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
 '							<a data-ng-href="#{{ entryLevel3.link }}">' +
-'								<span data-ng-if="entryLevel3.icon" class="glyphicon glyphicon-{{ entryLevel3.icon }}"></span>' +
+'								<span data-ng-if="entryLevel3.icon" class="{{ entryLevel3.icon }}"></span>' +
 '								<span data-ng-if="!entryLevel3.icon" class="no-glyphicon"></span>' +
 '								<span>{{ entryLevel3.name }}</span>' +
 '							</a>' +
