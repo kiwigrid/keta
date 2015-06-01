@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.21
+ * keta 0.3.22
  */
 
 // source: dist/directives/app-bar.js
@@ -1653,7 +1653,7 @@ angular.module('keta.directives.MainMenu')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/main-menu.html', '<div>' +
 '	<div data-ng-show="titleCallback()" class="sidebar-title">' +
-'		<span>{{titleCallback()}}</span>' +
+'		<span>{{ titleCallback() }}</span>' +
 '	</div>' +
 '	<ul class="nav nav-pills nav-stacked keta-main-menu">' +
 '		<li data-ng-repeat="entry in configuration.items"' +
@@ -1661,13 +1661,13 @@ angular.module('keta.directives.MainMenu')
 '				\'active\': isActive(entry),' +
 '				\'active-parent\': isActiveParent(entry)' +
 '			}">' +
-'			<a data-ng-href="#{{ entry.link }}" data-ng-click="checkExpand(entry, $event)"' +
+'			<a data-ng-href="{{ entry.link }}" data-ng-click="checkExpand(entry, $event)"' +
 '			   title="{{ entry.name }}">' +
 '				<span class="{{ entry.icon }}"></span>' +
 '				<span class="list-item">{{ entry.name }}</span>' +
 '				<span class="expander glyphicon"' +
-'				      data-ng-if="entry.items"' +
-'				      data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
+'					data-ng-if="entry.items"' +
+'					data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
 '				</span>' +
 '			</a>' +
 '			<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entry.expanded">' +
@@ -1676,7 +1676,7 @@ angular.module('keta.directives.MainMenu')
 '						\'active\': isActive(entryLevel2),' +
 '						\'active-parent\': isActiveParent(entryLevel2)' +
 '					}">' +
-'					<a data-ng-href="#{{ entryLevel2.link }}" data-ng-click="checkExpand(entryLevel2, $event)">' +
+'					<a data-ng-href="{{ entryLevel2.link }}" data-ng-click="checkExpand(entryLevel2, $event)">' +
 '						<span data-ng-if="entryLevel2.icon" class="{{ entryLevel2.icon }}"></span>' +
 '						<span data-ng-if="!entryLevel2.icon" class="no-glyphicon"></span>' +
 '						<span>{{ entryLevel2.name }}</span>' +
@@ -1688,7 +1688,7 @@ angular.module('keta.directives.MainMenu')
 '					<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entryLevel2.expanded">' +
 '						<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
 '							data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
-'							<a data-ng-href="#{{ entryLevel3.link }}">' +
+'							<a data-ng-href="{{ entryLevel3.link }}">' +
 '								<span data-ng-if="entryLevel3.icon" class="{{ entryLevel3.icon }}"></span>' +
 '								<span data-ng-if="!entryLevel3.icon" class="no-glyphicon"></span>' +
 '								<span>{{ entryLevel3.name }}</span>' +

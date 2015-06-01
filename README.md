@@ -12,6 +12,7 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 Version | Release Date | Changes
 ------- | ------------ | -------
+0.3.22 | 2015-06-01 | <ul><li>Made main menu link configuration more flexible</li></ul>
 0.3.21 | 2015-05-29 | <ul><li>Optimized main menu icon configuration</li></ul>
 0.3.20 | 2015-05-27 | <ul><li>Fixed App Bar current locale usage</li><li>Added App Bar app title link configuration option</li><li>Added App Bar element, size and state constants to ketaShared</li></ul>
 0.3.19 | 2015-05-26 | <ul><li>Fixed App Bar current locale configuration</li></ul>
