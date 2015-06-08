@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.22
+			Version 0.3.23
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.22" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.22" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.23" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.23" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.22" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.22" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.23" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.23" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -321,6 +321,13 @@ angular.module('keta.services.DeviceSet',
 
 						// register handler under created UUID
 						EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
+
+							// inject guid if missing
+							if (!angular.isDefined(event.value.guid) &&
+								angular.isDefined(event.value.tagValues)) {
+								var tagValueKeys = Object.keys(event.value.tagValues);
+								event.value.guid = event.value.tagValues[tagValueKeys[0]].guid;
+							}
 
 							// process event using sync
 							api.sync(set, DeviceEvent.create(event.type, event.value), eventBus);
