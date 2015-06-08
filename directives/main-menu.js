@@ -149,7 +149,7 @@ angular.module('keta.directives.MainMenu')
 '					data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
 '				</span>' +
 '			</a>' +
-'			<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entry.expanded">' +
+'			<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entry.expanded">' +
 '				<li data-ng-repeat="entryLevel2 in entry.items"' +
 '					data-ng-class="{' +
 '						\'active\': isActive(entryLevel2),' +
@@ -157,19 +157,17 @@ angular.module('keta.directives.MainMenu')
 '					}">' +
 '					<a data-ng-href="{{ entryLevel2.link }}" data-ng-click="checkExpand(entryLevel2, $event)">' +
 '						<span data-ng-if="entryLevel2.icon" class="{{ entryLevel2.icon }}"></span>' +
-'						<span data-ng-if="!entryLevel2.icon" class="no-glyphicon"></span>' +
 '						<span>{{ entryLevel2.name }}</span>' +
 '						<span class="expander glyphicon"' +
 '							data-ng-if="entryLevel2.items"' +
 '							data-ng-class="{ \'glyphicon-minus\': entryLevel2.expanded, \'glyphicon-plus\': !entryLevel2.expanded }">' +
 '						</span>' +
 '					</a>' +
-'					<ul class="nav nav-pills nav-stacked expanded" data-ng-show="entryLevel2.expanded">' +
+'					<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entryLevel2.expanded">' +
 '						<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
 '							data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
 '							<a data-ng-href="{{ entryLevel3.link }}">' +
 '								<span data-ng-if="entryLevel3.icon" class="{{ entryLevel3.icon }}"></span>' +
-'								<span data-ng-if="!entryLevel3.icon" class="no-glyphicon"></span>' +
 '								<span>{{ entryLevel3.name }}</span>' +
 '							</a>' +
 '						</li>' +

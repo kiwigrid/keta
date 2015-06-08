@@ -7594,7 +7594,7 @@ body {
 .sidebar-offcanvas .sidebar-inner .alert {
   margin: 0 10px 5px;
 }
-.sidebar-offcanvas .expander {
+.sidebar-offcanvas .nav-pills .expander {
   float: right;
   top: 6px;
   font-weight: bold;
@@ -8244,6 +8244,9 @@ a.bg-blue:hover {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.nav-pills .glyphicon {
+  top: 2px;
 }
 .glyphicon-asterisk:before {
   content: "\2a";
@@ -10491,6 +10494,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     border-bottom-color: #f4f0e7;
   }
 }
+.nav-pills.nav-sub-level > li a {
+  padding-left: 32px;
+}
 .nav-pills > li {
   float: left;
 }
@@ -10507,11 +10513,17 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   color: #ffffff;
   background-color: #c1d34f;
 }
+.nav-pills > li > a span {
+  display: inline-block;
+  width: 82%;
+}
 .nav-pills > li + li {
   margin-left: 2px;
 }
 .nav-pills .glyphicon {
   margin-right: 4px;
+  vertical-align: top;
+  width: auto;
 }
 .nav-stacked > li {
   float: none;

@@ -255,6 +255,13 @@ angular.module('keta.services.DeviceSet',
 						// register handler under created UUID
 						EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
 
+							// inject guid if missing
+							if (!angular.isDefined(event.value.guid) &&
+								angular.isDefined(event.value.tagValues)) {
+								var tagValueKeys = Object.keys(event.value.tagValues);
+								event.value.guid = event.value.tagValues[tagValueKeys[0]].guid;
+							}
+
 							// process event using sync
 							api.sync(set, DeviceEvent.create(event.type, event.value), eventBus);
 
