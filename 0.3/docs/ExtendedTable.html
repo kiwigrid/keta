@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.3.23
+			Version 0.3.24
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.23" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.23" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.24" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.24" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.23" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.23" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.3.24" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.3.24" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -139,7 +139,7 @@
     <pre class="prettyprint"><code>&lt;div data-extended-table
     data-rows="rows"
     data-label-add-column="labelAddColumn"
-    data-disabledComponents="disabledComponents"
+    data-disabled-components="disabledComponents"
     data-switchable-columns="switchableColumns"
     data-group-by-property="groupByProperty"
     data-order-by-property="orderByProperty"
@@ -179,7 +179,12 @@
 
         // object of labels
         $scope.labels = {
-            ADD_COLUMN: 'add col:'
+            SEARCH: 'Search',
+            ADD_COLUMN: 'Add column',
+            REMOVE_COLUMN: 'Remove column',
+            SORT: 'Sort',
+            NO_ENTRIES: 'No entries',
+            OF: 'of'
         };
 
         // array of disabled components (empty by default)
