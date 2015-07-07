@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.23
+ * keta 0.3.24
  */
 
 // source: dist/directives/app-bar.js
@@ -133,10 +133,9 @@ angular.module('keta', [
 angular.module('keta.directives.AppBar',
 	[
 		'keta.shared',
-		'keta.services.EventBusDispatcher',
 		'keta.services.EventBusManager',
 		'keta.services.DeviceSet',
-		'keta.services.UserSet'
+		'keta.services.User'
 	])
 
 	.directive('appBar', function AppBarDirective(
@@ -740,7 +739,7 @@ angular.module('keta.directives.AppBar')
  * &lt;div data-extended-table
  *     data-rows="rows"
  *     data-label-add-column="labelAddColumn"
- *     data-disabledComponents="disabledComponents"
+ *     data-disabled-components="disabledComponents"
  *     data-switchable-columns="switchableColumns"
  *     data-group-by-property="groupByProperty"
  *     data-order-by-property="orderByProperty"
@@ -780,7 +779,12 @@ angular.module('keta.directives.AppBar')
  *
  *         // object of labels
  *         $scope.labels = {
- *             ADD_COLUMN: 'add col:'
+ *             SEARCH: 'Search',
+ *             ADD_COLUMN: 'Add column',
+ *             REMOVE_COLUMN: 'Remove column',
+ *             SORT: 'Sort',
+ *             NO_ENTRIES: 'No entries',
+ *             OF: 'of'
  *         };
  *
  *         // array of disabled components (empty by default)
@@ -926,7 +930,8 @@ angular.module('keta.directives.ExtendedTable',
 		'ngSanitize',
 		'keta.shared',
 		'keta.filters.OrderObjectBy',
-		'keta.filters.Slice'
+		'keta.filters.Slice',
+		'keta.filters.Unit'
 	])
 
 	.directive('extendedTable', function ExtendedTableDirective($compile, $filter, ketaSharedConfig) {
@@ -1004,7 +1009,8 @@ angular.module('keta.directives.ExtendedTable',
 					ADD_COLUMN: 'Add column',
 					REMOVE_COLUMN: 'Remove column',
 					SORT: 'Sort',
-					NO_ENTRIES: 'No entries'
+					NO_ENTRIES: 'No entries',
+					OF: 'of'
 				};
 				scope.labels = angular.extend(defaultLabels, scope.labels);
 
@@ -1311,9 +1317,59 @@ angular.module('keta.directives.ExtendedTable',
 					$scope.resetSelectedColumn();
 				};
 
+				/**
+				 * @description Jumps to the given page and updates the view accordingly.
+				 * @param {number} page The number of the page to go to.
+				 * @returns {void} nothing
+				 */
 				$scope.goToPage = function(page) {
-					$scope.pager[$scope.PAGER_OFFSET] = $scope.pager[$scope.PAGER_LIMIT] * (page - 1);
-					$scope.resetPager();
+					if (page > 0 && page <= $scope.pages.length) {
+						$scope.pager[$scope.PAGER_OFFSET] = $scope.pager[$scope.PAGER_LIMIT] * (page - 1);
+						$scope.resetPager();
+					}
+				};
+
+				/**
+				 * @description Resets the pager input (page number) to a valid numeric value if the user
+				 * has accidently entered something else and jumps to the page afterwards.
+				 * @param {*} currentPage The current input by the user.
+				 * @returns {void} nothing
+				 */
+				var resetPagerInputIfNecessary = function resetPagerInputIfNecessary(currentPage) {
+					var parsingRadix = 10;
+					var pageAsNumber = parseInt(currentPage, parsingRadix);
+					var newPage = pageAsNumber;
+					if (!angular.isNumber(pageAsNumber) || isNaN(pageAsNumber) || pageAsNumber <= 0) {
+						newPage = 1;
+					} else if (pageAsNumber > $scope.pages.length) {
+						newPage = $scope.pages.length;
+					}
+					$scope.goToPage(newPage);
+				};
+
+				/**
+				 * @description
+				 * <p>
+				 *   Checks the input (on specific events) that the user makes for the pager's current page
+				 *   and resets the input to a valid number if something else (e.g. characters) were entered.
+				 * </p>
+				 * @param {*} currentPage The current input by the user.
+				 * @param {object} $event The jQlite event that is connected with the user interaction.
+				 * @returns {void} nothing
+				 */
+				$scope.checkPagerInput = function checkPagerInput(currentPage, $event) {
+					switch ($event.type) {
+						case 'keypress':
+							if ($event.keyCode === 13) {
+								resetPagerInputIfNecessary(currentPage);
+							}
+							break;
+						case 'blur':
+							resetPagerInputIfNecessary(currentPage);
+							break;
+						default:
+							break;
+					}
 				};
 
 			}
@@ -1420,7 +1476,8 @@ angular.module('keta.directives.ExtendedTable')
 '								<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)"><span' +
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
-'							<th data-ng-if="actionList.length">' +
+'							<th data-ng-if="actionList.length"' +
+'								class="{{columnClassCallback(headers, \'!!actions!!\', true)}}">' +
 '								{{headerLabelCallback(\'actions\')}}' +
 '							</th>' +
 '						</tr>' +
@@ -1433,7 +1490,8 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length">' +
+'							<td data-ng-if="row && actionList.length"' +
+'								class="{{columnClassCallback(row, \'!!actions!!\', false)}}">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList">' +
 '										<a class="btn-link"' +
@@ -1464,7 +1522,8 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length">' +
+'							<td data-ng-if="row && actionList.length"' +
+'								class="{{columnClassCallback(row, \'!!actions!!\', false)}}">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList">' +
 '										<a class="btn-link"' +
@@ -1503,15 +1562,26 @@ angular.module('keta.directives.ExtendedTable')
 '	<!-- PAGER -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
 '		<div class="col-xs-12 col-sm-6">' +
-'			<div class="btn-group form-group" role="group" data-ng-if="pages.length > 1">' +
-'				<button type="button"' +
-'					data-ng-repeat="page in pages"' +
-'					data-ng-click="goToPage(page)"' +
-'					data-ng-class="{' +
-'						\'btn\': true,' +
-'						\'btn-default\': true,' +
-'						\'btn-primary\': page === currentPage' +
-'					}">{{page}}</button>' +
+'			<div class="pager max-width">' +
+'				<div class="input-group">' +
+'					<div class="pager-buttons input-group-btn">' +
+'						<button type="button" class="btn btn-default" data-ng-click="goToPage(currentPage - 1)">' +
+'							<i class="glyphicon glyphicon-chevron-left"></i>' +
+'						</button>' +
+'					</div>' +
+'					<input type="text" class="form-control pager-input"' +
+'							data-ng-model="currentPage"' +
+'							data-ng-keypress="checkPagerInput(currentPage, $event)"' +
+'							data-ng-blur="checkPagerInput(currentPage, $event)">' +
+'					<span class="input-group-addon">' +
+'						{{ labels.OF }} {{pages.length}}' +
+'					</span>' +
+'					<div class="pager-buttons input-group-btn">' +
+'						<button type="button" class="btn btn-default" data-ng-click="goToPage(currentPage + 1)">' +
+'							<i class="glyphicon glyphicon-chevron-right"></i>' +
+'						</button>' +
+'					</div>' +
+'				</div>' +
 '			</div>' +
 '		</div>' +
 '	</div>' +
@@ -1537,7 +1607,7 @@ angular.module('keta.directives.ExtendedTable')
  *   the sidebar (if the current path-route is the same as in the clicked link).
  * </p>
  * @example
- * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
+ * &lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
  *     .controller('ExampleController', function($scope, ketaSharedConfig) {
@@ -1567,6 +1637,11 @@ angular.module('keta.directives.ExtendedTable')
  *             }],
  *             compactMode: false,
  *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
+ *         };
+ *
+ *         // return app-title depending on current language
+ *         $scope.getAppTitle = function() {
+ *             return 'My App';
  *         };
  *
  *     });

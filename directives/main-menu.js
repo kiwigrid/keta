@@ -16,7 +16,7 @@
  *   the sidebar (if the current path-route is the same as in the clicked link).
  * </p>
  * @example
- * &lt;div data-main-menu data-configuration="menuConfiguration"&gt;&lt;/div&gt;
+ * &lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
  *     .controller('ExampleController', function($scope, ketaSharedConfig) {
@@ -46,6 +46,11 @@
  *             }],
  *             compactMode: false,
  *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
+ *         };
+ *
+ *         // return app-title depending on current language
+ *         $scope.getAppTitle = function() {
+ *             return 'My App';
  *         };
  *
  *     });

@@ -101,10 +101,9 @@
 angular.module('keta.directives.AppBar',
 	[
 		'keta.shared',
-		'keta.services.EventBusDispatcher',
 		'keta.services.EventBusManager',
 		'keta.services.DeviceSet',
-		'keta.services.UserSet'
+		'keta.services.User'
 	])
 
 	.directive('appBar', function AppBarDirective(

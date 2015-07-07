@@ -12,6 +12,7 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 Version | Release Date | Changes
 ------- | ------------ | -------
+0.3.24 | 2015-07-07 | <ul><li>New pager style for Extended Table, Added columnClassCallback to actions row</li></ul>
 0.3.23 | 2015-06-08 | <ul><li>Some smaller CSS fixes and changes</li></ul>
 0.3.22 | 2015-06-01 | <ul><li>Made main menu link configuration more flexible</li></ul>
 0.3.21 | 2015-05-29 | <ul><li>Optimized main menu icon configuration</li></ul>
