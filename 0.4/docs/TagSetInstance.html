@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Class: TagSetInstance</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.4.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="AppBar.html">AppBar</a></li><li><a href="ExtendedTable.html">ExtendedTable</a></li><li><a href="MainMenu.html">MainMenu</a></li><li><a href="Sidebar.html">Sidebar</a></li><li><a href="OrderObjectBy.html">OrderObjectBy</a></li><li><a href="Slice.html">Slice</a></li><li><a href="Unit.html">Unit</a></li><li><a href="AccessToken_.html">AccessToken</a></li><li><a href="AppContext_.html">AppContext</a></li><li><a href="Application_.html">Application</a></li><li><a href="ApplicationSet_.html">ApplicationSet</a></li><li><a href="Device_.html">Device</a></li><li><a href="DeviceEvent_.html">DeviceEvent</a></li><li><a href="DeviceSet_.html">DeviceSet</a></li><li><a href="EventBus_.html">EventBus</a></li><li><a href="EventBusDispatcher_.html">EventBusDispatcher</a></li><li><a href="EventBusManager_.html">EventBusManager</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Tag.html">Tag</a></li><li><a href="TagSet.html">TagSet</a></li><li><a href="User.html">User</a></li><li><a href="UserSet.html">UserSet</a></li><li><a href="Application__.html">Application</a></li><li><a href="Common.html">Common</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="AccessToken.html">AccessToken</a></li><li><a href="AppContext.html">AppContext</a></li><li><a href="AppContextProvider.html">AppContextProvider</a></li><li><a href="Application.html">Application</a></li><li><a href="ApplicationInstance.html">ApplicationInstance</a></li><li><a href="ApplicationProvider.html">ApplicationProvider</a></li><li><a href="ApplicationSet.html">ApplicationSet</a></li><li><a href="ApplicationSetInstance.html">ApplicationSetInstance</a></li><li><a href="ApplicationSetProvider.html">ApplicationSetProvider</a></li><li><a href="ApplicationUtils.html">ApplicationUtils</a></li><li><a href="CommonUtils.html">CommonUtils</a></li><li><a href="Device.html">Device</a></li><li><a href="DeviceEvent.html">DeviceEvent</a></li><li><a href="DeviceEventInstance.html">DeviceEventInstance</a></li><li><a href="DeviceEventProvider.html">DeviceEventProvider</a></li><li><a href="DeviceInstance.html">DeviceInstance</a></li><li><a href="DeviceProvider.html">DeviceProvider</a></li><li><a href="DeviceSet.html">DeviceSet</a></li><li><a href="DeviceSetInstance.html">DeviceSetInstance</a></li><li><a href="DeviceSetProvider.html">DeviceSetProvider</a></li><li><a href="EventBus.html">EventBus</a></li><li><a href="EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="EventBusDispatcherProvider.html">EventBusDispatcherProvider</a></li><li><a href="EventBusManager.html">EventBusManager</a></li><li><a href="EventBusManagerProvider.html">EventBusManagerProvider</a></li><li><a href="EventBusProvider.html">EventBusProvider</a></li><li><a href="LoggerConfig.html">LoggerConfig</a></li><li><a href="LoggerDecorator.html">LoggerDecorator</a></li><li><a href="Tag_.html">Tag</a></li><li><a href="TagInstance.html">TagInstance</a></li><li><a href="TagProvider.html">TagProvider</a></li><li><a href="TagSet_.html">TagSet</a></li><li><a href="TagSetInstance.html">TagSetInstance</a></li><li><a href="TagSetProvider.html">TagSetProvider</a></li><li><a href="User_.html">User</a></li><li><a href="UserInstance.html">UserInstance</a></li><li><a href="UserProvider.html">UserProvider</a></li><li><a href="UserSet_.html">UserSet</a></li><li><a href="UserSetInstance.html">UserSetInstance</a></li><li><a href="UserSetProvider.html">UserSetProvider</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Class: TagSetInstance</h1>
+		
+
+
+
+<section>
+    
+<header>
+    <h2>
+    TagSetInstance
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h3 class="name" id="TagSetInstance"><span class="type-signature"></span>new TagSetInstance<span class="signature">()</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        TagSet Instance
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="tag-set.js.html">services/tag-set.js</a>, <a href="tag-set.js.html#line25">line 25</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <ul class="list-unstyled"><li><a href="#add"><span class="type-signature">&lt;static> </span>add<span class="signature">(tag)</span><span class="type-signature"> &rarr; {<a href="TagSetInstance.html">TagSetInstance</a>}</span></a></li><li><a href="#getTags"><span class="type-signature">&lt;static> </span>getTags<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></a></li><li><a href="#getTagsAsHierarchy"><span class="type-signature">&lt;static> </span>getTagsAsHierarchy<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></a></li><li><a href="#remove"><span class="type-signature">&lt;static> </span>remove<span class="signature">(tag)</span><span class="type-signature"> &rarr; {<a href="TagSetInstance.html">TagSetInstance</a>}</span></a></li></ul>
+        
+        <dl class="methods">
+            
+<dt>
+    <h3 class="name" id="add"><span class="type-signature">&lt;static> </span>add<span class="signature">(tag)</span><span class="type-signature"> &rarr; {<a href="TagSetInstance.html">TagSetInstance</a>}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
+  In this case nothing will be changed.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>tag</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="TagInstance.html">TagInstance</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Tag to add</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="tag-set.js.html">services/tag-set.js</a>, <a href="tag-set.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type"><a href="TagSetInstance.html">TagSetInstance</a></span>
+
+
+	
+	
+    TagSetInstance with added TagInstance
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.TagSet'])
+    .controller('ExampleController', function(TagSet) {
+        TagSet
+            .create()
+            .add(Tag.create({
+                guid: 'guid',
+                name: 'name',
+                sampleRate: 10
+            }));
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getTags"><span class="type-signature">&lt;static> </span>getTags<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns tags as an Array.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="tag-set.js.html">services/tag-set.js</a>, <a href="tag-set.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">Array</span>
+
+
+	
+	
+    tags
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.TagSet'])
+    .controller('ExampleController', function(TagSet) {
+        var tagSet = TagSet.create();
+        var tags = tagSet.getTags();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getTagsAsHierarchy"><span class="type-signature">&lt;static> </span>getTagsAsHierarchy<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns tags as hierarchically organized Object. First level represents devices
+  specified by <code>guid</code> property. On the second level <code>name</code> property
+  is used as key pointing to the <code>Tag</code> object.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="tag-set.js.html">services/tag-set.js</a>, <a href="tag-set.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">Object</span>
+
+
+	
+	
+    tagsAsHierarchy
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.TagSet'])
+    .controller('ExampleController', function(TagSet) {
+        var tagSet = TagSet.create();
+        var hierarchy = tagSet.getTagsAsHierarchy();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="remove"><span class="type-signature">&lt;static> </span>remove<span class="signature">(tag)</span><span class="type-signature"> &rarr; {<a href="TagSetInstance.html">TagSetInstance</a>}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
+  Otherwise nothing will be changed.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>tag</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="TagInstance.html">TagInstance</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Tag to remove</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="tag-set.js.html">services/tag-set.js</a>, <a href="tag-set.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type"><a href="TagSetInstance.html">TagSetInstance</a></span>
+
+
+	
+	
+    TagSetInstance with removed TagInstance
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.TagSet'])
+    .controller('ExampleController', function(TagSet) {
+        var tag = Tag.create({
+            guid: 'guid',
+            name: 'name',
+            sampleRate: 10
+        });
+        TagSet
+            .create()
+            .add(tag)
+            .remove(tag);
+    });</code></pre>
+
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
