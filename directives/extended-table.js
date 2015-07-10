@@ -17,6 +17,7 @@
  * @example
  * &lt;div data-extended-table
  *     data-rows="rows"
+ *     data-current-locale="currentLocale"
  *     data-label-add-column="labelAddColumn"
  *     data-disabled-components="disabledComponents"
  *     data-switchable-columns="switchableColumns"
@@ -35,8 +36,10 @@
  *     data-search="search"
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
  * @example
- * angular.module('exampleApp', ['keta.directives.ExtendedTable'])
- *     .controller('ExampleController', function($scope, ketaSharedConfig) {
+ * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device])
+ *     .controller('ExampleController', function(
+ *         $scope,
+ *         ExtendedTableConstants, ExtendedTableMessageKeys, DeviceConstants) {
  *
  *         // data as array of objects, keys from first element are taken as headers
  *         $scope.rows = [{
@@ -56,26 +59,32 @@
  *             deviceClass: 'class-3'
  *         }];
  *
- *         // object of labels
- *         $scope.labels = {
- *             SEARCH: 'Search',
- *             ADD_COLUMN: 'Add column',
- *             REMOVE_COLUMN: 'Remove column',
- *             SORT: 'Sort',
- *             NO_ENTRIES: 'No entries',
- *             OF: 'of'
+ *         // override default-labels if necessary
+ *         // get default labels
+ *         $scope.labels = ExtendedTableMessageKeys;
+ *
+ *         // use case 1: overwrite specific key
+ *         $scope.labels.de['__keta.directives.ExtendedTable_search'] = 'Finde';
+ *
+ *         // use case 2: add locale
+ *         $scope.labels.fr = {
+ *             '__keta.directives.ExtendedTable_search': 'Recherche',
+ *             '__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
+ *             '__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
+ *             '__keta.directives.ExtendedTable_sort': 'Sorte',
+ *             '__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées'
  *         };
  *
  *         // array of disabled components (empty by default)
  *         $scope.disabledComponents = [
  *             // the table itself
- *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.TABLE,
+ *             ExtendedTableConstants.COMPONENT.TABLE,
  *             // an input field to search throughout the full dataset
- *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.FILTER,
+ *             ExtendedTableConstants.COMPONENT.FILTER,
  *             // a selector to add columns to table
- *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.SELECTOR,
+ *             ExtendedTableConstants.COMPONENT.SELECTOR,
  *             // a pager to navigate through paged data
- *             ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER
+ *             ExtendedTableConstants.COMPONENT.PAGER
  *         ];
  *
  *         // array of switchable columns (empty by default)
@@ -110,7 +119,7 @@
  *         // by defining operations mode as "view" the directive itself manages sorting,
  *         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
  *         // dataset by querying a backend, you have to use "data"
- *         $scope.operationsMode = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
+ *         $scope.operationsMode = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
  *
  *         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
  *         $scope.rowSortEnabled = true;
@@ -138,14 +147,14 @@
  *             },
  *             label: 'Edit',
  *             icon: 'glyphicon glyphicon-pencil',
- *             type: ketaSharedConfig.EXTENDED_TABLE.ACTION_LIST_TYPE.LINK
+ *             type: ExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
  *             runAction: function(row) {
  *                 console.log('action called with ', row);
  *             },
  *             label: 'Remove',
  *             icon: 'glyphicon glyphicon-remove'
- *             type: ketaSharedConfig.EXTENDED_TABLE.ACTION_LIST_TYPE.ACTION
+ *             type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION
  *         }];
  *
  *         // callback method to render each cell individually
@@ -166,13 +175,13 @@
  *             var columnClass = '';
  *             if (column === 'stateDevice') {
  *                 columnClass = 'state';
- *                 if (row.state === ketaSharedConfig.STATE.OK && !isHeader) {
+ *                 if (row.state === DeviceConstants.STATE.OK && !isHeader) {
  *                     columnClass+= ' state-success';
  *                 }
- *                 if (row.state === ketaSharedConfig.STATE.ERROR && !isHeader) {
+ *                 if (row.state === DeviceConstants.STATE.ERROR && !isHeader) {
  *                     columnClass+= ' state-warning';
  *                 }
- *                 if (row.state === ketaSharedConfig.STATE.FATAL && !isHeader) {
+ *                 if (row.state === DeviceConstants.STATE.FATAL && !isHeader) {
  *                     columnClass+= ' state-danger';
  *                 }
  *             }
@@ -185,9 +194,9 @@
  *         // limit is the number of rows shown per page
  *         // offset is the index in the dataset to start from
  *         var pager = {};
- *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.TOTAL] = $scope.allRows.length;
- *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT] = 5;
- *         pager[ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET] = 0;
+ *         pager[ExtendedTableConstants.PAGER.TOTAL] = $scope.allRows.length;
+ *         pager[ExtendedTableConstants.PAGER.LIMIT] = 5;
+ *         pager[ExtendedTableConstants.PAGER.OFFSET] = 0;
  *         $scope.pager = pager;
  *
  *         // search term to filter the table
@@ -207,13 +216,57 @@
 angular.module('keta.directives.ExtendedTable',
 	[
 		'ngSanitize',
-		'keta.shared',
 		'keta.filters.OrderObjectBy',
 		'keta.filters.Slice',
-		'keta.filters.Unit'
+		'keta.filters.Unit',
+		'keta.utils.Common'
 	])
 
-	.directive('extendedTable', function ExtendedTableDirective($compile, $filter, ketaSharedConfig) {
+	.constant('ExtendedTableConstants', {
+		COMPONENT: {
+			TABLE: 'table',
+			FILTER: 'filter',
+			SELECTOR: 'selector',
+			PAGER: 'pager'
+		},
+		OPERATIONS_MODE: {
+			DATA: 'data',
+			VIEW: 'view'
+		},
+		PAGER: {
+			TOTAL: 'total',
+			LIMIT: 'limit',
+			OFFSET: 'offset'
+		},
+		ACTION_LIST_TYPE: {
+			LINK: 'link',
+			ACTION: 'action'
+		}
+	})
+
+	// message keys with default values
+	.constant('ExtendedTableMessageKeys', {
+		'en': {
+			'__keta.directives.ExtendedTable_search': 'Search',
+			'__keta.directives.ExtendedTable_add_column': 'Add column',
+			'__keta.directives.ExtendedTable_remove_column': 'Remove column',
+			'__keta.directives.ExtendedTable_sort': 'Sort',
+			'__keta.directives.ExtendedTable_no_entries': 'No entries',
+			'__keta.directives.ExtendedTable_of': 'of'
+		},
+		'de': {
+			'__keta.directives.ExtendedTable_search': 'Suche',
+			'__keta.directives.ExtendedTable_add_column': 'Spalte hinzufügen',
+			'__keta.directives.ExtendedTable_remove_column': 'Spalte entfernen',
+			'__keta.directives.ExtendedTable_sort': 'Sortieren',
+			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
+			'__keta.directives.ExtendedTable_of': 'von'
+		}
+	})
+
+	.directive('extendedTable', function ExtendedTableDirective(
+		$compile, $filter,
+		ExtendedTableConstants, ExtendedTableMessageKeys, CommonUtils) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -221,6 +274,9 @@ angular.module('keta.directives.ExtendedTable',
 
 				// data as array of objects, keys from first element are taken as headers
 				rows: '=',
+
+				// current locale
+				currentLocale: '=?',
 
 				// label prefixed to selector-component
 				labels: '=?',
@@ -282,16 +338,15 @@ angular.module('keta.directives.ExtendedTable',
 					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ?
 						scope.rows : [];
 
+				scope.currentLocale = scope.currentLocale || 'en';
+
 				// object of labels
-				var defaultLabels = {
-					SEARCH: 'Search',
-					ADD_COLUMN: 'Add column',
-					REMOVE_COLUMN: 'Remove column',
-					SORT: 'Sort',
-					NO_ENTRIES: 'No entries',
-					OF: 'of'
+				scope.MESSAGE_KEY_PREFIX = '__keta.directives.ExtendedTable';
+				scope.labels = angular.extend(ExtendedTableMessageKeys, scope.labels);
+
+				scope.getLabel = function getLabel(key) {
+					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
-				scope.labels = angular.extend(defaultLabels, scope.labels);
 
 				// headers to save
 				scope.headers =
@@ -378,17 +433,17 @@ angular.module('keta.directives.ExtendedTable',
 
 				// CONSTANTS ---
 
-				$scope.COMPONENTS_FILTER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.FILTER;
-				$scope.COMPONENTS_SELECTOR = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.SELECTOR;
-				$scope.COMPONENTS_TABLE = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.TABLE;
-				$scope.COMPONENTS_PAGER = ketaSharedConfig.EXTENDED_TABLE.COMPONENTS.PAGER;
+				$scope.COMPONENTS_FILTER = ExtendedTableConstants.COMPONENT.FILTER;
+				$scope.COMPONENTS_SELECTOR = ExtendedTableConstants.COMPONENT.SELECTOR;
+				$scope.COMPONENTS_TABLE = ExtendedTableConstants.COMPONENT.TABLE;
+				$scope.COMPONENTS_PAGER = ExtendedTableConstants.COMPONENT.PAGER;
 
-				$scope.OPERATIONS_MODE_DATA = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.DATA;
-				$scope.OPERATIONS_MODE_VIEW = ketaSharedConfig.EXTENDED_TABLE.OPERATIONS_MODE.VIEW;
+				$scope.OPERATIONS_MODE_DATA = ExtendedTableConstants.OPERATIONS_MODE.DATA;
+				$scope.OPERATIONS_MODE_VIEW = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
 
-				$scope.PAGER_TOTAL = ketaSharedConfig.EXTENDED_TABLE.PAGER.TOTAL;
-				$scope.PAGER_LIMIT = ketaSharedConfig.EXTENDED_TABLE.PAGER.LIMIT;
-				$scope.PAGER_OFFSET = ketaSharedConfig.EXTENDED_TABLE.PAGER.OFFSET;
+				$scope.PAGER_TOTAL = ExtendedTableConstants.PAGER.TOTAL;
+				$scope.PAGER_LIMIT = ExtendedTableConstants.PAGER.LIMIT;
+				$scope.PAGER_OFFSET = ExtendedTableConstants.PAGER.OFFSET;
 
 				// VARIABLES ---
 
@@ -669,7 +724,8 @@ angular.module('keta.directives.ExtendedTable')
 '			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
 '				<div class="form-group form-inline">' +
 '					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
-'						<input type="text" class="form-control" placeholder="{{ labels.SEARCH }}" data-ng-model="search">' +
+'						<input type="text" class="form-control"' +
+'							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}" data-ng-model="search">' +
 '						<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>' +
 '					</div>' +
 '				</div>' +
@@ -683,7 +739,7 @@ angular.module('keta.directives.ExtendedTable')
 '				<div class="form-group pull-right" data-ng-show="selectedColumn !== null">' +
 '					<div class="form-group">' +
 '						<div class="button-form">' +
-'							<label for="columnSelector">{{ labels.ADD_COLUMN }}</label>' +
+'							<label for="columnSelector">{{ getLabel(MESSAGE_KEY_PREFIX + \'_add_column\') }}</label>' +
 '							<div class="input-group">' +
 '								<select id="columnSelector"' +
 '									class="add-select form-control"' +
@@ -705,7 +761,8 @@ angular.module('keta.directives.ExtendedTable')
 '										orderBy:orderByProperty">' +
 '								</select>' +
 '								<div class="stepper-buttons input-group-btn">' +
-'									<button type="button" class="btn btn-primary" data-ng-click="addColumn(selectedColumn)">' +
+'									<button type="button" class="btn btn-primary"' +
+'										data-ng-click="addColumn(selectedColumn)">' +
 '										<i class="glyphicon glyphicon-plus"></i>' +
 '									</button>' +
 '								</div>' +
@@ -729,21 +786,21 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
 '								data-ng-if="rowSortEnabled"' +
 '								data-ng-class="{sort: isSortCriteria(column)}">' +
-'								<a class="header" title="{{ labels.SORT }}"' +
+'								<a class="header" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '								   data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
-'								<a class="sort" title="{{ labels.SORT }}"' +
+'								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '								   data-ng-if="isSortCriteria(column) && rowSortOrderAscending"' +
 '								   data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet"></span></a>' +
-'								<a class="sort" title="{{ labels.SORT }}"' +
+'								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '								   data-ng-if="isSortCriteria(column) && !rowSortOrderAscending"' +
 '								   data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a>' +
-'								<a class="unsort" title="{{ labels.SORT }}"' +
+'								<a class="unsort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '									data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort"></span></a>' +
-'								<a class="operation" title="{{ labels.REMOVE_COLUMN }}"' +
+'								<a class="operation" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_remove_column\') }}"' +
 '								   data-ng-if="isSwitchable(column)"' +
 '								   data-ng-click="removeColumn(column)"><span' +
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
@@ -752,11 +809,12 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
 '								data-ng-if="!rowSortEnabled">' +
 '								{{headerLabelCallback(column)}}' +
-'								<a class="operation" data-ng-if="isSwitchable(column)" data-ng-click="removeColumn(column)"><span' +
-'									class="glyphicon glyphicon-minus-sign"></span></a>' +
+'								<a class="operation" data-ng-if="isSwitchable(column)"' +
+'									data-ng-click="removeColumn(column)">' +
+'									<span class="glyphicon glyphicon-minus-sign"></span>' +
+'								</a>' +
 '							</th>' +
-'							<th data-ng-if="actionList.length"' +
-'								class="{{columnClassCallback(headers, \'!!actions!!\', true)}}">' +
+'							<th data-ng-if="actionList.length">' +
 '								{{headerLabelCallback(\'actions\')}}' +
 '							</th>' +
 '						</tr>' +
@@ -769,8 +827,7 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length"' +
-'								class="{{columnClassCallback(row, \'!!actions!!\', false)}}">' +
+'							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList">' +
 '										<a class="btn-link"' +
@@ -801,8 +858,7 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length"' +
-'								class="{{columnClassCallback(row, \'!!actions!!\', false)}}">' +
+'							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList">' +
 '										<a class="btn-link"' +
@@ -829,7 +885,7 @@ angular.module('keta.directives.ExtendedTable')
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
 '								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
 '							<td colspan="{{(rows[0] | orderObjectBy:visibleColumns:true).length + 1}}">' +
-'								{{ labels.NO_ENTRIES }}' +
+'								{{ getLabel(MESSAGE_KEY_PREFIX + \'_no_entries\') }}' +
 '							</td>' +
 '						</tr>' +
 '					</tbody>' +
@@ -849,11 +905,11 @@ angular.module('keta.directives.ExtendedTable')
 '						</button>' +
 '					</div>' +
 '					<input type="text" class="form-control pager-input"' +
-'							data-ng-model="currentPage"' +
-'							data-ng-keypress="checkPagerInput(currentPage, $event)"' +
-'							data-ng-blur="checkPagerInput(currentPage, $event)">' +
+'						data-ng-model="currentPage"' +
+'						data-ng-keypress="checkPagerInput(currentPage, $event)"' +
+'						data-ng-blur="checkPagerInput(currentPage, $event)">' +
 '					<span class="input-group-addon">' +
-'						{{ labels.OF }} {{pages.length}}' +
+'						{{ getLabel(MESSAGE_KEY_PREFIX + \'_of\') }} {{pages.length}}' +
 '					</span>' +
 '					<div class="pager-buttons input-group-btn">' +
 '						<button type="button" class="btn btn-default" data-ng-click="goToPage(currentPage + 1)">' +

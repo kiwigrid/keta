@@ -13,12 +13,28 @@
  * &lt;div data-sidebar data-configuration="{position: 'left', label: 'Fold'}"&gt;&lt;/div&gt;
  */
 
-angular.module('keta.directives.Sidebar',
-	[
-		'keta.shared'
-	])
+angular.module('keta.directives.Sidebar', [])
 
-	.directive('sidebar', function SidebarDirective($document, ketaSharedConfig) {
+	.constant('SidebarConstants', {
+		POSITION: {
+			LEFT: 'left',
+			RIGHT: 'right'
+		},
+		CSS: {
+			OFFCANVAS: 'offcanvas',
+			BRAND_BAR: 'brand-bar'
+		},
+		OFFSET: {
+			TOGGLE_AREA: 5,
+			TRANSCLUDE: 15
+		},
+		EVENT: {
+			TOGGLE_SIDEBAR_LEFT: 'TOGGLE_SIDEBAR_LEFT',
+			TOGGLE_SIDEBAR_RIGHT: 'TOGGLE_SIDEBAR_RIGHT'
+		}
+	})
+
+	.directive('sidebar', function SidebarDirective($document, SidebarConstants) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -33,7 +49,7 @@ angular.module('keta.directives.Sidebar',
 				scope.configuration.position =
 					angular.isDefined(scope.configuration.position) ?
 						scope.configuration.position :
-						ketaSharedConfig.SIDEBAR.POSITION_LEFT;
+						SidebarConstants.POSITION.LEFT;
 
 				// flag for showing toggle area in sidebar
 				scope.showToggleArea = angular.isDefined(scope.configuration.label);
@@ -45,49 +61,49 @@ angular.module('keta.directives.Sidebar',
 
 				// toggle css class on body element
 				scope.toggleSideBar = function() {
-					bodyElem.toggleClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+					bodyElem.toggleClass(SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
 				};
 
 				// close open sidebars if location change starts
 				scope.$on('$locationChangeStart', function() {
-					bodyElem.removeClass(ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position);
+					bodyElem.removeClass(SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
 				});
 
 				// if sidebars are toggled from outside toggle css class on body element
 				var toggleBodyClass = function(position) {
 					if (scope.configuration.position === position) {
 						bodyElem.toggleClass(
-							ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position
+							SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
 						);
 					}
 				};
 
 				// sidebar left
-				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT, function() {
-					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_LEFT);
+				scope.$on(SidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT, function() {
+					toggleBodyClass(SidebarConstants.POSITION.LEFT);
 				});
 
 				// sidebar right
-				scope.$on(ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_RIGHT, function() {
-					toggleBodyClass(ketaSharedConfig.SIDEBAR.POSITION_RIGHT);
+				scope.$on(SidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT, function() {
+					toggleBodyClass(SidebarConstants.POSITION.RIGHT);
 				});
 
 				// position toggle area according to height of brand bar
 				if (scope.showToggleArea) {
 
 					// determine brand bar height
-					var brandBarElem = bodyElem[0].getElementsByClassName(ketaSharedConfig.SIDEBAR.CSS_BRAND_BAR);
+					var brandBarElem = bodyElem[0].getElementsByClassName(SidebarConstants.CSS.BRAND_BAR);
 					var brandBarHeight = angular.isDefined(brandBarElem[0]) ? brandBarElem[0].clientHeight : 0;
 
-					scope.toggleAreaTop = brandBarHeight + ketaSharedConfig.SIDEBAR.TOGGLE_AREA_OFFSET;
-					scope.transcludeTop = ketaSharedConfig.SIDEBAR.TRANSCLUDE_OFFSET;
+					scope.toggleAreaTop = brandBarHeight + SidebarConstants.OFFSET.TOGGLE_AREA;
+					scope.transcludeTop = SidebarConstants.OFFSET.TRANSCLUDE;
 
 				}
 
 				// close on click outside
 				$document.bind('click', function(event) {
 					if (bodyElem.hasClass(
-							ketaSharedConfig.SIDEBAR.CSS_OFFCANVAS + '-' + scope.configuration.position
+							SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
 						)) {
 						var sideBarHtml = element.html(),
 							targetElementHtml = angular.element(event.target).html();

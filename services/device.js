@@ -15,6 +15,35 @@ angular.module('keta.services.Device',
 		'keta.services.Logger'
 	])
 
+	.constant('DeviceConstants', {
+		STATE: {
+			OK: 'OK',
+			ERROR: 'ERROR',
+			FATAL: 'FATAL'
+		},
+		// TODO: include full device class list
+		CLASS: {
+			ENERGY_MANAGER: 'com.kiwigrid.devices.em.EnergyManager',
+			LOCATION: 'com.kiwigrid.devices.location.Location',
+			PV_PLANT: 'com.kiwigrid.devices.pvplant.PVPlant'
+		},
+		// TODO: avoid constant duplication in a certain manner
+		ICON: {
+			'com.kiwigrid.devices.batteryconverter.BatteryConverter': 'kiwigrid-device-icon-battery-converter',
+			'com.kiwigrid.devices.plug.Plug': 'kiwigrid-device-icon-plug',
+			'com.kiwigrid.devices.powermeter.PowerMeter': 'kiwigrid-device-icon-plug',
+			'com.kiwigrid.devices.windturbine.WindTurbine': 'kiwigrid-device-icon-wind-turbine',
+			'com.kiwigrid.devices.sensor.TemperatureSensor': 'kiwigrid-device-icon-temperature-sensor',
+			'com.kiwigrid.devices.inverter.Inverter': 'kiwigrid-device-icon-inverter',
+			'com.kiwigrid.devices.heatpump.HeatPump': 'kiwigrid-device-icon-smart-heat-pump',
+			'com.kiwigrid.devices.microchp.MicroChpSystem': 'kiwigrid-device-icon-micro-combined-heat-pump',
+			'com.kiwigrid.devices.ripplecontrolreceiver.RippleControlReceiver':
+				'kiwigrid-device-icon-ripple-control-receiver',
+			'com.kiwigrid.devices.smartheatpumps.SmartHeatPumps': 'kiwigrid-device-icon-smart-heat-pump',
+			'com.kiwigrid.devices.pvplant.PVPlant': 'kiwigrid-device-icon-pv-plant'
+		}
+	})
+
 	/**
 	 * @class DeviceProvider
 	 * @propertyOf keta.services.Device

@@ -85,8 +85,11 @@
  *     });
  */
 
-angular.module('keta.filters.Unit', [])
-	.filter('unit', function($filter, ketaSharedConfig) {
+angular.module('keta.filters.Unit',
+	[
+		'keta.services.Tag'
+	])
+	.filter('unit', function($filter, TagConstants) {
 		return function(input, configuration) {
 
 			if (!angular.isNumber(input)) {
@@ -156,10 +159,10 @@ angular.module('keta.filters.Unit', [])
 
 			var sizes = isBytes ? ['Bytes', 'KB', 'MB', 'GB', 'TB'] : ['', 'k', 'M', 'G', 'T'];
 
-			if (unit === ketaSharedConfig.UNITS.EURO ||
-				unit === ketaSharedConfig.UNITS.KILOMETER ||
-				unit === ketaSharedConfig.UNITS.DOLLAR ||
-				unit === ketaSharedConfig.UNITS.POUND) {
+			if (unit === TagConstants.UNIT.EURO ||
+				unit === TagConstants.UNIT.KILOMETER ||
+				unit === TagConstants.UNIT.DOLLAR ||
+				unit === TagConstants.UNIT.POUND) {
 				return $filter('number')(input, precision) + ' ' + unit;
 			}
 

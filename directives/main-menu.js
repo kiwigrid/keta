@@ -18,8 +18,8 @@
  * @example
  * &lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
  * @example
- * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.shared'])
- *     .controller('ExampleController', function($scope, ketaSharedConfig) {
+ * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.directives.Sidebar'])
+ *     .controller('ExampleController', function($scope, SidebarConfig) {
  *
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
@@ -45,7 +45,7 @@
  *                 }]
  *             }],
  *             compactMode: false,
- *             toggleBroadcast: ketaSharedConfig.EVENTS.TOGGLE_SIDEBAR_LEFT
+ *             toggleBroadcast: SidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
  *         };
  *
  *         // return app-title depending on current language
@@ -69,7 +69,7 @@ angular.module('keta.directives.MainMenu', [])
 			link: function(scope) {
 
 				scope.titleCallback = scope.titleCallback || function() {
-					return false;
+					return '';
 				};
 
 				var checkPaths = function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {

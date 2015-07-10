@@ -10,6 +10,19 @@
 
 angular.module('keta.services.Tag', [])
 
+	.constant('TagConstants', {
+		// TODO: include full tag unit list
+		UNIT: {
+			WATTS: 'W',
+			WATTHOURS: 'Wh',
+			PERCENT: '%',
+			EURO: '€',
+			DOLLAR: '$',
+			POUND: '£',
+			KILOMETER: 'km'
+		}
+	})
+
 	/**
 	 * @class TagProvider
 	 * @propertyOf keta.services.Tag
