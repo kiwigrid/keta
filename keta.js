@@ -28,7 +28,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.3.24
+ * keta 0.3.25
  */
 
 // source: dist/directives/app-bar.js
@@ -1560,7 +1560,7 @@ angular.module('keta.directives.ExtendedTable')
 '	</div>' +
 '' +
 '	<!-- PAGER -->' +
-'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null && pages.length > 1">' +
 '		<div class="col-xs-12 col-sm-6">' +
 '			<div class="pager max-width">' +
 '				<div class="input-group">' +

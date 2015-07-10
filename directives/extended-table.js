@@ -839,7 +839,7 @@ angular.module('keta.directives.ExtendedTable')
 '	</div>' +
 '' +
 '	<!-- PAGER -->' +
-'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null">' +
+'	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null && pages.length > 1">' +
 '		<div class="col-xs-12 col-sm-6">' +
 '			<div class="pager max-width">' +
 '				<div class="input-group">' +
