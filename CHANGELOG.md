@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.1
+
+_Released: 2015-07-17_
+
+* Bugfix for `AppBar` directive: Overwriting the logout link is now possible
+* Added `tableClassCallback` to `ExtendedTable` directive to modify table classes
+
 ## Version 0.4.0
 
 _Released: 2015-07-10_

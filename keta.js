@@ -29,7 +29,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.4.0
+ * keta 0.4.1
  */
 
 // source: dist/directives/app-bar.js
@@ -451,7 +451,8 @@ angular.module('keta.directives.AppBar',
 				 */
 				var setDefaultLinks = function setDefaultLinks() {
 
-					scope.links.USER_LOGOUT = '/rest/auth/logout';
+					scope.links.USER_LOGOUT =
+						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
 					if (eventBus !== null) {
 						ApplicationSet.create(eventBus)
@@ -1005,6 +1006,7 @@ angular.module('keta.directives.AppBar')
  *     data-action-list="actionList"
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
+ *     data-table-class-callback="tableClassCallback"
  *     data-pager="pager"
  *     data-search="search"
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
@@ -1048,7 +1050,7 @@ angular.module('keta.directives.AppBar')
  *             '__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées'
  *         };
  *
- *         // array of disabled components (empty by default)
+ *         // array of disabled components (default: everything except the table itself is disabled)
  *         $scope.disabledComponents = [
  *             // the table itself
  *             ExtendedTableConstants.COMPONENT.TABLE,
@@ -1159,6 +1161,11 @@ angular.module('keta.directives.AppBar')
  *                 }
  *             }
  *             return columnClass;
+ *         };
+ *
+ *         // callback method to return class array for table
+ *         $scope.tableClassCallback = function() {
+ *             return ['table-striped'];
  *         };
  *
  *         // object for pager configuration (total, limit, offset)
@@ -1293,6 +1300,9 @@ angular.module('keta.directives.ExtendedTable',
 				// callback method to return class attribute for each column
 				columnClassCallback: '=?',
 
+				// callback method to return class array for table
+				tableClassCallback: '=?',
+
 				// object for pager configuration (total, limit, offset)
 				pager: '=?',
 
@@ -1385,6 +1395,11 @@ angular.module('keta.directives.ExtendedTable',
 				scope.columnClassCallback = scope.columnClassCallback || function() {
 					// parameters: row, column, isHeader
 					return '';
+				};
+
+				// tableClassCallback
+				scope.tableClassCallback = scope.tableClassCallback || function() {
+					return ['table-striped'];
 				};
 
 				// pager
@@ -1546,6 +1561,13 @@ angular.module('keta.directives.ExtendedTable',
 				}, true);
 
 				// ACTIONS ---
+
+				$scope.getTableClasses = function() {
+					var configuredClasses = $scope.tableClassCallback();
+					configuredClasses.push('table');
+					configuredClasses.push('form-group');
+					return configuredClasses.join(' ');
+				};
 
 				$scope.isDisabled = function(key) {
 					return inArray($scope.disabledComponents, key);
@@ -1752,7 +1774,7 @@ angular.module('keta.directives.ExtendedTable')
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_TABLE)">' +
 '		<div class="col-xs-12">' +
 '			<div class="table-responsive table-data">' +
-'				<table class="table table-striped form-group">' +
+'				<table data-ng-class="getTableClasses()">' +
 '					<thead>' +
 '						<tr>' +
 '							<th class="{{columnClassCallback(headers, column, true)}} sortable"' +

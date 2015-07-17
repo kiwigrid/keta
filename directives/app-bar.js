@@ -418,7 +418,8 @@ angular.module('keta.directives.AppBar',
 				 */
 				var setDefaultLinks = function setDefaultLinks() {
 
-					scope.links.USER_LOGOUT = '/rest/auth/logout';
+					scope.links.USER_LOGOUT =
+						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
 					if (eventBus !== null) {
 						ApplicationSet.create(eventBus)
