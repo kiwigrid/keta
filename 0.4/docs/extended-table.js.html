@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.0
+			Version 0.4.1
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.0" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.0" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.1" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.1" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.0" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.0" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.1" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.1" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -99,6 +99,7 @@
  *     data-action-list="actionList"
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
+ *     data-table-class-callback="tableClassCallback"
  *     data-pager="pager"
  *     data-search="search"
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
@@ -142,7 +143,7 @@
  *             '__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées'
  *         };
  *
- *         // array of disabled components (empty by default)
+ *         // array of disabled components (default: everything except the table itself is disabled)
  *         $scope.disabledComponents = [
  *             // the table itself
  *             ExtendedTableConstants.COMPONENT.TABLE,
@@ -253,6 +254,11 @@
  *                 }
  *             }
  *             return columnClass;
+ *         };
+ *
+ *         // callback method to return class array for table
+ *         $scope.tableClassCallback = function() {
+ *             return ['table-striped'];
  *         };
  *
  *         // object for pager configuration (total, limit, offset)
@@ -387,6 +393,9 @@ angular.module('keta.directives.ExtendedTable',
 				// callback method to return class attribute for each column
 				columnClassCallback: '=?',
 
+				// callback method to return class array for table
+				tableClassCallback: '=?',
+
 				// object for pager configuration (total, limit, offset)
 				pager: '=?',
 
@@ -479,6 +488,11 @@ angular.module('keta.directives.ExtendedTable',
 				scope.columnClassCallback = scope.columnClassCallback || function() {
 					// parameters: row, column, isHeader
 					return '';
+				};
+
+				// tableClassCallback
+				scope.tableClassCallback = scope.tableClassCallback || function() {
+					return ['table-striped'];
 				};
 
 				// pager
@@ -640,6 +654,13 @@ angular.module('keta.directives.ExtendedTable',
 				}, true);
 
 				// ACTIONS ---
+
+				$scope.getTableClasses = function() {
+					var configuredClasses = $scope.tableClassCallback();
+					configuredClasses.push('table');
+					configuredClasses.push('form-group');
+					return configuredClasses.join(' ');
+				};
 
 				$scope.isDisabled = function(key) {
 					return inArray($scope.disabledComponents, key);
