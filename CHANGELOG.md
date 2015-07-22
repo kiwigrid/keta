@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.2
+
+_Released: 2015-07-22_
+
+* Added support for new `meta.json` format to `AppBar` directive
+* Several features and bugfixes for CSS parts
+
 ## Version 0.4.1
 
 _Released: 2015-07-17_

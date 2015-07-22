@@ -41,14 +41,13 @@ angular.module('keta.utils.Application',
 			 *   uiLocale is the current (user set) UI language of the running app.
 			 *   Can be either short ('de') or long ('en-US') format.
 			 * </p>
-			 * @param {string} localizedKey key to look for inside the uiLocale object
 			 * @param {object} labels object of all labels grouped by locale keys
 			 * @param {string} uiLocale current locale
 			 * @returns {string} application localized application name
 			 */
 
-			getAppName: function getAppName(localizedKey, labels, uiLocale) {
-				return CommonUtils.getLabelByLocale(localizedKey, labels, uiLocale);
+			getAppName: function getAppName(labels, uiLocale) {
+				return CommonUtils.getLabelByLocale('name', labels, uiLocale);
 			},
 
 			/**
@@ -120,7 +119,7 @@ angular.module('keta.utils.Application',
 										!angular.isDefined(usedOptions.excludeAppIds[app.appId]) ||
 										usedOptions.excludeAppIds[app.appId] === false	&&
 										angular.isString(app.entryUri) && app.entryUri !== '' &&
-										CommonUtils.doesPropertyExist(app, 'meta.en.name')) {
+										CommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
 
 										filteredApps.push(app);
 									}

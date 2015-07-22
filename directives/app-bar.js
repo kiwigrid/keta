@@ -21,7 +21,20 @@
  *     data-display-modes="displayModes"
  *     data-root-app="rootApp"&gt;
  *     &lt;a data-ng-href="{{rootApp.link}}" title="{{rootApp.name[currentLocale]}}"&gt;
- *         &lt;img src="img/kiwigrid-logo.svg"&gt;
+ *         &lt;img src="img/logo.svg"&gt;
+ *     &lt;/a&gt;
+ * &lt;/div&gt;
+ * @example
+ * &lt;div data-app-bar
+ *     data-event-bus-id="eventBusId"
+ *     data-locales="locales"
+ *     data-current-locale="currentLocale"
+ *     data-labels="labels"
+ *     data-links="links"
+ *     data-worlds="worlds"
+ *     data-display-modes="displayModes"&gt;
+ *     &lt;a data-ng-href="/" title="My App root"&gt;
+ *         &lt;img src="img/logo.svg"&gt;
  *     &lt;/a&gt;
  * &lt;/div&gt;
  * @example
@@ -62,8 +75,8 @@
  *             '__keta.directives.AppBar_user_profile': 'Profil de l'utilisateur'
  *         };
  *
- *         // object of link to use in template.
- *         // the directive sets default links that can be overwritten by the keys of this object.
+ *         // object of link to use in template
+ *         // the directive sets default links that can be overwritten by the keys of this object
  *         $scope.links = {
  *             ALL_APPS: '/#/applications/',
  *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
@@ -142,13 +155,9 @@
  *             }
  *         };
  *
- *         $scope.rootApp = {
- *             link: 'http://root.app',
- *             name: {
- *                 en: 'Root App',
- *                 de: 'Startapplikation'
- *             }
- *         };
+ *         // object of root app to use in transclusion template
+ *         // will be filled automatically by directive
+ *         $scope.rootApp = {};
  *
  *     });
  */
@@ -198,7 +207,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Logout',
-			'__keta.directives.AppBar_user_profile': 'User Profile'
+			'__keta.directives.AppBar_user_profile': 'User Account'
 		},
 		'de': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
@@ -206,12 +215,12 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Abmelden',
-			'__keta.directives.AppBar_user_profile': 'Benutzerprofil'
+			'__keta.directives.AppBar_user_profile': 'Benutzerkonto'
 		}
 	})
 
 	.directive('appBar', function AppBarDirective(
-		$rootScope, $window, $document, $timeout,
+		$rootScope, $window, $document, $timeout, $filter,
 		EventBusManager, DeviceSet, ApplicationSet, User,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils) {
 
@@ -224,6 +233,7 @@ angular.module('keta.directives.AppBar',
 				eventBusId: '=?',
 
 				// array of locales to use for language menu
+				// this will be sorted alphabetically in ascending order
 				locales: '=?',
 
 				// current locale
@@ -258,6 +268,9 @@ angular.module('keta.directives.AppBar',
 				scope.worlds = scope.worlds || [];
 				scope.locales = scope.locales || [];
 				scope.energyManagers = [];
+
+				// sort locales
+				scope.locales = $filter('orderBy')(scope.locales, 'name');
 
 				// event bus
 				scope.eventBusId = scope.eventBusId || 'kiwibus';
@@ -439,7 +452,11 @@ angular.module('keta.directives.AppBar',
 											app.appId === AppBarConstants.ROOT_APP_ID &&
 											angular.isDefined(app.entryUri)) {
 											entryUri = app.entryUri;
-											name = app.meta.names;
+											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
+												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
+													name[locale] = app.meta.i18n[locale].name;
+												});
+											}
 										}
 									});
 									// use link-element to easily access url params
