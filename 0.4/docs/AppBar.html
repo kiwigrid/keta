@@ -142,7 +142,20 @@
     data-display-modes="displayModes"
     data-root-app="rootApp"&gt;
     &lt;a data-ng-href="{{rootApp.link}}" title="{{rootApp.name[currentLocale]}}"&gt;
-        &lt;img src="img/kiwigrid-logo.svg"&gt;
+        &lt;img src="img/logo.svg"&gt;
+    &lt;/a&gt;
+&lt;/div&gt;</code></pre>
+
+    <pre class="prettyprint"><code>&lt;div data-app-bar
+    data-event-bus-id="eventBusId"
+    data-locales="locales"
+    data-current-locale="currentLocale"
+    data-labels="labels"
+    data-links="links"
+    data-worlds="worlds"
+    data-display-modes="displayModes"&gt;
+    &lt;a data-ng-href="/" title="My App root"&gt;
+        &lt;img src="img/logo.svg"&gt;
     &lt;/a&gt;
 &lt;/div&gt;</code></pre>
 
@@ -183,8 +196,8 @@
             '__keta.directives.AppBar_user_profile': 'Profil de l'utilisateur'
         };
 
-        // object of link to use in template.
-        // the directive sets default links that can be overwritten by the keys of this object.
+        // object of link to use in template
+        // the directive sets default links that can be overwritten by the keys of this object
         $scope.links = {
             ALL_APPS: '/#/applications/',
             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
@@ -263,13 +276,9 @@
             }
         };
 
-        $scope.rootApp = {
-            link: 'http://root.app',
-            name: {
-                en: 'Root App',
-                de: 'Startapplikation'
-            }
-        };
+        // object of root app to use in transclusion template
+        // will be filled automatically by directive
+        $scope.rootApp = {};
 
     });</code></pre>
 
