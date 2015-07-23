@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.1
+			Version 0.4.3
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.1" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.1" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.3" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.3" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.1" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.1" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.3" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.3" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -501,11 +501,14 @@ angular.module('keta.directives.AppBar',
 					scope.links.USER_LOGOUT =
 						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
+					// TODO: re-enable filter if it is used on backend
 					if (eventBus !== null) {
 						ApplicationSet.create(eventBus)
+							/*
 							.filter({
 								appId: AppBarConstants.ROOT_APP_ID
 							})
+							*/
 							.query()
 							.then(function(reply) {
 								if (angular.isDefined(reply.result) &&
@@ -516,7 +519,9 @@ angular.module('keta.directives.AppBar',
 									scope.rootApp = null;
 									angular.forEach(reply.result.items, function(app) {
 										if (angular.isDefined(app.appId) &&
-											app.appId === AppBarConstants.ROOT_APP_ID &&
+											// app.appId === AppBarConstants.ROOT_APP_ID &&
+											(app.appId === AppBarConstants.ROOT_APP_ID ||
+											app.appId === 'kiwigrid.desktop') &&
 											angular.isDefined(app.entryUri)) {
 											entryUri = app.entryUri;
 											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
