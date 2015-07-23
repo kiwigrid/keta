@@ -29,7 +29,7 @@ angular.module('keta', [
 ]);
 
 /**
- * keta 0.4.2
+ * keta 0.4.3
  */
 
 // source: dist/directives/app-bar.js
@@ -467,11 +467,14 @@ angular.module('keta.directives.AppBar',
 					scope.links.USER_LOGOUT =
 						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
+					// TODO: re-enable filter if it is used on backend
 					if (eventBus !== null) {
 						ApplicationSet.create(eventBus)
+							/*
 							.filter({
 								appId: AppBarConstants.ROOT_APP_ID
 							})
+							*/
 							.query()
 							.then(function(reply) {
 								if (angular.isDefined(reply.result) &&
@@ -482,7 +485,9 @@ angular.module('keta.directives.AppBar',
 									scope.rootApp = null;
 									angular.forEach(reply.result.items, function(app) {
 										if (angular.isDefined(app.appId) &&
-											app.appId === AppBarConstants.ROOT_APP_ID &&
+											// app.appId === AppBarConstants.ROOT_APP_ID &&
+											(app.appId === AppBarConstants.ROOT_APP_ID ||
+											app.appId === 'kiwigrid.desktop') &&
 											angular.isDefined(app.entryUri)) {
 											entryUri = app.entryUri;
 											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
