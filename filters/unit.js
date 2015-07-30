@@ -90,7 +90,8 @@ angular.module('keta.filters.Unit',
 		'keta.services.Tag'
 	])
 	.filter('unit', function($filter, TagConstants) {
-		return function(input, configuration) {
+
+		var unitFilter = function unitFilter(input, configuration) {
 
 			if (!angular.isNumber(input)) {
 				return input;
@@ -211,6 +212,12 @@ angular.module('keta.filters.Unit',
 			if (separate) {
 				return separated;
 			}
+
 			return input;
 		};
+
+		unitFilter.$stateful = true;
+
+		return unitFilter;
+
 	});

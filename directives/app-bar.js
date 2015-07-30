@@ -399,7 +399,7 @@ angular.module('keta.directives.AppBar',
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
-					APP_ROOT: null,
+					APP_ROOT: '#/',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};

@@ -37,7 +37,7 @@
  *     data-search="search"
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
  * @example
- * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device])
+ * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device'])
  *     .controller('ExampleController', function(
  *         $scope,
  *         ExtendedTableConstants, ExtendedTableMessageKeys, DeviceConstants) {

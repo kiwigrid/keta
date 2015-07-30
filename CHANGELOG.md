@@ -10,6 +10,19 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.4
+
+_Released: 2015-07-30_
+
+* Bugfix for `unit` filter to respond to `locale` changes when used in templates
+* Added `keta.utils.Country`: `getCountryList` returns localized list of countries
+
+## Version 0.4.3
+
+_Released: 2015-07-23_
+
+* Changed App ID for Cloud Desktop
+
 ## Version 0.4.2
 
 _Released: 2015-07-22_
