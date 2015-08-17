@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.4
+			Version 0.4.5
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -610,6 +610,7 @@ angular.module('keta.utils.Country', [])
 		 * &lt;/p>
 		 * &lt;p>
 		 *     Accessor provides the possibility to reformat the return value on per usage basis.
+		 *     The accessor is optional.
 		 * &lt;/p>
 		 * @param {string} currentLocale can be either in short ('en') or long ('en-US') format.
 		 * @param {function} accessor a function to format the output
@@ -620,12 +621,23 @@ angular.module('keta.utils.Country', [])
 		 *
 		 *         $scope.currentLocale = 'en';
 		 *
+		 *         // countries as array of objects {key: ..., value: ...}
+		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
+		 *
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.utils.Country'])
+		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *
+		 *         $scope.currentLocale = 'en';
+		 *
+		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
 		 *             CountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
 		 *                 return {value: countryCode, name: countryName};
-         *             });
-         *
-         *     });
+		 *             });
+		 *
+		 *     });
 		 */
 		factory.getCountryList = function getCountryList(currentLocale, accessor) {
 			var countries = [];

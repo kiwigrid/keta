@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.4
+			Version 0.4.5
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -120,7 +120,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line20">line 20</a>
+        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line25">line 25</a>
     </li></ul></dd>
     
     
@@ -205,7 +205,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line36">line 36</a>
+        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line42">line 42</a>
     </li></ul></dd>
     
     
@@ -226,9 +226,325 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <ul class="list-unstyled"><li><a href="#getAppList"><span class="type-signature">&lt;static> </span>getAppList<span class="signature">(options)</span><span class="type-signature"> &rarr; {promise}</span></a></li></ul>
+        <ul class="list-unstyled"><li><a href="#getAppAuthor"><span class="type-signature">&lt;static> </span>getAppAuthor<span class="signature">(app, type)</span><span class="type-signature"> &rarr; {string}</span></a></li><li><a href="#getAppIcon"><span class="type-signature">&lt;static> </span>getAppIcon<span class="signature">(app, language)</span><span class="type-signature"> &rarr; {string}</span></a></li><li><a href="#getAppList"><span class="type-signature">&lt;static> </span>getAppList<span class="signature">(options)</span><span class="type-signature"> &rarr; {promise}</span></a></li></ul>
         
         <dl class="methods">
+            
+<dt>
+    <h3 class="name" id="getAppAuthor"><span class="type-signature">&lt;static> </span>getAppAuthor<span class="signature">(app, type)</span><span class="type-signature"> &rarr; {string}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns author from type or the first author in app.meta.author array.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">application instance</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">author type</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line206">line 206</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">string</span>
+
+
+	
+	
+    app author name
+    
+</div>
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getAppIcon"><span class="type-signature">&lt;static> </span>getAppIcon<span class="signature">(app, language)</span><span class="type-signature"> &rarr; {string}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns app icon source from app meta object by using
+  link-element to easily access url params.
+  If app has no icon informations it return <code>null</code>.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>app</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">application instance</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>language</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">current language</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line150">line 150</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">string</span>
+
+
+	
+	
+    app icon src
+    
+</div>
+        
+    
+    
+</dd>
+
+        
             
 <dt>
     <h3 class="name" id="getAppList"><span class="type-signature">&lt;static> </span>getAppList<span class="signature">(options)</span><span class="type-signature"> &rarr; {promise}</span></h3>
@@ -323,7 +639,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line53">line 53</a>
+        <a href="application.js_.html">utils/application.js</a>, <a href="application.js_.html#line59">line 59</a>
     </li></ul></dd>
     
     

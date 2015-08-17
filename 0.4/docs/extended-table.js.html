@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.4
+			Version 0.4.5
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.4" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.4" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -411,8 +411,7 @@ angular.module('keta.directives.ExtendedTable',
 
 				// rows
 				scope.rows =
-					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ?
-						scope.rows : [];
+					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ? scope.rows : [];
 
 				scope.currentLocale = scope.currentLocale || 'en';
 
@@ -534,10 +533,44 @@ angular.module('keta.directives.ExtendedTable',
 
 				// HELPER ---
 
+				/**
+				 * Checkout all keys and fill empty keys with null
+				 * @param {Array} objects array with objects to fill
+				 * @returns {Object} filled object
+				 */
+				var fillAllKeys = function(objects) {
+					var keys = [];
+
+					// get all keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(obj, function(value, key) {
+
+							if (keys.indexOf(key) === -1) {
+								keys.push(key);
+							}
+
+						});
+					});
+
+					// fill empty keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(keys, function(key) {
+
+							obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
+
+						});
+					});
+
+					return objects;
+				};
+
 				// update properties without using defaults
 				var update = function() {
 
 					if (angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) {
+
+						// fill all keys
+						$scope.rows = fillAllKeys($scope.rows);
 
 						// headers to save
 						if (angular.equals($scope.headers, {})) {
@@ -572,6 +605,9 @@ angular.module('keta.directives.ExtendedTable',
 					});
 					return found;
 				};
+
+				// fill all keys initial
+				$scope.rows = fillAllKeys($scope.rows);
 
 				// reset pager object regarding filtered rows
 				$scope.resetPager = function() {
