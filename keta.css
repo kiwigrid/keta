@@ -7981,6 +7981,7 @@ td.visible-xxs {
   height: 100%;
   position: absolute;
   right: 0;
+  top: 0;
 }
 .navbar-level-1 .dropdown.open .dropdown-toggle,
 .navbar-level-1 .dropdown .dropdown-toggle {
@@ -8078,8 +8079,7 @@ body {
 .alert {
   font-size: 14px;
 }
-.row-offcanvas,
-.sidebar-transclude {
+.row-offcanvas {
   position: relative;
 }
 .navbar-logo {
@@ -8180,7 +8180,7 @@ body {
 }
 .sidebar-offcanvas .sidebar-title {
   text-transform: uppercase;
-  padding: 15px 10px;
+  padding: 10px;
   line-height: normal;
 }
 .sidebar-offcanvas .sidebar-title span {
@@ -8305,9 +8305,6 @@ body {
   max-height: 22px;
 }
 .tag.label {
-  margin-top: 0;
-  margin-right: 0;
-  margin-left: 0;
   padding: 6px;
 }
 .tag .tag-value {
@@ -8725,43 +8722,26 @@ a.bg-blue:focus {
   cursor: pointer;
 }
 .table-data th.sort a {
-  color: #acbf30;
+  color: #363636;
+}
+.table-data th.sort a:hover,
+.table-data th.sort a:focus {
+  color: #363636;
 }
 .table-data th span {
-  color: #acbf30;
   padding-left: 3px;
 }
 .table-data th a {
   text-decoration: none;
-  color: #363636;
-}
-.table-data th a:hover span {
-  color: #9aab2b;
 }
 .short-cuts {
   position: absolute;
-  list-style: none;
-  z-index: 5;
-  left: -30px;
-  top: 17px;
-}
-.short-cuts li:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 5px;
-}
-.short-cuts li a {
-  padding: 10px;
-}
-.short-cuts li a:focus {
-  text-decoration: none;
-}
-.short-cuts li a.glyphicon {
-  font-size: 16px;
+  left: 10px;
   top: 0;
-  color: #a1a1a1;
+  z-index: 5;
 }
-.short-cuts li a.glyphicon:hover {
-  text-decoration: none;
+.short-cuts.nav-pills > li > a {
+  color: #a1a1a1;
 }
 @font-face {
   font-family: "kiwigrid-device-icons";
@@ -8836,7 +8816,8 @@ a.bg-blue:focus {
   position: relative;
   overflow: hidden;
 }
-.widget a:hover {
+.widget a:hover,
+.widget a:focus {
   text-decoration: none;
 }
 .widget .widget-lg,
@@ -9129,6 +9110,16 @@ textarea.form-control {
   font-size: 14px;
   text-transform: none;
 }
+.radio-inline.disabled,
+.checkbox-inline.disabled,
+.radio.disabled,
+.checkbox.disabled,
+fieldset[disabled] .radio-inline,
+fieldset[disabled] .checkbox-inline,
+fieldset[disabled] .radio,
+fieldset[disabled] .checkbox {
+  color: #838383;
+}
 .help-block {
   font-size: 12px;
 }
@@ -9174,6 +9165,11 @@ textarea.form-control {
   padding: 2px 10px 2px 10px;
   color: #ffffff;
   border-radius: 2px;
+}
+.uppercase-label {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
 }
 .nav-pills.nav-sub-level > li a {
   padding-left: 32px;
@@ -9588,7 +9584,7 @@ h2 .label {
   z-index: 510;
 }
 .label {
-  margin: 5px;
+  margin: 0 5px 5px 0;
 }
 .table th.state,
 .table td.state {
@@ -9690,4 +9686,8 @@ a.app:hover {
 }
 .glyphicon + span {
   padding-left: 0.25em;
+}
+sup {
+  top: 0;
+  padding-left: 0.35rem;
 }

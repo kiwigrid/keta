@@ -17,6 +17,11 @@ angular.module('keta.utils.Application',
 		'keta.utils.Common'
 	])
 
+	.constant('ApplicationUtilsConstants', {
+		MEDIA_TYPE_APPICON: 'APPICON',
+		AUTHOR_TYPE_SELLER: 'SELLER'
+	})
+
 	/**
 	 * @class ApplicationUtils
 	 * @propertyOf keta.utils.Application
@@ -24,7 +29,8 @@ angular.module('keta.utils.Application',
 	 */
 	.factory('ApplicationUtils', function ApplicationUtils(
 		$log, $q,
-		ApplicationSet, EventBusManager, CommonUtils
+		ApplicationSet, EventBusManager, CommonUtils,
+		ApplicationUtilsConstants
 	) {
 
 		var deferred = {
@@ -139,6 +145,100 @@ angular.module('keta.utils.Application',
 				}
 
 				return deferred.getAppList.promise;
+			},
+
+			/**
+			 * @name getAppIcon
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * <p>
+			 *   Returns app icon source from app meta object by using
+			 *   link-element to easily access url params.
+			 *   If app has no icon informations it return <code>null</code>.
+			 * </p>
+			 * @param {object} app application instance
+			 * @param {string} language current language
+			 * @returns {string} app icon src
+			 */
+			getAppIcon: function(app, language) {
+
+				var appIcon = null;
+
+				language = angular.isDefined(language) ? language : 'en';
+
+				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+					angular.isDefined(app.meta.i18n[language]) &&
+					angular.isDefined(app.meta.i18n[language].media) ?
+						app.meta.i18n[language].media : null;
+
+				if (mediaSource === null &&
+					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					mediaSource = app.meta.i18n.en.media;
+				}
+
+				if (angular.isDefined(app.entryUri)) {
+
+					var link = document.createElement('a');
+					link.href = app.entryUri;
+
+					angular.forEach(mediaSource, function(media) {
+
+						if (angular.isDefined(media.type) &&
+							media.type === ApplicationUtilsConstants.MEDIA_TYPE_APPICON &&
+							angular.isDefined(media.src)) {
+
+							appIcon =
+								link.origin[link.origin.length - 1] !== '/' && media.src[0] !== '/' ?
+								link.origin + '/' + media.src :
+								link.origin + media.src;
+
+						}
+
+					});
+
+				}
+
+				return appIcon;
+
+			},
+
+			/**
+			 * @name getAppAuthor
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * <p>
+			 *   Returns author from type or the first author in app.meta.author array.
+			 * </p>
+			 * @param {object} app application instance
+			 * @param {string} type author type
+			 * @returns {string} app author name
+			 */
+			getAppAuthor: function(app, type) {
+
+				var appAuthor = null;
+
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE_SELLER;
+
+				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
+
+					angular.forEach(app.meta.authors, function(author) {
+
+						if (author.type === type) {
+							appAuthor = author.name;
+						}
+
+					});
+
+					if (appAuthor === null) {
+						appAuthor = app.meta.authors[0].name;
+					}
+
+				}
+
+				return appAuthor;
+
 			}
 
 		};

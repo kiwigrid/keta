@@ -543,6 +543,7 @@ angular.module('keta.utils.Country', [])
 		 * </p>
 		 * <p>
 		 *     Accessor provides the possibility to reformat the return value on per usage basis.
+		 *     The accessor is optional.
 		 * </p>
 		 * @param {string} currentLocale can be either in short ('en') or long ('en-US') format.
 		 * @param {function} accessor a function to format the output
@@ -553,12 +554,23 @@ angular.module('keta.utils.Country', [])
 		 *
 		 *         $scope.currentLocale = 'en';
 		 *
+		 *         // countries as array of objects {key: ..., value: ...}
+		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
+		 *
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.utils.Country'])
+		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *
+		 *         $scope.currentLocale = 'en';
+		 *
+		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
 		 *             CountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
 		 *                 return {value: countryCode, name: countryName};
-         *             });
-         *
-         *     });
+		 *             });
+		 *
+		 *     });
 		 */
 		factory.getCountryList = function getCountryList(currentLocale, accessor) {
 			var countries = [];

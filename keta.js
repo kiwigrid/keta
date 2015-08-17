@@ -27,13 +27,7 @@ angular.module('keta', [
 	'keta.utils.Application',
 	'keta.utils.Common',
 	'keta.utils.Country'
-]);
-
-/**
- * keta 0.4.4
- */
-
-// source: dist/directives/app-bar.js
+]);// source: dist/directives/app-bar.js
 /**
  * @name keta.directives.AppBar
  * @author Vincent Romanus <vincent.romanus@kiwigrid.com>
@@ -1341,8 +1335,7 @@ angular.module('keta.directives.ExtendedTable',
 
 				// rows
 				scope.rows =
-					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ?
-						scope.rows : [];
+					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ? scope.rows : [];
 
 				scope.currentLocale = scope.currentLocale || 'en';
 
@@ -1464,10 +1457,44 @@ angular.module('keta.directives.ExtendedTable',
 
 				// HELPER ---
 
+				/**
+				 * Checkout all keys and fill empty keys with null
+				 * @param {Array} objects array with objects to fill
+				 * @returns {Object} filled object
+				 */
+				var fillAllKeys = function(objects) {
+					var keys = [];
+
+					// get all keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(obj, function(value, key) {
+
+							if (keys.indexOf(key) === -1) {
+								keys.push(key);
+							}
+
+						});
+					});
+
+					// fill empty keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(keys, function(key) {
+
+							obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
+
+						});
+					});
+
+					return objects;
+				};
+
 				// update properties without using defaults
 				var update = function() {
 
 					if (angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) {
+
+						// fill all keys
+						$scope.rows = fillAllKeys($scope.rows);
 
 						// headers to save
 						if (angular.equals($scope.headers, {})) {
@@ -1502,6 +1529,9 @@ angular.module('keta.directives.ExtendedTable',
 					});
 					return found;
 				};
+
+				// fill all keys initial
+				$scope.rows = fillAllKeys($scope.rows);
 
 				// reset pager object regarding filtered rows
 				$scope.resetPager = function() {
@@ -7074,6 +7104,11 @@ angular.module('keta.utils.Application',
 		'keta.utils.Common'
 	])
 
+	.constant('ApplicationUtilsConstants', {
+		MEDIA_TYPE_APPICON: 'APPICON',
+		AUTHOR_TYPE_SELLER: 'SELLER'
+	})
+
 	/**
 	 * @class ApplicationUtils
 	 * @propertyOf keta.utils.Application
@@ -7081,7 +7116,8 @@ angular.module('keta.utils.Application',
 	 */
 	.factory('ApplicationUtils', function ApplicationUtils(
 		$log, $q,
-		ApplicationSet, EventBusManager, CommonUtils
+		ApplicationSet, EventBusManager, CommonUtils,
+		ApplicationUtilsConstants
 	) {
 
 		var deferred = {
@@ -7196,6 +7232,100 @@ angular.module('keta.utils.Application',
 				}
 
 				return deferred.getAppList.promise;
+			},
+
+			/**
+			 * @name getAppIcon
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * <p>
+			 *   Returns app icon source from app meta object by using
+			 *   link-element to easily access url params.
+			 *   If app has no icon informations it return <code>null</code>.
+			 * </p>
+			 * @param {object} app application instance
+			 * @param {string} language current language
+			 * @returns {string} app icon src
+			 */
+			getAppIcon: function(app, language) {
+
+				var appIcon = null;
+
+				language = angular.isDefined(language) ? language : 'en';
+
+				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+					angular.isDefined(app.meta.i18n[language]) &&
+					angular.isDefined(app.meta.i18n[language].media) ?
+						app.meta.i18n[language].media : null;
+
+				if (mediaSource === null &&
+					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					mediaSource = app.meta.i18n.en.media;
+				}
+
+				if (angular.isDefined(app.entryUri)) {
+
+					var link = document.createElement('a');
+					link.href = app.entryUri;
+
+					angular.forEach(mediaSource, function(media) {
+
+						if (angular.isDefined(media.type) &&
+							media.type === ApplicationUtilsConstants.MEDIA_TYPE_APPICON &&
+							angular.isDefined(media.src)) {
+
+							appIcon =
+								link.origin[link.origin.length - 1] !== '/' && media.src[0] !== '/' ?
+								link.origin + '/' + media.src :
+								link.origin + media.src;
+
+						}
+
+					});
+
+				}
+
+				return appIcon;
+
+			},
+
+			/**
+			 * @name getAppAuthor
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * <p>
+			 *   Returns author from type or the first author in app.meta.author array.
+			 * </p>
+			 * @param {object} app application instance
+			 * @param {string} type author type
+			 * @returns {string} app author name
+			 */
+			getAppAuthor: function(app, type) {
+
+				var appAuthor = null;
+
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE_SELLER;
+
+				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
+
+					angular.forEach(app.meta.authors, function(author) {
+
+						if (author.type === type) {
+							appAuthor = author.name;
+						}
+
+					});
+
+					if (appAuthor === null) {
+						appAuthor = app.meta.authors[0].name;
+					}
+
+				}
+
+				return appAuthor;
+
 			}
 
 		};
@@ -7839,6 +7969,7 @@ angular.module('keta.utils.Country', [])
 		 * </p>
 		 * <p>
 		 *     Accessor provides the possibility to reformat the return value on per usage basis.
+		 *     The accessor is optional.
 		 * </p>
 		 * @param {string} currentLocale can be either in short ('en') or long ('en-US') format.
 		 * @param {function} accessor a function to format the output
@@ -7849,12 +7980,23 @@ angular.module('keta.utils.Country', [])
 		 *
 		 *         $scope.currentLocale = 'en';
 		 *
+		 *         // countries as array of objects {key: ..., value: ...}
+		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
+		 *
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.utils.Country'])
+		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *
+		 *         $scope.currentLocale = 'en';
+		 *
+		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
 		 *             CountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
 		 *                 return {value: countryCode, name: countryName};
-         *             });
-         *
-         *     });
+		 *             });
+		 *
+		 *     });
 		 */
 		factory.getCountryList = function getCountryList(currentLocale, accessor) {
 			var countries = [];

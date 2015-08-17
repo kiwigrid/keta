@@ -344,8 +344,7 @@ angular.module('keta.directives.ExtendedTable',
 
 				// rows
 				scope.rows =
-					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ?
-						scope.rows : [];
+					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ? scope.rows : [];
 
 				scope.currentLocale = scope.currentLocale || 'en';
 
@@ -467,10 +466,44 @@ angular.module('keta.directives.ExtendedTable',
 
 				// HELPER ---
 
+				/**
+				 * Checkout all keys and fill empty keys with null
+				 * @param {Array} objects array with objects to fill
+				 * @returns {Object} filled object
+				 */
+				var fillAllKeys = function(objects) {
+					var keys = [];
+
+					// get all keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(obj, function(value, key) {
+
+							if (keys.indexOf(key) === -1) {
+								keys.push(key);
+							}
+
+						});
+					});
+
+					// fill empty keys
+					angular.forEach(objects, function(obj) {
+						angular.forEach(keys, function(key) {
+
+							obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
+
+						});
+					});
+
+					return objects;
+				};
+
 				// update properties without using defaults
 				var update = function() {
 
 					if (angular.isDefined($scope.rows) && angular.isDefined($scope.rows[0])) {
+
+						// fill all keys
+						$scope.rows = fillAllKeys($scope.rows);
 
 						// headers to save
 						if (angular.equals($scope.headers, {})) {
@@ -505,6 +538,9 @@ angular.module('keta.directives.ExtendedTable',
 					});
 					return found;
 				};
+
+				// fill all keys initial
+				$scope.rows = fillAllKeys($scope.rows);
 
 				// reset pager object regarding filtered rows
 				$scope.resetPager = function() {
