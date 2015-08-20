@@ -189,22 +189,25 @@ angular.module('keta.services.User',
 
 					angular.forEach(cleanedUser, function(value, key) {
 						if (key === 'properties') {
-							if (!angular.isDefined(cleanedUserOriginal.properties)) {
-								cleanedUserOriginal.properties = {};
-							}
-							angular.forEach(value, function(propValue, propKey) {
-								if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
-									!angular.equals(
-										cleanedUser.properties[propKey],
-										cleanedUserOriginal.properties[propKey]
-									)
-								) {
-									if (!angular.isDefined(changes.properties)) {
-										changes.properties = {};
+							if (!angular.isDefined(cleanedUserOriginal.properties) ||
+								cleanedUserOriginal.properties === null ||
+								angular.equals(cleanedUserOriginal.properties, {})) {
+								changes.properties = value;
+							} else {
+								angular.forEach(value, function(propValue, propKey) {
+									if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
+										!angular.equals(
+											cleanedUser.properties[propKey],
+											cleanedUserOriginal.properties[propKey]
+										)
+									) {
+										if (!angular.isDefined(changes.properties)) {
+											changes.properties = {};
+										}
+										changes.properties[propKey] = propValue;
 									}
-									changes.properties[propKey] = propValue;
-								}
-							});
+								});
+							}
 						} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
 							changes[key] = value;
 						}

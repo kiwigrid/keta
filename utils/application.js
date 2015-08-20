@@ -18,8 +18,22 @@ angular.module('keta.utils.Application',
 	])
 
 	.constant('ApplicationUtilsConstants', {
-		MEDIA_TYPE_APPICON: 'APPICON',
-		AUTHOR_TYPE_SELLER: 'SELLER'
+
+		// media type of assets
+		ASSET_MEDIA_TYPE: {
+			APPICON: 'APPICON',
+			FAVICON: 'FAVICON',
+			SCREENSHOT: 'SCREENSHOT',
+			TOUCHICON: 'TOUCHICON',
+			VIDEO: 'VIDEO'
+		},
+
+		// type of authors
+		AUTHOR_TYPE: {
+			DEVELOPER: 'DEVELOPER',
+			SELLER: 'SELLER'
+		}
+
 	})
 
 	/**
@@ -38,23 +52,6 @@ angular.module('keta.utils.Application',
 		};
 
 		return {
-
-			/**
-			 * @name getAppName
-			 * @memberOf ApplicationUtils
-			 * @description
-			 * <p>
-			 *   uiLocale is the current (user set) UI language of the running app.
-			 *   Can be either short ('de') or long ('en-US') format.
-			 * </p>
-			 * @param {object} labels object of all labels grouped by locale keys
-			 * @param {string} uiLocale current locale
-			 * @returns {string} application localized application name
-			 */
-
-			getAppName: function getAppName(labels, uiLocale) {
-				return CommonUtils.getLabelByLocale('name', labels, uiLocale);
-			},
 
 			/**
 			 * @name getAppList
@@ -148,6 +145,24 @@ angular.module('keta.utils.Application',
 			},
 
 			/**
+			 * @name getAppName
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * <p>
+			 *   uiLocale is the current (user set) UI language of the running app.
+			 *   Can be either short ('de') or long ('en-US') format.
+			 * </p>
+			 * @param {object} app application instance
+			 * @param {string} uiLocale current locale
+			 * @returns {string} application localized application name
+			 */
+
+			getAppName: function getAppName(app, uiLocale) {
+				return CommonUtils.doesPropertyExist(app, 'meta.i18n') ?
+					CommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
+			},
+
+			/**
 			 * @name getAppIcon
 			 * @function
 			 * @memberOf ApplicationUtils
@@ -185,7 +200,7 @@ angular.module('keta.utils.Application',
 					angular.forEach(mediaSource, function(media) {
 
 						if (angular.isDefined(media.type) &&
-							media.type === ApplicationUtilsConstants.MEDIA_TYPE_APPICON &&
+							media.type === ApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &&
 							angular.isDefined(media.src)) {
 
 							appIcon =
@@ -219,7 +234,7 @@ angular.module('keta.utils.Application',
 
 				var appAuthor = null;
 
-				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE_SELLER;
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
 
 				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
 

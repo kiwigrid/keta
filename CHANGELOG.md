@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.6
+
+_Released: 2015-08-20_
+
+* Bugfix for `User.$update`: initial properties object is recognized as change
+
 ## Version 0.4.5
 
 _Released: 2015-08-17_

@@ -147,6 +147,8 @@ angular.module('keta.services.Device',
 				 */
 				that.$update = function() {
 
+					// TODO: verify if there are use cases where not only tag values are changed
+
 					// collect changes in tagValues property
 					var changes = {
 						tagValues: {}
