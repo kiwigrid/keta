@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.5
+			Version 0.4.6
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.6" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.6" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.5" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.5" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.6" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.6" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -256,22 +256,25 @@ angular.module('keta.services.User',
 
 					angular.forEach(cleanedUser, function(value, key) {
 						if (key === 'properties') {
-							if (!angular.isDefined(cleanedUserOriginal.properties)) {
-								cleanedUserOriginal.properties = {};
-							}
-							angular.forEach(value, function(propValue, propKey) {
-								if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
-									!angular.equals(
-										cleanedUser.properties[propKey],
-										cleanedUserOriginal.properties[propKey]
-									)
-								) {
-									if (!angular.isDefined(changes.properties)) {
-										changes.properties = {};
+							if (!angular.isDefined(cleanedUserOriginal.properties) ||
+								cleanedUserOriginal.properties === null ||
+								angular.equals(cleanedUserOriginal.properties, {})) {
+								changes.properties = value;
+							} else {
+								angular.forEach(value, function(propValue, propKey) {
+									if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
+										!angular.equals(
+											cleanedUser.properties[propKey],
+											cleanedUserOriginal.properties[propKey]
+										)
+									) {
+										if (!angular.isDefined(changes.properties)) {
+											changes.properties = {};
+										}
+										changes.properties[propKey] = propValue;
 									}
-									changes.properties[propKey] = propValue;
-								}
-							});
+								});
+							}
 						} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
 							changes[key] = value;
 						}
