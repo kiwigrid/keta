@@ -10,11 +10,19 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.7
+
+_Released: 2015-08-25_
+
+* Added optional `display` callback to `ExtendedTable.actionList` items (can be used to conditionally display action list items)
+* Changed `label` to `getLabel` as callback in `ExtendedTable.actionList` items to support external i18n
+
 ## Version 0.4.6
 
 _Released: 2015-08-20_
 
 * Bugfix for `User.$update`: initial properties object is recognized as change
+* Harmonized parameter for `ApplicationUtils.getAppName` method
 
 ## Version 0.4.5
 

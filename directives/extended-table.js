@@ -133,7 +133,7 @@
  *
  *         // Array of actions to render for each row.
  *         // getLink method will be used to construct a link with the help of the row object,
- *         // label is used as value for title-tag,
+ *         // getLabel is used as callback to retrieve value for title-tag,
  *         // icon is used as icon-class for visualizing the action.
  *         // runAction is a callback-function that will be executed when the user clicks on
  *         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
@@ -142,20 +142,28 @@
   *        // 'action' (a link with ng-click attribute to execute a callback will be rendered).
   *        // For simplicity the type-property can be left out. In this case the directive renders
   *        // a normal link-tag (same as type 'link').
+  *        // display is an optional callback to return condition for displaying action item based on given row
  *         $scope.actionList = [{
  *             getLink: function(row) {
  *                 return 'edit/' + row.guid;
  *             },
- *             label: 'Edit',
+ *             getLabel: function() {
+ *                 return 'Edit';
+ *             },
  *             icon: 'glyphicon glyphicon-pencil',
  *             type: ExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
  *             runAction: function(row) {
  *                 console.log('action called with ', row);
  *             },
- *             label: 'Remove',
+ *             getLabel: function() {
+ *                 return 'Remove';
+ *             },
  *             icon: 'glyphicon glyphicon-remove'
- *             type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION
+ *             type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
+ *             display: function(row) {
+ *                 return row.type !== 'EnergyManager';
+ *             }
  *         }];
  *
  *         // callback method to render each cell individually
@@ -458,6 +466,9 @@ angular.module('keta.directives.ExtendedTable',
 				$scope.PAGER_LIMIT = ExtendedTableConstants.PAGER.LIMIT;
 				$scope.PAGER_OFFSET = ExtendedTableConstants.PAGER.OFFSET;
 
+				$scope.ACTION_LIST_TYPE_LINK = ExtendedTableConstants.ACTION_LIST_TYPE.LINK;
+				$scope.ACTION_LIST_TYPE_ACTION = ExtendedTableConstants.ACTION_LIST_TYPE.ACTION;
+
 				// VARIABLES ---
 
 				$scope.pages = [];
@@ -592,6 +603,15 @@ angular.module('keta.directives.ExtendedTable',
 						possibleColumns = $filter('orderBy')(possibleColumns, $scope.orderByProperty);
 						$scope.selectedColumn = angular.isDefined(possibleColumns[0]) ? possibleColumns[0].id : null;
 					}
+				};
+
+				// check if action list item should be shown
+				$scope.showActionListItem = function(item, row) {
+					var show = true;
+					if (angular.isFunction(item.display)) {
+						show = item.display(row);
+					}
+					return show;
 				};
 
 				// WATCHER ---
@@ -844,10 +864,10 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-if="rowSortEnabled"' +
 '								data-ng-class="{sort: isSortCriteria(column)}">' +
 '								<a class="header" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'								   data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
+'									data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'								   data-ng-if="isSortCriteria(column) && rowSortOrderAscending"' +
-'								   data-ng-click="sortBy(column)"><span' +
+'									data-ng-if="isSortCriteria(column) && rowSortOrderAscending"' +
+'									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet"></span></a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '								   data-ng-if="isSortCriteria(column) && !rowSortOrderAscending"' +
@@ -858,8 +878,8 @@ angular.module('keta.directives.ExtendedTable')
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort"></span></a>' +
 '								<a class="operation" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_remove_column\') }}"' +
-'								   data-ng-if="isSwitchable(column)"' +
-'								   data-ng-click="removeColumn(column)"><span' +
+'									data-ng-if="isSwitchable(column)"' +
+'									data-ng-click="removeColumn(column)"><span' +
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
@@ -867,9 +887,8 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-if="!rowSortEnabled">' +
 '								{{headerLabelCallback(column)}}' +
 '								<a class="operation" data-ng-if="isSwitchable(column)"' +
-'									data-ng-click="removeColumn(column)">' +
-'									<span class="glyphicon glyphicon-minus-sign"></span>' +
-'								</a>' +
+'									data-ng-click="removeColumn(column)"><span' +
+'									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
 '							<th data-ng-if="actionList.length">' +
 '								{{headerLabelCallback(\'actions\')}}' +
@@ -886,20 +905,18 @@ angular.module('keta.directives.ExtendedTable')
 '							</td>' +
 '							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
-'									<span data-ng-repeat="item in actionList">' +
+'									<span data-ng-repeat="item in actionList"' +
+'										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
-'											data-ng-if="!item.type || item.type === \'link\'"' +
-'											title="{{item.label}}">' +
-'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'										</a>' +
-'										<a class="btn-link"' +
-'											href=""' +
+'											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
+'											title="{{item.getLabel()}}"><span' +
+'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'										<a class="btn-link"	href=""' +
 '											data-ng-click="item.runAction(row)"' +
-'											data-ng-if="item.type === \'action\'"' +
-'											title="{{item.label}}">' +
-'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'										</a>' +
+'											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
+'											title="{{item.getLabel()}}"><span' +
+'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +
@@ -917,20 +934,18 @@ angular.module('keta.directives.ExtendedTable')
 '							</td>' +
 '							<td data-ng-if="row && actionList.length">' +
 '								<div class="btn-group" role="group">' +
-'									<span data-ng-repeat="item in actionList">' +
+'									<span data-ng-repeat="item in actionList"' +
+'										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn-link"' +
-'												data-ng-href="{{item.getLink(row)}}"' +
-'												data-ng-if="!item.type || item.type === \'link\'"' +
-'												title="{{item.label}}">' +
-'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'										</a>' +
-'										<a class="btn-link"' +
-'												href=""' +
-'												data-ng-click="item.runAction(row)"' +
-'												data-ng-if="item.type === \'action\'"' +
-'												title="{{item.label}}">' +
-'											<span class="{{item.icon}}" aria-hidden="true"></span>' +
-'										</a>' +
+'											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
+'											title="{{item.getLabel()}}"><span' +
+'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'										<a class="btn-link"	href=""' +
+'											data-ng-click="item.runAction(row)"' +
+'											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
+'											title="{{item.getLabel()}}"><span' +
+'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +
