@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.6
+			Version 0.4.7
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.6" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.6" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.7" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.7" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.6" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.6" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.7" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.7" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -254,7 +254,7 @@
 
         // Array of actions to render for each row.
         // getLink method will be used to construct a link with the help of the row object,
-        // label is used as value for title-tag,
+        // getLabel is used as callback to retrieve value for title-tag,
         // icon is used as icon-class for visualizing the action.
         // runAction is a callback-function that will be executed when the user clicks on
         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
@@ -263,20 +263,28 @@
        // 'action' (a link with ng-click attribute to execute a callback will be rendered).
        // For simplicity the type-property can be left out. In this case the directive renders
        // a normal link-tag (same as type 'link').
+       // display is an optional callback to return condition for displaying action item based on given row
         $scope.actionList = [{
             getLink: function(row) {
                 return 'edit/' + row.guid;
             },
-            label: 'Edit',
+            getLabel: function() {
+                return 'Edit';
+            },
             icon: 'glyphicon glyphicon-pencil',
             type: ExtendedTableConstants.ACTION_LIST_TYPE.LINK
         }, {
             runAction: function(row) {
                 console.log('action called with ', row);
             },
-            label: 'Remove',
+            getLabel: function() {
+                return 'Remove';
+            },
             icon: 'glyphicon glyphicon-remove'
-            type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION
+            type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
+            display: function(row) {
+                return row.type !== 'EnergyManager';
+            }
         }];
 
         // callback method to render each cell individually
