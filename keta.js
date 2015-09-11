@@ -1128,12 +1128,12 @@ angular.module('keta.directives.AppBar')
  *         // icon is used as icon-class for visualizing the action.
  *         // runAction is a callback-function that will be executed when the user clicks on
  *         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
-  *        // with the value 'action'.
-  *        // type can have the values 'link' (a normal link with href-attribute will be rendered) or
-  *        // 'action' (a link with ng-click attribute to execute a callback will be rendered).
-  *        // For simplicity the type-property can be left out. In this case the directive renders
-  *        // a normal link-tag (same as type 'link').
-  *        // display is an optional callback to return condition for displaying action item based on given row
+ *         // with the value 'action'.
+ *         // type can have the values 'link' (a normal link with href-attribute will be rendered) or
+ *         // 'action' (a link with ng-click attribute to execute a callback will be rendered).
+ *         // For simplicity the type-property can be left out. In this case the directive renders
+ *         // a normal link-tag (same as type 'link').
+ *         // display is an optional callback to return condition for displaying action item based on given row
  *         $scope.actionList = [{
  *             getLink: function(row) {
  *                 return 'edit/' + row.guid;
