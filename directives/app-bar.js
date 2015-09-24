@@ -452,7 +452,6 @@ angular.module('keta.directives.AppBar',
 									scope.rootApp = null;
 									angular.forEach(reply.result.items, function(app) {
 										if (angular.isDefined(app.appId) &&
-											// app.appId === AppBarConstants.ROOT_APP_ID &&
 											(app.appId === AppBarConstants.ROOT_APP_ID ||
 											app.appId === 'kiwigrid.desktop') &&
 											angular.isDefined(app.entryUri)) {
@@ -479,20 +478,14 @@ angular.module('keta.directives.AppBar',
 									}
 
 									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS : link.origin + '/#/applications' + link.search;
+										scope.links.ALL_APPS : link.origin + link.search + '/#/applications';
 
 									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE : link.origin + '/#/user' + link.search;
+										scope.links.USER_PROFILE : link.origin + link.search + '/#/user';
 
 									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										scope.links.ALL_ENERGY_MANAGERS = link.origin + '/#/devices';
-										if (link.search.length > 0) {
-											scope.links.ALL_ENERGY_MANAGERS += link.search + '&';
-										} else {
-											scope.links.ALL_ENERGY_MANAGERS += link.search + '?';
-										}
-										scope.links.ALL_ENERGY_MANAGERS +=
-											'deviceClass=com.kiwigrid.devices.em.EnergyManager';
+										scope.links.ALL_ENERGY_MANAGERS = link.origin + link.search
+											+ '/#/devices?deviceClass=com.kiwigrid.devices.em.EnergyManager';
 									}
 								}
 							});
@@ -843,7 +836,7 @@ angular.module('keta.directives.AppBar')
 '						<span class="caret"></span>' +
 '					</a>' +
 '					<ul class="dropdown-menu dropdown-menu-right">' +
-'						<li>' +
+'						<li data-ng-if="links.USER_PROFILE">' +
 '							<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_user_profile\') }}' +
 '							</a>' +

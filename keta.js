@@ -24,6 +24,7 @@ angular.module('keta', [
 	'keta.services.Tag',
 	'keta.services.UserSet',
 	'keta.services.User',
+	'keta.utils.Api',
 	'keta.utils.Application',
 	'keta.utils.Common',
 	'keta.utils.Country'
@@ -480,7 +481,6 @@ angular.module('keta.directives.AppBar',
 									scope.rootApp = null;
 									angular.forEach(reply.result.items, function(app) {
 										if (angular.isDefined(app.appId) &&
-											// app.appId === AppBarConstants.ROOT_APP_ID &&
 											(app.appId === AppBarConstants.ROOT_APP_ID ||
 											app.appId === 'kiwigrid.desktop') &&
 											angular.isDefined(app.entryUri)) {
@@ -507,20 +507,14 @@ angular.module('keta.directives.AppBar',
 									}
 
 									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS : link.origin + '/#/applications' + link.search;
+										scope.links.ALL_APPS : link.origin + link.search + '/#/applications';
 
 									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE : link.origin + '/#/user' + link.search;
+										scope.links.USER_PROFILE : link.origin + link.search + '/#/user';
 
 									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										scope.links.ALL_ENERGY_MANAGERS = link.origin + '/#/devices';
-										if (link.search.length > 0) {
-											scope.links.ALL_ENERGY_MANAGERS += link.search + '&';
-										} else {
-											scope.links.ALL_ENERGY_MANAGERS += link.search + '?';
-										}
-										scope.links.ALL_ENERGY_MANAGERS +=
-											'deviceClass=com.kiwigrid.devices.em.EnergyManager';
+										scope.links.ALL_ENERGY_MANAGERS = link.origin + link.search
+											+ '/#/devices?deviceClass=com.kiwigrid.devices.em.EnergyManager';
 									}
 								}
 							});
@@ -871,7 +865,7 @@ angular.module('keta.directives.AppBar')
 '						<span class="caret"></span>' +
 '					</a>' +
 '					<ul class="dropdown-menu dropdown-menu-right">' +
-'						<li>' +
+'						<li data-ng-if="links.USER_PROFILE">' +
 '							<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_user_profile\') }}' +
 '							</a>' +
@@ -7103,6 +7097,319 @@ angular.module('keta.services.User',
 			return api;
 
 		};
+
+	});
+
+// source: dist/utils/api.js
+/**
+ * @name keta.utils.Api
+ * @author Vincent Romanus <vincent.romanus@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2015
+ * @module keta.utils.Api
+ * @description
+ * <p>
+ *    Utility service to convert search string and query language to filter params that can be used
+ *    with other keta services.
+ * </p>
+ */
+
+
+angular.module('keta.utils.Api', [])
+
+	.constant('ApiUtilsConstants', {
+
+		OPERATORS: {
+			OR: '$or',
+			AND: '$and',
+			LIKE: '$like'
+		},
+		REGEX: {
+			QUERY_DIVIDER: new RegExp('(".*?"|[^" ]+)+(?= *| *$)', 'g'),
+			KEY_DIVIDER: new RegExp('(".*?"|[^"\:]+)+(?= *| *$)', 'g'),
+			QUOTES: new RegExp('"', 'g')
+		},
+		CHARS: {
+			QUERY_DIVIDER: ':',
+			LIKE_EXTENDER: '%'
+		},
+		NUMBERS: {
+			MAX_COMPONENTS_LENGTH: 2
+		}
+
+	})
+
+	/**
+	 * @class ApiUtils
+	 * @propertyOf keta.utils.Api
+	 * @description Api Utils Factory
+	 */
+	.factory('ApiUtils', function ApiUtils(ApiUtilsConstants) {
+
+		var factory = {};
+
+		// HELPER
+		// -----
+
+		/**
+		 * @description
+		 * Helper to check if objects has no properties.
+		 * @param {Object} obj to check.
+		 * @returns {Boolean} if object has no properties.
+		 */
+		var isBlankObject = function isBlankObject(obj) {
+			var propertyCount = 0;
+
+			angular.forEach(obj, function() {
+				propertyCount++;
+			});
+
+			return propertyCount === 0;
+		};
+
+		/**
+		 * @description
+		 * Cleanup inserted query.
+		 * @param {String} query string.
+		 * @returns {String} clean uped query
+		 */
+		var cleanUpQuery = function cleanUpQuery(query) {
+
+			// prevent double QUERY_DIVIDER_CHAR
+			var cleanedUpQuery = query.replace(
+					ApiUtilsConstants.CHARS.QUERY_DIVIDER + ApiUtilsConstants.CHARS.QUERY_DIVIDER,
+					ApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ApiUtilsConstants.CHARS.QUERY_DIVIDER
+				) + '"';
+
+			return cleanedUpQuery;
+
+		};
+
+		/**
+		 * @description
+		 * Separate query in to search key und search value.
+		 * @param {String} query query string.
+		 * @returns {Object} search key as key and search value as value.
+		 */
+		var getQueryComponents = function getQueryComponents(query) {
+
+			query = cleanUpQuery(query);
+
+			var components = query.match(ApiUtilsConstants.REGEX.KEY_DIVIDER);
+
+			var	key = components[0].replace(ApiUtilsConstants.REGEX.QUOTES, '');
+			var	value = angular.isDefined(components[1]) ?
+				components[1].replace(ApiUtilsConstants.REGEX.QUOTES, '') : null;
+
+			if (components.length > ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
+
+				var extendedValues =
+					components.slice(ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
+				angular.forEach(extendedValues, function(extendedValue) {
+					value += ApiUtilsConstants.CHARS.QUERY_DIVIDER +
+						extendedValue.replace(ApiUtilsConstants.REGEX.QUOTES, '');
+				});
+
+			}
+
+			return {key: key, value: value};
+
+		};
+
+		/**
+		 * @description
+		 * Transform search string into $like search param.
+		 * @param {String} searchString search string.
+		 * @returns {Object} $like search param.
+		 */
+		var getLikeSearchParam = function getLikeSearchString(searchString) {
+			var likeSearchParam = [];
+
+			likeSearchParam[ApiUtilsConstants.OPERATORS.LIKE] =
+				ApiUtilsConstants.CHARS.LIKE_EXTENDER +
+				searchString +
+				ApiUtilsConstants.CHARS.LIKE_EXTENDER;
+
+			return angular.extend({}, likeSearchParam);
+
+		};
+
+		/**
+		 * @description
+		 * Helper for getFilterParams to connect filterString to all inserted criteria.
+		 * @param {String} filterString Search string.
+		 * @param {Object} criteriaMapping Criteria to search in.
+		 * @returns {Array} Params with criteria as key and filterString as value.
+		 */
+		var getCriteriaParams = function getCriteriaParams(filterString, criteriaMapping) {
+
+			var filters = [];
+
+			angular.forEach(criteriaMapping, function(criterion, key) {
+
+				// delete double keys
+				angular.forEach(criteriaMapping, function(comparisonCriterion, comparisonKey) {
+
+					if (criterion === comparisonCriterion && key !== comparisonKey) {
+						delete criteriaMapping[comparisonKey];
+					}
+
+				});
+
+				var container = [];
+
+				container[criterion] = getLikeSearchParam(filterString);
+				container = angular.extend({}, container);
+
+				filters.push(container);
+
+			});
+
+			return filters;
+		};
+
+		/**
+		 * @description
+		 * Merging params to send it to Eventbusmanager
+		 * @param {Object} acrossParams params that search over all criterias from criteriaMapping.
+		 * @param {Object} transformedParams params that you get from inserted query.
+		 * @returns {Object} Merged params.
+		 */
+		var mergeParams = function mergeParams(acrossParams, transformedParams) {
+
+			var params = {};
+
+			if (!isBlankObject(acrossParams) &&
+				!isBlankObject(transformedParams)) {
+
+				params[ApiUtilsConstants.OPERATORS.AND] = [
+					angular.extend({}, acrossParams),
+					angular.extend({}, transformedParams)
+				];
+
+			} else if (!isBlankObject(acrossParams)) {
+
+				params = angular.extend({}, acrossParams);
+
+			} else if (!isBlankObject(transformedParams)) {
+
+				params = angular.extend({}, transformedParams);
+
+			}
+
+			return params;
+
+		};
+
+		// LOGIC
+		// -----
+
+		/**
+		 * @description
+		 * Set filter params to all criteria or define them by query language.
+		 * If inserted string is "owner:test_user", only items with owner test_user will be returned
+		 * and if you insert "test_user", items with test_user in this criterion will be returned.
+		 * @param {String} filterString Search string or query language string.
+		 * @param {Object} criteriaMapping criteria to search in or convert key to criteria.
+		 * @returns {Object} Params to filter EventBusManager request.
+		 * @example
+		 * angular.module('exampleApp',
+		 *     [
+		 *         'keta.utils.Api',
+		 *         'keta.services.EventBusManager',
+		 *         'keta.services.DeviceSet'
+		 *     ])
+		 *     .controller('ExampleController', function(
+		 *         ApiUtils, EventBusManager, DeviceSet,
+		 *     ) {
+		 *
+		 *         // search scope model for an input to get the search string
+		 *         $scope.searchString = '';
+		 *
+		 *         // set search criteria
+		 *         var searchCriteria = {
+		 *             name: 'tagValues.IdName.value',
+		 *             owner: 'owner'
+		 *          };
+		 *
+		 *          // get filter params
+		 *          var filter = ApiUtils.getFilterParams($scope.searchString, searchCriteria);
+		 *
+		 *         // get reply by filter
+		 *        DeviceSet.create(EventBusManager.get('kiwibus'))
+		 *          .filter(filter)
+		 *          .project({
+		 *              tagValues: {
+		 *                  IdName: 1
+		 *              },
+		 *              owner: 1
+		 *          })
+		 *          .query()
+		 *          .then(function(reply) {
+		 *              // ...
+		 *          });
+		 *     });
+		 */
+		factory.getFilterParams = function getFilterParams(filterString, criteriaMapping) {
+
+			var params = {};
+
+			if (angular.isString(filterString) &&
+				angular.isObject(criteriaMapping) &&
+				filterString !== null) {
+
+				var transformedFilter = [];
+
+				var transformedParams = {};
+				var acrossParams = {};
+
+				var queries = filterString.match(ApiUtilsConstants.REGEX.QUERY_DIVIDER);
+
+				angular.forEach(queries, function(query) {
+
+					var FilterContainer = [];
+
+					var queryComponents = getQueryComponents(query);
+
+					if (queryComponents.value !== null) {
+
+						if (angular.isDefined(criteriaMapping[queryComponents.key])) {
+							queryComponents.key = criteriaMapping[queryComponents.key];
+						}
+
+						FilterContainer[queryComponents.key] = getLikeSearchParam(queryComponents.value);
+						FilterContainer = angular.extend({}, FilterContainer);
+
+						transformedFilter.push(FilterContainer);
+
+					} else if (!isBlankObject(acrossParams)) {
+
+						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+							acrossParams[ApiUtilsConstants.OPERATORS.OR]
+								.concat(getCriteriaParams(queryComponents.key, criteriaMapping));
+
+					} else {
+
+						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+							getCriteriaParams(queryComponents.key, criteriaMapping);
+
+					}
+
+				});
+
+				if (transformedFilter.length > 1) {
+					transformedParams[ApiUtilsConstants.OPERATORS.AND] = transformedFilter;
+				} else {
+					transformedParams = angular.extend({}, transformedFilter[0]);
+				}
+
+				params = mergeParams(acrossParams, transformedParams);
+
+			}
+
+			return params;
+		};
+
+		return factory;
 
 	});
 
