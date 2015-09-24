@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: filters/order-object-by.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,79 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: filters/order-object-by.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.filters.OrderObjectBy
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.OrderObjectBy
+ * @description
+ * &lt;p>
+ *   A filter to extract &lt;code>limit&lt;/code> elements beginning at &lt;code>offset&lt;/code>
+ *   out of an array.
+ * &lt;/p>
+ * @example
+ * {{ row | orderObjectBy:['col1', 'col2'] }}
+ * {{ row | orderObjectBy:['col1', 'col2']:true }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.OrderObjectBy'])
+ *     .controller('ExampleController', function($scope) {
+ *
+ *         // return object values in given order (all other values are dismissed)
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
+ *
+ *         // return object keys in given order (all other keys are dismissed)
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
+ *
+ *     });
+ */
 
-    <h3> </h3>
+angular.module('keta.filters.OrderObjectBy', [])
+	.filter('orderObjectBy', function() {
+		return function(input, order, returnKey) {
 
+			if (!angular.isObject(input)) {
+				return input;
+			}
 
+			returnKey = returnKey || false;
 
+			var fields = [];
 
+			// default sort order
+			if (!angular.isDefined(order) || order === null) {
+				angular.forEach(input, function(value, key) {
+					if (key.indexOf('$') !== 0) {
+						fields.push(key);
+					}
+				});
+			} else {
+				fields = order;
+			}
 
+			// sort by fields
+			var sorted = [];
 
+			angular.forEach(fields, function(field) {
+				if (angular.isDefined(input[field])) {
+					sorted.push(returnKey ? field : input[field]);
+				}
+			});
 
-
-
-    
-
-
-
-
-
+			return sorted;
+		};
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

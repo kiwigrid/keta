@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: directives/main-menu.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,149 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: directives/main-menu.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.directives.MainMenu
+ * @author Jan Uhlmann &lt;jan.uhlmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.MainMenu
+ * @description
+ * &lt;p>
+ *   Main menu with marking of currently active menu-entry. The menu can be nested (maximum 3 levels) with automatic
+ *   expand/fold functionality.
+ * &lt;/p>
+ * &lt;p>
+ *   The optional property toggleBroadcast is used to execute events from the $rootScope. For example
+ *   if the menu is inside an opened sidebar the event is used to close
+ *   the sidebar (if the current path-route is the same as in the clicked link).
+ * &lt;/p>
+ * @example
+ * &amp;lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&amp;gt;&amp;lt;/div&amp;gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.directives.Sidebar'])
+ *     .controller('ExampleController', function($scope, SidebarConfig) {
+ *
+ *         // menu object to use as input for directive
+ *         $scope.menuConfiguration = {
+ *             items: [{
+ *                 name: 'Dashboard',
+ *                 link: '/dashboard',
+ *                 icon: 'signal'
+ *             }, {
+ *                 name: 'Applications',
+ *                 icon: 'th-large',
+ *                 items: [{
+ *                     name: 'Application 1',
+ *                     link: '/applications/1'
+ *                 }, {
+ *                     name: 'All Apps',
+ *                     items: [{
+ *                         name: 'Application 2',
+ *                         link: '/applications/2'
+ *                     }, {
+ *                         name: 'Application 3',
+ *                         link: '/applications/3'
+ *                     }]
+ *                 }]
+ *             }],
+ *             compactMode: false,
+ *             toggleBroadcast: SidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
+ *         };
+ *
+ *         // return app-title depending on current language
+ *         $scope.getAppTitle = function() {
+ *             return 'My App';
+ *         };
+ *
+ *     });
+ */
 
-    <h3> </h3>
+angular.module('keta.directives.MainMenu', [])
+	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '=',
+				titleCallback: '=?'
+			},
+			templateUrl: '/components/directives/main-menu.html',
+			link: function(scope) {
 
+				scope.titleCallback = scope.titleCallback || function() {
+					return '';
+				};
 
+				var checkPaths = function checkPaths(currentMenuLevelParts, locationLevelParts, activeFlag) {
+					for (var i = 1; i &lt; currentMenuLevelParts.length; i++) {
+						if (currentMenuLevelParts[i] !== locationLevelParts[i]) {
+							activeFlag = false;
+						}
+					}
+					return activeFlag;
+				};
 
+				scope.isActive = function(menuEntry) {
+					var currentMenuLevelParts = menuEntry.link.split('/');
+					var locationLevelParts = $location.path().split('/');
+					var isActive = true;
 
+					// Menu-entries with sub-entries have another active-class
+					// to visualize the breadcrumb-path (in normal menu mode, see function isActiveParent)
+					if (angular.isArray(menuEntry.items) &amp;&amp; menuEntry.items.length > 0) {
+						return false;
+					}
 
+					isActive = checkPaths(currentMenuLevelParts, locationLevelParts, isActive);
+					return isActive;
+				};
 
+				scope.isActiveParent = function(menuEntry) {
+					var currentMenuLevelParts = menuEntry.link.split('/');
+					var locationLevelParts = $location.path().split('/');
+					var isActiveParent = false;
 
+					if (angular.isArray(menuEntry.items) &amp;&amp; menuEntry.items.length > 0) {
+						isActiveParent = true;
+						isActiveParent = checkPaths(currentMenuLevelParts, locationLevelParts, isActiveParent);
+					}
+					return isActiveParent;
+				};
 
+				scope.checkExpand = function(menuEntry, $event) {
+					// close sidebar when route-links (of current route and menu-entry) are equal
+					if ($location.path() === menuEntry.link &amp;&amp;
+						angular.isDefined(scope.configuration.toggleBroadcast)) {
+						$event.stopPropagation();
+						$rootScope.$broadcast(scope.configuration.toggleBroadcast);
+					}
 
-    
+					if (angular.isArray(menuEntry.items) &amp;&amp; menuEntry.items.length > 0) {
+						// prevent route-redirect when clicking an expand-menu-entry
+						$event.preventDefault();
+						if (angular.isUndefined(menuEntry.expanded) || menuEntry.expanded === false) {
+							menuEntry.expanded = true;
+						} else {
+							menuEntry.expanded = !menuEntry.expanded;
+						}
+					}
 
+				};
 
-
-
-
+			}
+		};
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

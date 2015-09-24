@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: utils/application.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,277 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: utils/application.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.utils.Application
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.utils.Application
+ * @description
+ * &lt;p>
+ *   Application service utilities for cross-component usage.
+ * &lt;/p>
+ */
 
-    <h3> </h3>
+angular.module('keta.utils.Application',
+	[
+		'keta.services.ApplicationSet',
+		'keta.utils.Common'
+	])
 
+	.constant('ApplicationUtilsConstants', {
 
+		// media type of assets
+		ASSET_MEDIA_TYPE: {
+			APPICON: 'APPICON',
+			FAVICON: 'FAVICON',
+			SCREENSHOT: 'SCREENSHOT',
+			TOUCHICON: 'TOUCHICON',
+			VIDEO: 'VIDEO'
+		},
 
+		// type of authors
+		AUTHOR_TYPE: {
+			DEVELOPER: 'DEVELOPER',
+			SELLER: 'SELLER'
+		}
 
+	})
 
+	/**
+	 * @class ApplicationUtils
+	 * @propertyOf keta.utils.Application
+	 * @description Application Utils Factory
+	 */
+	.factory('ApplicationUtils', function ApplicationUtils(
+		$log, $q,
+		ApplicationSet, EventBusManager, CommonUtils,
+		ApplicationUtilsConstants
+	) {
 
+		var deferred = {
+			getAppList: null
+		};
 
+		return {
 
+			/**
+			 * @name getAppList
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * &lt;p>
+			 *   Returns an array with all apps that are not blacklisted and have an entryUri. It is also
+			 *   possible to get apps for a specific user by providing an appropriate filter with key userId.
+			 * &lt;/p>
+			 * @param {object} options options to configure the API call
+			 * @returns {promise} app list promise
+			 * @example
+			 * angular.module('exampleApp', ['keta.utils.Application'])
+			 *     .controller('ExampleController', function(ApplicationUtils) {
+			 *
+			 *         // get apps with default options
+			 *         // eventBusId: kiwibus
+			 *         // forceRefresh: false
+			 *         // filter: {} (no filter applied)
+			 *         ApplicationUtils.getAppList().then(function(apps) {
+			 *             // ...
+			 *         });
+			 *
+			 *         // get apps with options in place
+			 *         ApplicationUtils.getAppList({
+			 *             eventBusId: 'myCustomEventBusId',
+			 *             forceRefresh: true,
+			 *             filter: {
+			 *                 userId: 'john.doe'
+			 *             },
+			 *             excludeAppIds: {
+			 *                 'kiwigrid.clouddesktop': true
+			 *             }
+			 *         }).then(function(apps) {
+			 *             // ...
+			 *         });
+			 *
+			 *     });
+			 */
+			getAppList: function getAppList(options) {
 
-    
+				var DEFAULT_OPTIONS = {
+					eventBusId: 'kiwibus',
+					forceRefresh: false,
+					filter: {},
+					excludeAppIds: {}
+				};
 
+				var usedOptions = angular.extend({}, DEFAULT_OPTIONS, options || {});
 
+				if (deferred.getAppList === null || usedOptions.forceRefresh === true) {
+					deferred.getAppList = $q.defer();
 
+					ApplicationSet.create(EventBusManager.get(usedOptions.eventBusId))
+						.filter(usedOptions.filter)
+						.query()
+						.then(function(reply) {
 
+							if (angular.isDefined(reply.result) &amp;&amp;
+								angular.isDefined(reply.result.items)) {
 
+								var filteredApps = [];
+								angular.forEach(reply.result.items, function(app) {
+									if (angular.isDefined(app.appId) &amp;&amp;
+										angular.isDefined(app.visible) &amp;&amp;
+										app.visible === true &amp;&amp;
+										!angular.isDefined(usedOptions.excludeAppIds[app.appId]) ||
+										usedOptions.excludeAppIds[app.appId] === false	&amp;&amp;
+										angular.isString(app.entryUri) &amp;&amp; app.entryUri !== '' &amp;&amp;
+										CommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
+
+										filteredApps.push(app);
+									}
+								});
+
+								deferred.getAppList.resolve(filteredApps);
+
+							} else {
+								var errorMessage = 'Something bad happened. Got no reply.';
+								deferred.getAppList.reject(errorMessage);
+							}
+						}, function() {
+							var errorMessage = 'Could not load application information.';
+							deferred.getAppList.reject(errorMessage);
+						});
+
+				}
+
+				return deferred.getAppList.promise;
+			},
+
+			/**
+			 * @name getAppName
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * &lt;p>
+			 *   uiLocale is the current (user set) UI language of the running app.
+			 *   Can be either short ('de') or long ('en-US') format.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} uiLocale current locale
+			 * @returns {string} application localized application name
+			 */
+
+			getAppName: function getAppName(app, uiLocale) {
+				return CommonUtils.doesPropertyExist(app, 'meta.i18n') ?
+					CommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
+			},
+
+			/**
+			 * @name getAppIcon
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * &lt;p>
+			 *   Returns app icon source from app meta object by using
+			 *   link-element to easily access url params.
+			 *   If app has no icon informations it return &lt;code>null&lt;/code>.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} language current language
+			 * @returns {string} app icon src
+			 */
+			getAppIcon: function(app, language) {
+
+				var appIcon = null;
+
+				language = angular.isDefined(language) ? language : 'en';
+
+				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &amp;&amp;
+					angular.isDefined(app.meta.i18n[language]) &amp;&amp;
+					angular.isDefined(app.meta.i18n[language].media) ?
+						app.meta.i18n[language].media : null;
+
+				if (mediaSource === null &amp;&amp;
+					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					mediaSource = app.meta.i18n.en.media;
+				}
+
+				if (angular.isDefined(app.entryUri)) {
+
+					var link = document.createElement('a');
+					link.href = app.entryUri;
+
+					angular.forEach(mediaSource, function(media) {
+
+						if (angular.isDefined(media.type) &amp;&amp;
+							media.type === ApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &amp;&amp;
+							angular.isDefined(media.src)) {
+
+							appIcon =
+								link.origin[link.origin.length - 1] !== '/' &amp;&amp; media.src[0] !== '/' ?
+								link.origin + '/' + media.src :
+								link.origin + media.src;
+
+						}
+
+					});
+
+				}
+
+				return appIcon;
+
+			},
+
+			/**
+			 * @name getAppAuthor
+			 * @function
+			 * @memberOf ApplicationUtils
+			 * @description
+			 * &lt;p>
+			 *   Returns author from type or the first author in app.meta.author array.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} type author type
+			 * @returns {string} app author name
+			 */
+			getAppAuthor: function(app, type) {
+
+				var appAuthor = null;
+
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
+
+				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
+
+					angular.forEach(app.meta.authors, function(author) {
+
+						if (author.type === type) {
+							appAuthor = author.name;
+						}
+
+					});
+
+					if (appAuthor === null) {
+						appAuthor = app.meta.authors[0].name;
+					}
+
+				}
+
+				return appAuthor;
+
+			}
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

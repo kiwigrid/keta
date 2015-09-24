@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Module: Logger</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,134 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Module: Logger</h1>
 		
 
 
+
+<section>
+    
+<header>
+    <h2>
+    Logger
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><p>
+  Logger Decorator
+</p>
+<p>
+  A bitmask is used to define the <code>logLevel</code> of the whole application
+  (if <code>'common.logLevel'</code> is set in <code>AppContext</code>). The numeric <code>logLevel</code>
+  constants are defined on the <code>$log</code> service as <code>$log.LOG_LEVEL_LOG</code>,
+  <code>$log.LOG_LEVEL_DEBUG</code> and so on.
+</p>
+<p>
+  Because a bitwise & is used to determine the <code>logLevel</code> you have to specify all levels you want to
+  have enabled using a bitwise | operator. You get the same logLevel by adding up the numeric value of all
+  wanted levels and subtracting 1 from the result.
+</p>
+<p>
+  The decorator also provides the new logging methods <code>$log.request(logMessage)</code> and
+  <code>$log.event(logMessage)</code> which are described inside of <code>LoggerDecorator</code>.
+  This section also provides information about the usage of <code>$log.ADVANCED_FORMATTER</code>.
+</p></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
     
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
     
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul class="list-unstyled">
+            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
+        </ul>
+    </dd>
+    
+    
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="services_logger.js.html">services/logger.js</a>, <a href="services_logger.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
+        
+        
+            <h3>Example</h3>
+            
+    <pre class="prettyprint"><code>// enable levels 'log', 'debug', 'info'
+"logLevel": $log.LOG_LEVEL_LOG | $log.LOG_LEVEL_DEBUG | $log.LOG_LEVEL_INFO
+// same logLevel in numeric notation ($log.LOG_LEVEL_LOG + $log.LOG_LEVEL_DEBUG + $log.LOG_LEVEL_INFO)
+"logLevel": 7</code></pre>
 
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Classes</h3>
+        
+        <dl>
+            <dt><a href="keta.services.module_Logger-LoggerConfig.html">LoggerConfig</a></dt>
+            <dd></dd>
+        
+            <dt><a href="keta.services.module_Logger-LoggerDecorator.html">LoggerDecorator</a></dt>
+            <dd></dd>
+        </dl>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
 
-
-
+</section>  
 
 
 

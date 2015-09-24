@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Module: Unit</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,177 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Module: Unit</h1>
 		
 
 
+
+<section>
+    
+<header>
+    <h2>
+    Unit
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><p>
+  A filter using SI prefixes to format numeric values.
+</p>
+<p>
+  The filter takes a couple of parameters to configure it. <code>unit</code> defines the unit
+  as string to append to formatted value (e.g. <code>'W'</code>, defaults to empty string).
+  <code>precision</code> defines the number of digits to appear after the decimal point as integer
+  (e.g. <code>2</code>, defaults to <code>0</code>). <code>precisionRanges</code> defines used
+  precision in a more flexible way by defining an array of precisions with <code>min</code> (included)
+  and/or <code>max</code> (excluded) value. <code>isBytes</code> is a boolean flag to
+  specify if the given number is bytes and therefor 1024-based (defaults to <code>false</code>).
+  <code>separate</code> is a boolean flag (defaults to <code>false</code>) which defines whether
+  to return a single string or an object with separated values <code>numberFormatted</code> (String),
+  <code>numberRaw</code> (Number) and <code>unit</code> (String).
+</p>
+<p>
+  If <code>precisionRanges</code> is set to:
+</p>
+<pre>[
+    {max: 1000, precision: 0},
+    {min: 1000, precision: 1}
+]</pre>
+<p>
+  numeric values which are less than 1000 are formatted with a precision of 0, as numeric values
+  equal or greater than 1000 are formatted with a precision of 1.
+</p>
+<p>
+  If <code>separate</code> is set to <code>true</code> the filter returns an object in the
+  following manner if for instance German is the current locale:
+</p>
+<pre>{
+    numberFormatted: '1,546',
+    numberRaw: 1.546,
+    unit: 'kW'
+}</pre></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
     
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
     
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul class="list-unstyled">
+            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
+        </ul>
+    </dd>
+    
+    
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="filters_unit.js.html">filters/unit.js</a>, <a href="filters_unit.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
+        
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>{{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
 
+Number: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
+Unit: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}</code></pre>
 
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.Unit'])
+    .controller('ExampleController', function($scope) {
 
+        // use unit filter to return formatted number value
+        // $scope.value equals string '1.2 kW'
+        $scope.value = $filter('unit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false
+        });
 
+        // use unit filter to return object for number formatting
+        // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
+        // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
+        // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
+        $scope.valueSeparated = $filter('unit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false,
+            separate: true
+        });
+
+        // use unit filter with precision ranges
+        // for the example below all values which are less than 1000 are formatted with a precision of 0
+        // and all values equal or greater than 1000 are formatted with a precision of 1
+        $scope.valueRanges = $filter('unit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            precisionRanges: [
+                {max: 1000, precision: 0},
+                {min: 1000, precision: 1}
+            ],
+            isBytes: false
+        });
+
+    });</code></pre>
+
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 

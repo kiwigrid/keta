@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Module: MainMenu</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,148 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Module: MainMenu</h1>
 		
 
 
+
+<section>
+    
+<header>
+    <h2>
+    MainMenu
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><p>
+  Main menu with marking of currently active menu-entry. The menu can be nested (maximum 3 levels) with automatic
+  expand/fold functionality.
+</p>
+<p>
+  The optional property toggleBroadcast is used to execute events from the $rootScope. For example
+  if the menu is inside an opened sidebar the event is used to close
+  the sidebar (if the current path-route is the same as in the clicked link).
+</p></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
     
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
     
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul class="list-unstyled">
+            <li>Jan Uhlmann &lt;jan.uhlmann (at) kiwigrid.com&gt;</li>
+        </ul>
+    </dd>
+    
+    
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="directives_main-menu.js.html">directives/main-menu.js</a>, <a href="directives_main-menu.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
+        
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>&lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;</code></pre>
 
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.directives.Sidebar'])
+    .controller('ExampleController', function($scope, SidebarConfig) {
 
+        // menu object to use as input for directive
+        $scope.menuConfiguration = {
+            items: [{
+                name: 'Dashboard',
+                link: '/dashboard',
+                icon: 'signal'
+            }, {
+                name: 'Applications',
+                icon: 'th-large',
+                items: [{
+                    name: 'Application 1',
+                    link: '/applications/1'
+                }, {
+                    name: 'All Apps',
+                    items: [{
+                        name: 'Application 2',
+                        link: '/applications/2'
+                    }, {
+                        name: 'Application 3',
+                        link: '/applications/3'
+                    }]
+                }]
+            }],
+            compactMode: false,
+            toggleBroadcast: SidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
+        };
 
+        // return app-title depending on current language
+        $scope.getAppTitle = function() {
+            return 'My App';
+        };
 
+    });</code></pre>
+
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 
