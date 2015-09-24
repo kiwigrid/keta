@@ -10,6 +10,16 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.8
+
+_Released: 2015-09-24_
+
+* Bugfixes for `AppBar` directive: 
+	- set default with correct channel param for OAuth redirect 
+	- set default with correct channel param for OAuth redirect
+* Added `keta.utils.Api` module with `ApiUtils` service 
+
+
 ## Version 0.4.7
 
 _Released: 2015-08-25_
