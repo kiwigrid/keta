@@ -29,7 +29,7 @@ angular.module('keta.utils.Api', [])
 		},
 		CHARS: {
 			QUERY_DIVIDER: ':',
-			LIKE_EXTENDER: '%'
+			LIKE_EXTENDER: '*'
 		},
 		NUMBERS: {
 			MAX_COMPONENTS_LENGTH: 2
