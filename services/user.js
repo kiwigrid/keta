@@ -35,10 +35,10 @@ angular.module('keta.services.User',
 						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
-					if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
-						deferred.resolve(reply);
-					} else {
+					if (angular.isUndefined(reply.code) || reply.code >= EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 						deferred.reject(reply);
+					} else {
+						deferred.resolve(reply);
 					}
 
 				});

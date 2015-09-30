@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.8.2
+
+_Released: 2015-09-30_
+
+* Fix for `User` service: corrected check for successful `$delete` call 
+
 ## Version 0.4.8.1
 
 _Released: 2015-09-24_

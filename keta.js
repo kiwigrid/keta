@@ -4732,6 +4732,23 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
+				 *   Response code 204.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_NO_CONTENT: 204,
+
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
 				 *   Response message 200.
 				 * </p>
 				 * @example
@@ -6676,10 +6693,10 @@ angular.module('keta.services.User',
 						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
-					if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
-						deferred.resolve(reply);
-					} else {
+					if (angular.isUndefined(reply.code) || reply.code >= EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 						deferred.reject(reply);
+					} else {
+						deferred.resolve(reply);
 					}
 
 				});

@@ -170,6 +170,23 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
+				 *   Response code 204.
+				 * </p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_NO_CONTENT: 204,
+
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * <p>
 				 *   Response message 200.
 				 * </p>
 				 * @example
