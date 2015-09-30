@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.8.1
+			Version 0.4.8.2
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.8.1" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.8.1" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.8.2" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.8.2" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.8.1" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.8.1" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.8.2" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.8.2" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -231,6 +231,23 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				RESPONSE_CODE_OK: 200,
+
+				/**
+				 * @const
+				 * @memberOf EventBusDispatcher
+				 * @description
+				 * &lt;p>
+				 *   Response code 204.
+				 * &lt;/p>
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
+				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
+				 *             // ...
+				 *         }
+				 *     });
+				 */
+				RESPONSE_CODE_NO_CONTENT: 204,
 
 				/**
 				 * @const
