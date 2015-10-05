@@ -555,15 +555,21 @@ angular.module('keta.directives.ExtendedTable',
 
 				// reset pager object regarding filtered rows
 				$scope.resetPager = function() {
+					var rowsLength = $scope.rows.length;
+
+					if ($scope.search !== null) {
+						$scope.searchResults = $filter('filter')($scope.rows, $scope.searchIn);
+						rowsLength = $scope.searchResults.length;
+					}
 
 					// update pager
 					if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
-						var rowsLength = $scope.search !== null ?
-							$filter('filter')($scope.rows, $scope.search).length : $scope.rows.length;
 						$scope.pager[$scope.PAGER_TOTAL] = rowsLength;
+
 						if ($scope.pager[$scope.PAGER_LIMIT] === 0) {
 							$scope.pager[$scope.PAGER_LIMIT] = rowsLength;
 						}
+
 						if ($scope.pager[$scope.PAGER_OFFSET] > rowsLength - 1) {
 							$scope.pager[$scope.PAGER_OFFSET] = 0;
 						}
@@ -632,7 +638,6 @@ angular.module('keta.directives.ExtendedTable',
 				$scope.$watch('search', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
 						$scope.resetPager();
-						$scope.searchResults = $filter('filter')($scope.rows, $scope.searchIn);
 					}
 				});
 
@@ -685,27 +690,27 @@ angular.module('keta.directives.ExtendedTable',
 					if (!angular.isDefined($scope.search) || $scope.search === null || $scope.search === '') {
 						return true;
 					}
-					var match = false;
-					angular.forEach($scope.visibleColumns, function(column) {
+
+					return $scope.visibleColumns.some(function(column) {
 						if (angular.isDefined(row[column]) && row[column] !== null) {
 
 							if (angular.isObject(row[column]) && !angular.isArray(row[column])) {
+
 								var deepMatch = false;
+
 								angular.forEach(row[column], function(prop) {
 									if (String(prop).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
 										deepMatch = true;
 									}
 								});
-								if (deepMatch === true) {
-									match = true;
-								}
-							} else if (String(row[column]).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
-								match = true;
-							}
 
+								return deepMatch;
+
+							} else if (String(row[column]).toLowerCase().indexOf($scope.search.toLowerCase()) !== -1) {
+								return true;
+							}
 						}
 					});
-					return match;
 				};
 
 				$scope.filterColumns = function(column) {

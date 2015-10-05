@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.9
+
+_Released: 2015-10-05_
+
+* Fix for view driven search in `ExtendedTable` directive
+
 ## Version 0.4.8.2
 
 _Released: 2015-09-30_
@@ -27,7 +33,6 @@ _Released: 2015-09-24_
 _Released: 2015-09-24_
 
 * Bugfixes for `AppBar` directive: 
-	- set default with correct channel param for OAuth redirect 
 	- set default with correct channel param for OAuth redirect
 * Added `keta.utils.Api` module with `ApiUtils` service 
 
