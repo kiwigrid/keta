@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/user.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.4.9
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.9" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.9" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.9" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.9" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="AppBar.html">AppBar</a></li><li><a href="ExtendedTable.html">ExtendedTable</a></li><li><a href="MainMenu.html">MainMenu</a></li><li><a href="Sidebar.html">Sidebar</a></li><li><a href="OrderObjectBy.html">OrderObjectBy</a></li><li><a href="Slice.html">Slice</a></li><li><a href="Unit.html">Unit</a></li><li><a href="AccessToken_.html">AccessToken</a></li><li><a href="AppContext_.html">AppContext</a></li><li><a href="Application_.html">Application</a></li><li><a href="ApplicationSet_.html">ApplicationSet</a></li><li><a href="Device_.html">Device</a></li><li><a href="DeviceEvent_.html">DeviceEvent</a></li><li><a href="DeviceSet_.html">DeviceSet</a></li><li><a href="EventBus_.html">EventBus</a></li><li><a href="EventBusDispatcher_.html">EventBusDispatcher</a></li><li><a href="EventBusManager_.html">EventBusManager</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Tag.html">Tag</a></li><li><a href="TagSet.html">TagSet</a></li><li><a href="User.html">User</a></li><li><a href="UserSet.html">UserSet</a></li><li><a href="Api.html">Api</a></li><li><a href="Application__.html">Application</a></li><li><a href="Common.html">Common</a></li><li><a href="Country.html">Country</a></li></ul><h3>Classes</h3><ul class="list-unstyled"><li><a href="AccessToken.html">AccessToken</a></li><li><a href="ApiUtils.html">ApiUtils</a></li><li><a href="AppContext.html">AppContext</a></li><li><a href="AppContextProvider.html">AppContextProvider</a></li><li><a href="Application.html">Application</a></li><li><a href="ApplicationInstance.html">ApplicationInstance</a></li><li><a href="ApplicationProvider.html">ApplicationProvider</a></li><li><a href="ApplicationSet.html">ApplicationSet</a></li><li><a href="ApplicationSetInstance.html">ApplicationSetInstance</a></li><li><a href="ApplicationSetProvider.html">ApplicationSetProvider</a></li><li><a href="ApplicationUtils.html">ApplicationUtils</a></li><li><a href="CommonUtils.html">CommonUtils</a></li><li><a href="CountryUtils.html">CountryUtils</a></li><li><a href="Device.html">Device</a></li><li><a href="DeviceEvent.html">DeviceEvent</a></li><li><a href="DeviceEventInstance.html">DeviceEventInstance</a></li><li><a href="DeviceEventProvider.html">DeviceEventProvider</a></li><li><a href="DeviceInstance.html">DeviceInstance</a></li><li><a href="DeviceProvider.html">DeviceProvider</a></li><li><a href="DeviceSet.html">DeviceSet</a></li><li><a href="DeviceSetInstance.html">DeviceSetInstance</a></li><li><a href="DeviceSetProvider.html">DeviceSetProvider</a></li><li><a href="EventBus.html">EventBus</a></li><li><a href="EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="EventBusDispatcherProvider.html">EventBusDispatcherProvider</a></li><li><a href="EventBusManager.html">EventBusManager</a></li><li><a href="EventBusManagerProvider.html">EventBusManagerProvider</a></li><li><a href="EventBusProvider.html">EventBusProvider</a></li><li><a href="LoggerConfig.html">LoggerConfig</a></li><li><a href="LoggerDecorator.html">LoggerDecorator</a></li><li><a href="Tag_.html">Tag</a></li><li><a href="TagInstance.html">TagInstance</a></li><li><a href="TagProvider.html">TagProvider</a></li><li><a href="TagSet_.html">TagSet</a></li><li><a href="TagSetInstance.html">TagSetInstance</a></li><li><a href="TagSetProvider.html">TagSetProvider</a></li><li><a href="User_.html">User</a></li><li><a href="UserInstance.html">UserInstance</a></li><li><a href="UserProvider.html">UserProvider</a></li><li><a href="UserSet_.html">UserSet</a></li><li><a href="UserSetInstance.html">UserSetInstance</a></li><li><a href="UserSetProvider.html">UserSetProvider</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/user.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.services.User
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.User
+ * @description User Provider
+ */
+
+angular.module('keta.services.User',
+	[
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
+	])
+
+	/**
+	 * @class UserProvider
+	 * @propertyOf keta.services.User
+	 * @description User Provider
+	 */
+	.provider('User', function UserProvider() {
+
+		this.$get = function UserService($q, $log, EventBusDispatcher, EventBusManager) {
+
+			// send message and return promise
+			var sendMessage = function(eventBus, message) {
+				var deferred = $q.defer();
+
+				EventBusDispatcher.send(eventBus, 'userservice', message, function(reply) {
+
+					// log if in debug mode
+					if (EventBusManager.inDebugMode()) {
+						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
+					}
+
+					if (angular.isUndefined(reply.code) || reply.code >= EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+						deferred.reject(reply);
+					} else {
+						deferred.resolve(reply);
+					}
+
+				});
+
+				return deferred.promise;
+			};
+
+			var returnRejectedPromise = function(message) {
+				var deferred = $q.defer();
+				deferred.reject(message);
+				return deferred.promise;
+			};
+
+			/**
+			 * @class UserInstance
+			 * @propertyOf User
+			 * @description User Instance
+			 * @param {EventBus} givenEventBus eventBus to use for UserInstance
+			 * @param {Object} properties Properties to inject into UserInstance
+			 */
+			var UserInstance = function(givenEventBus, properties) {
+
+				// keep reference
+				var that = this;
+
+				// save EventBus instance
+				var eventBus = givenEventBus;
+
+				// populate properties
+				angular.forEach(properties, function(value, key) {
+					that[key] = value;
+
+					// save copy under $pristine
+					if (!angular.isDefined(that.$pristine)) {
+						that.$pristine = {};
+					}
+
+					that.$pristine[key] = angular.copy(value);
+				});
+
+				/**
+				 * @name $create
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * &lt;p>
+				 *   Creates a remote UserInstance from local one the method is called on.
+				 * &lt;/p>
+				 * @returns {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'userId'
+				 *         });
+				 *
+				 *         user.$create()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$create = function() {
+
+					var cleanedUser = {};
+					for (var el in that) {
+						if (that.hasOwnProperty(el) && !angular.isFunction(that[el]) && el !== '$pristine') {
+							cleanedUser[el] = angular.copy(that[el]);
+						}
+					}
+
+					return sendMessage(eventBus, {
+						action: 'createUser',
+						params: {
+							userId: cleanedUser.userId
+						},
+						body: cleanedUser
+					});
+
+				};
+
+				/**
+				 * @name $update
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * &lt;p>
+				 *   Updates a remote UserInstance from local one the method is called on.
+				 * &lt;/p>
+				 * @returns {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'john.doe',
+				 *             channel: 'channel',
+				 *             givenName: 'John',
+				 *             familyName: 'Doe',
+				 *             email: 'john.doe@test.com',
+				 *             address: {
+				 *                 street: 'Main Street',
+				 *                 number: '100 E',
+				 *                 city: 'Phoenix',
+				 *                 country: 'USA',
+				 *                 zip: '85123'
+				 *             },
+				 *             properties: {
+				 *                 position: 'left'
+				 *             }
+				 *         });
+				 *
+				 *         user.email = 'john.doe@kiwigrid.com';
+				 *         delete user.properties.position;
+				 *
+				 *         user.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$update = function() {
+
+					// create cleaned copies
+					var cleanedUser = angular.copy(that);
+					var cleanedUserOriginal = angular.copy(that.$pristine);
+					delete cleanedUser.$pristine;
+					delete cleanedUser.$create;
+					delete cleanedUser.$update;
+					delete cleanedUser.$delete;
+					delete cleanedUser.$reset;
+
+					// collect changes
+					// changes on second level are not merged and therefor objects have to be transmitted in full
+					// except "properties", which are merged on second level too
+					var changes = {};
+
+					angular.forEach(cleanedUser, function(value, key) {
+						if (key === 'properties') {
+							if (!angular.isDefined(cleanedUserOriginal.properties) ||
+								cleanedUserOriginal.properties === null ||
+								angular.equals(cleanedUserOriginal.properties, {})) {
+								changes.properties = value;
+							} else {
+								angular.forEach(value, function(propValue, propKey) {
+									if (!angular.isDefined(cleanedUserOriginal.properties[propKey]) ||
+										!angular.equals(
+											cleanedUser.properties[propKey],
+											cleanedUserOriginal.properties[propKey]
+										)
+									) {
+										if (!angular.isDefined(changes.properties)) {
+											changes.properties = {};
+										}
+										changes.properties[propKey] = propValue;
+									}
+								});
+							}
+						} else if (!angular.equals(cleanedUser[key], cleanedUserOriginal[key])) {
+							changes[key] = value;
+						}
+					});
+
+					if (Object.keys(changes).length) {
+						var deferred = $q.defer();
+
+						sendMessage(eventBus, {
+							action: 'mergeUser',
+							params: {
+								userId: that.userId
+							},
+							body: changes
+						}).then(function(reply) {
+
+							// reset $pristine copies after success
+							that.$pristine = {};
+							angular.forEach(that, function(value, key) {
+								if (!angular.isFunction(that[key])) {
+									that.$pristine[key] = angular.copy(that[key]);
+								}
+							});
+
+							deferred.resolve(reply);
+						}, function(reply) {
+							deferred.reject(reply);
+						});
+
+						return deferred.promise;
+					}
+
+					return returnRejectedPromise('No changes found');
+				};
+
+				/**
+				 * @name $delete
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * &lt;p>
+				 *   Deletes a remote UserInstance from local one the method is called on.
+				 * &lt;/p>
+				 * @returns {promise} promise
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'userId'
+				 *         });
+				 *
+				 *         user.$delete()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$delete = function() {
+					return sendMessage(eventBus, {
+						action: 'deleteUser',
+						params: {
+							userId: that.userId
+						}
+					});
+				};
+
+				/**
+				 * @name $reset
+				 * @function
+				 * @memberOf UserInstance
+				 * @description
+				 * &lt;p>
+				 *   Resets a UserInstance to it's $pristine state.
+				 * &lt;/p>
+				 * @returns {undefined} nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *
+				 *         var user = User.create({
+				 *             userId: 'john.doe',
+				 *             channel: 'channel',
+				 *             givenName: 'John',
+				 *             familyName: 'Doe',
+				 *             email: 'john.doe@test.com',
+				 *             address: {
+				 *                 street: 'Main Street',
+				 *                 number: '100 E',
+				 *                 city: 'Phoenix',
+				 *                 country: 'USA',
+				 *                 zip: '85123'
+				 *             },
+				 *             properties: {
+				 *                 position: 'left'
+				 *             }
+				 *         });
+				 *
+				 *         user.email = 'john.doe@kiwigrid.com';
+				 *         delete user.properties.position;
+				 *
+				 *         user.$update()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 user.$reset();
+				 *             });
+				 *
+				 *     });
+				 */
+				that.$reset = function() {
+
+					// remove everything beside methods and $pristine copy
+					angular.forEach(that, function(value, key) {
+						if (!angular.isFunction(value) && key !== '$pristine') {
+							delete that[key];
+						}
+					});
+
+					// add copies of $pristine values
+					angular.forEach(that.$pristine, function(value, key) {
+						that[key] = angular.copy(value);
+					});
+
+				};
+
+			};
+
+			/**
+			 * @class User
+			 * @propertyOf UserProvider
+			 * @description User Service
+			 */
+			var api = {
+
+				/**
+				 * @function
+				 * @memberOf User
+				 * @description
+				 * &lt;p>
+				 *   Creates a UserInstance with given EventBus instance and properties.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {Object} properties Properties to set upon UserInstance creation
+				 * @returns {UserInstance} created UserInstance
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *         var user = User.create(eventBus, {
+				 *             userId: 'john.doe',
+				 *             channel: 'channel',
+				 *             givenName: 'John',
+				 *             familyName: 'Doe',
+				 *             email: 'john.doe@test.com',
+				 *             address: {
+				 *                 street: 'Main Street',
+				 *                 number: '100 E',
+				 *                 city: 'Phoenix',
+				 *                 country: 'USA',
+				 *                 zip: '85123'
+				 *             }
+				 *         });
+				 *     });
+				 */
+				create: function(eventBus, properties) {
+					return new UserInstance(eventBus, properties);
+				},
+
+				/**
+				 * @function
+				 * @memberOf User
+				 * @description
+				 * &lt;p>
+				 *   Returns the channel name for given channel id.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {String} channelId Channel id to retrieve.
+				 * @returns {String} channel name
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *         User.getChannel(eventBus, 'channel-1')
+				 *             .then(function(reply) {
+				 *                 // reply is channel name
+				 *             });
+				 *     });
+				 */
+				getChannel: function(eventBus, channelId) {
+					var deferred = $q.defer();
+
+					sendMessage(eventBus, {
+						action: 'getChannel',
+						params: {
+							channelId: channelId
+						}
+					}).then(function(reply) {
+						deferred.resolve(reply);
+					}, function(reply) {
+						deferred.reject(reply);
+					});
+
+					return deferred.promise;
+				},
+
+				/**
+				 * @function
+				 * @memberOf User
+				 * @description
+				 * &lt;p>
+				 *   Returns the currently logged-in user.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {UserInstance} current logged-in user
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.User'])
+				 *     .controller('ExampleController', function(User) {
+				 *         User.getCurrentUser(eventBus)
+				 *             .then(function(reply) {
+				 *                 // reply is current UserInstance
+				 *             });
+				 *     });
+				 */
+				getCurrent: function(eventBus) {
+					var deferred = $q.defer();
+
+					sendMessage(eventBus, {
+						action: 'getCurrentUser'
+					}).then(function(reply) {
+						deferred.resolve(new UserInstance(eventBus, reply.result));
+					}, function(reply) {
+						deferred.reject(reply);
+					});
+
+					return deferred.promise;
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: filters/slice.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,55 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: filters/slice.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.filters.Slice
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.Slice
+ * @description
+ * &lt;p>
+ *   A filter to extract &lt;code>limit&lt;/code> elements beginning at &lt;code>offset&lt;/code>
+ *   out of an array.
+ * &lt;/p>
+ * @example
+ * {{ rows | slice:0:5 }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.Slice'])
+ *     .controller('ExampleController', function($scope) {
+ *
+ *         // extract 5 elements starting at offset 0
+ *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
+ *
+ *     });
+ */
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+angular.module('keta.filters.Slice', [])
+	.filter('slice', function() {
+		return function(arr, offset, limit) {
+			if (!angular.isDefined(arr) || !angular.isArray(arr)) {
+				arr = [];
+			}
+			if (!angular.isDefined(offset) || !angular.isNumber(offset)) {
+				offset = 0;
+			}
+			if (!angular.isDefined(limit) || !angular.isNumber(limit)) {
+				limit = arr.length;
+			}
+			return arr.slice(offset, offset + limit);
+		};
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

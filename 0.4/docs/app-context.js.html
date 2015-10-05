@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Source: services/app-context.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,105 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Source: services/app-context.js</h1>
 		
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
+/**
+ * @name keta.services.AppContext
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.AppContext
+ * @description AppContext Provider
+ */
 
-    <h3> </h3>
+angular.module('keta.services.AppContext', [])
 
+	/**
+	 * @class AppContextProvider
+	 * @propertyOf keta.services.AppContext
+	 * @description App Context Provider
+	 */
+	.provider('AppContext', function AppContextProvider() {
 
+		/**
+		 * @private
+		 * @description Internal representation of app context from global namespace injected by context.js.
+		 */
+		var appContext = angular.isDefined(window.appContext) ? window.appContext : {};
 
+		/**
+		 * @name get
+		 * @function
+		 * @memberOf AppContextProvider
+		 * @description
+		 * &lt;p>
+		 *   Get value by key from app context object. There &lt;code>key&lt;/code> is a string in dot notation to describe
+		 *   object properties with hierarchy.
+		 * &lt;/p>
+		 * @param {string} key key to retrieve from app context
+		 * @returns {*} Object extracted from AppContext
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.AppContext'])
+		 *     .config(function(AppContextProvider) {
+		 *         var socketURL = AppContextProvider.get('bus.url');
+		 *     });
+		 */
+		this.get = function(key) {
+			var obj = appContext;
+			key = key.split('.');
+			for (var i = 0, l = key.length; i &lt; l; i++) {
+				if (angular.isDefined(obj[key[i]])) {
+					obj = obj[key[i]];
+				} else {
+					return null;
+				}
+			}
+			return obj;
+		};
 
+		this.$get = function AppContextService() {
 
+			/**
+			 * @class AppContext
+			 * @propertyOf AppContextProvider
+			 * @description AppContext Service
+			 */
+			var api = {
 
+				/**
+				 * @function
+				 * @memberOf AppContext
+				 * @description
+				 * &lt;p>
+				 *   Get value by key from app context object. There &lt;code>key&lt;/code> is a string in dot notation
+				 *   to describe object properties with hierarchy.
+				 * &lt;/p>
+				 * @param {string} key key to retrieve from app context
+				 * @returns {*}
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.AppContext'])
+				 *     .controller('ExampleController', function(AppContext) {
+				 *         var socketURL = AppContext.get('bus.url');
+				 *     });
+				 */
+				get: this.get
 
+			};
 
+			return api;
 
-    
+		};
 
-
-
-
-
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

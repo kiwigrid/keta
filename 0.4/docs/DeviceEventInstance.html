@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – </title>
+	<title>keta – Docs – Class: DeviceEventInstance</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,29 +58,389 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title"></h1>
+		<h1 class="page-title">Class: DeviceEventInstance</h1>
 		
 
 
+
+<section>
+    
+<header>
+    <h2>
+    DeviceEventInstance
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+<dt>
+    <h3 class="name" id="DeviceEventInstance"><span class="type-signature"></span>new DeviceEventInstance<span class="signature">(givenType, givenDevice)</span><span class="type-signature"></span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        DeviceEvent Instance
+    </div>
     
 
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
 
-    <h3> </h3>
+<table class="table">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>givenType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
 
 
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">DeviceEvent type</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>givenDevice</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="DeviceInstance.html">DeviceInstance</a></span>
 
 
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">DeviceInstance to be affected by event</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="device-event.js.html">services/device-event.js</a>, <a href="device-event.js.html#line22">line 22</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-
-
+    
+    
 
     
 
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <ul class="list-unstyled"><li><a href="#getDevice"><span class="type-signature">&lt;static> </span>getDevice<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="DeviceInstance.html">DeviceInstance</a>}</span></a></li><li><a href="#getType"><span class="type-signature">&lt;static> </span>getType<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></a></li></ul>
+        
+        <dl class="methods">
+            
+<dt>
+    <h3 class="name" id="getDevice"><span class="type-signature">&lt;static> </span>getDevice<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="DeviceInstance.html">DeviceInstance</a>}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns device of DeviceEvent.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="device-event.js.html">services/device-event.js</a>, <a href="device-event.js.html#line63">line 63</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type"><a href="DeviceInstance.html">DeviceInstance</a></span>
 
 
+	
+	
+    device
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+    .controller('ExampleController', function(Device, DeviceEvent) {
+        var device = Device.create({
+            guid: 'guid'
+        });
+        var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+        var deviceEventDevice = deviceEvent.getDevice();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="getType"><span class="type-signature">&lt;static> </span>getType<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns type of DeviceEvent.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="device-event.js.html">services/device-event.js</a>, <a href="device-event.js.html#line37">line 37</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">string</span>
 
 
+	
+	
+    type
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
+    .controller('ExampleController', function(Device, DeviceEvent) {
+        var device = Device.create({
+            guid: 'guid'
+        });
+        var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+        var deviceEventType = deviceEvent.getType();
+    });</code></pre>
+
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 
