@@ -1502,9 +1502,7 @@ angular.module('keta.directives.ExtendedTable',
 						$scope.rows = fillAllKeys($scope.rows);
 
 						// headers to save
-						if (angular.equals($scope.headers, {})) {
-							$scope.headers = $scope.rows[0];
-						}
+						$scope.headers = $scope.rows[0];
 
 						// visibleColumns
 						if (angular.equals($scope.visibleColumns, [])) {

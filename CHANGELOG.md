@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.10
+
+_Released: 2015-10-06_
+
+* Fix for table headers in `ExtendedTable` directive
+
 ## Version 0.4.9
 
 _Released: 2015-10-05_
