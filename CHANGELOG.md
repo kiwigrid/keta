@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.11
+
+_Released: 2015-10-13_
+
+* Changed a specific app id used to retrieve link to user profile
+* Added `sortableColumns` configuration property to `ExtendedTable` directive
+
 ## Version 0.4.10
 
 _Released: 2015-10-06_

@@ -196,7 +196,7 @@ angular.module('keta.directives.AppBar',
 			FULL: 'full',
 			COMPACT: 'compact'
 		},
-		ROOT_APP_ID: 'kiwigrid.clouddesktop'
+		ROOT_APP_ID: 'kiwigrid.desktop'
 	})
 
 	// message keys with default values
@@ -452,8 +452,7 @@ angular.module('keta.directives.AppBar',
 									scope.rootApp = null;
 									angular.forEach(reply.result.items, function(app) {
 										if (angular.isDefined(app.appId) &&
-											(app.appId === AppBarConstants.ROOT_APP_ID ||
-											app.appId === 'kiwigrid.desktop') &&
+											app.appId === AppBarConstants.ROOT_APP_ID &&
 											angular.isDefined(app.entryUri)) {
 											entryUri = app.entryUri;
 											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {

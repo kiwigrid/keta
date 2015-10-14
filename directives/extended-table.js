@@ -29,6 +29,7 @@
  *     data-row-sort-enabled="rowSortEnabled"
  *     data-row-sort-criteria="rowSortCriteria"
  *     data-row-sort-order-ascending="rowSortOrderAscending"
+ *     data-unsortable-columns="unsortableColumns"
  *     data-action-list="actionList"
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
@@ -130,6 +131,9 @@
  *
  *         // boolean flag to determine if sort order is ascending (true by default)
  *         $scope.rowSortOrderAscending = true;
+ *
+ *         // array of columns (empty by default) that should not be sorted
+ *         $scope.unsortableColumns = ['idName'];
  *
  *         // Array of actions to render for each row.
  *         // getLink method will be used to construct a link with the help of the row object,
@@ -325,6 +329,9 @@ angular.module('keta.directives.ExtendedTable',
 				// boolean flag to enable ascending sort order for rows
 				rowSortOrderAscending: '=?',
 
+				// array of columns that can be sorted (empty by default)
+				unsortableColumns: '=?',
+
 				// array of actions to render for each row
 				actionList: '=?',
 
@@ -391,6 +398,10 @@ angular.module('keta.directives.ExtendedTable',
 					scope.visibleColumns ||
 					(angular.isDefined(scope.rows) && angular.isDefined(scope.rows[0]) ?
 						Object.keys(scope.rows[0]) : []);
+
+				// sortableColumns
+				scope.unsortableColumns =
+					scope.unsortableColumns || [];
 
 				// headerLabelCallback
 				scope.headerLabelCallback = scope.headerLabelCallback || function(column) {
@@ -672,6 +683,10 @@ angular.module('keta.directives.ExtendedTable',
 					return $scope.rowSortCriteria !== null ? key === $scope.rowSortCriteria : false;
 				};
 
+				$scope.isSortable = function(column) {
+					return $scope.unsortableColumns.indexOf(column) === -1;
+				};
+
 				$scope.sortBy = function(column) {
 					if ($scope.rowSortEnabled &&
 						$scope.headerLabelCallback(column) !== null &&
@@ -862,22 +877,36 @@ angular.module('keta.directives.ExtendedTable')
 '				<table data-ng-class="getTableClasses()">' +
 '					<thead>' +
 '						<tr>' +
-'							<th class="{{columnClassCallback(headers, column, true)}} sortable"' +
+'							<th class="{{columnClassCallback(headers, column, true)}}"' +
 '								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
 '								data-ng-if="rowSortEnabled"' +
-'								data-ng-class="{sort: isSortCriteria(column)}">' +
+'								data-ng-class="{' +
+'									sort: isSortCriteria(column),' +
+'									sortable: isSortable(column)}">' +
+'								<span data-ng-if="!isSortable(column)">' +
+'									{{headerLabelCallback(column)}}</span>' +
 '								<a class="header" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
+'									data-ng-if="isSortable(column)"' +
 '									data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'									data-ng-if="isSortCriteria(column) && rowSortOrderAscending"' +
+'									data-ng-if="' +
+'										isSortCriteria(column) &&' +
+'										rowSortOrderAscending &&' +
+'										isSortable(column)"' +
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet"></span></a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'								   data-ng-if="isSortCriteria(column) && !rowSortOrderAscending"' +
+'								   data-ng-if="' +
+'									   isSortCriteria(column) &&' +
+'									   !rowSortOrderAscending &&' +
+'									   isSortable(column)"' +
 '								   data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a>' +
 '								<a class="unsort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'									data-ng-if="!isSortCriteria(column) && headerLabelCallback(column) !== null"' +
+'									data-ng-if="' +
+'										!isSortCriteria(column) &&' +
+'										headerLabelCallback(column) !== null &&' +
+'										isSortable(column)"' +
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort"></span></a>' +
 '								<a class="operation" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_remove_column\') }}"' +
@@ -890,8 +919,9 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-if="!rowSortEnabled">' +
 '								{{headerLabelCallback(column)}}' +
 '								<a class="operation" data-ng-if="isSwitchable(column)"' +
-'									data-ng-click="removeColumn(column)"><span' +
-'									class="glyphicon glyphicon-minus-sign"></span></a>' +
+'									data-ng-click="removeColumn(column)">' +
+'									<span class="glyphicon glyphicon-minus-sign"></span>' +
+'								</a>' +
 '							</th>' +
 '							<th data-ng-if="actionList.length">' +
 '								{{headerLabelCallback(\'actions\')}}' +
