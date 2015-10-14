@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.10
+			Version 0.4.11
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.10" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.10" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.11" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.11" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.10" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.10" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.11" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.11" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -150,6 +150,7 @@
     data-row-sort-enabled="rowSortEnabled"
     data-row-sort-criteria="rowSortCriteria"
     data-row-sort-order-ascending="rowSortOrderAscending"
+    data-unsortable-columns="unsortableColumns"
     data-action-list="actionList"
     data-cell-renderer="cellRenderer"
     data-column-class-callback="columnClassCallback"
@@ -251,6 +252,9 @@
 
         // boolean flag to determine if sort order is ascending (true by default)
         $scope.rowSortOrderAscending = true;
+
+        // array of columns (empty by default) that should not be sorted
+        $scope.unsortableColumns = ['idName'];
 
         // Array of actions to render for each row.
         // getLink method will be used to construct a link with the help of the row object,
