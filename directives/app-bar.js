@@ -319,6 +319,17 @@ angular.module('keta.directives.AppBar',
 				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.MD] = STATES.HIDDEN;
 				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.LG] = STATES.HIDDEN;
 
+				// default container height
+				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT;
+				var container = element;
+
+				var navbarFirst = container.children()[0];
+				var navbarFirstHeight = 0;
+
+				var navbarSecond = container.children()[1];
+				var navbarSecondHeight = 0;
+				var navbarSecondMarginBottom = 0;
+
 				/**
 				 * @description	Checks if the given menu is visible in all screen sizes
 				 * @param {object} menuElement The menu element
@@ -362,20 +373,12 @@ angular.module('keta.directives.AppBar',
 					return result;
 				};
 
-				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
-				// default container height
-				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT,
-					container = element,
-					// navbar-level-1
-					navbarFirst = container.children()[0],
-					// navbar-level-2
-					navbarSecond = container.children()[1],
-					navbarFirstHeight = 0,
-					navbarSecondHeight = 0,
-					navbarSecondMarginBottom = 0;
-
-				$timeout(function() {
+				/**
+				 * Set Container height for scrolling affix
+				 * @returns {void}
+				 */
+				var setContainerHeight = function setContainerHeight() {
 					navbarFirstHeight = navbarFirst.offsetHeight;
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
@@ -384,7 +387,9 @@ angular.module('keta.directives.AppBar',
 					);
 					// container height for fixed navigation
 					scrollContainerHeight = navbarFirstHeight + navbarSecondHeight + navbarSecondMarginBottom;
-				});
+				};
+
+				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
 				scope.currentLocale = scope.currentLocale || 'en';
 
@@ -638,8 +643,6 @@ angular.module('keta.directives.AppBar',
 					};
 				};
 
-				updateMenus();
-
 				// query current user
 				if (eventBus !== null) {
 					User.getCurrent(eventBus)
@@ -776,6 +779,25 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
+				scope.$watch('navbarFirst.offsetHeight', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						setContainerHeight();
+					}
+				});
+
+				scope.$watch('navbarSecond.offsetHeight', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						setContainerHeight();
+					}
+				});
+
+
+				// INIT
+				// ----
+
+				setContainerHeight();
+				updateMenus();
+
 			}
 		};
 
@@ -787,9 +809,7 @@ angular.module('keta.directives.AppBar')
 		$templateCache.put('/components/directives/app-bar.html', '<div class="navigation-container">' +
 '	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
 '		<div class="container-fluid">' +
-'			<div class="pull-left">' +
-'				<div data-ng-transclude></div>' +
-'			</div>' +
+'			<div data-ng-transclude></div>' +
 '			<div class="dropdown pull-right"' +
 '				data-ng-show="worlds.length > 0"' +
 '				data-ng-class="getClasses(MENU_ELEMENTS.WORLD_SWITCHER)">' +

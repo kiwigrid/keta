@@ -10,6 +10,15 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.12
+
+_Released: 2015-11-05_
+
+* Several CSS bugfixes (e.g. iOS 9 overlay closing)
+* Changed markup for search input field
+* Renamed `.tags` into `.labels` and changed underlaying markup
+* Added CSS support for application list and tabs
+
 ## Version 0.4.11
 
 _Released: 2015-10-13_

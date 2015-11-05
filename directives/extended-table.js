@@ -819,50 +819,51 @@ angular.module('keta.directives.ExtendedTable')
 '			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
 '				<div class="form-group form-inline">' +
 '					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
-'						<input type="text" class="form-control"' +
+'						<input type="search" class="form-control"' +
 '							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}" data-ng-model="search">' +
-'						<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>' +
+'						<span class="input-group-btn">' +
+'							<button class="btn btn-default btn-addon" type="button">' +
+'								<i class="glyphicon glyphicon-search"></i>' +
+'							</button>' +
+'						</span>' +
 '					</div>' +
 '				</div>' +
 '			</div>' +
 '' +
 '		</div>' +
-'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-5 pull-right">' +
+'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">' +
 '' +
 '			<!-- SELECTOR -->' +
-'			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
-'				<div class="form-group pull-right" data-ng-show="selectedColumn !== null">' +
-'					<div class="form-group">' +
-'						<div class="button-form">' +
-'							<label for="columnSelector">{{ getLabel(MESSAGE_KEY_PREFIX + \'_add_column\') }}</label>' +
-'							<div class="input-group">' +
-'								<select id="columnSelector"' +
-'									class="add-select form-control"' +
-'									data-ng-if="groupByProperty !== null"' +
-'									data-ng-model="$parent.selectedColumn"' +
-'									data-ng-options="' +
-'										column.id as headerLabelCallback(column.id)' +
-'											group by {{groupByProperty}} for column in switchableColumns |' +
-'										filter:filterColumns |' +
-'										orderBy:orderByProperty">' +
-'								</select>' +
-'								<select id="columnSelector"' +
-'									class="add-select form-control"' +
-'									data-ng-if="groupByProperty === null"' +
-'									data-ng-model="$parent.selectedColumn"' +
-'									data-ng-options="' +
-'										column.id as headerLabelCallback(column.id) for column in switchableColumns |' +
-'										filter:filterColumns |' +
-'										orderBy:orderByProperty">' +
-'								</select>' +
-'								<div class="stepper-buttons input-group-btn">' +
-'									<button type="button" class="btn btn-primary"' +
-'										data-ng-click="addColumn(selectedColumn)">' +
-'										<i class="glyphicon glyphicon-plus"></i>' +
-'									</button>' +
-'								</div>' +
-'							</div>' +
-'						</div>' +
+'			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR) && selectedColumn !== null" class="form-horizontal">' +
+'				<div class="form-group">' +
+'					<label for="columnSelector"' +
+'						class="col-xs-12 col-sm-5 col-lg-6 control-label">{{ getLabel(MESSAGE_KEY_PREFIX + \'_add_column\') }}</label>' +
+'					<div class="col-xs-12 col-sm-7 col-lg-6 input-group">' +
+'						<select id="columnSelector"' +
+'							class="form-control"' +
+'							data-ng-if="groupByProperty !== null"' +
+'							data-ng-model="$parent.selectedColumn"' +
+'							data-ng-options="' +
+'								column.id as headerLabelCallback(column.id)' +
+'									group by {{groupByProperty}} for column in switchableColumns |' +
+'								filter:filterColumns |' +
+'								orderBy:orderByProperty">' +
+'						</select>' +
+'						<select id="columnSelector"' +
+'							class="form-control"' +
+'							data-ng-if="groupByProperty === null"' +
+'							data-ng-model="$parent.selectedColumn"' +
+'							data-ng-options="' +
+'								column.id as headerLabelCallback(column.id) for column in switchableColumns |' +
+'								filter:filterColumns |' +
+'								orderBy:orderByProperty">' +
+'						</select>' +
+'						<span class="input-group-btn">' +
+'							<button type="button" class="btn btn-primary"' +
+'								data-ng-click="addColumn(selectedColumn)">' +
+'								<i class="glyphicon glyphicon-plus"></i>' +
+'							</button>' +
+'						</span>' +
 '					</div>' +
 '				</div>' +
 '			</div>' +
@@ -940,12 +941,12 @@ angular.module('keta.directives.ExtendedTable')
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
-'										<a class="btn-link"' +
+'										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
 '											class="{{item.icon}}" aria-hidden="true"></span></a>' +
-'										<a class="btn-link"	href=""' +
+'										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
@@ -969,12 +970,12 @@ angular.module('keta.directives.ExtendedTable')
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
-'										<a class="btn-link"' +
+'										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
 '											class="{{item.icon}}" aria-hidden="true"></span></a>' +
-'										<a class="btn-link"	href=""' +
+'										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +

@@ -348,6 +348,17 @@ angular.module('keta.directives.AppBar',
 				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.MD] = STATES.HIDDEN;
 				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.LG] = STATES.HIDDEN;
 
+				// default container height
+				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT;
+				var container = element;
+
+				var navbarFirst = container.children()[0];
+				var navbarFirstHeight = 0;
+
+				var navbarSecond = container.children()[1];
+				var navbarSecondHeight = 0;
+				var navbarSecondMarginBottom = 0;
+
 				/**
 				 * @description	Checks if the given menu is visible in all screen sizes
 				 * @param {object} menuElement The menu element
@@ -391,20 +402,12 @@ angular.module('keta.directives.AppBar',
 					return result;
 				};
 
-				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
-				// default container height
-				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT,
-					container = element,
-					// navbar-level-1
-					navbarFirst = container.children()[0],
-					// navbar-level-2
-					navbarSecond = container.children()[1],
-					navbarFirstHeight = 0,
-					navbarSecondHeight = 0,
-					navbarSecondMarginBottom = 0;
-
-				$timeout(function() {
+				/**
+				 * Set Container height for scrolling affix
+				 * @returns {void}
+				 */
+				var setContainerHeight = function setContainerHeight() {
 					navbarFirstHeight = navbarFirst.offsetHeight;
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
@@ -413,7 +416,9 @@ angular.module('keta.directives.AppBar',
 					);
 					// container height for fixed navigation
 					scrollContainerHeight = navbarFirstHeight + navbarSecondHeight + navbarSecondMarginBottom;
-				});
+				};
+
+				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
 				scope.currentLocale = scope.currentLocale || 'en';
 
@@ -667,8 +672,6 @@ angular.module('keta.directives.AppBar',
 					};
 				};
 
-				updateMenus();
-
 				// query current user
 				if (eventBus !== null) {
 					User.getCurrent(eventBus)
@@ -805,6 +808,25 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
+				scope.$watch('navbarFirst.offsetHeight', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						setContainerHeight();
+					}
+				});
+
+				scope.$watch('navbarSecond.offsetHeight', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						setContainerHeight();
+					}
+				});
+
+
+				// INIT
+				// ----
+
+				setContainerHeight();
+				updateMenus();
+
 			}
 		};
 
@@ -816,9 +838,7 @@ angular.module('keta.directives.AppBar')
 		$templateCache.put('/components/directives/app-bar.html', '<div class="navigation-container">' +
 '	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
 '		<div class="container-fluid">' +
-'			<div class="pull-left">' +
-'				<div data-ng-transclude></div>' +
-'			</div>' +
+'			<div data-ng-transclude></div>' +
 '			<div class="dropdown pull-right"' +
 '				data-ng-show="worlds.length > 0"' +
 '				data-ng-class="getClasses(MENU_ELEMENTS.WORLD_SWITCHER)">' +
@@ -1803,50 +1823,51 @@ angular.module('keta.directives.ExtendedTable')
 '			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
 '				<div class="form-group form-inline">' +
 '					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
-'						<input type="text" class="form-control"' +
+'						<input type="search" class="form-control"' +
 '							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}" data-ng-model="search">' +
-'						<div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>' +
+'						<span class="input-group-btn">' +
+'							<button class="btn btn-default btn-addon" type="button">' +
+'								<i class="glyphicon glyphicon-search"></i>' +
+'							</button>' +
+'						</span>' +
 '					</div>' +
 '				</div>' +
 '			</div>' +
 '' +
 '		</div>' +
-'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-5 pull-right">' +
+'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">' +
 '' +
 '			<!-- SELECTOR -->' +
-'			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR)">' +
-'				<div class="form-group pull-right" data-ng-show="selectedColumn !== null">' +
-'					<div class="form-group">' +
-'						<div class="button-form">' +
-'							<label for="columnSelector">{{ getLabel(MESSAGE_KEY_PREFIX + \'_add_column\') }}</label>' +
-'							<div class="input-group">' +
-'								<select id="columnSelector"' +
-'									class="add-select form-control"' +
-'									data-ng-if="groupByProperty !== null"' +
-'									data-ng-model="$parent.selectedColumn"' +
-'									data-ng-options="' +
-'										column.id as headerLabelCallback(column.id)' +
-'											group by {{groupByProperty}} for column in switchableColumns |' +
-'										filter:filterColumns |' +
-'										orderBy:orderByProperty">' +
-'								</select>' +
-'								<select id="columnSelector"' +
-'									class="add-select form-control"' +
-'									data-ng-if="groupByProperty === null"' +
-'									data-ng-model="$parent.selectedColumn"' +
-'									data-ng-options="' +
-'										column.id as headerLabelCallback(column.id) for column in switchableColumns |' +
-'										filter:filterColumns |' +
-'										orderBy:orderByProperty">' +
-'								</select>' +
-'								<div class="stepper-buttons input-group-btn">' +
-'									<button type="button" class="btn btn-primary"' +
-'										data-ng-click="addColumn(selectedColumn)">' +
-'										<i class="glyphicon glyphicon-plus"></i>' +
-'									</button>' +
-'								</div>' +
-'							</div>' +
-'						</div>' +
+'			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR) && selectedColumn !== null" class="form-horizontal">' +
+'				<div class="form-group">' +
+'					<label for="columnSelector"' +
+'						class="col-xs-12 col-sm-5 col-lg-6 control-label">{{ getLabel(MESSAGE_KEY_PREFIX + \'_add_column\') }}</label>' +
+'					<div class="col-xs-12 col-sm-7 col-lg-6 input-group">' +
+'						<select id="columnSelector"' +
+'							class="form-control"' +
+'							data-ng-if="groupByProperty !== null"' +
+'							data-ng-model="$parent.selectedColumn"' +
+'							data-ng-options="' +
+'								column.id as headerLabelCallback(column.id)' +
+'									group by {{groupByProperty}} for column in switchableColumns |' +
+'								filter:filterColumns |' +
+'								orderBy:orderByProperty">' +
+'						</select>' +
+'						<select id="columnSelector"' +
+'							class="form-control"' +
+'							data-ng-if="groupByProperty === null"' +
+'							data-ng-model="$parent.selectedColumn"' +
+'							data-ng-options="' +
+'								column.id as headerLabelCallback(column.id) for column in switchableColumns |' +
+'								filter:filterColumns |' +
+'								orderBy:orderByProperty">' +
+'						</select>' +
+'						<span class="input-group-btn">' +
+'							<button type="button" class="btn btn-primary"' +
+'								data-ng-click="addColumn(selectedColumn)">' +
+'								<i class="glyphicon glyphicon-plus"></i>' +
+'							</button>' +
+'						</span>' +
 '					</div>' +
 '				</div>' +
 '			</div>' +
@@ -1924,12 +1945,12 @@ angular.module('keta.directives.ExtendedTable')
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
-'										<a class="btn-link"' +
+'										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
 '											class="{{item.icon}}" aria-hidden="true"></span></a>' +
-'										<a class="btn-link"	href=""' +
+'										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
@@ -1953,12 +1974,12 @@ angular.module('keta.directives.ExtendedTable')
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
-'										<a class="btn-link"' +
+'										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
 '											class="{{item.icon}}" aria-hidden="true"></span></a>' +
-'										<a class="btn-link"	href=""' +
+'										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
