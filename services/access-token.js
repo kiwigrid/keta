@@ -14,11 +14,29 @@ angular.module('keta.services.AccessToken',
 	])
 
 	/**
+	 * @class AccessTokenConstants
+	 * @propertyOf keta.services.AccessToken
+	 * @description Access Token Constants
+	 */
+	.constant('AccessTokenConstants', {
+
+		// session types
+		SESSION_TYPE: {
+			NORMAL: 'normal',
+			IMPERSONATED: 'impersonated'
+		}
+
+	})
+
+	/**
 	 * @class AccessToken
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
+	.factory('AccessToken', function AccessTokenFactory(
+		$http,
+		AppContext, AccessTokenConstants
+	) {
 
 		/**
 		 * @private
@@ -26,7 +44,13 @@ angular.module('keta.services.AccessToken',
 		 */
 		var accessToken = AppContext.get('oauth.accessToken');
 
-		// buddy ignore:start
+		/**
+		 * @private
+		 * @description Decoded access token.
+		 */
+		var decodedAccessToken = null;
+
+		/*eslint-disable no-magic-numbers */
 		var Base64 = {
 
 			keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
@@ -152,7 +176,18 @@ angular.module('keta.services.AccessToken',
 			}
 
 		};
-		// buddy ignore:end
+		/*eslint-enable no-magic-numbers */
+
+		/**
+		 * @private
+		 * @param {string} property property to extract from token
+		 * @returns {*} property value
+		 */
+		var getProperty = function(property) {
+			return decodedAccessToken !== null &&
+				angular.isDefined(decodedAccessToken[property]) ?
+					decodedAccessToken[property] : null;
+		};
 
 		var api = {
 
@@ -160,6 +195,7 @@ angular.module('keta.services.AccessToken',
 			 * @function
 			 * @memberOf AccessToken
 			 * @description Get access token.
+			 * @param {boolean} decoded Return in decoded or raw format.
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
@@ -167,8 +203,8 @@ angular.module('keta.services.AccessToken',
 			 *         var accessToken = AccessToken.get();
 			 *     });
 			 */
-			get: function() {
-				return accessToken;
+			get: function(decoded) {
+				return angular.isDefined(decoded) ? decodedAccessToken : accessToken;
 			},
 
 			/**
@@ -186,6 +222,7 @@ angular.module('keta.services.AccessToken',
 			set: function(token) {
 				if (angular.isDefined(token) && angular.isString(token)) {
 					accessToken = token;
+					decodedAccessToken = api.decode(token);
 				}
 			},
 
@@ -238,7 +275,7 @@ angular.module('keta.services.AccessToken',
 
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Refresh access token by requesting backend.
 			 * @returns {promise} Promise which is resolved when query is returned
 			 * @example
@@ -262,6 +299,83 @@ angular.module('keta.services.AccessToken',
 					method: 'GET',
 					url: refreshUrl
 				});
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Checks if current user has a certain permission.
+			 * @param {string} permission permission to check
+			 * @returns {boolean} result
+			 */
+			hasPermission: function(permission) {
+				var has = false;
+
+				var decoded = api.get(true);
+				if (decoded !== null &&
+					angular.isArray(decoded.scope)) {
+					has = decoded.scope.indexOf(permission) !== -1;
+				}
+
+				return has;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Checks if session is of a certain type.
+			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
+			 * @returns {boolean} result
+			 */
+			isType: function(type) {
+
+				var decoded = api.get(true);
+
+				return decoded !== null &&
+					angular.isDefined(decoded.session) &&
+					angular.isDefined(decoded.session.type) &&
+					decoded.session.type === type;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Returns back URL for an impersonated session.
+			 * @returns {string} back URL
+			 */
+			getBackUrl: function() {
+				var backUrl = null;
+
+				if (api.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+					var decoded = api.get(true);
+					if (decoded !== null &&
+						angular.isDefined(decoded.session) &&
+						angular.isDefined(decoded.session.backUrl)) {
+						backUrl = decoded.session.backUrl;
+					}
+				}
+
+				return backUrl;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Get user id from token.
+			 * @returns {string} user id
+			 */
+			getUserId: function() {
+				return getProperty('user_id');
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Get channel from token.
+			 * @returns {string} channel
+			 */
+			getChannel: function() {
+				return getProperty('channel');
 			}
 
 		};

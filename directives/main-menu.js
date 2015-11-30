@@ -136,7 +136,7 @@ angular.module('keta.directives.MainMenu', [])
 angular.module('keta.directives.MainMenu')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/main-menu.html', '<div>' +
-'	<div data-ng-show="titleCallback()" class="sidebar-title">' +
+'	<div data-ng-if="titleCallback()" class="sidebar-title">' +
 '		<span>{{ titleCallback() }}</span>' +
 '	</div>' +
 '	<ul class="nav nav-pills nav-stacked keta-main-menu">' +
@@ -154,7 +154,7 @@ angular.module('keta.directives.MainMenu')
 '					data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
 '				</span>' +
 '			</a>' +
-'			<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entry.expanded">' +
+'			<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-if="entry.expanded">' +
 '				<li data-ng-repeat="entryLevel2 in entry.items"' +
 '					data-ng-class="{' +
 '						\'active\': isActive(entryLevel2),' +
@@ -168,7 +168,7 @@ angular.module('keta.directives.MainMenu')
 '							data-ng-class="{ \'glyphicon-minus\': entryLevel2.expanded, \'glyphicon-plus\': !entryLevel2.expanded }">' +
 '						</span>' +
 '					</a>' +
-'					<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entryLevel2.expanded">' +
+'					<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-if="entryLevel2.expanded">' +
 '						<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
 '							data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
 '							<a data-ng-href="{{ entryLevel3.link }}">' +

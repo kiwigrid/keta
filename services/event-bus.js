@@ -109,6 +109,8 @@ angular.module('keta.services.EventBus', [])
 			// init vertx.EventBus
 			var init = function() {
 
+				var MILLISECONDS = 1000;
+
 				// instantiate vertx.EventBus
 				eb = new vertx.EventBus(config.url);
 
@@ -119,7 +121,7 @@ angular.module('keta.services.EventBus', [])
 					if (config.reconnect) {
 						window.setTimeout(function() {
 							init();
-						}, config.reconnectTimeout * 1000);
+						}, config.reconnectTimeout * MILLISECONDS);
 					}
 
 				};

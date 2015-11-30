@@ -94,9 +94,11 @@ angular.module('keta.services.Tag', [])
 					return name;
 				};
 
+				var MINIMUM_SAMPLE_RATE = 5;
+
 				// sample rate
 				var sampleRate =
-					angular.isDefined(properties.sampleRate) && properties.sampleRate >= 5 ?
+					angular.isDefined(properties.sampleRate) && properties.sampleRate >= MINIMUM_SAMPLE_RATE ?
 						properties.sampleRate : null;
 
 				/**

@@ -38,12 +38,13 @@ angular.module('keta.services.EventBusDispatcher',
 			var waitForOpen = function(eventBus, replied, success, error) {
 
 				var timeout = null;
+				var MILLISECONDS = 1000;
 
 				// set timeout
 				if (replied) {
 					timeout = $timeout(function() {
 						error();
-					}, eventBus.getConfig().requestTimeout * 1000);
+					}, eventBus.getConfig().requestTimeout * MILLISECONDS);
 				}
 
 				// wait if readyState isn't open
@@ -476,7 +477,7 @@ angular.module('keta.services.EventBusDispatcher',
 					message.accessToken = AccessToken.get();
 
 					var handler = function(reply) {
-						if (reply && reply.code === 419) {
+						if (reply && reply.code === api.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 							// refresh access token
 							AccessToken.refresh().then(function(response) {
 								if (angular.isDefined(response.data.accessToken)) {

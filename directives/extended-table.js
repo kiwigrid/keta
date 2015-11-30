@@ -351,7 +351,13 @@ angular.module('keta.directives.ExtendedTable',
 				search: '=?',
 
 				// array of search results
-				searchResults: '=?'
+				searchResults: '=?',
+
+				// array of selected rows results
+				selectionResults: '=?',
+
+				// boolean flag to enable or disable row selection
+				selectionEnabled: '=?'
 
 			},
 			templateUrl: '/components/directives/extended-table.html',
@@ -460,10 +466,18 @@ angular.module('keta.directives.ExtendedTable',
 				// array of search results
 				scope.searchResults = scope.searchResults || scope.rows;
 
+				// selection enabled
+				scope.selectionEnabled = scope.selectionEnabled || false;
+
+				// array of selection results
+				scope.selectionResults = scope.selectionResults || [];
+
 			},
 			controller: function($scope) {
 
 				// CONSTANTS ---
+
+				var KEYCODE_ENTER = 13;
 
 				$scope.COMPONENTS_FILTER = ExtendedTableConstants.COMPONENT.FILTER;
 				$scope.COMPONENTS_SELECTOR = ExtendedTableConstants.COMPONENT.SELECTOR;
@@ -500,7 +514,7 @@ angular.module('keta.directives.ExtendedTable',
 					angular.forEach(objects, function(obj) {
 						angular.forEach(obj, function(value, key) {
 
-							if (keys.indexOf(key) === -1) {
+							if (angular.isDefined(obj) && keys.indexOf(key) === -1) {
 								keys.push(key);
 							}
 
@@ -510,9 +524,9 @@ angular.module('keta.directives.ExtendedTable',
 					// fill empty keys
 					angular.forEach(objects, function(obj) {
 						angular.forEach(keys, function(key) {
-
-							obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
-
+							if (angular.isDefined(obj)) {
+								obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
+							}
 						});
 					});
 
@@ -557,6 +571,10 @@ angular.module('keta.directives.ExtendedTable',
 						}
 					});
 					return found;
+				};
+
+				var resetSelection = function() {
+					$scope.selectionResults = [];
 				};
 
 				// fill all keys initial
@@ -635,18 +653,21 @@ angular.module('keta.directives.ExtendedTable',
 					if (newValue !== null && newValue !== oldValue) {
 						update();
 						$scope.resetPager();
+						resetSelection();
 					}
 				}, true);
 
 				$scope.$watch('pager', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
 						$scope.resetPager();
+						resetSelection();
 					}
 				}, true);
 
 				$scope.$watch('search', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
 						$scope.resetPager();
+						resetSelection();
 					}
 				});
 
@@ -747,6 +768,55 @@ angular.module('keta.directives.ExtendedTable',
 				};
 
 				/**
+				 * adds / removes clicked row to/from selectionResults array
+				 * @param {object} row to add/remove to/from selection
+				 * @returns {boolean} if selection is enabled
+				 */
+				$scope.selectRow = function(row) {
+
+					if (!$scope.selectionEnabled) {
+						return false;
+					}
+
+					var isSelected = false;
+
+					for (var i = 0; i < $scope.selectionResults.length; i++) {
+						if (angular.equals(row, $scope.selectionResults[i])) {
+							isSelected = true;
+							$scope.selectionResults.splice(i, 1);
+							break;
+						}
+					}
+
+					if (!isSelected) {
+						$scope.selectionResults.push(row);
+					}
+				};
+
+				/**
+				 * checks if row is selected
+				 * @param {object} row to check
+				 * @returns {boolean} is selected or not
+				 */
+				$scope.isSelected = function(row) {
+
+					if (!$scope.selectionEnabled) {
+						return false;
+					}
+
+					var isSelected = false;
+
+					for (var i = 0; i < $scope.selectionResults.length; i++) {
+						if (angular.equals(row, $scope.selectionResults[i])) {
+							isSelected = true;
+							break;
+						}
+					}
+
+					return isSelected;
+				};
+
+				/**
 				 * @description Jumps to the given page and updates the view accordingly.
 				 * @param {number} page The number of the page to go to.
 				 * @returns {void} nothing
@@ -789,7 +859,7 @@ angular.module('keta.directives.ExtendedTable',
 				$scope.checkPagerInput = function checkPagerInput(currentPage, $event) {
 					switch ($event.type) {
 						case 'keypress':
-							if ($event.keyCode === 13) {
+							if ($event.keyCode === KEYCODE_ENTER) {
 								resetPagerInputIfNecessary(currentPage);
 							}
 							break;
@@ -932,7 +1002,8 @@ angular.module('keta.directives.ExtendedTable')
 '					<tbody>' +
 '						<!-- operationsMode: data -->' +
 '						<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
-'							data-ng-repeat="row in rows">' +
+'							data-ng-repeat="row in rows" data-ng-click="selectRow(row)"' +
+'							data-ng-class="{\'active\' : isSelected(row)}">' +
 '							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +

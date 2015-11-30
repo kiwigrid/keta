@@ -10,6 +10,14 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.13
+
+_Released: 2015-11-30_
+
+* Added impersonation bar to `AppBar` directive
+* Added selection support to `ExtendedTable` directive
+* Added CSS support for both components
+
 ## Version 0.4.12
 
 _Released: 2015-11-05_
@@ -79,7 +87,7 @@ _Released: 2015-08-17_
 * Bugfix for `ExtendedTable` directive: non-heterogeneous rows don’t break table anymore
 * Added `ApplicationUtils.getAppIcon` to retrieve app icon for specified language
 * Added `ApplicationUtils.getAppAuthor` to retrieve app author
-* Updated  css parts
+* Updated css parts
 
 ## Version 0.4.4
 

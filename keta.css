@@ -2336,14 +2336,14 @@ table th[class*="col-"] {
 .table > thead > tr.active > th,
 .table > tbody > tr.active > th,
 .table > tfoot > tr.active > th {
-  background-color: #f5f5f5;
+  background-color: #fcf8e3;
 }
 .table-hover > tbody > tr > td.active:hover,
 .table-hover > tbody > tr > th.active:hover,
 .table-hover > tbody > tr.active:hover > td,
 .table-hover > tbody > tr:hover > .active,
 .table-hover > tbody > tr.active:hover > th {
-  background-color: #e8e8e8;
+  background-color: #faf2cc;
 }
 .table > thead > tr > td.success,
 .table > tbody > tr > td.success,
@@ -5634,7 +5634,7 @@ a.thumbnail.active {
   overflow: hidden;
   height: 20px;
   margin-bottom: 20px;
-  background-color: #eeeeee;
+  background-color: #d5d5d5;
   border-radius: 2px;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -7524,9 +7524,9 @@ button.close {
   -webkit-animation: spin 1s infinite linear;
   -o-animation: spin 1s infinite linear;
   animation: spin 1s infinite linear;
-  border-bottom: 5px solid #eeeeee;
-  border-left: 5px solid #eeeeee;
-  border-right: 5px solid #eeeeee;
+  border-bottom: 5px solid #d5d5d5;
+  border-left: 5px solid #d5d5d5;
+  border-right: 5px solid #d5d5d5;
   border-top: 5px solid #acbf30;
   border-radius: 100%;
   height: 32px;
@@ -8119,13 +8119,6 @@ body {
   -webkit-transition: left 0.25s ease-out, right 0.25s ease-out;
   -o-transition: left 0.25s ease-out, right 0.25s ease-out;
   transition: left 0.25s ease-out, right 0.25s ease-out;
-}
-.content {
-  width: 100%;
-}
-.content-with-shortcuts {
-  left: 70px;
-  width: calc(100% - 70px);
 }
 .alert {
   font-size: 14px;
@@ -8724,7 +8717,7 @@ a.bg-blue:focus {
 .table-data .table-condensed td:last-child {
   padding: 6px 0;
 }
-.table-data th.sortable {
+.table-data th.sortable a {
   cursor: pointer;
 }
 .table-data th.sort a {
@@ -8740,25 +8733,28 @@ a.bg-blue:focus {
 .table-data th a > span {
   padding-left: 3px;
 }
-.short-cuts {
-  position: absolute;
-  left: -6px;
-  top: 0;
-  z-index: 15;
-}
-.short-cuts.nav-pills > li > a {
+.table-data th:not(.sortable) {
   color: #787878;
 }
-.short-cuts.nav-pills > li > a:focus,
-.short-cuts.nav-pills > li > a:hover {
-  color: #363636;
-  background: rgba(172, 191, 48, 0.2);
+.short-cuts {
+  z-index: 15;
 }
-.short-cuts.nav-pills > li.active a {
+.short-cuts .nav-pills > li > a {
+  color: #787878;
+}
+.short-cuts .nav-pills > li:focus,
+.short-cuts .nav-pills > li:hover {
+  color: #363636;
+}
+.short-cuts .nav-pills > li.active a {
+  background: #acbf30;
   color: #ffffff;
 }
-.short-cuts.nav-pills > li.active a:hover {
-  background-color: #acbf30;
+.short-cuts span {
+  display: block !important;
+  font-size: 10px;
+  font-family: "Droid Sans", verdana, arial, sans-serif;
+  line-height: 1.42857143;
 }
 @font-face {
   font-family: "kiwigrid-device-icons";
@@ -9023,25 +9019,6 @@ a.bg-blue:focus {
   font-size: 20px;
   line-height: 20px;
 }
-.progress-bordered-success,
-.progress-bordered-info,
-.progress-bordered-warning,
-.progress-bordered-danger {
-  border-width: 1px;
-  border-style: solid;
-}
-.progress-bordered-success {
-  border-color: #7b9340;
-}
-.progress-bordered-info {
-  border-color: #abcbc5;
-}
-.progress-bordered-warning {
-  border-color: #f59d20;
-}
-.progress-bordered-danger {
-  border-color: #e95322;
-}
 .underline {
   border-bottom: 1px solid #c7c7c7 !important;
 }
@@ -9226,6 +9203,48 @@ fieldset[disabled] a.btn {
 .btn-link {
   text-transform: none;
 }
+.btn-link-default {
+  color: #787878;
+}
+.btn-link-default:hover,
+.btn-link-default:focus {
+  color: #525252;
+}
+.btn-link-primary {
+  color: #acbf30;
+}
+.btn-link-primary:hover,
+.btn-link-primary:focus {
+  color: #758221;
+}
+.btn-link-success {
+  color: #7b9340;
+}
+.btn-link-success:hover,
+.btn-link-success:focus {
+  color: #4e5e29;
+}
+.btn-link-info {
+  color: #abcbc5;
+}
+.btn-link-info:hover,
+.btn-link-info:focus {
+  color: #7caea4;
+}
+.btn-link-warning {
+  color: #f59d20;
+}
+.btn-link-warning:hover,
+.btn-link-warning:focus {
+  color: #c07409;
+}
+.btn-link-danger {
+  color: #e95322;
+}
+.btn-link-danger:hover,
+.btn-link-danger:focus {
+  color: #ad3811;
+}
 .close {
   opacity: 0.8;
   filter: alpha(opacity=80);
@@ -9323,6 +9342,14 @@ fieldset[disabled] .checkbox {
   .form-horizontal .checkbox input[type="checkbox"] {
     float: none;
   }
+}
+input[type="range"][disabled] {
+  cursor: not-allowed;
+}
+.impersonation-bar {
+  padding: 5px 15px;
+  background-color: #fcf8e3;
+  color: #363636;
 }
 .input-group[class*="col-"] {
   padding-left: 3px;
@@ -9736,15 +9763,9 @@ td h6 {
 .table > tfoot > tr > td {
   vertical-align: middle;
   border-top: 1px solid #bababa;
-  background: #ffffff;
 }
-.table-striped > tbody > tr:nth-child(odd) > td,
-.table-striped > tbody > tr:nth-child(odd) > th {
-  background-color: #eeeeee;
-}
-.table-hover > tbody > tr:hover > td,
-.table-hover > tbody > tr:hover > th {
-  background-color: #f5f5f5;
+.table .progress {
+  margin-bottom: 0;
 }
 /*
  * keta – keta.less
@@ -9959,401 +9980,6 @@ sup {
   border: 0;
 }
 /*
-  Icon Font: deviceIcon
-*/
-@font-face {
-  font-family: "appIcon";
-  src: url("fonts/appIcon.eot?#iefix") format("embedded-opentype"), url("fonts/appIcon.woff") format("woff"), url("fonts/appIcon.ttf") format("truetype"), url("fonts/appIcon.svg#appIcon") format("svg");
-}
-[data-icon]:before {
-  content: attr(data-icon);
-}
-[data-icon]:before,
-.icon-app-alertconfirm:before,
-.icon-app-alerterror:before,
-.icon-app-alertinfo:before,
-.icon-app-alertsuccess:before,
-.icon-app-alertwarning:before,
-.icon-app-arrowdown:before,
-.icon-app-arrowleft:before,
-.icon-app-arrowright:before,
-.icon-app-arrowup:before,
-.icon-app-balance:before,
-.icon-app-checkbox:before,
-.icon-app-control:before,
-.icon-app-currentpower:before,
-.icon-app-dashboard:before,
-.icon-app-device:before,
-.icon-app-edit:before,
-.icon-app-electricitymeterhouse:before,
-.icon-app-emobility:before,
-.icon-app-energy:before,
-.icon-app-energygenerator:before,
-.icon-app-energymanagment:before,
-.icon-app-energymanagmentconsumer:before,
-.icon-app-export:before,
-.icon-app-forecast:before,
-.icon-app-heatmeter:before,
-.icon-app-heatpump:before,
-.icon-app-house:before,
-.icon-app-key:before,
-.icon-app-navbar:before,
-.icon-app-off:before,
-.icon-app-on:before,
-.icon-app-onOff:before,
-.icon-app-overview:before,
-.icon-app-powerpole:before,
-.icon-app-powerpolepv:before,
-.icon-app-pv:before,
-.icon-app-radiobox:before,
-.icon-app-rss:before,
-.icon-app-servicedata:before,
-.icon-app-settings:before,
-.icon-app-standby:before,
-.icon-app-status:before,
-.icon-app-storage:before,
-.icon-app-tag:before,
-.icon-app-timer:before,
-.icon-app-trash:before,
-.icon-app-user:before,
-.icon-app-userdata:before,
-.icon-app-warning:before,
-.icon-app-widget:before,
-.icon-app-revenue:before {
-  font-family: "appIcon";
-  line-height: 1;
-  font-style: normal;
-}
-.icon-app-alertconfirm:before {
-  content: "\f100";
-}
-.icon-app-alerterror:before {
-  content: "\f101";
-}
-.icon-app-alertinfo:before {
-  content: "\f102";
-}
-.icon-app-alertsuccess:before {
-  content: "\f103";
-}
-.icon-app-alertwarning:before {
-  content: "\f104";
-}
-.icon-app-arrowdown:before {
-  content: "\f105";
-}
-.icon-app-arrowleft:before {
-  content: "\f106";
-}
-.icon-app-arrowright:before {
-  content: "\f107";
-}
-.icon-app-arrowup:before {
-  content: "\f108";
-}
-.icon-app-balance:before {
-  content: "\f109";
-}
-.icon-app-checkbox:before {
-  content: "\f10a";
-}
-.icon-app-control:before {
-  content: "\f10b";
-}
-.icon-app-currentpower:before {
-  content: "\f10c";
-}
-.icon-app-dashboard:before {
-  content: "\f10d";
-}
-.icon-app-device:before {
-  content: "\f10e";
-}
-.icon-app-edit:before {
-  content: "\f10f";
-}
-.icon-app-electricitymeterhouse:before {
-  content: "\f110";
-}
-.icon-app-emobility:before {
-  content: "\f111";
-}
-.icon-app-energy:before {
-  content: "\f112";
-}
-.icon-app-energygenerator:before {
-  content: "\f113";
-}
-.icon-app-energymanagment:before {
-  content: "\f114";
-}
-.icon-app-energymanagmentconsumer:before {
-  content: "\f115";
-}
-.icon-app-export:before {
-  content: "\f116";
-}
-.icon-app-forecast:before {
-  content: "\f117";
-}
-.icon-app-heatmeter:before {
-  content: "\f118";
-}
-.icon-app-heatpump:before {
-  content: "\f119";
-}
-.icon-app-house:before {
-  content: "\f11a";
-}
-.icon-app-key:before {
-  content: "\f11b";
-}
-.icon-app-navbar:before {
-  content: "\f11c";
-}
-.icon-app-off:before {
-  content: "\f11d";
-}
-.icon-app-on:before {
-  content: "\f11e";
-}
-.icon-app-onOff:before {
-  content: "\f11f";
-}
-.icon-app-overview:before {
-  content: "\f120";
-}
-.icon-app-powerpole:before {
-  content: "\f121";
-}
-.icon-app-powerpolepv:before {
-  content: "\f122";
-}
-.icon-app-pv:before {
-  content: "\f123";
-}
-.icon-app-radiobox:before {
-  content: "\f124";
-}
-.icon-app-revenue:before {
-  content: "\f125";
-}
-.icon-app-rss:before {
-  content: "\f126";
-}
-.icon-app-servicedata:before {
-  content: "\f127";
-}
-.icon-app-settings:before {
-  content: "\f128";
-}
-.icon-app-standby:before {
-  content: "\f129";
-}
-.icon-app-status:before {
-  content: "\f12a";
-}
-.icon-app-storage:before {
-  content: "\f12b";
-}
-.icon-app-tag:before {
-  content: "\f12c";
-}
-.icon-app-timer:before {
-  content: "\f12d";
-}
-.icon-app-trash:before {
-  content: "\f12e";
-}
-.icon-app-user:before {
-  content: "\f12f";
-}
-.icon-app-userdata:before {
-  content: "\f130";
-}
-.icon-app-warning:before {
-  content: "\f131";
-}
-.icon-app-widget:before {
-  content: "\f132";
-}
-/*
-  Icon Font: deviceIcon
-*/
-@font-face {
-  font-family: "deviceIcon";
-  src: url("fonts/deviceIcon.eot");
-  src: url("fonts/deviceIcon.eot?#iefix") format("embedded-opentype"), url("fonts/deviceIcon.woff") format("woff"), url("fonts/deviceIcon.ttf") format("truetype"), url("fonts/deviceIcon.svg#deviceIcon") format("svg");
-}
-[data-icon]:before {
-  content: attr(data-icon);
-}
-[data-icon]:before,
-.icon-device-aircon:before,
-.icon-device-app:before,
-.icon-device-chargingstation:before,
-.icon-device-coffee:before,
-.icon-device-cooker:before,
-.icon-device-dishwasher:before,
-.icon-device-dryer:before,
-.icon-device-eheating:before,
-.icon-device-freezer:before,
-.icon-device-headset:before,
-.icon-device-heatpump:before,
-.icon-device-hotwater:before,
-.icon-device-light:before,
-.icon-device-microwave:before,
-.icon-device-plug:before,
-.icon-device-printer:before,
-.icon-device-sauna:before,
-.icon-device-tv:before,
-.icon-device-washer:before,
-.icon-device-waterpump:before {
-  font-family: "deviceIcon";
-  line-height: 1;
-  font-style: normal;
-}
-.icon-device-aircon:before {
-  content: "\f100";
-}
-.icon-device-app:before {
-  content: "\f101";
-}
-.icon-device-chargingstation:before {
-  content: "\f102";
-}
-.icon-device-coffee:before {
-  content: "\f103";
-}
-.icon-device-cooker:before {
-  content: "\f104";
-}
-.icon-device-dishwasher:before {
-  content: "\f105";
-}
-.icon-device-dryer:before {
-  content: "\f106";
-}
-.icon-device-eheating:before {
-  content: "\f107";
-}
-.icon-device-freezer:before {
-  content: "\f108";
-}
-.icon-device-headset:before {
-  content: "\f109";
-}
-.icon-device-heatpump:before {
-  content: "\f10a";
-}
-.icon-device-hotwater:before {
-  content: "\f10b";
-}
-.icon-device-light:before {
-  content: "\f10c";
-}
-.icon-device-microwave:before {
-  content: "\f10d";
-}
-.icon-device-plug:before {
-  content: "\f10e";
-}
-.icon-device-printer:before {
-  content: "\f10f";
-}
-.icon-device-sauna:before {
-  content: "\f110";
-}
-.icon-device-tv:before {
-  content: "\f111";
-}
-.icon-device-washer:before {
-  content: "\f112";
-}
-.icon-device-waterpump:before {
-  content: "\f113";
-}
-/*
-  Icon Font: weatherIcon
-*/
-@font-face {
-  font-family: "weatherIcon";
-  src: url("fonts/weatherIcon.eot");
-  src: url("fonts/weatherIcon.eot?#iefix") format("embedded-opentype"), url("fonts/weatherIcon.woff") format("woff"), url("fonts/weatherIcon.ttf") format("truetype"), url("fonts/weatherIcon.svg#weatherIcon") format("svg");
-}
-.icon-weather-brokenclouds:before,
-.icon-weather-error:before,
-.icon-weather-fewclouds:before,
-.icon-weather-mist:before,
-.icon-weather-nightfeeclouds:before,
-.icon-weather-nightscatterescloud:before,
-.icon-weather-nightskyisclear:before,
-.icon-weather-rain:before,
-.icon-weather-scatteresclouds:before,
-.icon-weather-showerrain:before,
-.icon-weather-skyisclear:before,
-.icon-weather-sleet:before,
-.icon-weather-snow:before,
-.icon-weather-sunrise:before,
-.icon-weather-sunset:before,
-.icon-weather-thunderstorm:before,
-.icon-weather-wind:before {
-  font-family: "weatherIcon";
-  line-height: 1;
-  font-style: normal;
-}
-.icon-weather-brokenclouds:before {
-  content: "\f100";
-}
-.icon-weather-error:before {
-  content: "\f101";
-}
-.icon-weather-fewclouds:before {
-  content: "\f102";
-}
-.icon-weather-mist:before {
-  content: "\f103";
-}
-.icon-weather-nightfeeclouds:before {
-  content: "\f104";
-}
-.icon-weather-nightscatterescloud:before {
-  content: "\f105";
-}
-.icon-weather-nightskyisclear:before {
-  content: "\f106";
-}
-.icon-weather-rain:before {
-  content: "\f107";
-}
-.icon-weather-scatteresclouds:before {
-  content: "\f108";
-}
-.icon-weather-showerrain:before {
-  content: "\f109";
-}
-.icon-weather-skyisclear:before {
-  content: "\f10a";
-}
-.icon-weather-sleet:before {
-  content: "\f10b";
-}
-.icon-weather-snow:before {
-  content: "\f10c";
-}
-.icon-weather-sunrise:before {
-  content: "\f10d";
-}
-.icon-weather-sunset:before {
-  content: "\f10e";
-}
-.icon-weather-thunderstorm:before {
-  content: "\f10f";
-}
-.icon-weather-wind:before {
-  content: "\f110";
-}
-/*
  * Energy Flow Animations for Dashboard-Widgets
  */
 .progress-flow {
@@ -10426,7 +10052,7 @@ sup {
   border-radius: 0;
   width: 12px;
   height: 2px;
-  background-color: #eeeeee;
+  background-color: #d5d5d5;
   margin: 0 2px;
 }
 .carousel-indicators .active {
@@ -10438,164 +10064,10 @@ sup {
 .nav-pills > li > a:hover {
   color: #ffffff;
 }
-/* Battery */
-.battery-contact,
-.battery-body,
-.battery-value-body,
-.battery-value {
-  position: absolute;
-}
-.battery {
-  position: relative;
-  margin: 10px auto;
-}
-.battery-contact {
-  background: #eeeeee;
-  border-top: 2px solid #eeeeee;
-  border-left: 2px solid #eeeeee;
-  border-right: 2px solid #eeeeee;
-}
-.battery-body {
-  background: transparent;
-  border: 2px solid #eeeeee;
-  border-radius: 2px;
-}
-.battery-value-body {
-  height: 100%;
-  bottom: 0;
-  left: 0;
-}
-.battery-value-fix {
-  background: #eeeeee;
-  position: absolute;
-  z-index: 10;
-}
-.battery-value {
-  bottom: 0;
-  border: 2px solid #ffffff;
-  background: #acbf30;
-  z-index: 20;
-}
-.battery-value.discharged {
-  background: #3f71b7;
-}
-/* Small Battery for Dashboard */
-.battery-icon {
-  float: left;
-  margin: 0 auto;
-  width: 50%;
-}
-/* Big Battery for Storage-Status */
-.battery-small .battery,
-.battery-big .battery {
-  width: 76px;
-  margin: 0 auto;
-}
-.battery-small .battery-contact,
-.battery-big .battery-contact {
-  height: 12px;
+.short-cuts {
   width: 40px;
-  top: 48px;
-  left: 17px;
-}
-.battery-small .battery-body,
-.battery-big .battery-body {
-  top: 60px;
-  height: 180px;
-  width: 75px;
-}
-.battery-small .battery-value,
-.battery-big .battery-value {
-  width: 71px;
-}
-.battery-small .battery-state .arrow i,
-.battery-big .battery-state .arrow i {
-  font-size: 12px;
-  padding-right: 5px;
-}
-.battery-small .battery-state,
-.battery-big .battery-state {
-  width: 100%;
-  height: 265px;
-  position: relative;
-  float: none;
-}
-.battery-small .battery-state .arrow-up,
-.battery-big .battery-state .arrow-up,
-.battery-small .battery-state .arrow-down,
-.battery-big .battery-state .arrow-down {
-  width: 97%;
-}
-.battery-small .battery-state .arrow-down,
-.battery-big .battery-state .arrow-down {
-  position: absolute;
-  bottom: 0;
-}
-.battery-small .battery-value-fix,
-.battery-big .battery-value-fix {
-  z-index: 20;
-  width: 71px;
-  bottom: 0;
-}
-.battery-big .battery {
-  width: 40px;
-}
-.battery-big .battery-contact {
-  border-top-right-radius: 2px;
-  border-top-left-radius: 2px;
-  height: 7px;
-  width: 19px;
-  top: 4px;
-  left: 10px;
-}
-.battery-big .battery-body {
-  border-radius: 2px;
-  top: 10px;
-  height: 74px;
-  width: 40px;
-}
-.battery-big .battery-body i {
-  position: absolute;
-  top: 50%;
-  left: 8px;
-  margin-top: -15px;
-  color: #acbf30;
-  font-size: 20px;
-}
-.battery-big .battery-value {
-  width: 36px;
-}
-.battery-small {
-  position: relative;
-  height: 80px;
-  width: 30px;
-  margin: 0 auto;
-}
-.battery-small .battery-contact {
-  top: 9px;
-  height: 5px;
-  width: 14px;
-  left: 8px;
-  border-top-right-radius: 2px;
-  border-top-left-radius: 2px;
-}
-.battery-small .battery-body {
-  top: 13px;
-  height: 60px;
-  width: 30px;
-  border-radius: 2px;
-}
-.battery-small .battery-value {
-  width: 26px;
-}
-.battery-small .battery-value-fix {
-  width: 50px;
-  bottom: 0;
-}
-.battery-small .icon {
-  position: absolute;
-  top: 20%;
-  left: 4px;
+  margin-left: -9px;
+  margin-right: 30px;
 }
 .panel-extended {
   border-left: 1px solid #acbf30;
@@ -10634,6 +10106,98 @@ sup {
 }
 .panel-extended ~ button {
   margin-top: 5px;
+}
+.storage {
+  margin: 0 auto;
+  position: relative;
+  z-index: 0;
+}
+.storage .storage-contact,
+.storage .storage-body,
+.storage .storage-value-body,
+.storage .storage-value {
+  position: absolute;
+}
+.storage .storage-contact {
+  background: #d5d5d5;
+  border-top: 2px solid #d5d5d5;
+  border-left: 2px solid #d5d5d5;
+  border-right: 2px solid #d5d5d5;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+  height: 12px;
+  width: 40px;
+  top: 0;
+  left: 17px;
+}
+.storage .storage-body {
+  bottom: 0;
+  background: transparent;
+  border: 2px solid #d5d5d5;
+  border-radius: 2px;
+  height: 180px;
+  width: 75px;
+}
+.storage .storage-value-body {
+  height: 100%;
+  bottom: 0;
+  left: 0;
+}
+.storage .storage-value {
+  bottom: 0;
+  border: 2px solid #ffffff;
+  background: #acbf30;
+  z-index: 20;
+  width: 71px;
+}
+.storage .storage-icon {
+  float: left;
+  margin: 0 auto;
+  width: 50%;
+}
+.storage .icon {
+  position: absolute;
+  top: 50%;
+}
+.storage.storage-sm {
+  height: 65px;
+  width: 30px;
+}
+.storage.storage-sm .storage-contact {
+  height: 5px;
+  width: 14px;
+  left: 8px;
+}
+.storage.storage-sm .storage-body {
+  height: 60px;
+  width: 30px;
+}
+.storage.storage-sm .storage-value {
+  width: 26px;
+}
+.storage.storage-sm .icon {
+  left: -2px;
+  margin-top: -15px;
+}
+.storage.storage-lg {
+  width: 50px;
+  height: 102px;
+}
+.storage.storage-lg .storage-contact {
+  height: 7px;
+  width: 20px;
+  left: 15px;
+}
+.storage.storage-lg .storage-body {
+  height: 95px;
+  width: 50px;
+}
+.storage.storage-lg .storage-value {
+  width: 46px;
+}
+.storage.storage-lg .icon {
+  left: -4px;
+  margin-top: -27px;
 }
 .widget a:hover {
   color: #acbf30;
@@ -10764,12 +10328,17 @@ sup {
   color: #ffffff;
   display: block;
 }
-.solarwatt-energy-welcome .truncate {
+.solarwatt-energy-welcome .user-name {
   display: inline-block;
+  display: -webkit-box;
   max-width: 150px;
+  max-height: 140px;
+  /* Fallback for non-webkit */
+  margin: 0 auto;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .solarwatt-energymanagement-overview .indicator {
   padding-left: 10px;
@@ -10819,4 +10388,456 @@ sup {
 }
 .solarwatt-energymanagement-consumer .frameless .center {
   height: 116px;
+}
+/*
+  Icon Font: app
+*/
+@font-face {
+  font-family: "app";
+  src: url("fonts/icons/app/app.eot");
+  src: url("fonts/icons/app/app.eot?#iefix") format("embedded-opentype"), url("fonts/icons/app/app.woff") format("woff"), url("fonts/icons/app/app.ttf") format("truetype"), url("fonts/icons/app/app.svg#app") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+[data-icon]:before {
+  content: attr(data-icon);
+}
+[data-icon]:before,
+.icon-app-alertconfirm:before,
+.icon-app-alerterror:before,
+.icon-app-alertinfo:before,
+.icon-app-alertsuccess:before,
+.icon-app-alertwarning:before,
+.icon-app-arrowdown:before,
+.icon-app-arrowleft:before,
+.icon-app-arrowright:before,
+.icon-app-arrowup:before,
+.icon-app-balance:before,
+.icon-app-charge:before,
+.icon-app-checkbox:before,
+.icon-app-control:before,
+.icon-app-currentpower:before,
+.icon-app-dashboard:before,
+.icon-app-device:before,
+.icon-app-discharge:before,
+.icon-app-edit:before,
+.icon-app-electricitymeterhouse:before,
+.icon-app-emobility:before,
+.icon-app-energy:before,
+.icon-app-energygenerator:before,
+.icon-app-energymanagment:before,
+.icon-app-energymanagmentconsumer:before,
+.icon-app-export:before,
+.icon-app-fatal:before,
+.icon-app-forecast:before,
+.icon-app-heatmeter:before,
+.icon-app-heatpump:before,
+.icon-app-house:before,
+.icon-app-key:before,
+.icon-app-navbar:before,
+.icon-app-off:before,
+.icon-app-on:before,
+.icon-app-onOff:before,
+.icon-app-overview:before,
+.icon-app-phone:before,
+.icon-app-powerpole:before,
+.icon-app-powerpolepv:before,
+.icon-app-pv:before,
+.icon-app-radiobox:before,
+.icon-app-revenue:before,
+.icon-app-rss:before,
+.icon-app-servicedata:before,
+.icon-app-settings:before,
+.icon-app-standby:before,
+.icon-app-status:before,
+.icon-app-stop:before,
+.icon-app-storage:before,
+.icon-app-tag:before,
+.icon-app-timer:before,
+.icon-app-trash:before,
+.icon-app-user:before,
+.icon-app-userdata:before,
+.icon-app-warning:before,
+.icon-app-widget:before {
+  font-family: "app";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  text-decoration: inherit;
+}
+.icon-app-alertconfirm:before {
+  content: "\f100";
+}
+.icon-app-alerterror:before {
+  content: "\f101";
+}
+.icon-app-alertinfo:before {
+  content: "\f102";
+}
+.icon-app-alertsuccess:before {
+  content: "\f103";
+}
+.icon-app-alertwarning:before {
+  content: "\f104";
+}
+.icon-app-arrowdown:before {
+  content: "\f105";
+}
+.icon-app-arrowleft:before {
+  content: "\f106";
+}
+.icon-app-arrowright:before {
+  content: "\f107";
+}
+.icon-app-arrowup:before {
+  content: "\f108";
+}
+.icon-app-balance:before {
+  content: "\f109";
+}
+.icon-app-charge:before {
+  content: "\f10a";
+}
+.icon-app-checkbox:before {
+  content: "\f10b";
+}
+.icon-app-control:before {
+  content: "\f10c";
+}
+.icon-app-currentpower:before {
+  content: "\f10d";
+}
+.icon-app-dashboard:before {
+  content: "\f10e";
+}
+.icon-app-device:before {
+  content: "\f10f";
+}
+.icon-app-discharge:before {
+  content: "\f110";
+}
+.icon-app-edit:before {
+  content: "\f111";
+}
+.icon-app-electricitymeterhouse:before {
+  content: "\f112";
+}
+.icon-app-emobility:before {
+  content: "\f113";
+}
+.icon-app-energy:before {
+  content: "\f114";
+}
+.icon-app-energygenerator:before {
+  content: "\f115";
+}
+.icon-app-energymanagment:before {
+  content: "\f116";
+}
+.icon-app-energymanagmentconsumer:before {
+  content: "\f117";
+}
+.icon-app-export:before {
+  content: "\f118";
+}
+.icon-app-fatal:before {
+  content: "\f119";
+}
+.icon-app-forecast:before {
+  content: "\f11a";
+}
+.icon-app-heatmeter:before {
+  content: "\f11b";
+}
+.icon-app-heatpump:before {
+  content: "\f11c";
+}
+.icon-app-house:before {
+  content: "\f11d";
+}
+.icon-app-key:before {
+  content: "\f11e";
+}
+.icon-app-navbar:before {
+  content: "\f11f";
+}
+.icon-app-off:before {
+  content: "\f120";
+}
+.icon-app-on:before {
+  content: "\f121";
+}
+.icon-app-onOff:before {
+  content: "\f122";
+}
+.icon-app-overview:before {
+  content: "\f123";
+}
+.icon-app-phone:before {
+  content: "\f124";
+}
+.icon-app-powerpole:before {
+  content: "\f125";
+}
+.icon-app-powerpolepv:before {
+  content: "\f126";
+}
+.icon-app-pv:before {
+  content: "\f127";
+}
+.icon-app-radiobox:before {
+  content: "\f128";
+}
+.icon-app-revenue:before {
+  content: "\f129";
+}
+.icon-app-rss:before {
+  content: "\f12a";
+}
+.icon-app-servicedata:before {
+  content: "\f12b";
+}
+.icon-app-settings:before {
+  content: "\f12c";
+}
+.icon-app-standby:before {
+  content: "\f12d";
+}
+.icon-app-status:before {
+  content: "\f12e";
+}
+.icon-app-stop:before {
+  content: "\f12f";
+}
+.icon-app-storage:before {
+  content: "\f130";
+}
+.icon-app-tag:before {
+  content: "\f131";
+}
+.icon-app-timer:before {
+  content: "\f132";
+}
+.icon-app-trash:before {
+  content: "\f133";
+}
+.icon-app-user:before {
+  content: "\f134";
+}
+.icon-app-userdata:before {
+  content: "\f135";
+}
+.icon-app-warning:before {
+  content: "\f136";
+}
+.icon-app-widget:before {
+  content: "\f137";
+}
+/*
+  Icon Font: device
+*/
+@font-face {
+  font-family: "device";
+  src: url("fonts/icons/device/device.eot");
+  src: url("fonts/icons/device/device.eot?#iefix") format("embedded-opentype"), url("fonts/icons/device/device.woff") format("woff"), url("fonts/icons/device/device.ttf") format("truetype"), url("fonts/icons/device/device.svg#device") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+[data-icon]:before {
+  content: attr(data-icon);
+}
+[data-icon]:before,
+.icon-device-aircon:before,
+.icon-device-app:before,
+.icon-device-chargingstation:before,
+.icon-device-coffee:before,
+.icon-device-cooker:before,
+.icon-device-dishwasher:before,
+.icon-device-dryer:before,
+.icon-device-eheating:before,
+.icon-device-freezer:before,
+.icon-device-headset:before,
+.icon-device-heatpump:before,
+.icon-device-hotwater:before,
+.icon-device-light:before,
+.icon-device-microwave:before,
+.icon-device-plug:before,
+.icon-device-printer:before,
+.icon-device-sauna:before,
+.icon-device-tv:before,
+.icon-device-washer:before,
+.icon-device-waterpump:before,
+.icon-device-device-icon:before {
+  font-family: "device";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  text-decoration: inherit;
+}
+.icon-device-aircon:before {
+  content: "\f100";
+}
+.icon-device-app:before {
+  content: "\f101";
+}
+.icon-device-chargingstation:before {
+  content: "\f102";
+}
+.icon-device-coffee:before {
+  content: "\f103";
+}
+.icon-device-cooker:before {
+  content: "\f104";
+}
+.icon-device-dishwasher:before {
+  content: "\f105";
+}
+.icon-device-dryer:before {
+  content: "\f106";
+}
+.icon-device-eheating:before {
+  content: "\f107";
+}
+.icon-device-freezer:before {
+  content: "\f108";
+}
+.icon-device-headset:before {
+  content: "\f109";
+}
+.icon-device-heatpump:before {
+  content: "\f10a";
+}
+.icon-device-hotwater:before {
+  content: "\f10b";
+}
+.icon-device-light:before {
+  content: "\f10c";
+}
+.icon-device-microwave:before {
+  content: "\f10d";
+}
+.icon-device-plug:before {
+  content: "\f10e";
+}
+.icon-device-printer:before {
+  content: "\f10f";
+}
+.icon-device-sauna:before {
+  content: "\f110";
+}
+.icon-device-tv:before {
+  content: "\f111";
+}
+.icon-device-washer:before {
+  content: "\f112";
+}
+.icon-device-waterpump:before {
+  content: "\f113";
+}
+.icon-device-device-icon:before {
+  content: "\f114";
+}
+/*
+  Icon Font: weather
+*/
+@font-face {
+  font-family: "weather";
+  src: url("fonts/icons/weather/weather.eot");
+  src: url("fonts/icons/weather/weather.eot?#iefix") format("embedded-opentype"), url("fonts/icons/weather/weather.woff") format("woff"), url("fonts/icons/weather/weather.ttf") format("truetype"), url("fonts/icons/weather/weather.svg#weather") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+[data-icon]:before {
+  content: attr(data-icon);
+}
+[data-icon]:before,
+.icon-weather-brokenclouds:before,
+.icon-weather-error:before,
+.icon-weather-fewclouds:before,
+.icon-weather-mist:before,
+.icon-weather-nightfeeclouds:before,
+.icon-weather-nightscatterescloud:before,
+.icon-weather-nightskyisclear:before,
+.icon-weather-rain:before,
+.icon-weather-scatteresclouds:before,
+.icon-weather-showerrain:before,
+.icon-weather-skyisclear:before,
+.icon-weather-sleet:before,
+.icon-weather-snow:before,
+.icon-weather-sunrise:before,
+.icon-weather-sunset:before,
+.icon-weather-thunderstorm:before,
+.icon-weather-wind:before,
+.icon-weather-weather-icon:before {
+  font-family: "weather";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  text-decoration: inherit;
+}
+.icon-weather-brokenclouds:before {
+  content: "\f100";
+}
+.icon-weather-error:before {
+  content: "\f101";
+}
+.icon-weather-fewclouds:before {
+  content: "\f102";
+}
+.icon-weather-mist:before {
+  content: "\f103";
+}
+.icon-weather-nightfeeclouds:before {
+  content: "\f104";
+}
+.icon-weather-nightscatterescloud:before {
+  content: "\f105";
+}
+.icon-weather-nightskyisclear:before {
+  content: "\f106";
+}
+.icon-weather-rain:before {
+  content: "\f107";
+}
+.icon-weather-scatteresclouds:before {
+  content: "\f108";
+}
+.icon-weather-showerrain:before {
+  content: "\f109";
+}
+.icon-weather-skyisclear:before {
+  content: "\f10a";
+}
+.icon-weather-sleet:before {
+  content: "\f10b";
+}
+.icon-weather-snow:before {
+  content: "\f10c";
+}
+.icon-weather-sunrise:before {
+  content: "\f10d";
+}
+.icon-weather-sunset:before {
+  content: "\f10e";
+}
+.icon-weather-thunderstorm:before {
+  content: "\f10f";
+}
+.icon-weather-wind:before {
+  content: "\f110";
+}
+.icon-weather-weather-icon:before {
+  content: "\f111";
 }

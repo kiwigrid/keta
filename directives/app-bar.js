@@ -170,6 +170,7 @@ angular.module('keta.directives.AppBar',
 		'keta.services.DeviceSet',
 		'keta.services.ApplicationSet',
 		'keta.services.User',
+		'keta.services.AccessToken',
 		'keta.utils.Common'
 	])
 
@@ -207,7 +208,9 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Logout',
-			'__keta.directives.AppBar_user_profile': 'User Account'
+			'__keta.directives.AppBar_user_profile': 'User Account',
+			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
+			'__keta.directives.AppBar_drop_access': 'Drop access'
 		},
 		'de': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
@@ -215,13 +218,15 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Abmelden',
-			'__keta.directives.AppBar_user_profile': 'Benutzerkonto'
+			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
+			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
+			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		}
 	})
 
 	.directive('appBar', function AppBarDirective(
-		$rootScope, $window, $document, $timeout, $filter,
-		EventBusManager, DeviceSet, ApplicationSet, User,
+		$rootScope, $window, $document, $filter,
+		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils) {
 
 		return {
@@ -268,6 +273,7 @@ angular.module('keta.directives.AppBar',
 				scope.worlds = scope.worlds || [];
 				scope.locales = scope.locales || [];
 				scope.energyManagers = [];
+				scope.impersonationInfo = {};
 
 				// sort locales
 				scope.locales = $filter('orderBy')(scope.locales, 'name');
@@ -296,15 +302,23 @@ angular.module('keta.directives.AppBar',
 				sizesFullState[SIZES.LG] = STATES.FULL;
 
 				// standard STATES for userMenu, energyManagerMenu and languageMenu
-				var	sizesDefaultState = {};
+				var sizesDefaultState = {};
 				sizesDefaultState[SIZES.XXS] = STATES.HIDDEN;
 				sizesDefaultState[SIZES.XS] = STATES.HIDDEN;
 				sizesDefaultState[SIZES.SM] = STATES.COMPACT;
 				sizesDefaultState[SIZES.MD] = STATES.COMPACT;
 				sizesDefaultState[SIZES.LG] = STATES.FULL;
 
+				// standard STATES for World Switcher
+				var sizesHiddenState = {};
+				sizesHiddenState[SIZES.XXS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.XS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.SM] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.MD] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.LG] = STATES.HIDDEN;
+
 				var defaultDisplayModes = {};
-				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesHiddenState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.MENU_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.APP_TITLE] = sizesFullState;
@@ -321,12 +335,17 @@ angular.module('keta.directives.AppBar',
 
 				// default container height
 				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT;
-				var container = element;
 
-				var navbarFirst = container.children()[0];
+				scope.container = element[0];
+				var navBars = element.find('nav');
+
+				var navbarFirst = navBars[0];
 				var navbarFirstHeight = 0;
 
-				var navbarSecond = container.children()[1];
+				var impersonationBar = element[0].getElementsByClassName('impersonation-bar')[0];
+				var impersonationBarHeight = 0;
+
+				var navbarSecond = navBars[1];
 				var navbarSecondHeight = 0;
 				var navbarSecondMarginBottom = 0;
 
@@ -380,13 +399,17 @@ angular.module('keta.directives.AppBar',
 				 */
 				var setContainerHeight = function setContainerHeight() {
 					navbarFirstHeight = navbarFirst.offsetHeight;
+					if (angular.isDefined(impersonationBar)) {
+						impersonationBarHeight = impersonationBar.offsetHeight;
+					}
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
 						$window.getComputedStyle(navbarSecond, null).getPropertyValue('margin-bottom'),
 						DECIMAL_RADIX
 					);
 					// container height for fixed navigation
-					scrollContainerHeight = navbarFirstHeight + navbarSecondHeight + navbarSecondMarginBottom;
+					scrollContainerHeight = navbarFirstHeight + impersonationBarHeight +
+							navbarSecondHeight + navbarSecondMarginBottom;
 				};
 
 				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
@@ -655,6 +678,24 @@ angular.module('keta.directives.AppBar',
 				// LOGIC ---
 
 				/**
+				 * Checks, whether the currently opened app is
+				 * accessed by an impersonated user
+				 * @returns {boolean} impersonation status
+				 */
+				scope.isImpersonated = function isImpersonated() {
+					var result = false;
+					if (AccessToken.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+						scope.impersonationInfo = {
+							userId: AccessToken.getUserId(),
+							backUrl: AccessToken.getBackUrl()
+						};
+						result = true;
+					}
+
+					return result;
+				};
+
+				/**
 				 * order elements by predicate
 				 * @param {string} type component type to order
 				 * @returns {function} ordering function that is used by ng-repeat in the template
@@ -682,7 +723,7 @@ angular.module('keta.directives.AppBar',
 
 					if (angular.isDefined(navbarFirst)) {
 						// scroll over navbar-level-1
-						if (this.scrollY > navbarFirstHeight) {
+						if (this.scrollY > navbarFirstHeight + impersonationBarHeight) {
 							scope.scrollOverNavbarFirst = true;
 							// compensate empty space of fixed navbar with placeholder height
 							element.css('height', scrollContainerHeight + 'px');
@@ -779,18 +820,11 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
-				scope.$watch('navbarFirst.offsetHeight', function(newValue, oldValue) {
+				scope.$watch('container.offsetHeight', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
 						setContainerHeight();
 					}
 				});
-
-				scope.$watch('navbarSecond.offsetHeight', function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						setContainerHeight();
-					}
-				});
-
 
 				// INIT
 				// ----
@@ -807,11 +841,24 @@ angular.module('keta.directives.AppBar',
 angular.module('keta.directives.AppBar')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/app-bar.html', '<div class="navigation-container">' +
+'	<div class="impersonation-bar" data-ng-show="isImpersonated()">' +
+'		<div class="container-fluid">' +
+'			<span class="glyphicon glyphicon-warning-sign"></span>' +
+'			<span>' +
+'				{{ getLabel(MESSAGE_KEY_PREFIX + \'_logged_in_as\') }}' +
+'				<strong>{{ user.givenName }} {{ user.familyName }} ({{impersonationInfo.userId}}). </strong>' +
+'				<a href="{{impersonationInfo.backUrl}}" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}">' +
+'					{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}' +
+'				</a>' +
+'			</span>' +
+'		</div>' +
+'	</div>' +
+'' +
 '	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
 '		<div class="container-fluid">' +
 '			<div data-ng-transclude></div>' +
 '			<div class="dropdown pull-right"' +
-'				data-ng-show="worlds.length > 0"' +
+'				data-ng-if="worlds.length > 0"' +
 '				data-ng-class="getClasses(MENU_ELEMENTS.WORLD_SWITCHER)">' +
 '				<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(MENU_ELEMENTS.WORLD_SWITCHER)">' +
 '					<span class="glyphicon glyphicon-th"></span>' +
@@ -869,7 +916,7 @@ angular.module('keta.directives.AppBar')
 '				</li>' +
 '' +
 '				<li class="dropdown"' +
-'					data-ng-show="energyManagers.length > 0"' +
+'					data-ng-if="energyManagers.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.ENERGY_MANAGER_MENU)">' +
 '					<a href="" class="dropdown-toggle"' +
 '						data-ng-click="toggleOpenState(MENU_ELEMENTS.ENERGY_MANAGER_MENU)">' +
@@ -902,7 +949,7 @@ angular.module('keta.directives.AppBar')
 '				</li>' +
 '' +
 '				<li class="dropdown"' +
-'					data-ng-show="locales.length > 0"' +
+'					data-ng-if="locales.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.LANGUAGE_MENU)">' +
 '					<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(MENU_ELEMENTS.LANGUAGE_MENU)">' +
 '						<span class="glyphicon glyphicon-flag"' +
@@ -962,7 +1009,7 @@ angular.module('keta.directives.AppBar')
 '					<a href="" id="toggleSidebarButton" data-ng-click="toggleSidebar($event, \'right\')">' +
 '						<span class="glyphicon glyphicon-bell"' +
 '							title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_notifications\') }}"></span>' +
-'						<span data-ng-show="notifications.length > 0" class="badge">{{notifications.length}}</span>' +
+'						<span data-ng-if="notifications.length > 0" class="badge">{{notifications.length}}</span>' +
 '					</a>' +
 '				</li>' +
 '' +

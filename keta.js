@@ -199,6 +199,7 @@ angular.module('keta.directives.AppBar',
 		'keta.services.DeviceSet',
 		'keta.services.ApplicationSet',
 		'keta.services.User',
+		'keta.services.AccessToken',
 		'keta.utils.Common'
 	])
 
@@ -236,7 +237,9 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Logout',
-			'__keta.directives.AppBar_user_profile': 'User Account'
+			'__keta.directives.AppBar_user_profile': 'User Account',
+			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
+			'__keta.directives.AppBar_drop_access': 'Drop access'
 		},
 		'de': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
@@ -244,13 +247,15 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
 			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
 			'__keta.directives.AppBar_user_logout': 'Abmelden',
-			'__keta.directives.AppBar_user_profile': 'Benutzerkonto'
+			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
+			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
+			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		}
 	})
 
 	.directive('appBar', function AppBarDirective(
-		$rootScope, $window, $document, $timeout, $filter,
-		EventBusManager, DeviceSet, ApplicationSet, User,
+		$rootScope, $window, $document, $filter,
+		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils) {
 
 		return {
@@ -297,6 +302,7 @@ angular.module('keta.directives.AppBar',
 				scope.worlds = scope.worlds || [];
 				scope.locales = scope.locales || [];
 				scope.energyManagers = [];
+				scope.impersonationInfo = {};
 
 				// sort locales
 				scope.locales = $filter('orderBy')(scope.locales, 'name');
@@ -325,15 +331,23 @@ angular.module('keta.directives.AppBar',
 				sizesFullState[SIZES.LG] = STATES.FULL;
 
 				// standard STATES for userMenu, energyManagerMenu and languageMenu
-				var	sizesDefaultState = {};
+				var sizesDefaultState = {};
 				sizesDefaultState[SIZES.XXS] = STATES.HIDDEN;
 				sizesDefaultState[SIZES.XS] = STATES.HIDDEN;
 				sizesDefaultState[SIZES.SM] = STATES.COMPACT;
 				sizesDefaultState[SIZES.MD] = STATES.COMPACT;
 				sizesDefaultState[SIZES.LG] = STATES.FULL;
 
+				// standard STATES for World Switcher
+				var sizesHiddenState = {};
+				sizesHiddenState[SIZES.XXS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.XS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.SM] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.MD] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.LG] = STATES.HIDDEN;
+
 				var defaultDisplayModes = {};
-				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesHiddenState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.MENU_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.APP_TITLE] = sizesFullState;
@@ -350,12 +364,17 @@ angular.module('keta.directives.AppBar',
 
 				// default container height
 				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT;
-				var container = element;
 
-				var navbarFirst = container.children()[0];
+				scope.container = element[0];
+				var navBars = element.find('nav');
+
+				var navbarFirst = navBars[0];
 				var navbarFirstHeight = 0;
 
-				var navbarSecond = container.children()[1];
+				var impersonationBar = element[0].getElementsByClassName('impersonation-bar')[0];
+				var impersonationBarHeight = 0;
+
+				var navbarSecond = navBars[1];
 				var navbarSecondHeight = 0;
 				var navbarSecondMarginBottom = 0;
 
@@ -409,13 +428,17 @@ angular.module('keta.directives.AppBar',
 				 */
 				var setContainerHeight = function setContainerHeight() {
 					navbarFirstHeight = navbarFirst.offsetHeight;
+					if (angular.isDefined(impersonationBar)) {
+						impersonationBarHeight = impersonationBar.offsetHeight;
+					}
 					navbarSecondHeight = navbarSecond.offsetHeight;
 					navbarSecondMarginBottom = parseInt(
 						$window.getComputedStyle(navbarSecond, null).getPropertyValue('margin-bottom'),
 						DECIMAL_RADIX
 					);
 					// container height for fixed navigation
-					scrollContainerHeight = navbarFirstHeight + navbarSecondHeight + navbarSecondMarginBottom;
+					scrollContainerHeight = navbarFirstHeight + impersonationBarHeight +
+							navbarSecondHeight + navbarSecondMarginBottom;
 				};
 
 				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
@@ -684,6 +707,24 @@ angular.module('keta.directives.AppBar',
 				// LOGIC ---
 
 				/**
+				 * Checks, whether the currently opened app is
+				 * accessed by an impersonated user
+				 * @returns {boolean} impersonation status
+				 */
+				scope.isImpersonated = function isImpersonated() {
+					var result = false;
+					if (AccessToken.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+						scope.impersonationInfo = {
+							userId: AccessToken.getUserId(),
+							backUrl: AccessToken.getBackUrl()
+						};
+						result = true;
+					}
+
+					return result;
+				};
+
+				/**
 				 * order elements by predicate
 				 * @param {string} type component type to order
 				 * @returns {function} ordering function that is used by ng-repeat in the template
@@ -711,7 +752,7 @@ angular.module('keta.directives.AppBar',
 
 					if (angular.isDefined(navbarFirst)) {
 						// scroll over navbar-level-1
-						if (this.scrollY > navbarFirstHeight) {
+						if (this.scrollY > navbarFirstHeight + impersonationBarHeight) {
 							scope.scrollOverNavbarFirst = true;
 							// compensate empty space of fixed navbar with placeholder height
 							element.css('height', scrollContainerHeight + 'px');
@@ -808,18 +849,11 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
-				scope.$watch('navbarFirst.offsetHeight', function(newValue, oldValue) {
+				scope.$watch('container.offsetHeight', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
 						setContainerHeight();
 					}
 				});
-
-				scope.$watch('navbarSecond.offsetHeight', function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						setContainerHeight();
-					}
-				});
-
 
 				// INIT
 				// ----
@@ -836,11 +870,24 @@ angular.module('keta.directives.AppBar',
 angular.module('keta.directives.AppBar')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/app-bar.html', '<div class="navigation-container">' +
+'	<div class="impersonation-bar" data-ng-show="isImpersonated()">' +
+'		<div class="container-fluid">' +
+'			<span class="glyphicon glyphicon-warning-sign"></span>' +
+'			<span>' +
+'				{{ getLabel(MESSAGE_KEY_PREFIX + \'_logged_in_as\') }}' +
+'				<strong>{{ user.givenName }} {{ user.familyName }} ({{impersonationInfo.userId}}). </strong>' +
+'				<a href="{{impersonationInfo.backUrl}}" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}">' +
+'					{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}' +
+'				</a>' +
+'			</span>' +
+'		</div>' +
+'	</div>' +
+'' +
 '	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
 '		<div class="container-fluid">' +
 '			<div data-ng-transclude></div>' +
 '			<div class="dropdown pull-right"' +
-'				data-ng-show="worlds.length > 0"' +
+'				data-ng-if="worlds.length > 0"' +
 '				data-ng-class="getClasses(MENU_ELEMENTS.WORLD_SWITCHER)">' +
 '				<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(MENU_ELEMENTS.WORLD_SWITCHER)">' +
 '					<span class="glyphicon glyphicon-th"></span>' +
@@ -898,7 +945,7 @@ angular.module('keta.directives.AppBar')
 '				</li>' +
 '' +
 '				<li class="dropdown"' +
-'					data-ng-show="energyManagers.length > 0"' +
+'					data-ng-if="energyManagers.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.ENERGY_MANAGER_MENU)">' +
 '					<a href="" class="dropdown-toggle"' +
 '						data-ng-click="toggleOpenState(MENU_ELEMENTS.ENERGY_MANAGER_MENU)">' +
@@ -931,7 +978,7 @@ angular.module('keta.directives.AppBar')
 '				</li>' +
 '' +
 '				<li class="dropdown"' +
-'					data-ng-show="locales.length > 0"' +
+'					data-ng-if="locales.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.LANGUAGE_MENU)">' +
 '					<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(MENU_ELEMENTS.LANGUAGE_MENU)">' +
 '						<span class="glyphicon glyphicon-flag"' +
@@ -991,7 +1038,7 @@ angular.module('keta.directives.AppBar')
 '					<a href="" id="toggleSidebarButton" data-ng-click="toggleSidebar($event, \'right\')">' +
 '						<span class="glyphicon glyphicon-bell"' +
 '							title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_notifications\') }}"></span>' +
-'						<span data-ng-show="notifications.length > 0" class="badge">{{notifications.length}}</span>' +
+'						<span data-ng-if="notifications.length > 0" class="badge">{{notifications.length}}</span>' +
 '					</a>' +
 '				</li>' +
 '' +
@@ -1355,7 +1402,13 @@ angular.module('keta.directives.ExtendedTable',
 				search: '=?',
 
 				// array of search results
-				searchResults: '=?'
+				searchResults: '=?',
+
+				// array of selected rows results
+				selectionResults: '=?',
+
+				// boolean flag to enable or disable row selection
+				selectionEnabled: '=?'
 
 			},
 			templateUrl: '/components/directives/extended-table.html',
@@ -1464,10 +1517,18 @@ angular.module('keta.directives.ExtendedTable',
 				// array of search results
 				scope.searchResults = scope.searchResults || scope.rows;
 
+				// selection enabled
+				scope.selectionEnabled = scope.selectionEnabled || false;
+
+				// array of selection results
+				scope.selectionResults = scope.selectionResults || [];
+
 			},
 			controller: function($scope) {
 
 				// CONSTANTS ---
+
+				var KEYCODE_ENTER = 13;
 
 				$scope.COMPONENTS_FILTER = ExtendedTableConstants.COMPONENT.FILTER;
 				$scope.COMPONENTS_SELECTOR = ExtendedTableConstants.COMPONENT.SELECTOR;
@@ -1504,7 +1565,7 @@ angular.module('keta.directives.ExtendedTable',
 					angular.forEach(objects, function(obj) {
 						angular.forEach(obj, function(value, key) {
 
-							if (keys.indexOf(key) === -1) {
+							if (angular.isDefined(obj) && keys.indexOf(key) === -1) {
 								keys.push(key);
 							}
 
@@ -1514,9 +1575,9 @@ angular.module('keta.directives.ExtendedTable',
 					// fill empty keys
 					angular.forEach(objects, function(obj) {
 						angular.forEach(keys, function(key) {
-
-							obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
-
+							if (angular.isDefined(obj)) {
+								obj[key] = angular.isDefined(obj[key]) ? obj[key] : null;
+							}
 						});
 					});
 
@@ -1561,6 +1622,10 @@ angular.module('keta.directives.ExtendedTable',
 						}
 					});
 					return found;
+				};
+
+				var resetSelection = function() {
+					$scope.selectionResults = [];
 				};
 
 				// fill all keys initial
@@ -1639,18 +1704,21 @@ angular.module('keta.directives.ExtendedTable',
 					if (newValue !== null && newValue !== oldValue) {
 						update();
 						$scope.resetPager();
+						resetSelection();
 					}
 				}, true);
 
 				$scope.$watch('pager', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
 						$scope.resetPager();
+						resetSelection();
 					}
 				}, true);
 
 				$scope.$watch('search', function(newValue, oldValue) {
 					if (newValue !== null && newValue !== oldValue) {
 						$scope.resetPager();
+						resetSelection();
 					}
 				});
 
@@ -1751,6 +1819,55 @@ angular.module('keta.directives.ExtendedTable',
 				};
 
 				/**
+				 * adds / removes clicked row to/from selectionResults array
+				 * @param {object} row to add/remove to/from selection
+				 * @returns {boolean} if selection is enabled
+				 */
+				$scope.selectRow = function(row) {
+
+					if (!$scope.selectionEnabled) {
+						return false;
+					}
+
+					var isSelected = false;
+
+					for (var i = 0; i < $scope.selectionResults.length; i++) {
+						if (angular.equals(row, $scope.selectionResults[i])) {
+							isSelected = true;
+							$scope.selectionResults.splice(i, 1);
+							break;
+						}
+					}
+
+					if (!isSelected) {
+						$scope.selectionResults.push(row);
+					}
+				};
+
+				/**
+				 * checks if row is selected
+				 * @param {object} row to check
+				 * @returns {boolean} is selected or not
+				 */
+				$scope.isSelected = function(row) {
+
+					if (!$scope.selectionEnabled) {
+						return false;
+					}
+
+					var isSelected = false;
+
+					for (var i = 0; i < $scope.selectionResults.length; i++) {
+						if (angular.equals(row, $scope.selectionResults[i])) {
+							isSelected = true;
+							break;
+						}
+					}
+
+					return isSelected;
+				};
+
+				/**
 				 * @description Jumps to the given page and updates the view accordingly.
 				 * @param {number} page The number of the page to go to.
 				 * @returns {void} nothing
@@ -1793,7 +1910,7 @@ angular.module('keta.directives.ExtendedTable',
 				$scope.checkPagerInput = function checkPagerInput(currentPage, $event) {
 					switch ($event.type) {
 						case 'keypress':
-							if ($event.keyCode === 13) {
+							if ($event.keyCode === KEYCODE_ENTER) {
 								resetPagerInputIfNecessary(currentPage);
 							}
 							break;
@@ -1936,7 +2053,8 @@ angular.module('keta.directives.ExtendedTable')
 '					<tbody>' +
 '						<!-- operationsMode: data -->' +
 '						<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
-'							data-ng-repeat="row in rows">' +
+'							data-ng-repeat="row in rows" data-ng-click="selectRow(row)"' +
+'							data-ng-class="{\'active\' : isSelected(row)}">' +
 '							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
@@ -2172,7 +2290,7 @@ angular.module('keta.directives.MainMenu', [])
 angular.module('keta.directives.MainMenu')
 	.run(function($templateCache) {
 		$templateCache.put('/components/directives/main-menu.html', '<div>' +
-'	<div data-ng-show="titleCallback()" class="sidebar-title">' +
+'	<div data-ng-if="titleCallback()" class="sidebar-title">' +
 '		<span>{{ titleCallback() }}</span>' +
 '	</div>' +
 '	<ul class="nav nav-pills nav-stacked keta-main-menu">' +
@@ -2190,7 +2308,7 @@ angular.module('keta.directives.MainMenu')
 '					data-ng-class="{ \'glyphicon-minus\': entry.expanded, \'glyphicon-plus\': !entry.expanded }">' +
 '				</span>' +
 '			</a>' +
-'			<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entry.expanded">' +
+'			<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-if="entry.expanded">' +
 '				<li data-ng-repeat="entryLevel2 in entry.items"' +
 '					data-ng-class="{' +
 '						\'active\': isActive(entryLevel2),' +
@@ -2204,7 +2322,7 @@ angular.module('keta.directives.MainMenu')
 '							data-ng-class="{ \'glyphicon-minus\': entryLevel2.expanded, \'glyphicon-plus\': !entryLevel2.expanded }">' +
 '						</span>' +
 '					</a>' +
-'					<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-show="entryLevel2.expanded">' +
+'					<ul class="nav nav-pills nav-stacked expanded nav-sub-level" data-ng-if="entryLevel2.expanded">' +
 '						<li data-ng-repeat="entryLevel3 in entryLevel2.items"' +
 '							data-ng-class="{ \'active\': isActive(entryLevel3) }">' +
 '							<a data-ng-href="{{ entryLevel3.link }}">' +
@@ -2715,11 +2833,29 @@ angular.module('keta.services.AccessToken',
 	])
 
 	/**
+	 * @class AccessTokenConstants
+	 * @propertyOf keta.services.AccessToken
+	 * @description Access Token Constants
+	 */
+	.constant('AccessTokenConstants', {
+
+		// session types
+		SESSION_TYPE: {
+			NORMAL: 'normal',
+			IMPERSONATED: 'impersonated'
+		}
+
+	})
+
+	/**
 	 * @class AccessToken
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('AccessToken', function AccessTokenFactory($http, AppContext) {
+	.factory('AccessToken', function AccessTokenFactory(
+		$http,
+		AppContext, AccessTokenConstants
+	) {
 
 		/**
 		 * @private
@@ -2727,7 +2863,13 @@ angular.module('keta.services.AccessToken',
 		 */
 		var accessToken = AppContext.get('oauth.accessToken');
 
-		// buddy ignore:start
+		/**
+		 * @private
+		 * @description Decoded access token.
+		 */
+		var decodedAccessToken = null;
+
+		/*eslint-disable no-magic-numbers */
 		var Base64 = {
 
 			keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
@@ -2853,7 +2995,18 @@ angular.module('keta.services.AccessToken',
 			}
 
 		};
-		// buddy ignore:end
+		/*eslint-enable no-magic-numbers */
+
+		/**
+		 * @private
+		 * @param {string} property property to extract from token
+		 * @returns {*} property value
+		 */
+		var getProperty = function(property) {
+			return decodedAccessToken !== null &&
+				angular.isDefined(decodedAccessToken[property]) ?
+					decodedAccessToken[property] : null;
+		};
 
 		var api = {
 
@@ -2861,6 +3014,7 @@ angular.module('keta.services.AccessToken',
 			 * @function
 			 * @memberOf AccessToken
 			 * @description Get access token.
+			 * @param {boolean} decoded Return in decoded or raw format.
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
@@ -2868,8 +3022,8 @@ angular.module('keta.services.AccessToken',
 			 *         var accessToken = AccessToken.get();
 			 *     });
 			 */
-			get: function() {
-				return accessToken;
+			get: function(decoded) {
+				return angular.isDefined(decoded) ? decodedAccessToken : accessToken;
 			},
 
 			/**
@@ -2887,6 +3041,7 @@ angular.module('keta.services.AccessToken',
 			set: function(token) {
 				if (angular.isDefined(token) && angular.isString(token)) {
 					accessToken = token;
+					decodedAccessToken = api.decode(token);
 				}
 			},
 
@@ -2939,7 +3094,7 @@ angular.module('keta.services.AccessToken',
 
 			/**
 			 * @function
-			 * @memberOf ketaAccessToken
+			 * @memberOf AccessToken
 			 * @description Refresh access token by requesting backend.
 			 * @returns {promise} Promise which is resolved when query is returned
 			 * @example
@@ -2963,6 +3118,83 @@ angular.module('keta.services.AccessToken',
 					method: 'GET',
 					url: refreshUrl
 				});
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Checks if current user has a certain permission.
+			 * @param {string} permission permission to check
+			 * @returns {boolean} result
+			 */
+			hasPermission: function(permission) {
+				var has = false;
+
+				var decoded = api.get(true);
+				if (decoded !== null &&
+					angular.isArray(decoded.scope)) {
+					has = decoded.scope.indexOf(permission) !== -1;
+				}
+
+				return has;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Checks if session is of a certain type.
+			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
+			 * @returns {boolean} result
+			 */
+			isType: function(type) {
+
+				var decoded = api.get(true);
+
+				return decoded !== null &&
+					angular.isDefined(decoded.session) &&
+					angular.isDefined(decoded.session.type) &&
+					decoded.session.type === type;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Returns back URL for an impersonated session.
+			 * @returns {string} back URL
+			 */
+			getBackUrl: function() {
+				var backUrl = null;
+
+				if (api.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+					var decoded = api.get(true);
+					if (decoded !== null &&
+						angular.isDefined(decoded.session) &&
+						angular.isDefined(decoded.session.backUrl)) {
+						backUrl = decoded.session.backUrl;
+					}
+				}
+
+				return backUrl;
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Get user id from token.
+			 * @returns {string} user id
+			 */
+			getUserId: function() {
+				return getProperty('user_id');
+			},
+
+			/**
+			 * @function
+			 * @memberOf AccessToken
+			 * @description Get channel from token.
+			 * @returns {string} channel
+			 */
+			getChannel: function() {
+				return getProperty('channel');
 			}
 
 		};
@@ -4653,12 +4885,13 @@ angular.module('keta.services.EventBusDispatcher',
 			var waitForOpen = function(eventBus, replied, success, error) {
 
 				var timeout = null;
+				var MILLISECONDS = 1000;
 
 				// set timeout
 				if (replied) {
 					timeout = $timeout(function() {
 						error();
-					}, eventBus.getConfig().requestTimeout * 1000);
+					}, eventBus.getConfig().requestTimeout * MILLISECONDS);
 				}
 
 				// wait if readyState isn't open
@@ -5091,7 +5324,7 @@ angular.module('keta.services.EventBusDispatcher',
 					message.accessToken = AccessToken.get();
 
 					var handler = function(reply) {
-						if (reply && reply.code === 419) {
+						if (reply && reply.code === api.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 							// refresh access token
 							AccessToken.refresh().then(function(response) {
 								if (angular.isDefined(response.data.accessToken)) {
@@ -5654,6 +5887,8 @@ angular.module('keta.services.EventBus', [])
 			// init vertx.EventBus
 			var init = function() {
 
+				var MILLISECONDS = 1000;
+
 				// instantiate vertx.EventBus
 				eb = new vertx.EventBus(config.url);
 
@@ -5664,7 +5899,7 @@ angular.module('keta.services.EventBus', [])
 					if (config.reconnect) {
 						window.setTimeout(function() {
 							init();
-						}, config.reconnectTimeout * 1000);
+						}, config.reconnectTimeout * MILLISECONDS);
 					}
 
 				};
@@ -6246,9 +6481,11 @@ angular.module('keta.services.Tag', [])
 					return name;
 				};
 
+				var MINIMUM_SAMPLE_RATE = 5;
+
 				// sample rate
 				var sampleRate =
-					angular.isDefined(properties.sampleRate) && properties.sampleRate >= 5 ?
+					angular.isDefined(properties.sampleRate) && properties.sampleRate >= MINIMUM_SAMPLE_RATE ?
 						properties.sampleRate : null;
 
 				/**
