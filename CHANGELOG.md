@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.14
+
+_Released: 2015-12-01_
+
+* Bugfix for `AccessToken.get` with `decoded` parameter set to `true`
+
 ## Version 0.4.13
 
 _Released: 2015-11-30_

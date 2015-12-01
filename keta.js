@@ -3023,7 +3023,10 @@ angular.module('keta.services.AccessToken',
 			 *     });
 			 */
 			get: function(decoded) {
-				return angular.isDefined(decoded) ? decodedAccessToken : accessToken;
+				if (accessToken !== null && decodedAccessToken === null) {
+					decodedAccessToken = api.decode(accessToken);
+				}
+				return angular.isDefined(decoded) && decoded === true ? decodedAccessToken : accessToken;
 			},
 
 			/**
