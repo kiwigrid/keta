@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.15
+
+_Released: 2016-01-05_
+
+* Added selection support to `ExtendedTable` directive for `view` mode too
+
 ## Version 0.4.14
 
 _Released: 2015-12-01_

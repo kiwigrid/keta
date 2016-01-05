@@ -2083,7 +2083,8 @@ angular.module('keta.directives.ExtendedTable')
 '								row in rows |' +
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]">' +
+'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
+'							data-ng-class="{\'active\' : isSelected(row)}" data-ng-click="selectRow(row)">' +
 '							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
@@ -2721,7 +2722,7 @@ angular.module('keta.filters.Unit',
 					angular.isDefined(configuration.unit) ?
 						configuration.unit : unit;
 
-				// flag if value reprensents bytes (defaults to false)
+				// flag if value represents bytes (defaults to false)
 				isBytes =
 					angular.isDefined(configuration.isBytes) ?
 						configuration.isBytes : isBytes;
