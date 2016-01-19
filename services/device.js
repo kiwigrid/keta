@@ -178,12 +178,20 @@ angular.module('keta.services.Device',
 							if (angular.isDefined(reply.result) &&
 								angular.isDefined(reply.result.value) &&
 								angular.isDefined(reply.result.value.tagValues)) {
+
 								angular.forEach(reply.result.value.tagValues, function(tag) {
-									if (angular.isDefined(that.tagValues[tag.tagName])) {
+
+									var failed =
+										angular.isDefined(reply.result.value.failedTagValues) &&
+										angular.isDefined(reply.result.value.failedTagValues[tag.tagName]);
+
+									if (angular.isDefined(that.tagValues[tag.tagName]) && !failed) {
 										that.$pristine.tagValues[tag.tagName] =
 											angular.copy(that.tagValues[tag.tagName]);
 									}
+
 								});
+
 							}
 
 							deferred.resolve(reply);

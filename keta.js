@@ -1085,8 +1085,10 @@ angular.module('keta.directives.AppBar')
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
  *     data-table-class-callback="tableClassCallback"
+ *     data-row-class-callback="rowClassCallback"
  *     data-pager="pager"
  *     data-search="search"
+ *     data-search-wait-ms="waitTime"
  *     data-search-results="searchResults"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device'])
@@ -1252,6 +1254,18 @@ angular.module('keta.directives.AppBar')
  *             return columnClass;
  *         };
  *
+ *         // callback method to return class attribute for each row
+ *         $scope.rowClassCallback = function(row, isHeader) {
+ *             var rowClass = 'row-is-selected';
+ *             if (isHeader) {
+ *                 rowClass += ' header-row';
+ *             }
+ *             if (angular.isDefined(row.connected) && row.connected === true) {
+ *                 rowClass += ' connected';
+ *             }
+ *             return rowClass;
+ *         };
+ *
  *         // callback method to return class array for table
  *         $scope.tableClassCallback = function() {
  *             return ['table-striped'];
@@ -1273,6 +1287,11 @@ angular.module('keta.directives.AppBar')
  *         // typed by the user in the frontend and can therefor be used for querying
  *         // the backend, if watched here additionally
  *         $scope.search = null;
+ *
+ *         // Minimal wait time in milliseconds after last character typed before search kicks-in.
+ *         // updates on blur are instant
+ *         // default is 0
+ *         $scope.waitTime = 500;
  *
  *         // array of search results e.g. for usage in headlines
  *         // defaults to $scope.rows, typically not set directly by controller
@@ -1392,6 +1411,9 @@ angular.module('keta.directives.ExtendedTable',
 				// callback method to return class attribute for each column
 				columnClassCallback: '=?',
 
+				// callback method to return class attribute for each row
+				rowClassCallback: '=?',
+
 				// callback method to return class array for table
 				tableClassCallback: '=?',
 
@@ -1400,6 +1422,9 @@ angular.module('keta.directives.ExtendedTable',
 
 				// search term to filter the table
 				search: '=?',
+
+				// Minimal wait time after last character typed before search kicks-in.
+				searchWaitMs: '=?',
 
 				// array of search results
 				searchResults: '=?',
@@ -1498,6 +1523,12 @@ angular.module('keta.directives.ExtendedTable',
 					return '';
 				};
 
+				// rowClassCallback
+				scope.rowClassCallback = scope.rowClassCallback || function() {
+					// parameters: row, isHeader
+					return '';
+				};
+
 				// tableClassCallback
 				scope.tableClassCallback = scope.tableClassCallback || function() {
 					return ['table-striped'];
@@ -1513,6 +1544,9 @@ angular.module('keta.directives.ExtendedTable',
 
 				// search
 				scope.search = scope.search || null;
+
+				// default wait-time for search
+				scope.searchWaitMs = angular.isNumber(scope.searchWaitMs) ? scope.searchWaitMs : 0;
 
 				// array of search results
 				scope.searchResults = scope.searchResults || scope.rows;
@@ -1941,7 +1975,10 @@ angular.module('keta.directives.ExtendedTable')
 '				<div class="form-group form-inline">' +
 '					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
 '						<input type="search" class="form-control"' +
-'							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}" data-ng-model="search">' +
+'							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}"' +
+'							data-ng-model="search"' +
+'							data-ng-model-options="{ updateOn: \'default blur\', debounce: {\'default\': searchWaitMs, \'blur\': 0} }"' +
+'						>' +
 '						<span class="input-group-btn">' +
 '							<button class="btn btn-default btn-addon" type="button">' +
 '								<i class="glyphicon glyphicon-search"></i>' +
@@ -1998,7 +2035,7 @@ angular.module('keta.directives.ExtendedTable')
 '			<div class="table-responsive table-data">' +
 '				<table data-ng-class="getTableClasses()">' +
 '					<thead>' +
-'						<tr>' +
+'						<tr class="{{rowClassCallback(null, true)}}">' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
 '								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
 '								data-ng-if="rowSortEnabled"' +
@@ -2054,7 +2091,8 @@ angular.module('keta.directives.ExtendedTable')
 '						<!-- operationsMode: data -->' +
 '						<tr data-ng-if="operationsMode === OPERATIONS_MODE_DATA"' +
 '							data-ng-repeat="row in rows" data-ng-click="selectRow(row)"' +
-'							data-ng-class="{\'active\' : isSelected(row)}">' +
+'							data-ng-class="{\'active\' : isSelected(row)}"' +
+'							class="{{rowClassCallback(row, false)}}">' +
 '							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
@@ -2084,7 +2122,9 @@ angular.module('keta.directives.ExtendedTable')
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
 '								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
-'							data-ng-class="{\'active\' : isSelected(row)}" data-ng-click="selectRow(row)">' +
+'							data-ng-class="{\'active\' : isSelected(row)}"' +
+'							data-ng-click="selectRow(row)"' +
+'							class="{{rowClassCallback(row, false)}}">' +
 '							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
@@ -4702,12 +4742,20 @@ angular.module('keta.services.Device',
 							if (angular.isDefined(reply.result) &&
 								angular.isDefined(reply.result.value) &&
 								angular.isDefined(reply.result.value.tagValues)) {
+
 								angular.forEach(reply.result.value.tagValues, function(tag) {
-									if (angular.isDefined(that.tagValues[tag.tagName])) {
+
+									var failed =
+										angular.isDefined(reply.result.value.failedTagValues) &&
+										angular.isDefined(reply.result.value.failedTagValues[tag.tagName]);
+
+									if (angular.isDefined(that.tagValues[tag.tagName]) && !failed) {
 										that.$pristine.tagValues[tag.tagName] =
 											angular.copy(that.tagValues[tag.tagName]);
 									}
+
 								});
+
 							}
 
 							deferred.resolve(reply);
@@ -7922,6 +7970,21 @@ angular.module('keta.utils.Application',
 					var link = document.createElement('a');
 					link.href = app.entryUri;
 
+					var linkProtocol =
+						link.protocol +
+						(link.protocol[link.protocol.length - 1] === ':' ?
+							'//' : '://');
+
+					var linkPort =
+						link.port !== '' && link.port !== '0' ?
+							':' + link.port : '';
+
+					// workaround for internet explorer not having "origin" property
+					var linkOrigin =
+						angular.isDefined(link.origin) ?
+							link.origin :
+							linkProtocol + link.hostname + linkPort;
+
 					angular.forEach(mediaSource, function(media) {
 
 						if (angular.isDefined(media.type) &&
@@ -7929,9 +7992,9 @@ angular.module('keta.utils.Application',
 							angular.isDefined(media.src)) {
 
 							appIcon =
-								link.origin[link.origin.length - 1] !== '/' && media.src[0] !== '/' ?
-								link.origin + '/' + media.src :
-								link.origin + media.src;
+								linkOrigin[linkOrigin.length - 1] !== '/' && media.src[0] !== '/' ?
+								linkOrigin + '/' + media.src :
+								linkOrigin + media.src;
 
 						}
 

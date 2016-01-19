@@ -197,6 +197,21 @@ angular.module('keta.utils.Application',
 					var link = document.createElement('a');
 					link.href = app.entryUri;
 
+					var linkProtocol =
+						link.protocol +
+						(link.protocol[link.protocol.length - 1] === ':' ?
+							'//' : '://');
+
+					var linkPort =
+						link.port !== '' && link.port !== '0' ?
+							':' + link.port : '';
+
+					// workaround for internet explorer not having "origin" property
+					var linkOrigin =
+						angular.isDefined(link.origin) ?
+							link.origin :
+							linkProtocol + link.hostname + linkPort;
+
 					angular.forEach(mediaSource, function(media) {
 
 						if (angular.isDefined(media.type) &&
@@ -204,9 +219,9 @@ angular.module('keta.utils.Application',
 							angular.isDefined(media.src)) {
 
 							appIcon =
-								link.origin[link.origin.length - 1] !== '/' && media.src[0] !== '/' ?
-								link.origin + '/' + media.src :
-								link.origin + media.src;
+								linkOrigin[linkOrigin.length - 1] !== '/' && media.src[0] !== '/' ?
+								linkOrigin + '/' + media.src :
+								linkOrigin + media.src;
 
 						}
 

@@ -2,13 +2,20 @@
 
 #### Frontend Components for Kiwigrid Platform based AngularJS Apps
 
-Copyright Kiwigrid GmbH 2014-2015
+Copyright Kiwigrid GmbH 2014-2016
 
 ---
 
 Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/)
 
 # Changelog
+
+## Version 0.4.16
+
+_Released: 2016-01-19_
+
+* Added workaround for IE not having "origin" property on anchors
+* Added workaround for double-existing tag value entries in `mergeDevice` responses
 
 ## Version 0.4.15
 
