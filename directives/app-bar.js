@@ -490,9 +490,25 @@ angular.module('keta.directives.AppBar',
 											}
 										}
 									});
+
 									// use link-element to easily access url params
 									var link = document.createElement('a');
 									link.href = entryUri;
+
+									var linkProtocol =
+										link.protocol +
+										(link.protocol[link.protocol.length - 1] === ':' ?
+											'//' : '://');
+
+									var linkPort =
+										link.port !== '' && link.port !== '0' ?
+										':' + link.port : '';
+
+									// workaround for internet explorer not having "origin" property
+									var linkOrigin =
+										angular.isDefined(link.origin) ?
+											link.origin :
+										linkProtocol + link.hostname + linkPort;
 
 									if (entryUri !== null) {
 										scope.rootApp = {};
@@ -505,15 +521,16 @@ angular.module('keta.directives.AppBar',
 									}
 
 									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS : link.origin + link.search + '#/applications';
+										scope.links.ALL_APPS : linkOrigin + link.search + '#/applications';
 
 									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE : link.origin + link.search + '#/user';
+										scope.links.USER_PROFILE : linkOrigin + link.search + '#/user';
 
 									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										scope.links.ALL_ENERGY_MANAGERS = link.origin + link.search
+										scope.links.ALL_ENERGY_MANAGERS = linkOrigin + link.search
 											+ '#/devices?deviceClass=com.kiwigrid.devices.em.EnergyManager';
 									}
+
 								}
 							});
 					}

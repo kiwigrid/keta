@@ -109,8 +109,17 @@ angular.module('keta.directives.MainMenu', [])
 				};
 
 				scope.checkExpand = function(menuEntry, $event) {
-					// close sidebar when route-links (of current route and menu-entry) are equal
-					if ($location.path() === menuEntry.link &&
+
+					var menuLink = menuEntry.link;
+
+					// strip '#' at beginning if present
+					if (angular.isString(menuLink) &&
+						menuLink.substr(0, 1) === '#') {
+						menuLink = angular.copy(menuLink.substr(1, menuLink.length - 1));
+					}
+
+					// close sidebar when route links of current route and menu entry are equal
+					if ($location.url() === menuLink &&
 						angular.isDefined(scope.configuration.toggleBroadcast)) {
 						$event.stopPropagation();
 						$rootScope.$broadcast(scope.configuration.toggleBroadcast);

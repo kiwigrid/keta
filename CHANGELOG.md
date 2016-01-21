@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.17
+
+_Released: 2016-01-21_
+
+* Fix for `Sidebar` to close even if current entry is clicked
+* Fix for `ExtendedTable` messed up header labels if filter was used
+
 ## Version 0.4.16
 
 _Released: 2016-01-19_

@@ -35,6 +35,8 @@
  *     data-column-class-callback="columnClassCallback"
  *     data-table-class-callback="tableClassCallback"
  *     data-row-class-callback="rowClassCallback"
+ *     data-search-input-width-classes="searchInputWidthClasses"
+ *     data-selector-width-classes="selectorWidthClasses"
  *     data-pager="pager"
  *     data-search="search"
  *     data-search-wait-ms="waitTime"
@@ -208,8 +210,7 @@
  *             var rowClass = 'row-is-selected';
  *             if (isHeader) {
  *                 rowClass += ' header-row';
- *             }
- *             if (angular.isDefined(row.connected) && row.connected === true) {
+ *             } else if (angular.isDefined(row.connected) && row.connected === true) {
  *                 rowClass += ' connected';
  *             }
  *             return rowClass;
@@ -219,6 +220,12 @@
  *         $scope.tableClassCallback = function() {
  *             return ['table-striped'];
  *         };
+ *
+ *         // bootstrap width classes to define the size of the search input
+ *         $scope.searchInputWidthClasses = 'col-xs-12 col-sm-6';
+ *
+ *         // bootstrap width classes to define the size of the selector dropdown
+ *         $scope.selectorWidthClasses = 'col-xs-12 col-sm-6 col-md-6 col-lg-6';
  *
  *         // object for pager configuration (total, limit, offset)
  *         // with this configuration object you are able to manage paging
@@ -366,6 +373,12 @@ angular.module('keta.directives.ExtendedTable',
 				// callback method to return class array for table
 				tableClassCallback: '=?',
 
+				// bootstrap width classes to define the size of the search input
+				searchInputWidthClasses: '=?',
+
+				// bootstrap width classes to define the size of the selector dropdown
+				selectorWidthClasses: '=?',
+
 				// object for pager configuration (total, limit, offset)
 				pager: '=?',
 
@@ -482,6 +495,12 @@ angular.module('keta.directives.ExtendedTable',
 				scope.tableClassCallback = scope.tableClassCallback || function() {
 					return ['table-striped'];
 				};
+
+				// bootstrap width classes for search input
+				scope.searchInputWidthClasses = scope.searchInputWidthClasses || 'col-xs-12 col-sm-4';
+
+				// bootstrap width classes for selector dropdown
+				scope.selectorWidthClasses = scope.selectorWidthClasses || 'col-xs-12 col-sm-8 col-md-8 col-lg-8';
 
 				// pager
 				var defaultPager = {};
@@ -917,12 +936,13 @@ angular.module('keta.directives.ExtendedTable')
 '}">' +
 '' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_FILTER) || !isDisabled(COMPONENTS_SELECTOR)">' +
-'		<div class="col-xs-12 col-sm-6">' +
+'' +
+'		<div data-ng-class="::searchInputWidthClasses">' +
 '' +
 '			<!-- FILTER -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_FILTER)">' +
 '				<div class="form-group form-inline">' +
-'					<div class="input-group col-xs-12 col-sm-8 col-md-6">' +
+'					<div class="input-group col-xs-12">' +
 '						<input type="search" class="form-control"' +
 '							placeholder="{{ getLabel(MESSAGE_KEY_PREFIX + \'_search\') }}"' +
 '							data-ng-model="search"' +
@@ -938,7 +958,8 @@ angular.module('keta.directives.ExtendedTable')
 '			</div>' +
 '' +
 '		</div>' +
-'		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">' +
+'' +
+'		<div data-ng-class="::selectorWidthClasses">' +
 '' +
 '			<!-- SELECTOR -->' +
 '			<div data-ng-show="!isDisabled(COMPONENTS_SELECTOR) && selectedColumn !== null" class="form-horizontal">' +
@@ -976,6 +997,7 @@ angular.module('keta.directives.ExtendedTable')
 '			</div>' +
 '' +
 '		</div>' +
+'' +
 '	</div>' +
 '' +
 '	<!-- TABLE -->' +
@@ -991,34 +1013,41 @@ angular.module('keta.directives.ExtendedTable')
 '								data-ng-class="{' +
 '									sort: isSortCriteria(column),' +
 '									sortable: isSortable(column)}">' +
-'								<span data-ng-if="!isSortable(column)">' +
-'									{{headerLabelCallback(column)}}</span>' +
+'								<span data-ng-if="' +
+'									!isSortable(column) &&' +
+'									headerLabelCallback(column)">{{headerLabelCallback(column)}}</span>' +
 '								<a class="header" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
-'									data-ng-if="isSortable(column)"' +
+'									data-ng-if="' +
+'										isSortable(column) &&' +
+'										headerLabelCallback(column)"' +
 '									data-ng-click="sortBy(column)">{{headerLabelCallback(column)}}</a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '									data-ng-if="' +
 '										isSortCriteria(column) &&' +
 '										rowSortOrderAscending &&' +
-'										isSortable(column)"' +
+'										isSortable(column) &&' +
+'										headerLabelCallback(column)"' +
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet"></span></a>' +
 '								<a class="sort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '								   data-ng-if="' +
 '									   isSortCriteria(column) &&' +
 '									   !rowSortOrderAscending &&' +
-'									   isSortable(column)"' +
+'									   isSortable(column) &&' +
+'									   headerLabelCallback(column)"' +
 '								   data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a>' +
 '								<a class="unsort" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_sort\') }}"' +
 '									data-ng-if="' +
 '										!isSortCriteria(column) &&' +
-'										headerLabelCallback(column) !== null &&' +
-'										isSortable(column)"' +
+'										isSortable(column) &&' +
+'										headerLabelCallback(column)"' +
 '									data-ng-click="sortBy(column)"><span' +
 '									class="glyphicon glyphicon-sort"></span></a>' +
 '								<a class="operation" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_remove_column\') }}"' +
-'									data-ng-if="isSwitchable(column)"' +
+'									data-ng-if="' +
+'										isSwitchable(column) &&' +
+'										headerLabelCallback(column)"' +
 '									data-ng-click="removeColumn(column)"><span' +
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
@@ -1114,7 +1143,7 @@ angular.module('keta.directives.ExtendedTable')
 '' +
 '	<!-- PAGER -->' +
 '	<div class="row" data-ng-show="!isDisabled(COMPONENTS_PAGER) && pager !== null && pages.length > 1">' +
-'		<div class="col-xs-12 col-sm-6">' +
+'		<div class="col-xs-12">' +
 '			<div class="pager max-width">' +
 '				<div class="input-group">' +
 '					<div class="pager-buttons input-group-btn">' +
