@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.15
+			Version 0.4.17
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.15" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.15" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.17" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.17" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.15" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.15" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.17" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.17" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -101,8 +101,12 @@
  *     data-cell-renderer="cellRenderer"
  *     data-column-class-callback="columnClassCallback"
  *     data-table-class-callback="tableClassCallback"
+ *     data-row-class-callback="rowClassCallback"
+ *     data-search-input-width-classes="searchInputWidthClasses"
+ *     data-selector-width-classes="selectorWidthClasses"
  *     data-pager="pager"
  *     data-search="search"
+ *     data-search-wait-ms="waitTime"
  *     data-search-results="searchResults"&amp;gt;&amp;lt;/div&amp;gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device'])
@@ -268,10 +272,27 @@
  *             return columnClass;
  *         };
  *
+ *         // callback method to return class attribute for each row
+ *         $scope.rowClassCallback = function(row, isHeader) {
+ *             var rowClass = 'row-is-selected';
+ *             if (isHeader) {
+ *                 rowClass += ' header-row';
+ *             } else if (angular.isDefined(row.connected) &amp;&amp; row.connected === true) {
+ *                 rowClass += ' connected';
+ *             }
+ *             return rowClass;
+ *         };
+ *
  *         // callback method to return class array for table
  *         $scope.tableClassCallback = function() {
  *             return ['table-striped'];
  *         };
+ *
+ *         // bootstrap width classes to define the size of the search input
+ *         $scope.searchInputWidthClasses = 'col-xs-12 col-sm-6';
+ *
+ *         // bootstrap width classes to define the size of the selector dropdown
+ *         $scope.selectorWidthClasses = 'col-xs-12 col-sm-6 col-md-6 col-lg-6';
  *
  *         // object for pager configuration (total, limit, offset)
  *         // with this configuration object you are able to manage paging
@@ -289,6 +310,11 @@
  *         // typed by the user in the frontend and can therefor be used for querying
  *         // the backend, if watched here additionally
  *         $scope.search = null;
+ *
+ *         // Minimal wait time in milliseconds after last character typed before search kicks-in.
+ *         // updates on blur are instant
+ *         // default is 0
+ *         $scope.waitTime = 500;
  *
  *         // array of search results e.g. for usage in headlines
  *         // defaults to $scope.rows, typically not set directly by controller
@@ -408,14 +434,26 @@ angular.module('keta.directives.ExtendedTable',
 				// callback method to return class attribute for each column
 				columnClassCallback: '=?',
 
+				// callback method to return class attribute for each row
+				rowClassCallback: '=?',
+
 				// callback method to return class array for table
 				tableClassCallback: '=?',
+
+				// bootstrap width classes to define the size of the search input
+				searchInputWidthClasses: '=?',
+
+				// bootstrap width classes to define the size of the selector dropdown
+				selectorWidthClasses: '=?',
 
 				// object for pager configuration (total, limit, offset)
 				pager: '=?',
 
 				// search term to filter the table
 				search: '=?',
+
+				// Minimal wait time after last character typed before search kicks-in.
+				searchWaitMs: '=?',
 
 				// array of search results
 				searchResults: '=?',
@@ -514,10 +552,22 @@ angular.module('keta.directives.ExtendedTable',
 					return '';
 				};
 
+				// rowClassCallback
+				scope.rowClassCallback = scope.rowClassCallback || function() {
+					// parameters: row, isHeader
+					return '';
+				};
+
 				// tableClassCallback
 				scope.tableClassCallback = scope.tableClassCallback || function() {
 					return ['table-striped'];
 				};
+
+				// bootstrap width classes for search input
+				scope.searchInputWidthClasses = scope.searchInputWidthClasses || 'col-xs-12 col-sm-4';
+
+				// bootstrap width classes for selector dropdown
+				scope.selectorWidthClasses = scope.selectorWidthClasses || 'col-xs-12 col-sm-8 col-md-8 col-lg-8';
 
 				// pager
 				var defaultPager = {};
@@ -529,6 +579,9 @@ angular.module('keta.directives.ExtendedTable',
 
 				// search
 				scope.search = scope.search || null;
+
+				// default wait-time for search
+				scope.searchWaitMs = angular.isNumber(scope.searchWaitMs) ? scope.searchWaitMs : 0;
 
 				// array of search results
 				scope.searchResults = scope.searchResults || scope.rows;

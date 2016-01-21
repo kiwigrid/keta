@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.4.15
+			Version 0.4.17
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.15" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.15" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.17" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.17" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.15" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.15" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.17" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.17" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -176,8 +176,17 @@ angular.module('keta.directives.MainMenu', [])
 				};
 
 				scope.checkExpand = function(menuEntry, $event) {
-					// close sidebar when route-links (of current route and menu-entry) are equal
-					if ($location.path() === menuEntry.link &amp;&amp;
+
+					var menuLink = menuEntry.link;
+
+					// strip '#' at beginning if present
+					if (angular.isString(menuLink) &amp;&amp;
+						menuLink.substr(0, 1) === '#') {
+						menuLink = angular.copy(menuLink.substr(1, menuLink.length - 1));
+					}
+
+					// close sidebar when route links of current route and menu entry are equal
+					if ($location.url() === menuLink &amp;&amp;
 						angular.isDefined(scope.configuration.toggleBroadcast)) {
 						$event.stopPropagation();
 						$rootScope.$broadcast(scope.configuration.toggleBroadcast);
