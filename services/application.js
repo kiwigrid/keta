@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.Application
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Application
@@ -61,8 +60,8 @@ angular.module('keta.services.Application',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Application
 				 * @description
 				 * <p>
 				 *   Creates an ApplicationInstance with given EventBus instance and properties.

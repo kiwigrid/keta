@@ -531,7 +531,6 @@ angular.module('keta.utils.Country', [])
 		/**
 		 * @name getCountryList
 		 * @function
-		 * @memberOf CountryUtils
 		 * @description
 		 * <p>
 		 *     Returns the country list for a given locale in the form of

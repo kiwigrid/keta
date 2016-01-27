@@ -25,7 +25,6 @@ angular.module('keta.utils.Common', [])
 		/**
 		 * @name doesPropertyExist
 		 * @function
-		 * @memberOf CommonUtils
 		 * @description This method checks, if a deep property does exist in the given object.
 		 * @param {object} obj object to check property for
 		 * @param {string} prop property given in dot notation
@@ -47,7 +46,6 @@ angular.module('keta.utils.Common', [])
 		/**
 		 * @name getLabelByLocale
 		 * @function
-		 * @memberOf CommonUtils
 		 * @description
 		 * <p>
 		 *   Returns the translation for a given key inside of an object of labels which is grouped by locale keys.<br>

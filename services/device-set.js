@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.DeviceSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.DeviceSet
@@ -89,7 +88,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before DeviceSet query is sent to EventBus.
@@ -124,7 +122,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before DeviceSet query is sent to EventBus.
@@ -156,7 +153,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before DeviceSet query is sent to EventBus.
@@ -195,7 +191,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name live
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds live update capabilities by registering a DeviceSetListener.
@@ -223,7 +218,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes DeviceSet query by sending it to the associated EventBus instance.
@@ -349,8 +343,8 @@ angular.module('keta.services.DeviceSet',
 			api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Creates a DeviceSetInstance with given EventBus instance.
@@ -368,8 +362,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns index of given Device in DeviceSet by comparing GUIDs.
@@ -401,8 +395,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns number of devices in given DeviceSet.
@@ -428,8 +422,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns device in given DeviceSet by specified index.
@@ -456,8 +450,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns all devices in given DeviceSet.
@@ -481,8 +475,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name sync
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Synchronizes given DeviceSet with given DeviceEvent.

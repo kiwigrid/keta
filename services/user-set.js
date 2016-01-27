@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.UserSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.UserSet
@@ -47,7 +46,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before UserSet query is sent to EventBus.
@@ -79,7 +77,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before UserSet query is sent to EventBus.
@@ -111,7 +108,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before UserSet query is sent to EventBus.
@@ -143,7 +139,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before UserSet query is sent to EventBus.
@@ -182,7 +177,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes UserSet query by sending it to the associated EventBus instance.
@@ -255,8 +249,8 @@ angular.module('keta.services.UserSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Creates a UserSetInstance with given EventBus instance.
@@ -274,8 +268,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns index of given User in UserSet by comparing user IDs.
@@ -307,8 +301,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns number of users in given UserSet.
@@ -334,8 +328,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns user in given UserSet by specified index.
@@ -362,8 +356,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns all users in given UserSet.

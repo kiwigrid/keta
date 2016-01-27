@@ -305,6 +305,14 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_sort': 'Sortieren',
 			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
 			'__keta.directives.ExtendedTable_of': 'von'
+		},
+		'fr': {
+			'__keta.directives.ExtendedTable_search': 'Recherche',
+			'__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
+			'__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
+			'__keta.directives.ExtendedTable_sort': 'Trier',
+			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
+			'__keta.directives.ExtendedTable_of': 'de'
 		}
 	})
 
@@ -598,7 +606,8 @@ angular.module('keta.directives.ExtendedTable',
 						$scope.headers = $scope.rows[0];
 
 						// visibleColumns
-						if (angular.equals($scope.visibleColumns, [])) {
+						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW &&
+							angular.equals($scope.visibleColumns, [])) {
 							$scope.visibleColumns = Object.keys($scope.rows[0]);
 						}
 
@@ -609,7 +618,9 @@ angular.module('keta.directives.ExtendedTable',
 
 					} else {
 						$scope.headers = {};
-						$scope.visibleColumns = [];
+						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
+							$scope.visibleColumns = [];
+						}
 						$scope.rowSortCriteria = null;
 					}
 

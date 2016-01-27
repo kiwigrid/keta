@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.utils.Application
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.utils.Application
@@ -56,7 +55,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppList
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns an array with all apps that are not blacklisted and have an entryUri. It is also
@@ -146,7 +144,7 @@ angular.module('keta.utils.Application',
 
 			/**
 			 * @name getAppName
-			 * @memberOf ApplicationUtils
+			 * @function
 			 * @description
 			 * <p>
 			 *   uiLocale is the current (user set) UI language of the running app.
@@ -165,7 +163,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppIcon
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns app icon source from app meta object by using
@@ -236,7 +233,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppAuthor
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns author from type or the first author in app.meta.author array.

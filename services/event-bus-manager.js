@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.EventBusManager
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBusManager
@@ -35,7 +34,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name add
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Adds an EventBus instance to internal list, from which it can be retrieved later on by it's id.
@@ -58,7 +56,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name remove
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Removes an EventBus instance from internal list.
@@ -83,7 +80,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name removeAll
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Removes all EventBus instances from internal list.
@@ -105,7 +101,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name get
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Gets an EventBus instance from internal list by specified id.
@@ -125,7 +120,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name getAll
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Gets all EventBus instances from internal list.
@@ -144,7 +138,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name enableDebug
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Enables debug mode which outputs requests and responses to console.
@@ -163,7 +156,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name disableDebug
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Disables debug mode which normally outputs requests and responses to console.
@@ -182,7 +174,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name inDebugMode
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Returns true if currently in debug mode.
@@ -209,52 +200,20 @@ angular.module('keta.services.EventBusManager', [])
 			 */
 			var api = {
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.add
-				 */
 				add: this.add,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.remove
-				 */
 				remove: this.remove,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.removeAll
-				 */
 				removeAll: this.removeAll,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.get
-				 */
 				get: this.get,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.getAll
-				 */
 				getAll: this.getAll,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.enableDebug
-				 */
 				enableDebug: this.enableDebug,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.disableDebug
-				 */
 				disableDebug: this.disableDebug,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.inDebugMode
-				 */
 				inDebugMode: this.inDebugMode
 
 			};

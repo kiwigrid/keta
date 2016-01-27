@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.User
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.User
@@ -82,7 +81,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $create
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Creates a remote UserInstance from local one the method is called on.
@@ -129,7 +127,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $update
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Updates a remote UserInstance from local one the method is called on.
@@ -246,7 +243,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $delete
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Deletes a remote UserInstance from local one the method is called on.
@@ -283,7 +279,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $reset
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Resets a UserInstance to it's $pristine state.
@@ -351,8 +346,8 @@ angular.module('keta.services.User',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Creates a UserInstance with given EventBus instance and properties.
@@ -384,8 +379,8 @@ angular.module('keta.services.User',
 				},
 
 				/**
+				 * @name getChannel
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Returns the channel name for given channel id.
@@ -420,8 +415,8 @@ angular.module('keta.services.User',
 				},
 
 				/**
+				 * @name getCurrent
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Returns the currently logged-in user.

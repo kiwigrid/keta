@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.AccessToken
@@ -192,8 +191,8 @@ angular.module('keta.services.AccessToken',
 		var api = {
 
 			/**
+			 * @name get
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get access token.
 			 * @param {boolean} decoded Return in decoded or raw format.
 			 * @returns {string} access token
@@ -211,8 +210,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name set
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Set access token.
 			 * @param {string} token new access token
 			 * @returns {void} returns nothing
@@ -230,8 +229,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name decode
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Decode access token.
 			 * @param {string} token access token to decode
 			 * @returns {Object} access token properties
@@ -259,8 +258,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name encode
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Encode access token properties.
 			 * @param {Object} props access token properties to encode
 			 * @returns {string} access token
@@ -277,8 +276,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name refresh
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Refresh access token by requesting backend.
 			 * @returns {promise} Promise which is resolved when query is returned
 			 * @example
@@ -305,8 +304,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name hasPermission
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Checks if current user has a certain permission.
 			 * @param {string} permission permission to check
 			 * @returns {boolean} result
@@ -324,8 +323,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name isType
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Checks if session is of a certain type.
 			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
 			 * @returns {boolean} result
@@ -341,8 +340,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getBackUrl
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Returns back URL for an impersonated session.
 			 * @returns {string} back URL
 			 */
@@ -362,8 +361,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getUserId
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get user id from token.
 			 * @returns {string} user id
 			 */
@@ -372,8 +371,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getChannel
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get channel from token.
 			 * @returns {string} channel
 			 */

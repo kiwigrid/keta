@@ -221,6 +221,16 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
+		},
+		'fr': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
+			'__keta.directives.AppBar_all_energy_managers': 'Tous les Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Se déconnecter',
+			'__keta.directives.AppBar_user_profile': 'Compte d’utilisateur',
+			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
+			'__keta.directives.AppBar_drop_access': 'Déposez accès'
 		}
 	})
 

@@ -250,6 +250,16 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
+		},
+		'fr': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
+			'__keta.directives.AppBar_all_energy_managers': 'Tous les Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Se déconnecter',
+			'__keta.directives.AppBar_user_profile': 'Compte d’utilisateur',
+			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
+			'__keta.directives.AppBar_drop_access': 'Déposez accès'
 		}
 	})
 
@@ -1373,6 +1383,14 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_sort': 'Sortieren',
 			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
 			'__keta.directives.ExtendedTable_of': 'von'
+		},
+		'fr': {
+			'__keta.directives.ExtendedTable_search': 'Recherche',
+			'__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
+			'__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
+			'__keta.directives.ExtendedTable_sort': 'Trier',
+			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
+			'__keta.directives.ExtendedTable_of': 'de'
 		}
 	})
 
@@ -1666,7 +1684,8 @@ angular.module('keta.directives.ExtendedTable',
 						$scope.headers = $scope.rows[0];
 
 						// visibleColumns
-						if (angular.equals($scope.visibleColumns, [])) {
+						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW &&
+							angular.equals($scope.visibleColumns, [])) {
 							$scope.visibleColumns = Object.keys($scope.rows[0]);
 						}
 
@@ -1677,7 +1696,9 @@ angular.module('keta.directives.ExtendedTable',
 
 					} else {
 						$scope.headers = {};
-						$scope.visibleColumns = [];
+						if ($scope.operationsMode === $scope.OPERATIONS_MODE_VIEW) {
+							$scope.visibleColumns = [];
+						}
 						$scope.rowSortCriteria = null;
 					}
 
@@ -2916,7 +2937,6 @@ angular.module('keta.filters.Unit',
 
 // source: dist/services/access-token.js
 /**
- * @name keta.services.AccessToken
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.AccessToken
@@ -3107,8 +3127,8 @@ angular.module('keta.services.AccessToken',
 		var api = {
 
 			/**
+			 * @name get
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get access token.
 			 * @param {boolean} decoded Return in decoded or raw format.
 			 * @returns {string} access token
@@ -3126,8 +3146,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name set
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Set access token.
 			 * @param {string} token new access token
 			 * @returns {void} returns nothing
@@ -3145,8 +3165,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name decode
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Decode access token.
 			 * @param {string} token access token to decode
 			 * @returns {Object} access token properties
@@ -3174,8 +3194,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name encode
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Encode access token properties.
 			 * @param {Object} props access token properties to encode
 			 * @returns {string} access token
@@ -3192,8 +3212,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name refresh
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Refresh access token by requesting backend.
 			 * @returns {promise} Promise which is resolved when query is returned
 			 * @example
@@ -3220,8 +3240,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name hasPermission
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Checks if current user has a certain permission.
 			 * @param {string} permission permission to check
 			 * @returns {boolean} result
@@ -3239,8 +3259,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name isType
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Checks if session is of a certain type.
 			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
 			 * @returns {boolean} result
@@ -3256,8 +3276,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getBackUrl
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Returns back URL for an impersonated session.
 			 * @returns {string} back URL
 			 */
@@ -3277,8 +3297,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getUserId
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get user id from token.
 			 * @returns {string} user id
 			 */
@@ -3287,8 +3307,8 @@ angular.module('keta.services.AccessToken',
 			},
 
 			/**
+			 * @name getChannel
 			 * @function
-			 * @memberOf AccessToken
 			 * @description Get channel from token.
 			 * @returns {string} channel
 			 */
@@ -3304,7 +3324,6 @@ angular.module('keta.services.AccessToken',
 
 // source: dist/services/app-context.js
 /**
- * @name keta.services.AppContext
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.AppContext
@@ -3329,7 +3348,6 @@ angular.module('keta.services.AppContext', [])
 		/**
 		 * @name get
 		 * @function
-		 * @memberOf AppContextProvider
 		 * @description
 		 * <p>
 		 *   Get value by key from app context object. There <code>key</code> is a string in dot notation to describe
@@ -3365,22 +3383,6 @@ angular.module('keta.services.AppContext', [])
 			 */
 			var api = {
 
-				/**
-				 * @function
-				 * @memberOf AppContext
-				 * @description
-				 * <p>
-				 *   Get value by key from app context object. There <code>key</code> is a string in dot notation
-				 *   to describe object properties with hierarchy.
-				 * </p>
-				 * @param {string} key key to retrieve from app context
-				 * @returns {*}
-				 * @example
-				 * angular.module('exampleApp', ['keta.services.AppContext'])
-				 *     .controller('ExampleController', function(AppContext) {
-				 *         var socketURL = AppContext.get('bus.url');
-				 *     });
-				 */
 				get: this.get
 
 			};
@@ -3393,7 +3395,6 @@ angular.module('keta.services.AppContext', [])
 
 // source: dist/services/application-set.js
 /**
- * @name keta.services.ApplicationSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.ApplicationSet
@@ -3439,7 +3440,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before ApplicationSet query is sent to EventBus.
@@ -3471,7 +3471,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before ApplicationSet query is sent to EventBus.
@@ -3506,7 +3505,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before ApplicationSet query is sent to EventBus.
@@ -3541,7 +3539,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before ApplicationSet query is sent to EventBus.
@@ -3583,7 +3580,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes ApplicationSet query by sending it to the associated EventBus instance.
@@ -3659,8 +3655,8 @@ angular.module('keta.services.ApplicationSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Creates an ApplicationSetInstance with given EventBus instance.
@@ -3678,8 +3674,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns index of given Application in ApplicationSet by comparing app IDs.
@@ -3711,8 +3707,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns number of applications in given ApplicationSet.
@@ -3738,8 +3734,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns application in given ApplicationSet by specified index.
@@ -3766,8 +3762,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns all applications in given ApplicationSet.
@@ -3800,7 +3796,6 @@ angular.module('keta.services.ApplicationSet',
 
 // source: dist/services/application.js
 /**
- * @name keta.services.Application
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Application
@@ -3860,8 +3855,8 @@ angular.module('keta.services.Application',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Application
 				 * @description
 				 * <p>
 				 *   Creates an ApplicationInstance with given EventBus instance and properties.
@@ -3898,7 +3893,6 @@ angular.module('keta.services.Application',
 
 // source: dist/services/device-event.js
 /**
- * @name keta.services.DeviceEvent
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.DeviceEvent
@@ -3934,7 +3928,6 @@ angular.module('keta.services.DeviceEvent', [])
 				/**
 				 * @name getType
 				 * @function
-				 * @memberOf DeviceEventInstance
 				 * @description
 				 * <p>
 				 *   Returns type of DeviceEvent.
@@ -3960,7 +3953,6 @@ angular.module('keta.services.DeviceEvent', [])
 				/**
 				 * @name getDevice
 				 * @function
-				 * @memberOf DeviceEventInstance
 				 * @description
 				 * <p>
 				 *   Returns device of DeviceEvent.
@@ -3990,8 +3982,8 @@ angular.module('keta.services.DeviceEvent', [])
 			var api = {
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name CREATED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for created event.
@@ -4007,8 +3999,8 @@ angular.module('keta.services.DeviceEvent', [])
 				CREATED: 'CREATED',
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name UPDATED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for updated event.
@@ -4024,8 +4016,8 @@ angular.module('keta.services.DeviceEvent', [])
 				UPDATED: 'UPDATED',
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name DELETED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for deleted event.
@@ -4041,8 +4033,8 @@ angular.module('keta.services.DeviceEvent', [])
 				DELETED: 'DELETED',
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf DeviceEvent
 				 * @description
 				 * <p>
 				 *   Creates a DeviceEventInstance with given type and Device instance.
@@ -4080,7 +4072,6 @@ angular.module('keta.services.DeviceEvent', [])
 
 // source: dist/services/device-set.js
 /**
- * @name keta.services.DeviceSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.DeviceSet
@@ -4168,7 +4159,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before DeviceSet query is sent to EventBus.
@@ -4203,7 +4193,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before DeviceSet query is sent to EventBus.
@@ -4235,7 +4224,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before DeviceSet query is sent to EventBus.
@@ -4274,7 +4262,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name live
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds live update capabilities by registering a DeviceSetListener.
@@ -4302,7 +4289,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes DeviceSet query by sending it to the associated EventBus instance.
@@ -4428,8 +4414,8 @@ angular.module('keta.services.DeviceSet',
 			api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Creates a DeviceSetInstance with given EventBus instance.
@@ -4447,8 +4433,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns index of given Device in DeviceSet by comparing GUIDs.
@@ -4480,8 +4466,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns number of devices in given DeviceSet.
@@ -4507,8 +4493,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns device in given DeviceSet by specified index.
@@ -4535,8 +4521,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Returns all devices in given DeviceSet.
@@ -4560,8 +4546,8 @@ angular.module('keta.services.DeviceSet',
 				},
 
 				/**
+				 * @name sync
 				 * @function
-				 * @memberOf DeviceSet
 				 * @description
 				 * <p>
 				 *   Synchronizes given DeviceSet with given DeviceEvent.
@@ -4620,7 +4606,6 @@ angular.module('keta.services.DeviceSet',
 
 // source: dist/services/device.js
 /**
- * @name keta.services.Device
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Device
@@ -4730,7 +4715,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $update
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Updates a remote DeviceInstance from local one the method is called on.
@@ -4826,7 +4810,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $delete
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Deletes a remote DeviceInstance from local one the method is called on.
@@ -4860,7 +4843,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $reset
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Resets a DeviceInstance to it's $pristine state.
@@ -4917,8 +4899,8 @@ angular.module('keta.services.Device',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Device
 				 * @description
 				 * <p>
 				 *   Creates a DeviceInstance with given EventBus instance and properties.
@@ -4955,7 +4937,6 @@ angular.module('keta.services.Device',
 
 // source: dist/services/event-bus-dispatcher.js
 /**
- * @name keta.services.EventBusDispatcher
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBusDispatcher
@@ -4978,7 +4959,6 @@ angular.module('keta.services.EventBusDispatcher',
 
 			/**
 			 * @private
-			 * @memberOf EventBusDispatcher
 			 * @description
 			 * <p>
 			 *   Wait for EventBus to have open state before sending messages.
@@ -5036,8 +5016,8 @@ angular.module('keta.services.EventBusDispatcher',
 			var api = {
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CONNECTING
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Connecting state constant.
@@ -5053,8 +5033,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CONNECTING: 0,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_OPEN
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Open state constant.
@@ -5070,8 +5050,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_OPEN: 1,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CLOSING
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Closing state constant.
@@ -5087,8 +5067,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CLOSING: 2,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CLOSED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Closed state constant.
@@ -5104,8 +5084,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CLOSED: 3,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_OK
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 200.
@@ -5121,8 +5101,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_OK: 200,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_NO_CONTENT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 204.
@@ -5138,8 +5118,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_NO_CONTENT: 204,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_OK
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 200.
@@ -5155,8 +5135,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_OK: 'OK',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_BAD_REQUEST
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 400.
@@ -5172,8 +5152,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_BAD_REQUEST: 400,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_BAD_REQUEST
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 400.
@@ -5189,8 +5169,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_UNAUTHORIZED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 401.
@@ -5206,8 +5186,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_UNAUTHORIZED: 401,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_UNAUTHORIZED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 401.
@@ -5223,8 +5203,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_NOT_FOUND
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 404.
@@ -5240,8 +5220,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_NOT_FOUND: 404,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_NOT_FOUND
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 404.
@@ -5257,8 +5237,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_REQUEST_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 408.
@@ -5274,8 +5254,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_REQUEST_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 408.
@@ -5291,8 +5271,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_AUTHENTICATION_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 419.
@@ -5308,8 +5288,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 419.
@@ -5325,8 +5305,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_INTERNAL_SERVER_ERROR
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 500.
@@ -5342,8 +5322,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 500.
@@ -5359,8 +5339,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_SERVICE_UNAVAILABLE
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 503.
@@ -5376,8 +5356,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_SERVICE_UNAVAILABLE
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 503.
@@ -5393,8 +5373,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
 
 				/**
+				 * @name send
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Send a message to a specified address using the specified EventBus instance and
@@ -5465,8 +5445,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name publish
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Publish a message to a specified address using the specified EventBus instance.
@@ -5498,8 +5478,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name registerHandler
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Registers a handler on a specified address using the specified EventBus instance.
@@ -5523,8 +5503,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name unregisterHandler
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Unregisters a handler on a specified address using the specified EventBus instance.
@@ -5548,8 +5528,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name close
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Closes connection to specified EventBus instance.
@@ -5567,8 +5547,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name readyState
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Returns connection state of specified EventBus instance.
@@ -5586,8 +5566,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name generateUUID
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Generates an UUID for handler.
@@ -5620,7 +5600,6 @@ angular.module('keta.services.EventBusDispatcher',
 
 // source: dist/services/event-bus-manager.js
 /**
- * @name keta.services.EventBusManager
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBusManager
@@ -5654,7 +5633,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name add
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Adds an EventBus instance to internal list, from which it can be retrieved later on by it's id.
@@ -5677,7 +5655,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name remove
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Removes an EventBus instance from internal list.
@@ -5702,7 +5679,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name removeAll
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Removes all EventBus instances from internal list.
@@ -5724,7 +5700,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name get
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Gets an EventBus instance from internal list by specified id.
@@ -5744,7 +5719,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name getAll
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Gets all EventBus instances from internal list.
@@ -5763,7 +5737,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name enableDebug
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Enables debug mode which outputs requests and responses to console.
@@ -5782,7 +5755,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name disableDebug
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Disables debug mode which normally outputs requests and responses to console.
@@ -5801,7 +5773,6 @@ angular.module('keta.services.EventBusManager', [])
 		/**
 		 * @name inDebugMode
 		 * @function
-		 * @memberOf EventBusManagerProvider
 		 * @description
 		 * <p>
 		 *   Returns true if currently in debug mode.
@@ -5828,52 +5799,20 @@ angular.module('keta.services.EventBusManager', [])
 			 */
 			var api = {
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.add
-				 */
 				add: this.add,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.remove
-				 */
 				remove: this.remove,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.removeAll
-				 */
 				removeAll: this.removeAll,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.get
-				 */
 				get: this.get,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.getAll
-				 */
 				getAll: this.getAll,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.enableDebug
-				 */
 				enableDebug: this.enableDebug,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.disableDebug
-				 */
 				disableDebug: this.disableDebug,
 
-				/**
-				 * @memberOf EventBusManager
-				 * @see EventBusManagerProvider.inDebugMode
-				 */
 				inDebugMode: this.inDebugMode
 
 			};
@@ -5886,7 +5825,6 @@ angular.module('keta.services.EventBusManager', [])
 
 // source: dist/services/event-bus.js
 /**
- * @name keta.services.EventBus
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBus
@@ -5925,7 +5863,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getDefaultConfig
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns default config used to merge in EventBus instance create method.
@@ -5950,7 +5887,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getConfig
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns effective config of EventBus instance.
@@ -5975,7 +5911,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getInstance
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns vertx.EventBus instance.
@@ -6020,7 +5955,6 @@ angular.module('keta.services.EventBus', [])
 		/**
 		 * @name create
 		 * @function
-		 * @memberOf EventBusProvider
 		 * @description
 		 * <p>
 		 *   Creates an EventBus instance with given config, which is merged with the default config.
@@ -6065,7 +5999,6 @@ angular.module('keta.services.EventBus', [])
 
 // source: dist/services/logger.js
 /**
- * @name keta.services.Logger
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Logger
@@ -6120,7 +6053,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_LOG
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -6131,7 +6063,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_DEBUG
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -6142,7 +6073,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_INFO
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -6153,7 +6083,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_WARN
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -6164,7 +6093,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_ERROR
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -6198,7 +6126,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name ADVANCED_FORMATTER
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Formats a message in an advanced, colored manner.
@@ -6233,7 +6160,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name request
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Logs a message-based request using <code>console.log</code>. Additionally a custom or
@@ -6270,7 +6196,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name event
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Logs a message-based event using <code>console.log</code>. Additionally a custom or
@@ -6308,7 +6233,6 @@ angular.module('keta.services.Logger',
 
 // source: dist/services/tag-set.js
 /**
- * @name keta.services.TagSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.TagSet
@@ -6348,7 +6272,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name getTags
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Returns tags as an Array.
@@ -6368,7 +6291,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name getTagsAsHierarchy
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Returns tags as hierarchically organized Object. First level represents devices
@@ -6390,7 +6312,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name add
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
@@ -6425,7 +6346,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name remove
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
@@ -6468,8 +6388,8 @@ angular.module('keta.services.TagSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf TagSet
 				 * @description
 				 * <p>
 				 *   Creates a TagSetInstance.
@@ -6495,7 +6415,6 @@ angular.module('keta.services.TagSet',
 
 // source: dist/services/tag.js
 /**
- * @name keta.services.Tag
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Tag
@@ -6540,7 +6459,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getGuid
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>guid</code> property of Tag.
@@ -6567,7 +6485,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getName
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>name</code> property of Tag.
@@ -6598,7 +6515,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getSampleRate
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>sampleRate</code> property of Tag.
@@ -6629,8 +6545,8 @@ angular.module('keta.services.Tag', [])
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Tag
 				 * @description
 				 * <p>
 				 *   Creates a TagInstance.
@@ -6661,7 +6577,6 @@ angular.module('keta.services.Tag', [])
 
 // source: dist/services/user-set.js
 /**
- * @name keta.services.UserSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.UserSet
@@ -6707,7 +6622,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before UserSet query is sent to EventBus.
@@ -6739,7 +6653,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before UserSet query is sent to EventBus.
@@ -6771,7 +6684,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before UserSet query is sent to EventBus.
@@ -6803,7 +6715,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before UserSet query is sent to EventBus.
@@ -6842,7 +6753,6 @@ angular.module('keta.services.UserSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf UserSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes UserSet query by sending it to the associated EventBus instance.
@@ -6915,8 +6825,8 @@ angular.module('keta.services.UserSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Creates a UserSetInstance with given EventBus instance.
@@ -6934,8 +6844,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns index of given User in UserSet by comparing user IDs.
@@ -6967,8 +6877,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns number of users in given UserSet.
@@ -6994,8 +6904,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns user in given UserSet by specified index.
@@ -7022,8 +6932,8 @@ angular.module('keta.services.UserSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf UserSet
 				 * @description
 				 * <p>
 				 *   Returns all users in given UserSet.
@@ -7056,7 +6966,6 @@ angular.module('keta.services.UserSet',
 
 // source: dist/services/user.js
 /**
- * @name keta.services.User
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.User
@@ -7137,7 +7046,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $create
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Creates a remote UserInstance from local one the method is called on.
@@ -7184,7 +7092,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $update
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Updates a remote UserInstance from local one the method is called on.
@@ -7301,7 +7208,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $delete
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Deletes a remote UserInstance from local one the method is called on.
@@ -7338,7 +7244,6 @@ angular.module('keta.services.User',
 				/**
 				 * @name $reset
 				 * @function
-				 * @memberOf UserInstance
 				 * @description
 				 * <p>
 				 *   Resets a UserInstance to it's $pristine state.
@@ -7406,8 +7311,8 @@ angular.module('keta.services.User',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Creates a UserInstance with given EventBus instance and properties.
@@ -7439,8 +7344,8 @@ angular.module('keta.services.User',
 				},
 
 				/**
+				 * @name getChannel
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Returns the channel name for given channel id.
@@ -7475,8 +7380,8 @@ angular.module('keta.services.User',
 				},
 
 				/**
+				 * @name getCurrent
 				 * @function
-				 * @memberOf User
 				 * @description
 				 * <p>
 				 *   Returns the currently logged-in user.
@@ -7718,6 +7623,8 @@ angular.module('keta.utils.Api', [])
 		// -----
 
 		/**
+		 * @name getFilterParams
+		 * @function
 		 * @description
 		 * Set filter params to all criteria or define them by query language.
 		 * If inserted string is "owner:test_user", only items with owner test_user will be returned
@@ -7829,7 +7736,6 @@ angular.module('keta.utils.Api', [])
 
 // source: dist/utils/application.js
 /**
- * @name keta.utils.Application
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.utils.Application
@@ -7884,7 +7790,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppList
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns an array with all apps that are not blacklisted and have an entryUri. It is also
@@ -7974,7 +7879,7 @@ angular.module('keta.utils.Application',
 
 			/**
 			 * @name getAppName
-			 * @memberOf ApplicationUtils
+			 * @function
 			 * @description
 			 * <p>
 			 *   uiLocale is the current (user set) UI language of the running app.
@@ -7993,7 +7898,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppIcon
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns app icon source from app meta object by using
@@ -8064,7 +7968,6 @@ angular.module('keta.utils.Application',
 			/**
 			 * @name getAppAuthor
 			 * @function
-			 * @memberOf ApplicationUtils
 			 * @description
 			 * <p>
 			 *   Returns author from type or the first author in app.meta.author array.
@@ -8129,7 +8032,6 @@ angular.module('keta.utils.Common', [])
 		/**
 		 * @name doesPropertyExist
 		 * @function
-		 * @memberOf CommonUtils
 		 * @description This method checks, if a deep property does exist in the given object.
 		 * @param {object} obj object to check property for
 		 * @param {string} prop property given in dot notation
@@ -8151,7 +8053,6 @@ angular.module('keta.utils.Common', [])
 		/**
 		 * @name getLabelByLocale
 		 * @function
-		 * @memberOf CommonUtils
 		 * @description
 		 * <p>
 		 *   Returns the translation for a given key inside of an object of labels which is grouped by locale keys.<br>
@@ -8728,7 +8629,6 @@ angular.module('keta.utils.Country', [])
 		/**
 		 * @name getCountryList
 		 * @function
-		 * @memberOf CountryUtils
 		 * @description
 		 * <p>
 		 *     Returns the country list for a given locale in the form of

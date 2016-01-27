@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.EventBusDispatcher
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBusDispatcher
@@ -24,7 +23,6 @@ angular.module('keta.services.EventBusDispatcher',
 
 			/**
 			 * @private
-			 * @memberOf EventBusDispatcher
 			 * @description
 			 * <p>
 			 *   Wait for EventBus to have open state before sending messages.
@@ -82,8 +80,8 @@ angular.module('keta.services.EventBusDispatcher',
 			var api = {
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CONNECTING
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Connecting state constant.
@@ -99,8 +97,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CONNECTING: 0,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_OPEN
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Open state constant.
@@ -116,8 +114,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_OPEN: 1,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CLOSING
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Closing state constant.
@@ -133,8 +131,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CLOSING: 2,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name STATE_CLOSED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Closed state constant.
@@ -150,8 +148,8 @@ angular.module('keta.services.EventBusDispatcher',
 				STATE_CLOSED: 3,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_OK
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 200.
@@ -167,8 +165,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_OK: 200,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_NO_CONTENT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 204.
@@ -184,8 +182,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_NO_CONTENT: 204,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_OK
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 200.
@@ -201,8 +199,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_OK: 'OK',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_BAD_REQUEST
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 400.
@@ -218,8 +216,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_BAD_REQUEST: 400,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_BAD_REQUEST
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 400.
@@ -235,8 +233,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_BAD_REQUEST: 'Bad Request',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_UNAUTHORIZED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 401.
@@ -252,8 +250,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_UNAUTHORIZED: 401,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_UNAUTHORIZED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 401.
@@ -269,8 +267,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_UNAUTHORIZED: 'Unauthorized',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_NOT_FOUND
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 404.
@@ -286,8 +284,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_NOT_FOUND: 404,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_NOT_FOUND
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 404.
@@ -303,8 +301,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_NOT_FOUND: 'Not Found',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_REQUEST_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 408.
@@ -320,8 +318,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_REQUEST_TIMEOUT: 408,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_REQUEST_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 408.
@@ -337,8 +335,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_REQUEST_TIMEOUT: 'Request Time-out',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_AUTHENTICATION_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 419.
@@ -354,8 +352,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_AUTHENTICATION_TIMEOUT: 419,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 419.
@@ -371,8 +369,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT: 'Authentication Timeout',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_INTERNAL_SERVER_ERROR
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 500.
@@ -388,8 +386,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_INTERNAL_SERVER_ERROR: 500,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 500.
@@ -405,8 +403,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR: 'Internal Server Error',
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_CODE_SERVICE_UNAVAILABLE
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response code 503.
@@ -422,8 +420,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_CODE_SERVICE_UNAVAILABLE: 503,
 
 				/**
-				 * @const
-				 * @memberOf EventBusDispatcher
+				 * @name RESPONSE_MESSAGE_SERVICE_UNAVAILABLE
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Response message 503.
@@ -439,8 +437,8 @@ angular.module('keta.services.EventBusDispatcher',
 				RESPONSE_MESSAGE_SERVICE_UNAVAILABLE: 'Service Unavailable',
 
 				/**
+				 * @name send
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Send a message to a specified address using the specified EventBus instance and
@@ -511,8 +509,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name publish
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Publish a message to a specified address using the specified EventBus instance.
@@ -544,8 +542,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name registerHandler
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Registers a handler on a specified address using the specified EventBus instance.
@@ -569,8 +567,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name unregisterHandler
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Unregisters a handler on a specified address using the specified EventBus instance.
@@ -594,8 +592,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name close
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Closes connection to specified EventBus instance.
@@ -613,8 +611,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name readyState
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Returns connection state of specified EventBus instance.
@@ -632,8 +630,8 @@ angular.module('keta.services.EventBusDispatcher',
 				},
 
 				/**
+				 * @name generateUUID
 				 * @function
-				 * @memberOf EventBusDispatcher
 				 * @description
 				 * <p>
 				 *   Generates an UUID for handler.

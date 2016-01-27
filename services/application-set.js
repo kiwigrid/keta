@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.ApplicationSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.ApplicationSet
@@ -47,7 +46,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before ApplicationSet query is sent to EventBus.
@@ -79,7 +77,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name project
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a projection before ApplicationSet query is sent to EventBus.
@@ -114,7 +111,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name sort
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a sorting before ApplicationSet query is sent to EventBus.
@@ -149,7 +145,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name paginate
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a pagination before ApplicationSet query is sent to EventBus.
@@ -191,7 +186,6 @@ angular.module('keta.services.ApplicationSet',
 				/**
 				 * @name query
 				 * @function
-				 * @memberOf ApplicationSetInstance
 				 * @description
 				 * <p>
 				 *   Finally executes ApplicationSet query by sending it to the associated EventBus instance.
@@ -267,8 +261,8 @@ angular.module('keta.services.ApplicationSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Creates an ApplicationSetInstance with given EventBus instance.
@@ -286,8 +280,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name indexOf
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns index of given Application in ApplicationSet by comparing app IDs.
@@ -319,8 +313,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name length
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns number of applications in given ApplicationSet.
@@ -346,8 +340,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name get
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns application in given ApplicationSet by specified index.
@@ -374,8 +368,8 @@ angular.module('keta.services.ApplicationSet',
 				},
 
 				/**
+				 * @name getAll
 				 * @function
-				 * @memberOf ApplicationSet
 				 * @description
 				 * <p>
 				 *   Returns all applications in given ApplicationSet.

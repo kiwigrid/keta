@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.EventBus
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.EventBus
@@ -40,7 +39,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getDefaultConfig
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns default config used to merge in EventBus instance create method.
@@ -65,7 +63,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getConfig
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns effective config of EventBus instance.
@@ -90,7 +87,6 @@ angular.module('keta.services.EventBus', [])
 			/**
 			 * @name getInstance
 			 * @function
-			 * @memberOf EventBus
 			 * @description
 			 * <p>
 			 *   Returns vertx.EventBus instance.
@@ -135,7 +131,6 @@ angular.module('keta.services.EventBus', [])
 		/**
 		 * @name create
 		 * @function
-		 * @memberOf EventBusProvider
 		 * @description
 		 * <p>
 		 *   Creates an EventBus instance with given config, which is merged with the default config.

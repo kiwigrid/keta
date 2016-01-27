@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.Device
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Device
@@ -111,7 +110,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $update
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Updates a remote DeviceInstance from local one the method is called on.
@@ -207,7 +205,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $delete
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Deletes a remote DeviceInstance from local one the method is called on.
@@ -241,7 +238,6 @@ angular.module('keta.services.Device',
 				/**
 				 * @name $reset
 				 * @function
-				 * @memberOf DeviceInstance
 				 * @description
 				 * <p>
 				 *   Resets a DeviceInstance to it's $pristine state.
@@ -298,8 +294,8 @@ angular.module('keta.services.Device',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Device
 				 * @description
 				 * <p>
 				 *   Creates a DeviceInstance with given EventBus instance and properties.

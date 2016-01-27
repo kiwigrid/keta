@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.TagSet
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.TagSet
@@ -41,7 +40,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name getTags
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Returns tags as an Array.
@@ -61,7 +59,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name getTagsAsHierarchy
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Returns tags as hierarchically organized Object. First level represents devices
@@ -83,7 +80,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name add
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a <code>Tag</code> object to the <code>TagSet</code> if it doesn't exist already.
@@ -118,7 +114,6 @@ angular.module('keta.services.TagSet',
 				/**
 				 * @name remove
 				 * @function
-				 * @memberOf TagSetInstance
 				 * @description
 				 * <p>
 				 *   Removes a <code>Tag</code> object from the <code>TagSet</code> if it still exists.
@@ -161,8 +156,8 @@ angular.module('keta.services.TagSet',
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf TagSet
 				 * @description
 				 * <p>
 				 *   Creates a TagSetInstance.

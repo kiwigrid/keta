@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.Tag
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Tag
@@ -46,7 +45,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getGuid
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>guid</code> property of Tag.
@@ -73,7 +71,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getName
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>name</code> property of Tag.
@@ -104,7 +101,6 @@ angular.module('keta.services.Tag', [])
 				/**
 				 * @name getSampleRate
 				 * @function
-				 * @memberOf TagInstance
 				 * @description
 				 * <p>
 				 *   Returns <code>sampleRate</code> property of Tag.
@@ -135,8 +131,8 @@ angular.module('keta.services.Tag', [])
 			var api = {
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf Tag
 				 * @description
 				 * <p>
 				 *   Creates a TagInstance.

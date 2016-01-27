@@ -10,12 +10,20 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.18
+
+_Released: 2016-01-27_
+
+* Fix for `ExtendedTable` to prevent reset of `visibleColumns` when a search filter was added and removed afterwards
+* Added french translations for `appBar` and `ExtendedTable`
+
 ## Version 0.4.17
 
 _Released: 2016-01-21_
 
 * Fix for `Sidebar` to close even if current entry is clicked
 * Fix for `ExtendedTable` messed up header labels if filter was used
+* Added `search-input-width-classes` and `selector-width-classes` parameters for `ExtendedTable` to make displayed widths of these components configurable
 
 ## Version 0.4.16
 
@@ -23,6 +31,7 @@ _Released: 2016-01-19_
 
 * Added workaround for IE not having "origin" property on anchors
 * Added workaround for double-existing tag value entries in `mergeDevice` responses
+* Added `row-class-callback` parameter for `ExtendedTable` to enable styling of whole rows
 
 ## Version 0.4.15
 

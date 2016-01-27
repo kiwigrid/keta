@@ -203,6 +203,8 @@ angular.module('keta.utils.Api', [])
 		// -----
 
 		/**
+		 * @name getFilterParams
+		 * @function
 		 * @description
 		 * Set filter params to all criteria or define them by query language.
 		 * If inserted string is "owner:test_user", only items with owner test_user will be returned

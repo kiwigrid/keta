@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.Logger
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.Logger
@@ -56,7 +55,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_LOG
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -67,7 +65,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_DEBUG
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -78,7 +75,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_INFO
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -89,7 +85,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_WARN
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -100,7 +95,6 @@ angular.module('keta.services.Logger',
 
 			/**
 			 * @name LOG_LEVEL_ERROR
-			 * @memberOf LoggerDecorator
 			 * @constant {number}
 			 * @description
 			 * <p>
@@ -134,7 +128,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name ADVANCED_FORMATTER
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Formats a message in an advanced, colored manner.
@@ -169,7 +162,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name request
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Logs a message-based request using <code>console.log</code>. Additionally a custom or
@@ -206,7 +198,6 @@ angular.module('keta.services.Logger',
 			/**
 			 * @name event
 			 * @function
-			 * @memberOf LoggerDecorator
 			 * @description
 			 * <p>
 			 *   Logs a message-based event using <code>console.log</code>. Additionally a custom or

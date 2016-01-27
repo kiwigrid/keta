@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @name keta.services.DeviceEvent
  * @author Marco Lehmann <marco.lehmann@kiwigrid.com>
  * @copyright Kiwigrid GmbH 2014-2015
  * @module keta.services.DeviceEvent
@@ -37,7 +36,6 @@ angular.module('keta.services.DeviceEvent', [])
 				/**
 				 * @name getType
 				 * @function
-				 * @memberOf DeviceEventInstance
 				 * @description
 				 * <p>
 				 *   Returns type of DeviceEvent.
@@ -63,7 +61,6 @@ angular.module('keta.services.DeviceEvent', [])
 				/**
 				 * @name getDevice
 				 * @function
-				 * @memberOf DeviceEventInstance
 				 * @description
 				 * <p>
 				 *   Returns device of DeviceEvent.
@@ -93,8 +90,8 @@ angular.module('keta.services.DeviceEvent', [])
 			var api = {
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name CREATED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for created event.
@@ -110,8 +107,8 @@ angular.module('keta.services.DeviceEvent', [])
 				CREATED: 'CREATED',
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name UPDATED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for updated event.
@@ -127,8 +124,8 @@ angular.module('keta.services.DeviceEvent', [])
 				UPDATED: 'UPDATED',
 
 				/**
-				 * @const
-				 * @memberOf DeviceEvent
+				 * @name DELETED
+				 * @constant
 				 * @description
 				 * <p>
 				 *   Type for deleted event.
@@ -144,8 +141,8 @@ angular.module('keta.services.DeviceEvent', [])
 				DELETED: 'DELETED',
 
 				/**
+				 * @name create
 				 * @function
-				 * @memberOf DeviceEvent
 				 * @description
 				 * <p>
 				 *   Creates a DeviceEventInstance with given type and Device instance.
