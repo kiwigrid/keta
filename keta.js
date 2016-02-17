@@ -260,6 +260,26 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Compte d’utilisateur',
 			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
 			'__keta.directives.AppBar_drop_access': 'Déposez accès'
+		},
+		'nl': {
+			'__keta.directives.AppBar_app_title': 'Applicatie',
+			'__keta.directives.AppBar_all_apps': 'Alle applicaties',
+			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Uitloggen',
+			'__keta.directives.AppBar_user_profile': 'Gebruikers account',
+			'__keta.directives.AppBar_logged_in_as': 'U bent tijdelijk aangemeld als',
+			'__keta.directives.AppBar_drop_access': 'Drop toegang'
+		},
+		'it': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'Tutte le applicazioni',
+			'__keta.directives.AppBar_all_energy_managers': 'Tutti gli Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Disconnettersi',
+			'__keta.directives.AppBar_user_profile': 'Account utente',
+			'__keta.directives.AppBar_logged_in_as': 'Stai temporaneamente l’accesso come',
+			'__keta.directives.AppBar_drop_access': 'Goccia accesso'
 		}
 	})
 
@@ -1391,6 +1411,22 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_sort': 'Trier',
 			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
 			'__keta.directives.ExtendedTable_of': 'de'
+		},
+		'nl': {
+			'__keta.directives.ExtendedTable_search': 'Zoeken',
+			'__keta.directives.ExtendedTable_add_column': 'Kolom toevoegen',
+			'__keta.directives.ExtendedTable_remove_column': 'Kolom verwijderen',
+			'__keta.directives.ExtendedTable_sort': 'Soort',
+			'__keta.directives.ExtendedTable_no_entries': 'Geen data',
+			'__keta.directives.ExtendedTable_of': 'van'
+		},
+		'it': {
+			'__keta.directives.ExtendedTable_search': 'Ricerca',
+			'__keta.directives.ExtendedTable_add_column': 'Aggiungi colonna',
+			'__keta.directives.ExtendedTable_remove_column': 'Rimuovere colonna',
+			'__keta.directives.ExtendedTable_sort': 'Ordinare',
+			'__keta.directives.ExtendedTable_no_entries': 'Nessuna voce',
+			'__keta.directives.ExtendedTable_of': 'di'
 		}
 	})
 

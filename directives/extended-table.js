@@ -313,6 +313,22 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_sort': 'Trier',
 			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
 			'__keta.directives.ExtendedTable_of': 'de'
+		},
+		'nl': {
+			'__keta.directives.ExtendedTable_search': 'Zoeken',
+			'__keta.directives.ExtendedTable_add_column': 'Kolom toevoegen',
+			'__keta.directives.ExtendedTable_remove_column': 'Kolom verwijderen',
+			'__keta.directives.ExtendedTable_sort': 'Soort',
+			'__keta.directives.ExtendedTable_no_entries': 'Geen data',
+			'__keta.directives.ExtendedTable_of': 'van'
+		},
+		'it': {
+			'__keta.directives.ExtendedTable_search': 'Ricerca',
+			'__keta.directives.ExtendedTable_add_column': 'Aggiungi colonna',
+			'__keta.directives.ExtendedTable_remove_column': 'Rimuovere colonna',
+			'__keta.directives.ExtendedTable_sort': 'Ordinare',
+			'__keta.directives.ExtendedTable_no_entries': 'Nessuna voce',
+			'__keta.directives.ExtendedTable_of': 'di'
 		}
 	})
 

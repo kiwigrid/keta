@@ -10,12 +10,19 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.19
+
+_Released: 2016-02-17_
+
+* Added dutch and italian translations for `AppBar` and `ExtendedTable`
+* Made unit tests Angular 1.4.x compatible
+
 ## Version 0.4.18
 
 _Released: 2016-01-27_
 
 * Fix for `ExtendedTable` to prevent reset of `visibleColumns` when a search filter was added and removed afterwards
-* Added french translations for `appBar` and `ExtendedTable`
+* Added french translations for `AppBar` and `ExtendedTable`
 
 ## Version 0.4.17
 
