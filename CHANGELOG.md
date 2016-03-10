@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.20
+
+_Released: 2016-03-10_
+
+* Added `columnClassCallback` call for `actions` column in `ExtendedTable`
+* Fixed wrong jsdoc tag in `DeviceSet.filter` method documentation
+
 ## Version 0.4.19
 
 _Released: 2016-02-17_

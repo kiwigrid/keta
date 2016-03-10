@@ -2185,7 +2185,8 @@ angular.module('keta.directives.ExtendedTable')
 '									<span class="glyphicon glyphicon-minus-sign"></span>' +
 '								</a>' +
 '							</th>' +
-'							<th data-ng-if="actionList.length">' +
+'							<th data-ng-if="actionList.length"' +
+'								class="{{columnClassCallback(headers, \'actions\', true)}}">' +
 '								{{headerLabelCallback(\'actions\')}}' +
 '							</th>' +
 '						</tr>' +
@@ -2200,7 +2201,8 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length">' +
+'							<td data-ng-if="row && actionList.length"' +
+'								class="{{columnClassCallback(row, \'actions\', false)}}">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
@@ -2232,7 +2234,8 @@ angular.module('keta.directives.ExtendedTable')
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
-'							<td data-ng-if="row && actionList.length">' +
+'							<td data-ng-if="row && actionList.length"' +
+'								class="{{columnClassCallback(row, \'actions\', false)}}">' +
 '								<div class="btn-group" role="group">' +
 '									<span data-ng-repeat="item in actionList"' +
 '										data-ng-if="showActionListItem(item, row)">' +
@@ -4163,7 +4166,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before DeviceSet query is sent to EventBus.

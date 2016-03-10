@@ -56,7 +56,6 @@ angular.module('keta.services.DeviceSet',
 				/**
 				 * @name filter
 				 * @function
-				 * @memberOf DeviceSetInstance
 				 * @description
 				 * <p>
 				 *   Adds a filter before DeviceSet query is sent to EventBus.
