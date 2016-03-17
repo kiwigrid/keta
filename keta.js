@@ -286,7 +286,8 @@ angular.module('keta.directives.AppBar',
 	.directive('appBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter,
 		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
-		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils) {
+		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
+	) {
 
 		return {
 			restrict: 'EA',
@@ -483,10 +484,32 @@ angular.module('keta.directives.AppBar',
 					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
 
+				// get access token
+				var accessToken = AccessToken.decode(AccessToken.get());
+
+				/**
+				 * extend entry uri by current user id
+				 * @param {string} appEntryUri app entry uri to extend
+				 * @returns {string} extended app entry uri
+				 */
+				var extendEntryUriByCurrentUser = function extendEntryUriByCurrentUser(appEntryUri) {
+
+					if (CommonUtils.doesPropertyExist(accessToken, 'user_id')) {
+						if (appEntryUri.indexOf('?') === -1) {
+							appEntryUri += '?';
+						} else {
+							appEntryUri += '&';
+						}
+						appEntryUri += 'userId=' + accessToken.user_id;
+					}
+
+					return appEntryUri;
+				};
+
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
-					APP_ROOT: '#/',
+					APP_ROOT: extendEntryUriByCurrentUser('#/'),
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
@@ -561,17 +584,17 @@ angular.module('keta.directives.AppBar',
 
 									var linkPort =
 										link.port !== '' && link.port !== '0' ?
-										':' + link.port : '';
+											':' + link.port : '';
 
 									// workaround for internet explorer not having "origin" property
 									var linkOrigin =
 										angular.isDefined(link.origin) ?
 											link.origin :
-										linkProtocol + link.hostname + linkPort;
+											linkProtocol + link.hostname + linkPort;
 
 									if (entryUri !== null) {
 										scope.rootApp = {};
-										scope.rootApp.link = entryUri;
+										scope.rootApp.link = extendEntryUriByCurrentUser(entryUri);
 										scope.rootApp.name = name;
 										scope.worlds.unshift({
 											name: 'Desktop',
@@ -580,14 +603,22 @@ angular.module('keta.directives.AppBar',
 									}
 
 									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS : linkOrigin + link.search + '#/applications';
+										scope.links.ALL_APPS :
+										extendEntryUriByCurrentUser(linkOrigin + '#/applications' + link.search);
 
 									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE : linkOrigin + link.search + '#/user';
+										scope.links.USER_PROFILE :
+										extendEntryUriByCurrentUser(linkOrigin + '#/user' + link.search);
 
 									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										scope.links.ALL_ENERGY_MANAGERS = linkOrigin + link.search
-											+ '#/devices?deviceClass=com.kiwigrid.devices.em.EnergyManager';
+										var linkSearch = link.search;
+										linkSearch += linkSearch === '' ?
+											'?deviceClass=com.kiwigrid.devices.em.EnergyManager' :
+											'&deviceClass=com.kiwigrid.devices.em.EnergyManager';
+										scope.links.ALL_ENERGY_MANAGERS =
+											extendEntryUriByCurrentUser(
+												linkOrigin + '#/devices' + linkSearch
+											);
 									}
 
 								}

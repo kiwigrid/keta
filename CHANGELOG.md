@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.21
+
+_Released: 2016-03-17_
+
+* Added `userId` parameter to links used in `AppBar`
+
 ## Version 0.4.20
 
 _Released: 2016-03-10_
