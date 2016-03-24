@@ -56,7 +56,7 @@ angular.module('keta.utils.Common', [])
 		 *   The key can be either in short ('en') or long ('en-US') format.<br>
 		 *   Locales only match from specific > general > fallback<br>
 		 *   i. e. 'de-AT' > 'de' > 'en'<br>
-		 *   If a general local is not defined go straight to fallback locale.
+		 *   If a general locale is not defined go straight to fallback locale.
 		 * </p>
 		 * @param {string} key translation key to search for
 		 * @param {object} labels object with all translation keys grouped by locale keys
@@ -66,6 +66,7 @@ angular.module('keta.utils.Common', [])
 		factory.getLabelByLocale = function getLabelByLocale(key, labels, currentLocale) {
 
 			var LOCALE_LENGTH = 2;
+			var FALLBACK_LOCALE = 'en';
 			var label = null;
 
 			var shortLocale =
@@ -79,9 +80,9 @@ angular.module('keta.utils.Common', [])
 			} else if (angular.isObject(labels[shortLocale]) &&
 				angular.isDefined(labels[shortLocale][key])) {
 				label = labels[shortLocale][key];
-			} else if (angular.isObject(labels.en) &&
-				angular.isDefined(labels.en[key])) {
-				label = labels.en[key];
+			} else if (angular.isObject(labels[FALLBACK_LOCALE]) &&
+				angular.isDefined(labels[FALLBACK_LOCALE][key])) {
+				label = labels[FALLBACK_LOCALE][key];
 			}
 			return label;
 		};

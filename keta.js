@@ -2798,11 +2798,13 @@ angular.module('keta.filters.Slice', [])
  *   <code>precision</code> defines the number of digits to appear after the decimal point as integer
  *   (e.g. <code>2</code>, defaults to <code>0</code>). <code>precisionRanges</code> defines used
  *   precision in a more flexible way by defining an array of precisions with <code>min</code> (included)
- *   and/or <code>max</code> (excluded) value. <code>isBytes</code> is a boolean flag to
- *   specify if the given number is bytes and therefor 1024-based (defaults to <code>false</code>).
- *   <code>separate</code> is a boolean flag (defaults to <code>false</code>) which defines whether
- *   to return a single string or an object with separated values <code>numberFormatted</code> (String),
- *   <code>numberRaw</code> (Number) and <code>unit</code> (String).
+ *   and/or <code>max</code> (excluded) value. <code>precisionExcludeIntegers</code> defines if integers
+ *   should be excluded from precision. <code>precisionExclude</code> defines concrete values which are excluded
+ *   from precision. <code>isBytes</code> is a boolean flag tom specify if the given number is bytes and
+ *   therefor 1024-based (defaults to <code>false</code>). <code>separate</code> is a boolean flag
+ *   (defaults to <code>false</code>) which defines whether to return a single string or an object with
+ *   separated values <code>numberFormatted</code> (String), <code>numberRaw</code> (Number) and
+ *   <code>unit</code> (String).
  * </p>
  * <p>
  *   If <code>precisionRanges</code> is set to:
@@ -2811,6 +2813,13 @@ angular.module('keta.filters.Slice', [])
  *     {max: 1000, precision: 0},
  *     {min: 1000, precision: 1}
  * ]</pre>
+ * <p>
+ *   If <code>precisionExclude</code> is set to:
+ * </p>
+ * <pre>[0.123456, 100.123456]</pre>
+ * <p>
+ *   values that are 0.123456 or 100.123456 wouldn't be cutted by precision.
+ * </p>
  * <p>
  *   numeric values which are less than 1000 are formatted with a precision of 0, as numeric values
  *   equal or greater than 1000 are formatted with a precision of 1.
@@ -2839,6 +2848,22 @@ angular.module('keta.filters.Slice', [])
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false
+ *         });
+ *
+ *         // use unit filter for integers that shouldn't be cutted by precision
+ *         // $scope.valuePrecisionIntegersExcluded equals string '123 W'
+ *         $scope.valuePrecisionIntegersExcluded = $filter('unit')(123, {
+ *             unit: 'W',
+ *             precision: 2,
+ *             precisionExcludeIntegers: true
+ *         });
+ *
+ *         // use unit filter for values that shouldn't be cutted by precision
+ *         // $scope.valuePrecisionExcluded equals string '0.123456 W'
+ *         $scope.valuePrecisionExcluded = $filter('unit')(0.123456, {
+ *             unit: 'W',
+ *             precision: 2,
+ *             precisionExclude: [0.123456]
  *         });
  *
  *         // use unit filter to return object for number formatting
@@ -2882,6 +2907,8 @@ angular.module('keta.filters.Unit',
 
 			var precision = 0,
 				precisionRanges = [],
+				precisionExcludeIntegers = false,
+				precisionExclude = [],
 				unit = '',
 				isBytes = false,
 				separate = false,
@@ -2903,6 +2930,15 @@ angular.module('keta.filters.Unit',
 					angular.isArray(configuration.precisionRanges) ?
 						configuration.precisionRanges : precisionRanges;
 
+				// flag if decimal places shouldn't be forced by precision
+				precisionExcludeIntegers = angular.isDefined(configuration.precisionExcludeIntegers) ?
+					configuration.precisionExcludeIntegers : precisionExcludeIntegers;
+
+				// precision excluded values
+				precisionExclude =
+					angular.isArray(configuration.precisionExclude) ?
+						configuration.precisionExclude : precisionExclude;
+
 				// unit to use (defaults to '')
 				unit =
 					angular.isDefined(configuration.unit) ?
@@ -2918,6 +2954,14 @@ angular.module('keta.filters.Unit',
 					angular.isDefined(configuration.separate) ?
 						configuration.separate : separate;
 
+
+			}
+
+			var excludeFromPrecision = precisionExcludeIntegers;
+
+			// checking if input is an excluded value
+			if (!excludeFromPrecision) {
+				excludeFromPrecision = precisionExclude.indexOf(input) !== -1;
 			}
 
 			// reset precision if precision range matches
@@ -2937,12 +2981,13 @@ angular.module('keta.filters.Unit',
 				}
 			});
 
-			if (input === 0) {
+			if (input === 0 && excludeFromPrecision) {
 				precision = 0;
 			}
 
 			var sizes = isBytes ? ['Bytes', 'KB', 'MB', 'GB', 'TB'] : ['', 'k', 'M', 'G', 'T'];
 
+			// directly return currencies and distances
 			if (unit === TagConstants.UNIT.EURO ||
 				unit === TagConstants.UNIT.KILOMETER ||
 				unit === TagConstants.UNIT.DOLLAR ||
@@ -2964,13 +3009,20 @@ angular.module('keta.filters.Unit',
 				);
 
 				var siInput = input / Math.pow(isBytes ? oneKiloByte : oneKilo, i) * multiplicator;
-				var siInputFixed = Number(siInput.toFixed(precision));
+				var siInputFixed = excludeFromPrecision ? siInput : Number(siInput.toFixed(precision));
 				if (siInputFixed >= oneKilo) {
 					i++;
 					siInputFixed /= oneKilo;
 				}
 
-				separated.numberFormatted = $filter('number')(siInputFixed);
+				// determine number of decimal places
+				var inputPieces = String(siInputFixed).split(/\./);
+				var inputsCurrentPrecision = inputPieces.length > 1 ? inputPieces[1].length : 0;
+
+				separated.numberFormatted = excludeFromPrecision ?
+					$filter('number')(siInputFixed, inputsCurrentPrecision) :
+					$filter('number')(siInputFixed, precision);
+
 				separated.numberRaw = siInputFixed;
 				separated.unit = sizes[i] + unit;
 
@@ -8132,7 +8184,7 @@ angular.module('keta.utils.Common', [])
 		 *   The key can be either in short ('en') or long ('en-US') format.<br>
 		 *   Locales only match from specific > general > fallback<br>
 		 *   i. e. 'de-AT' > 'de' > 'en'<br>
-		 *   If a general local is not defined go straight to fallback locale.
+		 *   If a general locale is not defined go straight to fallback locale.
 		 * </p>
 		 * @param {string} key translation key to search for
 		 * @param {object} labels object with all translation keys grouped by locale keys
@@ -8142,6 +8194,7 @@ angular.module('keta.utils.Common', [])
 		factory.getLabelByLocale = function getLabelByLocale(key, labels, currentLocale) {
 
 			var LOCALE_LENGTH = 2;
+			var FALLBACK_LOCALE = 'en';
 			var label = null;
 
 			var shortLocale =
@@ -8155,9 +8208,9 @@ angular.module('keta.utils.Common', [])
 			} else if (angular.isObject(labels[shortLocale]) &&
 				angular.isDefined(labels[shortLocale][key])) {
 				label = labels[shortLocale][key];
-			} else if (angular.isObject(labels.en) &&
-				angular.isDefined(labels.en[key])) {
-				label = labels.en[key];
+			} else if (angular.isObject(labels[FALLBACK_LOCALE]) &&
+				angular.isDefined(labels[FALLBACK_LOCALE][key])) {
+				label = labels[FALLBACK_LOCALE][key];
 			}
 			return label;
 		};

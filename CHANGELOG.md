@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.22
+
+_Released: 2016-03-24_
+
+* Enhanced `unit` filter
+
 ## Version 0.4.21
 
 _Released: 2016-03-17_
