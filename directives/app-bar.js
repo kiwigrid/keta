@@ -79,7 +79,7 @@
  *         // the directive sets default links that can be overwritten by the keys of this object
  *         $scope.links = {
  *             ALL_APPS: '/#/applications/',
- *             ALL_ENERGY_MANAGERS: '/#/devices?deviceClass=com.kiwigrid.devices.EnergyManager',
+ *             ALL_ENERGY_MANAGERS: '?deviceClass=com.kiwigrid.devices.EnergyManager/#/devices',
  *             APP_ROOT: '/#/landing-page',
  *             USER_PROFILE: '/#/users/profile',
  *             USER_LOGOUT: '/#/users/logout'
@@ -458,29 +458,10 @@ angular.module('keta.directives.AppBar',
 				// get access token
 				var accessToken = AccessToken.decode(AccessToken.get());
 
-				/**
-				 * extend entry uri by current user id
-				 * @param {string} appEntryUri app entry uri to extend
-				 * @returns {string} extended app entry uri
-				 */
-				var extendEntryUriByCurrentUser = function extendEntryUriByCurrentUser(appEntryUri) {
-
-					if (CommonUtils.doesPropertyExist(accessToken, 'user_id')) {
-						if (appEntryUri.indexOf('?') === -1) {
-							appEntryUri += '?';
-						} else {
-							appEntryUri += '&';
-						}
-						appEntryUri += 'userId=' + accessToken.user_id;
-					}
-
-					return appEntryUri;
-				};
-
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
-					APP_ROOT: extendEntryUriByCurrentUser('#/'),
+					APP_ROOT: CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id),
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
@@ -548,24 +529,10 @@ angular.module('keta.directives.AppBar',
 									var link = document.createElement('a');
 									link.href = entryUri;
 
-									var linkProtocol =
-										link.protocol +
-										(link.protocol[link.protocol.length - 1] === ':' ?
-											'//' : '://');
-
-									var linkPort =
-										link.port !== '' && link.port !== '0' ?
-											':' + link.port : '';
-
-									// workaround for internet explorer not having "origin" property
-									var linkOrigin =
-										angular.isDefined(link.origin) ?
-											link.origin :
-											linkProtocol + link.hostname + linkPort;
-
 									if (entryUri !== null) {
 										scope.rootApp = {};
-										scope.rootApp.link = extendEntryUriByCurrentUser(entryUri);
+										scope.rootApp.link =
+											CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
 										scope.rootApp.name = name;
 										scope.worlds.unshift({
 											name: 'Desktop',
@@ -575,20 +542,24 @@ angular.module('keta.directives.AppBar',
 
 									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
 										scope.links.ALL_APPS :
-										extendEntryUriByCurrentUser(linkOrigin + '#/applications' + link.search);
+										CommonUtils.addUrlParameter(
+											entryUri + '#/applications', 'userId', accessToken.user_id
+										);
 
 									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
 										scope.links.USER_PROFILE :
-										extendEntryUriByCurrentUser(linkOrigin + '#/user' + link.search);
+										CommonUtils.addUrlParameter(
+											entryUri + '#/user', 'userId', accessToken.user_id
+										);
 
 									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										var linkSearch = link.search;
-										linkSearch += linkSearch === '' ?
-											'?deviceClass=com.kiwigrid.devices.em.EnergyManager' :
-											'&deviceClass=com.kiwigrid.devices.em.EnergyManager';
+										var allManagersUri =
+											CommonUtils.addUrlParameter(
+												entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
+											);
 										scope.links.ALL_ENERGY_MANAGERS =
-											extendEntryUriByCurrentUser(
-												linkOrigin + '#/devices' + linkSearch
+											CommonUtils.addUrlParameter(
+												allManagersUri + '#/devices', 'userId', accessToken.user_id
 											);
 									}
 

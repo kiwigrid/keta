@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.23
+
+_Released: 2016-04-14_
+
+* Added `CommonUtils.addUrlParameter` method to add or modify URL parameters
+* Removed former url modification method from `AppBar` and replaced it by `CommonUtils.addUrlParameter`
+
 ## Version 0.4.22
 
 _Released: 2016-03-24_

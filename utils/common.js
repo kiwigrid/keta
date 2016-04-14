@@ -87,6 +87,50 @@ angular.module('keta.utils.Common', [])
 			return label;
 		};
 
+		/**
+		 * @name getLabelByLocale
+		 * @function
+		 * @description
+		 * <p>
+		 *   Add or modify a parameter in given URL. It maintains the correct order or URL parts.
+		 * </p>
+		 * @param {string} uri uri to modify
+		 * @param {string} param parameter to modify
+		 * @param {string} value value to set parameter to
+		 * @returns {string} modified url
+		 */
+		factory.addUrlParameter = function addUrlParameter(uri, param, value) {
+
+			// using a positive lookahead (?=\=) to find the
+			// given parameter, preceded by a ? or &, and followed
+			// by a = with a value after than (using a non-greedy selector)
+			// and then followed by a & or the end of the string
+			var val = new RegExp('(\\?|\\&)' + param + '=.*?(?=(&|$))');
+			var parts = uri.toString().split('#');
+			var url = parts[0];
+			var hash = parts[1] || false;
+			var queryString = /\?.+$/;
+			var newURL = url;
+
+			// check if the parameter exists
+			if (val.test(url)) {
+				// if it does, replace it, using the captured group
+				// to determine & or ? at the beginning
+				newURL = url.replace(val, '$1' + param + '=' + value);
+			} else {
+				// otherwise, if there is a query string at all
+				// add the param to the end of it or
+				// if there's no query string, add one
+				newURL = url + (queryString.test(url) ? '&' : '?') + param + '=' + value;
+			}
+
+			if (hash) {
+				newURL += '#' + hash;
+			}
+
+			return newURL;
+		};
+
 		return factory;
 
 	});
