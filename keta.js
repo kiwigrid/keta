@@ -8187,7 +8187,7 @@ angular.module('keta.utils.Common', [])
 		};
 
 		/**
-		 * @name getLabelByLocale
+		 * @name addUrlParameter
 		 * @function
 		 * @description
 		 * <p>
