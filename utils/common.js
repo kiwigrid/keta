@@ -101,6 +101,11 @@ angular.module('keta.utils.Common', [])
 		 */
 		factory.addUrlParameter = function addUrlParameter(uri, param, value) {
 
+			// instantly return invalid input
+			if (!angular.isString(uri)) {
+				return uri;
+			}
+
 			// using a positive lookahead (?=\=) to find the
 			// given parameter, preceded by a ? or &, and followed
 			// by a = with a value after than (using a non-greedy selector)

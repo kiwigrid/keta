@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.4.24
+
+_Released: 2016-04-19_
+
+* Added check for invalid input to `CommonUtils.addUrlParameter` method
+
 ## Version 0.4.23
 
 _Released: 2016-04-14_
