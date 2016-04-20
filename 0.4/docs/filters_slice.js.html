@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Module: OrderObjectBy</title>
+	<title>keta – Docs – Source: filters/slice.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,118 +58,55 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Module: OrderObjectBy</h1>
+		<h1 class="page-title">Source: filters/slice.js</h1>
 		
 
 
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
-<section>
-    
-<header>
-    <h2>
-    OrderObjectBy
-    </h2>
-    
-</header>  
+/**
+ * @name keta.filters.Slice
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.filters.Slice
+ * @description
+ * &lt;p>
+ *   A filter to extract &lt;code>limit&lt;/code> elements beginning at &lt;code>offset&lt;/code>
+ *   out of an array.
+ * &lt;/p>
+ * @example
+ * {{ rows | slice:0:5 }}
+ * @example
+ * angular.module('exampleApp', ['keta.filters.Slice'])
+ *     .controller('ExampleController', function($scope) {
+ *
+ *         // extract 5 elements starting at offset 0
+ *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
+ *
+ *     });
+ */
 
-<article>
-    <div class="container-overview">
-    
-    
-    
-        
-            <div class="description"><p>
-  A filter to extract <code>limit</code> elements beginning at <code>offset</code>
-  out of an array.
-</p></div>
-        
-        
-        
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul class="list-unstyled">
-            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
-        </ul>
-    </dd>
-    
-    
-    
-    <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="filters_order-object-by.js.html">filters/order-object-by.js</a>, <a href="filters_order-object-by.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-        
-        
-            <h3>Examples</h3>
-            
-    <pre class="prettyprint"><code>{{ row | orderObjectBy:['col1', 'col2'] }}
-{{ row | orderObjectBy:['col1', 'col2']:true }}</code></pre>
-
-    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.OrderObjectBy'])
-    .controller('ExampleController', function($scope) {
-
-        // return object values in given order (all other values are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
-
-        // return object keys in given order (all other keys are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
-
-    });</code></pre>
-
-        
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</article>
-
-</section>  
+angular.module('keta.filters.Slice', [])
+	.filter('slice', function() {
+		return function(arr, offset, limit) {
+			if (!angular.isDefined(arr) || !angular.isArray(arr)) {
+				arr = [];
+			}
+			if (!angular.isDefined(offset) || !angular.isNumber(offset)) {
+				offset = 0;
+			}
+			if (!angular.isDefined(limit) || !angular.isNumber(limit)) {
+				limit = arr.length;
+			}
+			return arr.slice(offset, offset + limit);
+		};
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

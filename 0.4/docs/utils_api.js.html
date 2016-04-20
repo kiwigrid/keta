@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: utils/api.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.4.23
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.23" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.23" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.23" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.23" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: utils/api.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.utils.Api
+ * @author Vincent Romanus &lt;vincent.romanus@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2015
+ * @module keta.utils.Api
+ * @description
+ * &lt;p>
+ *    Utility service to convert search string and query language to filter params that can be used
+ *    with other keta services.
+ * &lt;/p>
+ */
+
+
+angular.module('keta.utils.Api', [])
+
+	.constant('ApiUtilsConstants', {
+
+		OPERATORS: {
+			OR: '$or',
+			AND: '$and',
+			LIKE: '$like'
+		},
+		REGEX: {
+			QUERY_DIVIDER: new RegExp('(".*?"|[^" ]+)+(?= *| *$)', 'g'),
+			KEY_DIVIDER: new RegExp('(".*?"|[^"\:]+)+(?= *| *$)', 'g'),
+			QUOTES: new RegExp('"', 'g')
+		},
+		CHARS: {
+			QUERY_DIVIDER: ':',
+			LIKE_EXTENDER: '*'
+		},
+		NUMBERS: {
+			MAX_COMPONENTS_LENGTH: 2
+		}
+
+	})
+
+	/**
+	 * @class ApiUtils
+	 * @propertyOf keta.utils.Api
+	 * @description Api Utils Factory
+	 */
+	.factory('ApiUtils', function ApiUtils(ApiUtilsConstants) {
+
+		var factory = {};
+
+		// HELPER
+		// -----
+
+		/**
+		 * @description
+		 * Helper to check if objects has no properties.
+		 * @param {Object} obj to check.
+		 * @returns {Boolean} if object has no properties.
+		 */
+		var isBlankObject = function isBlankObject(obj) {
+			var propertyCount = 0;
+
+			angular.forEach(obj, function() {
+				propertyCount++;
+			});
+
+			return propertyCount === 0;
+		};
+
+		/**
+		 * @description
+		 * Cleanup inserted query.
+		 * @param {String} query string.
+		 * @returns {String} clean uped query
+		 */
+		var cleanUpQuery = function cleanUpQuery(query) {
+
+			// prevent double QUERY_DIVIDER_CHAR
+			var cleanedUpQuery = query.replace(
+					ApiUtilsConstants.CHARS.QUERY_DIVIDER + ApiUtilsConstants.CHARS.QUERY_DIVIDER,
+					ApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ApiUtilsConstants.CHARS.QUERY_DIVIDER
+				) + '"';
+
+			return cleanedUpQuery;
+
+		};
+
+		/**
+		 * @description
+		 * Separate query in to search key und search value.
+		 * @param {String} query query string.
+		 * @returns {Object} search key as key and search value as value.
+		 */
+		var getQueryComponents = function getQueryComponents(query) {
+
+			query = cleanUpQuery(query);
+
+			var components = query.match(ApiUtilsConstants.REGEX.KEY_DIVIDER);
+
+			var	key = components[0].replace(ApiUtilsConstants.REGEX.QUOTES, '');
+			var	value = angular.isDefined(components[1]) ?
+				components[1].replace(ApiUtilsConstants.REGEX.QUOTES, '') : null;
+
+			if (components.length > ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
+
+				var extendedValues =
+					components.slice(ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
+				angular.forEach(extendedValues, function(extendedValue) {
+					value += ApiUtilsConstants.CHARS.QUERY_DIVIDER +
+						extendedValue.replace(ApiUtilsConstants.REGEX.QUOTES, '');
+				});
+
+			}
+
+			return {key: key, value: value};
+
+		};
+
+		/**
+		 * @description
+		 * Transform search string into $like search param.
+		 * @param {String} searchString search string.
+		 * @returns {Object} $like search param.
+		 */
+		var getLikeSearchParam = function getLikeSearchString(searchString) {
+			var likeSearchParam = [];
+
+			likeSearchParam[ApiUtilsConstants.OPERATORS.LIKE] =
+				ApiUtilsConstants.CHARS.LIKE_EXTENDER +
+				searchString +
+				ApiUtilsConstants.CHARS.LIKE_EXTENDER;
+
+			return angular.extend({}, likeSearchParam);
+
+		};
+
+		/**
+		 * @description
+		 * Helper for getFilterParams to connect filterString to all inserted criteria.
+		 * @param {String} filterString Search string.
+		 * @param {Object} criteriaMapping Criteria to search in.
+		 * @returns {Array} Params with criteria as key and filterString as value.
+		 */
+		var getCriteriaParams = function getCriteriaParams(filterString, criteriaMapping) {
+
+			var filters = [];
+
+			angular.forEach(criteriaMapping, function(criterion, key) {
+
+				// delete double keys
+				angular.forEach(criteriaMapping, function(comparisonCriterion, comparisonKey) {
+
+					if (criterion === comparisonCriterion &amp;&amp; key !== comparisonKey) {
+						delete criteriaMapping[comparisonKey];
+					}
+
+				});
+
+				var container = [];
+
+				container[criterion] = getLikeSearchParam(filterString);
+				container = angular.extend({}, container);
+
+				filters.push(container);
+
+			});
+
+			return filters;
+		};
+
+		/**
+		 * @description
+		 * Merging params to send it to Eventbusmanager
+		 * @param {Object} acrossParams params that search over all criterias from criteriaMapping.
+		 * @param {Object} transformedParams params that you get from inserted query.
+		 * @returns {Object} Merged params.
+		 */
+		var mergeParams = function mergeParams(acrossParams, transformedParams) {
+
+			var params = {};
+
+			if (!isBlankObject(acrossParams) &amp;&amp;
+				!isBlankObject(transformedParams)) {
+
+				params[ApiUtilsConstants.OPERATORS.AND] = [
+					angular.extend({}, acrossParams),
+					angular.extend({}, transformedParams)
+				];
+
+			} else if (!isBlankObject(acrossParams)) {
+
+				params = angular.extend({}, acrossParams);
+
+			} else if (!isBlankObject(transformedParams)) {
+
+				params = angular.extend({}, transformedParams);
+
+			}
+
+			return params;
+
+		};
+
+		// LOGIC
+		// -----
+
+		/**
+		 * @name getFilterParams
+		 * @function
+		 * @description
+		 * Set filter params to all criteria or define them by query language.
+		 * If inserted string is "owner:test_user", only items with owner test_user will be returned
+		 * and if you insert "test_user", items with test_user in this criterion will be returned.
+		 * @param {String} filterString Search string or query language string.
+		 * @param {Object} criteriaMapping criteria to search in or convert key to criteria.
+		 * @returns {Object} Params to filter EventBusManager request.
+		 * @example
+		 * angular.module('exampleApp',
+		 *     [
+		 *         'keta.utils.Api',
+		 *         'keta.services.EventBusManager',
+		 *         'keta.services.DeviceSet'
+		 *     ])
+		 *     .controller('ExampleController', function(
+		 *         ApiUtils, EventBusManager, DeviceSet,
+		 *     ) {
+		 *
+		 *         // search scope model for an input to get the search string
+		 *         $scope.searchString = '';
+		 *
+		 *         // set search criteria
+		 *         var searchCriteria = {
+		 *             name: 'tagValues.IdName.value',
+		 *             owner: 'owner'
+		 *          };
+		 *
+		 *          // get filter params
+		 *          var filter = ApiUtils.getFilterParams($scope.searchString, searchCriteria);
+		 *
+		 *         // get reply by filter
+		 *        DeviceSet.create(EventBusManager.get('kiwibus'))
+		 *          .filter(filter)
+		 *          .project({
+		 *              tagValues: {
+		 *                  IdName: 1
+		 *              },
+		 *              owner: 1
+		 *          })
+		 *          .query()
+		 *          .then(function(reply) {
+		 *              // ...
+		 *          });
+		 *     });
+		 */
+		factory.getFilterParams = function getFilterParams(filterString, criteriaMapping) {
+
+			var params = {};
+
+			if (angular.isString(filterString) &amp;&amp;
+				angular.isObject(criteriaMapping) &amp;&amp;
+				filterString !== null) {
+
+				var transformedFilter = [];
+
+				var transformedParams = {};
+				var acrossParams = {};
+
+				var queries = filterString.match(ApiUtilsConstants.REGEX.QUERY_DIVIDER);
+
+				angular.forEach(queries, function(query) {
+
+					var FilterContainer = [];
+
+					var queryComponents = getQueryComponents(query);
+
+					if (queryComponents.value !== null) {
+
+						if (angular.isDefined(criteriaMapping[queryComponents.key])) {
+							queryComponents.key = criteriaMapping[queryComponents.key];
+						}
+
+						FilterContainer[queryComponents.key] = getLikeSearchParam(queryComponents.value);
+						FilterContainer = angular.extend({}, FilterContainer);
+
+						transformedFilter.push(FilterContainer);
+
+					} else if (!isBlankObject(acrossParams)) {
+
+						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+							acrossParams[ApiUtilsConstants.OPERATORS.OR]
+								.concat(getCriteriaParams(queryComponents.key, criteriaMapping));
+
+					} else {
+
+						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+							getCriteriaParams(queryComponents.key, criteriaMapping);
+
+					}
+
+				});
+
+				if (transformedFilter.length > 1) {
+					transformedParams[ApiUtilsConstants.OPERATORS.AND] = transformedFilter;
+				} else {
+					transformedParams = angular.extend({}, transformedFilter[0]);
+				}
+
+				params = mergeParams(acrossParams, transformedParams);
+
+			}
+
+			return params;
+		};
+
+		return factory;
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

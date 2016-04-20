@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Module: OrderObjectBy</title>
+	<title>keta – Docs – Source: services/application.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,118 +58,113 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Module: OrderObjectBy</h1>
+		<h1 class="page-title">Source: services/application.js</h1>
 		
 
 
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
-<section>
-    
-<header>
-    <h2>
-    OrderObjectBy
-    </h2>
-    
-</header>  
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.Application
+ * @description Application Provider
+ */
 
-<article>
-    <div class="container-overview">
-    
-    
-    
-        
-            <div class="description"><p>
-  A filter to extract <code>limit</code> elements beginning at <code>offset</code>
-  out of an array.
-</p></div>
-        
-        
-        
-<dl class="details">
-    
-        
-    
-    
-    
+angular.module('keta.services.Application',
+	[
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
+		'keta.services.Logger'
+	])
 
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul class="list-unstyled">
-            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
-        </ul>
-    </dd>
-    
-    
-    
-    <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="filters_order-object-by.js.html">filters/order-object-by.js</a>, <a href="filters_order-object-by.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
+	/**
+	 * @class ApplicationProvider
+	 * @propertyOf keta.services.Application
+	 * @description Application Provider
+	 */
+	.provider('Application', function ApplicationProvider() {
 
-        
-        
-            <h3>Examples</h3>
-            
-    <pre class="prettyprint"><code>{{ row | orderObjectBy:['col1', 'col2'] }}
-{{ row | orderObjectBy:['col1', 'col2']:true }}</code></pre>
+		this.$get = function ApplicationService() {
 
-    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.OrderObjectBy'])
-    .controller('ExampleController', function($scope) {
+			/**
+			 * @class ApplicationInstance
+			 * @propertyOf Application
+			 * @description Application Instance
+			 * @param {EventBus} givenEventBus eventBus to use for ApplicationInstance
+			 * @param {Object} properties Properties to inject into ApplicationInstance
+			 */
+			var ApplicationInstance = function(givenEventBus, properties) {
 
-        // return object values in given order (all other values are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
+				// keep reference
+				var that = this;
 
-        // return object keys in given order (all other keys are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
+				// save EventBus instance
+				// var eventBus = givenEventBus;
 
-    });</code></pre>
+				// populate properties
+				angular.forEach(properties, function(value, key) {
+					that[key] = value;
 
-        
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</article>
+					// save copy under $pristine
+					if (!angular.isDefined(that.$pristine)) {
+						that.$pristine = {};
+					}
 
-</section>  
+					that.$pristine[key] = angular.copy(value);
+				});
+
+			};
+
+			/**
+			 * @class Application
+			 * @propertyOf ApplicationProvider
+			 * @description Application Service
+			 */
+			var api = {
+
+				/**
+				 * @name create
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Creates an ApplicationInstance with given EventBus instance and properties.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @param {Object} properties Properties to set upon UserInstance creation
+				 * @returns {ApplicationInstance} ApplicationInstance created
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Application'])
+				 *     .controller('ExampleController', function(Application) {
+				 *         var application = Application.create(eventBus, {
+				 *             appId: 'company.app',
+				 *             entryUri: 'https://...',
+				 *             redirectUri: 'https://...',
+				 *             iconUri: 'https://...',
+				 *             names: {
+				 *                 en: 'Company App',
+				 *                 de: 'Firmenanwendung'
+				 *             }
+				 *         });
+				 *     });
+				 */
+				create: function(eventBus, properties) {
+					return new ApplicationInstance(eventBus, properties);
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

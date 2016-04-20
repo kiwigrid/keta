@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Module: OrderObjectBy</title>
+	<title>keta – Docs – Source: services/tag.js</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,118 +58,178 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Module: OrderObjectBy</h1>
+		<h1 class="page-title">Source: services/tag.js</h1>
 		
 
 
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
 
-<section>
-    
-<header>
-    <h2>
-    OrderObjectBy
-    </h2>
-    
-</header>  
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.Tag
+ * @description Tag Provider
+ */
 
-<article>
-    <div class="container-overview">
-    
-    
-    
-        
-            <div class="description"><p>
-  A filter to extract <code>limit</code> elements beginning at <code>offset</code>
-  out of an array.
-</p></div>
-        
-        
-        
-<dl class="details">
-    
-        
-    
-    
-    
+angular.module('keta.services.Tag', [])
 
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul class="list-unstyled">
-            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
-        </ul>
-    </dd>
-    
-    
-    
-    <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="filters_order-object-by.js.html">filters/order-object-by.js</a>, <a href="filters_order-object-by.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
+	.constant('TagConstants', {
+		// TODO: include full tag unit list
+		UNIT: {
+			WATTS: 'W',
+			WATTHOURS: 'Wh',
+			PERCENT: '%',
+			EURO: '€',
+			DOLLAR: '$',
+			POUND: '£',
+			KILOMETER: 'km'
+		}
+	})
 
-        
-        
-            <h3>Examples</h3>
-            
-    <pre class="prettyprint"><code>{{ row | orderObjectBy:['col1', 'col2'] }}
-{{ row | orderObjectBy:['col1', 'col2']:true }}</code></pre>
+	/**
+	 * @class TagProvider
+	 * @propertyOf keta.services.Tag
+	 * @description Tag Provider
+	 */
+	.provider('Tag', function TagProvider() {
 
-    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.OrderObjectBy'])
-    .controller('ExampleController', function($scope) {
+		this.$get = function TagService() {
 
-        // return object values in given order (all other values are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
+			/**
+			 * @class TagInstance
+			 * @propertyOf TagSetProvider
+			 * @description Tag Instance
+			 * @param {Object} properties Properties to inject into TagInstance
+			 */
+			var TagInstance = function(properties) {
 
-        // return object keys in given order (all other keys are dismissed)
-        $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
+				// guid of device tag belongs to
+				var guid = angular.isDefined(properties.guid) ? properties.guid : null;
 
-    });</code></pre>
+				/**
+				 * @name getGuid
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>guid&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {string} guid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagGuid = tag.getGuid();
+				 *     });
+				 */
+				this.getGuid = function() {
+					return guid;
+				};
 
-        
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</article>
+				// tag name
+				var name = angular.isDefined(properties.name) ? properties.name : null;
 
-</section>  
+				/**
+				 * @name getName
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>name&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {string} name
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagName = tag.getName();
+				 *     });
+				 */
+				this.getName = function() {
+					return name;
+				};
+
+				var MINIMUM_SAMPLE_RATE = 5;
+
+				// sample rate
+				var sampleRate =
+					angular.isDefined(properties.sampleRate) &amp;&amp; properties.sampleRate >= MINIMUM_SAMPLE_RATE ?
+						properties.sampleRate : null;
+
+				/**
+				 * @name getSampleRate
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>sampleRate&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {number} sampleRate
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagSampleRate = tag.getSampleRate();
+				 *     });
+				 */
+				this.getSampleRate = function() {
+					return sampleRate;
+				};
+
+			};
+
+			/**
+			 * @class Tag
+			 * @propertyOf TagProvider
+			 * @description Tag Service
+			 */
+			var api = {
+
+				/**
+				 * @name create
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Creates a TagInstance.
+				 * &lt;/p>
+				 * @param {Object} properties Properties to inject into TagInstance
+				 * @returns {TagInstance} TagInstance created
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(Tag) {
+				 *         var tag = Tag.create({
+				 *             guid: 'guid',
+				 *             name: 'IdName',
+				 *             sampleRate: 10
+				 *         });
+				 *     });
+				 */
+				create: function(properties) {
+					return new TagInstance(properties);
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
 
 
 

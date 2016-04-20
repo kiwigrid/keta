@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/event-bus.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.4.23
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.23" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.23" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.4.23" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.4.23" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/event-bus.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.EventBus
+ * @description EventBus Provider
+ */
+
+angular.module('keta.services.EventBus', [])
+
+	/**
+	 * @class EventBusProvider
+	 * @propertyOf keta.services.EventBus
+	 * @description EventBus Provider
+	 */
+	.provider('EventBus', function EventBusProvider() {
+
+		/**
+		 * @class EventBus
+		 * @propertyOf keta.services.EventBus
+		 * @description EventBus Instance
+		 * @param {Object} givenConfig Config to use for EventBus
+		 */
+		var EventBus = function EventBus(givenConfig) {
+
+			/**
+			 * @private
+			 * @description Default config for EventBus instances.
+			 */
+			var DEFAULT_CONFIG = {
+				id: 'kiwibus',
+				url: 'https://localhost:10443/kiwibus',
+				reconnect: true,
+				reconnectTimeout: 5,
+				requestTimeout: 10
+			};
+
+			/**
+			 * @name getDefaultConfig
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns default config used to merge in EventBus instance create method.
+			 * &lt;/p>
+			 * @returns {Object} default configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var defaultConfig = eventBus.getDefaultConfig();
+			 *     });
+			 */
+			this.getDefaultConfig = function() {
+				return DEFAULT_CONFIG;
+			};
+
+			/**
+			 * @private
+			 * @description Effective config as merge result of given and default config.
+			 */
+			var config = angular.extend({}, DEFAULT_CONFIG, givenConfig);
+
+			/**
+			 * @name getConfig
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns effective config of EventBus instance.
+			 * &lt;/p>
+			 * @returns {Object} effective configuration
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var effectiveConfig = eventBus.getConfig();
+			 *     });
+			 */
+			this.getConfig = function() {
+				return config;
+			};
+
+			/**
+			 * @private
+			 * @description Internal reference to vertx.EventBus instance.
+			 */
+			var eb = null;
+
+			/**
+			 * @name getInstance
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns vertx.EventBus instance.
+			 * &lt;/p>
+			 * @returns {vertx.EventBus} vertx.EventBus instance
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var instance = eventBus.getInstance();
+			 *     });
+			 */
+			this.getInstance = function() {
+				return eb;
+			};
+
+			// init vertx.EventBus
+			var init = function() {
+
+				var MILLISECONDS = 1000;
+
+				// instantiate vertx.EventBus
+				eb = new vertx.EventBus(config.url);
+
+				// add onclose handler
+				eb.onclose = function() {
+
+					// reconnect if enabled
+					if (config.reconnect) {
+						window.setTimeout(function() {
+							init();
+						}, config.reconnectTimeout * MILLISECONDS);
+					}
+
+				};
+
+			};
+
+			init();
+
+		};
+
+		/**
+		 * @name create
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Creates an EventBus instance with given config, which is merged with the default config.
+		 * &lt;/p>
+		 * @param {Object} config config to use in created EventBus instance
+		 * @returns {EventBus} EventBus created
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with default config
+		 *         var eventBus = EventBusProvider.create();
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *         // create with custom id
+		 *         var eventBus = EventBusProvider.create({id: 'myEventBus'});
+		 *     });
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBus'])
+		 *     .config(function(EventBusProvider) {
+		 *
+		 *         // create with custom config
+		 *         // in this case it's exactly the default config
+		 *         var eventBus = EventBusProvider.create({
+		 *             id: 'kiwibus',
+		 *             url: 'https://localhost:10443/kiwibus',
+		 *             reconnect: true,
+		 *             reconnectTimeout: 5,
+		 *             requestTimeout: 10
+		 *         });
+		 *
+		 *     });
+		 */
+		this.create = function(config) {
+			return new EventBus(config);
+		};
+
+		this.$get = function EventBusService() {};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
