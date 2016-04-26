@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.5.0
+
+_Released: 2016-04-26_
+
+* Added `DatePicker` directive
+* Added `TimeRangeSelector` directive
+
 ## Version 0.4.24
 
 _Released: 2016-04-19_

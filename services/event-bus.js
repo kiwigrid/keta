@@ -99,7 +99,7 @@ angular.module('keta.services.EventBus', [])
 			 *     });
 			 */
 			this.getInstance = function() {
-				return eb;
+				return config.url !== false ? eb : null;
 			};
 
 			// init vertx.EventBus
@@ -107,20 +107,24 @@ angular.module('keta.services.EventBus', [])
 
 				var MILLISECONDS = 1000;
 
-				// instantiate vertx.EventBus
-				eb = new vertx.EventBus(config.url);
+				if (config.url !== false) {
 
-				// add onclose handler
-				eb.onclose = function() {
+					// instantiate vertx.EventBus
+					eb = new vertx.EventBus(config.url);
 
-					// reconnect if enabled
-					if (config.reconnect) {
-						window.setTimeout(function() {
-							init();
-						}, config.reconnectTimeout * MILLISECONDS);
-					}
+					// add onclose handler
+					eb.onclose = function() {
 
-				};
+						// reconnect if enabled
+						if (config.reconnect) {
+							window.setTimeout(function() {
+								init();
+							}, config.reconnectTimeout * MILLISECONDS);
+						}
+
+					};
+
+				}
 
 			};
 
