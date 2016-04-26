@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: directives/app-bar.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.5.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.5.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.5.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.5.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.5.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: directives/app-bar.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.directives.AppBar
+ * @author Vincent Romanus &lt;vincent.romanus@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.AppBar
+ * @description
+ * &lt;p>
+ *   Horizontal navigation bar called AppBar with multiple menus (World Switcher, Menu Bar Toggle, Notification Bar
+ *   Toggle, App Title, User Menu, Language Menu and Energy Manager Menu).
+ * &lt;/p>
+ * @example
+ * &amp;lt;div data-app-bar
+ *     data-event-bus-id="eventBusId"
+ *     data-locales="locales"
+ *     data-current-locale="currentLocale"
+ *     data-labels="labels"
+ *     data-links="links"
+ *     data-worlds="worlds"
+ *     data-display-modes="displayModes"
+ *     data-root-app="rootApp"&amp;gt;
+ *     &amp;lt;a data-ng-href="{{rootApp.link}}" title="{{rootApp.name[currentLocale]}}"&amp;gt;
+ *         &amp;lt;img src="img/logo.svg"&amp;gt;
+ *     &amp;lt;/a&amp;gt;
+ * &amp;lt;/div&amp;gt;
+ * @example
+ * &amp;lt;div data-app-bar
+ *     data-event-bus-id="eventBusId"
+ *     data-locales="locales"
+ *     data-current-locale="currentLocale"
+ *     data-labels="labels"
+ *     data-links="links"
+ *     data-worlds="worlds"
+ *     data-display-modes="displayModes"&amp;gt;
+ *     &amp;lt;a data-ng-href="/" title="My App root"&amp;gt;
+ *         &amp;lt;img src="img/logo.svg"&amp;gt;
+ *     &amp;lt;/a&amp;gt;
+ * &amp;lt;/div&amp;gt;
+ * @example
+ * angular.module('exampleApp', ['keta.directives.AppBar'])
+ *     .controller('ExampleController', function($scope, AppBarMessageKeys) {
+ *
+ *         // id of eventBus instance to use to retrieve data
+ *         $scope.eventBusId = 'kiwibus';
+ *
+ *         // array of locales to use for language menu
+ *         $scope.locales = [{
+ *             name: 'Deutsch',
+ *             nameShort: 'DE',
+ *             code: 'de'
+ *         }, {
+ *             name: 'English',
+ *             nameShort: 'EN',
+ *             code: 'en'
+ *         }];
+ *
+ *         // current locale
+ *         $scope.currentLocale = 'de';
+ *
+ *         // override default-labels if necessary
+ *         // get default labels
+ *         $scope.labels = AppBarMessageKeys;
+ *
+ *         // use case 1: overwrite specific key
+ *         $scope.labels.de['__keta.directives.AppBar_app_title'] = 'Meine App';
+ *
+ *         // use case 2: add locale
+ *         $scope.labels.fr = {
+ *             '__keta.directives.AppBar_app_title': 'Applications',
+ *             '__keta.directives.AppBar_all_apps': 'Toutes les applications',
+ *             '__keta.directives.AppBar_all_energy_managers': 'toutes les Energy-Managers',
+ *             '__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+ *             '__keta.directives.AppBar_user_logout': 'Se Déconnecter',
+ *             '__keta.directives.AppBar_user_profile': 'Profil de l'utilisateur'
+ *         };
+ *
+ *         // object of link to use in template
+ *         // the directive sets default links that can be overwritten by the keys of this object
+ *         $scope.links = {
+ *             ALL_APPS: '/#/applications/',
+ *             ALL_ENERGY_MANAGERS: '?deviceClass=com.kiwigrid.devices.EnergyManager/#/devices',
+ *             APP_ROOT: '/#/landing-page',
+ *             USER_PROFILE: '/#/users/profile',
+ *             USER_LOGOUT: '/#/users/logout'
+ *         };
+ *
+ *         // array of worlds to display in world switcher
+ *         // the first world ('Desktop') is automatically prepended as first menu-entry
+ *         $scope.worlds = [{
+ *             name: 'Market',
+ *             link: 'https://market.mycompany.com'
+ *         }, {
+ *             name: 'Service',
+ *             link: 'https://service.mycompany.com'
+ *         }];
+ *
+ *         // object to configure display modes at size xxs, xs, sm, md, and lg
+ *         $scope.displayModes = {
+ *             worldSwitcher: {
+ *                 xxs: 'hidden',
+ *                 xs: 'hidden',
+ *                 sm: 'hidden',
+ *                 md: 'hidden',
+ *                 lg: 'hidden'
+ *             },
+ *             menuBarToggle: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'full',
+ *                 md: 'full',
+ *                 lg: 'full'
+ *             },
+ *             notificationBarToggle: {
+ *                 xxs: 'hidden',
+ *                 xs: 'hidden',
+ *                 sm: 'hidden',
+ *                 md: 'hidden',
+ *                 lg: 'hidden'
+ *             },
+ *             appTitle: {
+ *                 xxs: 'hidden',
+ *                 xs: 'hidden',
+ *                 sm: 'full',
+ *                 md: 'full',
+ *                 lg: 'full'
+ *             },
+ *             userMenu: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'full',
+ *                 md: 'full',
+ *                 lg: 'full'
+ *             },
+ *             languageMenu: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'full',
+ *                 md: 'full',
+ *                 lg: 'full'
+ *             },
+ *             energyManagerMenu: {
+ *                 xxs: 'hidden',
+ *                 xs: 'compact',
+ *                 sm: 'full',
+ *                 md: 'full',
+ *                 lg: 'full'
+ *             },
+ *             compactMenu: {
+ *                 xxs: 'full',
+ *                 xs: 'full',
+ *                 sm: 'hidden',
+ *                 md: 'hidden',
+ *                 lg: 'hidden'
+ *             }
+ *         };
+ *
+ *         // object of root app to use in transclusion template
+ *         // will be filled automatically by directive
+ *         $scope.rootApp = {};
+ *
+ *     });
+ */
+
+angular.module('keta.directives.AppBar',
+	[
+		'keta.directives.Sidebar',
+		'keta.services.EventBusManager',
+		'keta.services.Device',
+		'keta.services.DeviceSet',
+		'keta.services.ApplicationSet',
+		'keta.services.User',
+		'keta.services.AccessToken',
+		'keta.utils.Common'
+	])
+
+	.constant('AppBarConstants', {
+		COMPONENT: {
+			WORLD_SWITCHER: 'worldSwitcher',
+			MENU_BAR_TOGGLE: 'menuBarToggle',
+			NOTIFICATION_BAR_TOGGLE: 'notificationBarToggle',
+			APP_TITLE: 'appTitle',
+			USER_MENU: 'userMenu',
+			LANGUAGE_MENU: 'languageMenu',
+			ENERGY_MANAGER_MENU: 'energyManagerMenu',
+			COMPACT_MENU: 'compactMenu'
+		},
+		SIZE: {
+			XXS: 'xxs',
+			XS: 'xs',
+			SM: 'sm',
+			MD: 'md',
+			LG: 'lg'
+		},
+		STATE: {
+			HIDDEN: 'hidden',
+			FULL: 'full',
+			COMPACT: 'compact'
+		},
+		ROOT_APP_ID: 'kiwigrid.desktop'
+	})
+
+	// message keys with default values
+	.constant('AppBarMessageKeys', {
+		'en': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'All Apps',
+			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Logout',
+			'__keta.directives.AppBar_user_profile': 'User Account',
+			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
+			'__keta.directives.AppBar_drop_access': 'Drop access'
+		},
+		'de': {
+			'__keta.directives.AppBar_app_title': 'Applikation',
+			'__keta.directives.AppBar_all_apps': 'Alle Apps',
+			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Abmelden',
+			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
+			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
+			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
+		},
+		'fr': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
+			'__keta.directives.AppBar_all_energy_managers': 'Tous les Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Se déconnecter',
+			'__keta.directives.AppBar_user_profile': 'Compte d’utilisateur',
+			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
+			'__keta.directives.AppBar_drop_access': 'Déposez accès'
+		},
+		'nl': {
+			'__keta.directives.AppBar_app_title': 'Applicatie',
+			'__keta.directives.AppBar_all_apps': 'Alle applicaties',
+			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Uitloggen',
+			'__keta.directives.AppBar_user_profile': 'Gebruikers account',
+			'__keta.directives.AppBar_logged_in_as': 'U bent tijdelijk aangemeld als',
+			'__keta.directives.AppBar_drop_access': 'Drop toegang'
+		},
+		'it': {
+			'__keta.directives.AppBar_app_title': 'Application',
+			'__keta.directives.AppBar_all_apps': 'Tutte le applicazioni',
+			'__keta.directives.AppBar_all_energy_managers': 'Tutti gli Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Disconnettersi',
+			'__keta.directives.AppBar_user_profile': 'Account utente',
+			'__keta.directives.AppBar_logged_in_as': 'Stai temporaneamente l’accesso come',
+			'__keta.directives.AppBar_drop_access': 'Goccia accesso'
+		}
+	})
+
+	.directive('appBar', function AppBarDirective(
+		$rootScope, $window, $document, $filter,
+		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
+		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
+	) {
+
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+
+				// id of eventBus instance to use to retrieve data
+				eventBusId: '=?',
+
+				// array of locales to use for language menu
+				// this will be sorted alphabetically in ascending order
+				locales: '=?',
+
+				// current locale
+				currentLocale: '=?',
+
+				// object of labels to use in template
+				labels: '=?',
+
+				// object of link to use in template
+				links: '=?',
+
+				// array of worlds with label and link
+				worlds: '=?',
+
+				// display mode configuration object
+				displayModes: '=?',
+
+				// environment-specific link to the root app and all available translations as an object.
+				// It will be set by the appBar directive itself and can be used by the parent scope afterwards
+				// (e.g. to set the logo link and title tag in the top left corner).
+				// The object-keys are 'name' (object with keys for all supported languages) and 'link'.
+				rootApp: '=?'
+
+			},
+			transclude: true,
+			templateUrl: '/components/directives/app-bar.html',
+			link: function linkAppBarDirective(scope, element) {
+
+				// get menu data
+				scope.user = {};
+				scope.menus = {};
+				scope.worlds = scope.worlds || [];
+				scope.locales = scope.locales || [];
+				scope.energyManagers = [];
+				scope.impersonationInfo = {};
+
+				// sort locales
+				scope.locales = $filter('orderBy')(scope.locales, 'name');
+
+				// event bus
+				scope.eventBusId = scope.eventBusId || 'kiwibus';
+				var eventBus = EventBusManager.get(scope.eventBusId);
+
+				var STATES = AppBarConstants.STATE;
+				var SIZES = AppBarConstants.SIZE;
+
+				var DEFAULT_CONTAINER_HEIGHT = 120;
+
+				scope.MENU_ELEMENTS = AppBarConstants.COMPONENT;
+
+				var DECIMAL_RADIX = 10,
+					HIDDEN_CLASS_PREFIX = 'hidden-',
+					VISIBLE_CLASS_PREFIX = 'visible-';
+
+				// all sizes have NONE state
+				var sizesFullState = {};
+				sizesFullState[SIZES.XXS] = STATES.FULL;
+				sizesFullState[SIZES.XS] = STATES.FULL;
+				sizesFullState[SIZES.SM] = STATES.FULL;
+				sizesFullState[SIZES.MD] = STATES.FULL;
+				sizesFullState[SIZES.LG] = STATES.FULL;
+
+				// standard STATES for userMenu, energyManagerMenu and languageMenu
+				var sizesDefaultState = {};
+				sizesDefaultState[SIZES.XXS] = STATES.HIDDEN;
+				sizesDefaultState[SIZES.XS] = STATES.HIDDEN;
+				sizesDefaultState[SIZES.SM] = STATES.COMPACT;
+				sizesDefaultState[SIZES.MD] = STATES.COMPACT;
+				sizesDefaultState[SIZES.LG] = STATES.FULL;
+
+				// standard STATES for World Switcher
+				var sizesHiddenState = {};
+				sizesHiddenState[SIZES.XXS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.XS] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.SM] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.MD] = STATES.HIDDEN;
+				sizesHiddenState[SIZES.LG] = STATES.HIDDEN;
+
+				var defaultDisplayModes = {};
+				defaultDisplayModes[scope.MENU_ELEMENTS.WORLD_SWITCHER] = sizesHiddenState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.MENU_BAR_TOGGLE] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.APP_TITLE] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.USER_MENU] = sizesDefaultState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU] = sizesDefaultState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.LANGUAGE_MENU] = sizesDefaultState;
+
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU] = {};
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.XXS] = STATES.COMPACT;
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.XS] = STATES.COMPACT;
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.SM] = STATES.HIDDEN;
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.MD] = STATES.HIDDEN;
+				defaultDisplayModes[scope.MENU_ELEMENTS.COMPACT_MENU][SIZES.LG] = STATES.HIDDEN;
+
+				// default container height
+				var scrollContainerHeight = DEFAULT_CONTAINER_HEIGHT;
+
+				scope.container = element[0];
+				var navBars = element.find('nav');
+
+				var navbarFirst = navBars[0];
+				var navbarFirstHeight = 0;
+
+				var impersonationBar = element[0].getElementsByClassName('impersonation-bar')[0];
+				var impersonationBarHeight = 0;
+
+				var navbarSecond = navBars[1];
+				var navbarSecondHeight = 0;
+				var navbarSecondMarginBottom = 0;
+
+				/**
+				 * @description	Checks if the given menu is visible in all screen sizes
+				 * @param {object} menuElement The menu element
+				 * @returns {boolean} Returns true if the menu is visible in any screen size
+				 */
+				var isMenuVisible = function isMenuVisible(menuElement) {
+					var isVisible = false;
+					angular.forEach(SIZES, function(size) {
+						if (scope.displayModes[menuElement][size] !== STATES.HIDDEN) {
+							isVisible = true;
+						}
+					});
+					return isVisible;
+				};
+
+				/**
+				 * merges two objects, customObject overwrites values in defaultObject
+				 * @param {object} customObject custom object
+				 * @param {object} defaultObject default object to merge into custom object
+				 * @returns {object} merged result
+				 */
+				var mergeObjects = function mergeObjects(customObject, defaultObject) {
+					var result = {},
+						value;
+					for (value in customObject) {
+						// if it's an object, merge
+						if (value in defaultObject &amp;&amp; typeof customObject[value] === 'object' &amp;&amp; value !== null) {
+							result[value] = mergeObjects(customObject[value], defaultObject[value]);
+							// add it to result
+						} else {
+							result[value] = customObject[value];
+						}
+					}
+					// add the remaining properties from defaultObject
+					for (value in defaultObject) {
+						if (value in result) {
+							continue;
+						}
+						result[value] = defaultObject[value];
+					}
+					return result;
+				};
+
+
+				/**
+				 * Set Container height for scrolling affix
+				 * @returns {void}
+				 */
+				var setContainerHeight = function setContainerHeight() {
+					navbarFirstHeight = navbarFirst.offsetHeight;
+					if (angular.isDefined(impersonationBar)) {
+						impersonationBarHeight = impersonationBar.offsetHeight;
+					}
+					navbarSecondHeight = navbarSecond.offsetHeight;
+					navbarSecondMarginBottom = parseInt(
+						$window.getComputedStyle(navbarSecond, null).getPropertyValue('margin-bottom'),
+						DECIMAL_RADIX
+					);
+					// container height for fixed navigation
+					scrollContainerHeight = navbarFirstHeight + impersonationBarHeight +
+							navbarSecondHeight + navbarSecondMarginBottom;
+				};
+
+				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
+
+				scope.currentLocale = scope.currentLocale || 'en';
+
+				// object of labels
+				scope.MESSAGE_KEY_PREFIX = '__keta.directives.AppBar';
+				scope.labels = angular.extend(AppBarMessageKeys, scope.labels);
+
+				scope.getLabel = function getLabel(key) {
+					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
+				};
+
+				// get access token
+				var accessToken = AccessToken.decode(AccessToken.get());
+
+				var defaultLinks = {
+					ALL_APPS: null,
+					ALL_ENERGY_MANAGERS: null,
+					APP_ROOT: CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id),
+					USER_PROFILE: null,
+					USER_LOGOUT: null
+				};
+
+				// type constants used in ng-repeats orderBy filter
+				scope.TYPES = {
+					ENERGY_MANAGER: 'ENERGY_MANAGER'
+				};
+
+				// limit constants used in ng-repeats limit filter
+				scope.LIMITS = {
+					ENERGY_MANAGER: 3
+				};
+
+				// order predicates and reverse flags
+				var PREDICATES = {
+					ENERGY_MANAGER: {
+						field: 'name',
+						reverse: false
+					}
+				};
+
+				scope.links = angular.isDefined(scope.links) ?
+					angular.extend(defaultLinks, scope.links) : defaultLinks;
+
+				/**
+				 * set default links that can be overwritten by the scope.links property
+				 * @returns {void} nothing
+				 */
+				var setDefaultLinks = function setDefaultLinks() {
+
+					scope.links.USER_LOGOUT =
+						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
+
+					// TODO: re-enable filter if it is used on backend
+					if (eventBus !== null) {
+						ApplicationSet.create(eventBus)
+							/*
+							.filter({
+								appId: AppBarConstants.ROOT_APP_ID
+							})
+							*/
+							.query()
+							.then(function(reply) {
+								if (angular.isDefined(reply.result) &amp;&amp;
+									angular.isDefined(reply.result.items)) {
+
+									var entryUri = null;
+									var name = {};
+									scope.rootApp = null;
+									angular.forEach(reply.result.items, function(app) {
+										if (angular.isDefined(app.appId) &amp;&amp;
+											app.appId === AppBarConstants.ROOT_APP_ID &amp;&amp;
+											angular.isDefined(app.entryUri)) {
+											entryUri = app.entryUri;
+											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
+												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
+													name[locale] = app.meta.i18n[locale].name;
+												});
+											}
+										}
+									});
+
+									// use link-element to easily access url params
+									var link = document.createElement('a');
+									link.href = entryUri;
+
+									if (entryUri !== null) {
+										scope.rootApp = {};
+										scope.rootApp.link =
+											CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
+										scope.rootApp.name = name;
+										scope.worlds.unshift({
+											name: 'Desktop',
+											link: scope.rootApp.link
+										});
+									}
+
+									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
+										scope.links.ALL_APPS :
+										CommonUtils.addUrlParameter(
+											entryUri + '#/applications', 'userId', accessToken.user_id
+										);
+
+									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
+										scope.links.USER_PROFILE :
+										CommonUtils.addUrlParameter(
+											entryUri + '#/user', 'userId', accessToken.user_id
+										);
+
+									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
+										var allManagersUri =
+											CommonUtils.addUrlParameter(
+												entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
+											);
+										scope.links.ALL_ENERGY_MANAGERS =
+											CommonUtils.addUrlParameter(
+												allManagersUri + '#/devices', 'userId', accessToken.user_id
+											);
+									}
+
+								}
+							});
+					}
+				};
+
+				var allLinkKeysAlreadySet = true;
+				angular.forEach(Object.keys(defaultLinks), function(linkKey) {
+					if (defaultLinks[linkKey] === null) {
+						allLinkKeysAlreadySet = false;
+					}
+				});
+
+				if (allLinkKeysAlreadySet === false) {
+					setDefaultLinks();
+				}
+
+				/**
+				 * get display mode classes
+				 * @param {string} menuName name of the menu
+				 * @param {string} elementType either 'menu' or 'label'
+				 * @returns {string} all css classes that should be applied to this element in the template
+				 */
+				scope.getClasses = function getClasses(menuName, elementType) {
+					var classes = [];
+
+					if (!angular.isDefined(elementType)) {
+						elementType = 'menu';
+					}
+
+					if (angular.isDefined(scope.menus[menuName]) &amp;&amp; angular.isDefined(scope.menus[menuName].isOpen)) {
+						if (scope.menus[menuName].isOpen) {
+							classes.push('open');
+						}
+					}
+
+					angular.forEach(SIZES, function(size) {
+
+						var state = scope.displayModes[menuName][size];
+
+						switch (elementType) {
+							case 'menu':
+								switch (state) {
+									case STATES.HIDDEN:
+										classes.push(HIDDEN_CLASS_PREFIX + size);
+										break;
+									case STATES.FULL:
+										classes.push(VISIBLE_CLASS_PREFIX + size);
+										break;
+									case STATES.COMPACT:
+										classes.push(VISIBLE_CLASS_PREFIX + size);
+										break;
+									default:
+										break;
+								}
+								break;
+							case 'label':
+								if (state === STATES.COMPACT) {
+									classes.push(HIDDEN_CLASS_PREFIX + size);
+								}
+								break;
+							default:
+								break;
+						}
+
+					});
+					return classes.join(' ');
+
+				};
+
+				/**
+				 * query energy managers, format: {name: 'ERC02-000001051', link: 'http://192.168.125.81'}
+				 * @returns {void} nothing
+				 */
+				var getDevices = function getDevices() {
+
+					if (eventBus !== null &amp;&amp;
+						angular.isDefined(scope.user.userId) &amp;&amp;
+						isMenuVisible(scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU)) {
+
+						DeviceSet.create(eventBus)
+							.filter({
+								'deviceModel.deviceClass': {
+									'$in': [DeviceConstants.CLASS.ENERGY_MANAGER]
+								},
+								owner: scope.user.userId
+							})
+							.project({
+								tagValues: {
+									IdName: 1,
+									SettingsNetworkMap: 1
+								}
+							})
+							.query()
+							.then(function(reply) {
+								if (angular.isDefined(reply.result) &amp;&amp;
+									angular.isDefined(reply.result.items)) {
+
+									var energyManagers = [];
+									angular.forEach(reply.result.items, function(item) {
+										var emIP =
+											angular.isDefined(item.tagValues) &amp;&amp;
+											angular.isDefined(item.tagValues.SettingsNetworkMap) &amp;&amp;
+											angular.isDefined(item.tagValues.SettingsNetworkMap.value) &amp;&amp;
+											angular.isDefined(item.tagValues.SettingsNetworkMap.value.ipv4) ?
+												item.tagValues.SettingsNetworkMap.value.ipv4 : null;
+										if (emIP !== null) {
+
+											energyManagers.push({
+												name: item.tagValues.IdName.value,
+												link: 'http://' + emIP
+											});
+										}
+									});
+
+									scope.energyManagers = energyManagers;
+								}
+							});
+
+					}
+
+				};
+
+				/**
+				 * returns the currently active entry in the language menu
+				 * @returns {object} active entry in language menu
+				 */
+				var getActiveLangEntry = function getActiveLangEntry() {
+					var activeLangEntry = scope.locales[0] || {};
+					angular.forEach(scope.locales, function(value) {
+						if (value.code === scope.currentLocale) {
+							activeLangEntry = value;
+						}
+					});
+					return activeLangEntry;
+				};
+
+				/**
+				 * updates the open state and currently active entry in the language menu
+				 * @returns {void} nothing
+				 */
+				var updateMenus = function updateMenus() {
+					scope.menus = {};
+					scope.menus[scope.MENU_ELEMENTS.COMPACT_MENU] = {isOpen: false};
+					scope.menus[scope.MENU_ELEMENTS.WORLD_SWITCHER] = {isOpen: false};
+					scope.menus[scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU] = {isOpen: false};
+					scope.menus[scope.MENU_ELEMENTS.USER_MENU] = {isOpen: false};
+					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU] = {
+						isOpen: false,
+						activeEntry: getActiveLangEntry()
+					};
+				};
+
+				// query current user
+				if (eventBus !== null) {
+					User.getCurrent(eventBus)
+						.then(function(reply) {
+							scope.user = reply;
+							getDevices();
+						});
+				}
+
+				// LOGIC ---
+
+				/**
+				 * Checks, whether the currently opened app is
+				 * accessed by an impersonated user
+				 * @returns {boolean} impersonation status
+				 */
+				scope.isImpersonated = function isImpersonated() {
+					var result = false;
+					if (AccessToken.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+						scope.impersonationInfo = {
+							userId: AccessToken.getUserId(),
+							backUrl: AccessToken.getBackUrl()
+						};
+						result = true;
+					}
+
+					return result;
+				};
+
+				/**
+				 * order elements by predicate
+				 * @param {string} type component type to order
+				 * @returns {function} ordering function that is used by ng-repeat in the template
+				 */
+				scope.order = function order(type) {
+					var field = angular.isDefined(PREDICATES[type]) ? PREDICATES[type].field : 'name';
+					return function(item) {
+						return angular.isDefined(item[field]) ? item[field] : '';
+					};
+				};
+
+				/**
+				 * returns if reverse ordering is active or not
+				 * @param {string} type component type to determine for
+				 * @returns {boolean} reverse ordering or not
+				 */
+				scope.reverse = function reverse(type) {
+					return angular.isDefined(PREDICATES[type]) &amp;&amp; angular.isDefined(PREDICATES[type].reverse) ?
+						PREDICATES[type].reverse : false;
+				};
+
+				scope.scrollOverNavbarFirst = false;
+
+				angular.element($window).bind('scroll', function scroll() {
+
+					if (angular.isDefined(navbarFirst)) {
+						// scroll over navbar-level-1
+						if (this.scrollY > navbarFirstHeight + impersonationBarHeight) {
+							scope.scrollOverNavbarFirst = true;
+							// compensate empty space of fixed navbar with placeholder height
+							element.css('height', scrollContainerHeight + 'px');
+						} else {
+							scope.scrollOverNavbarFirst = false;
+							element.css('height', 'auto');
+						}
+						scope.menus.worldSwitcher.isOpen = false;
+						scope.$digest();
+					}
+				});
+
+				/**
+				 * toggle state of menu
+				 * @param {string} menuName name of the menu to toggle
+				 * @returns {void} nothing
+				 */
+				scope.toggleOpenState = function toggleOpenState(menuName) {
+					if (angular.isDefined(scope.menus[menuName])) {
+						var currentState = angular.copy(scope.menus[menuName].isOpen);
+						scope.closeAllMenus();
+						if (currentState === scope.menus[menuName].isOpen) {
+							scope.menus[menuName].isOpen = !scope.menus[menuName].isOpen;
+						}
+					}
+				};
+
+				/**
+				 * close all menus by switching boolean flag isOpen
+				 * @returns {void} nothing
+				 */
+				scope.closeAllMenus = function closeAllMenus() {
+					scope.menus[scope.MENU_ELEMENTS.WORLD_SWITCHER].isOpen = false;
+					scope.menus[scope.MENU_ELEMENTS.USER_MENU].isOpen = false;
+					scope.menus[scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU].isOpen = false;
+					scope.menus[scope.MENU_ELEMENTS.COMPACT_MENU].isOpen = false;
+					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].isOpen = false;
+				};
+
+				/**
+				 * set locale if user selects another entry in the language menu
+				 * @param {object} locale new locale to set
+				 * @returns {void} nothing
+				 */
+				scope.setLocale = function setLocale(locale) {
+					scope.currentLocale = locale.code;
+					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].activeEntry = locale;
+					scope.closeAllMenus();
+				};
+
+				scope.$on('$locationChangeStart', function $locationChangeStart() {
+					scope.closeAllMenus();
+				});
+
+				/**
+				 * check if a given entry is active to set corresponding css class
+				 * @param {string} menuName menu name
+				 * @param {object} entry menu entry object with all flags
+				 * @returns {boolean} flag menu entry is open or not
+				 */
+				scope.isActive = function isActive(menuName, entry) {
+					return angular.isDefined(scope.menus[menuName]) &amp;&amp; scope.menus[menuName].activeEntry === entry;
+				};
+
+				/**
+				 * toggle sidebar if button is clicked
+				 * @param {object} $event jqLite event object
+				 * @param {string} position position of the sidebar ('left' or 'right')
+				 * @returns {void} nothing
+				 */
+				scope.toggleSidebar = function toggleSidebar($event, position) {
+					$event.stopPropagation();
+					scope.closeAllMenus();
+					if (position === SidebarConstants.POSITION.LEFT) {
+						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT);
+					} else if (position === SidebarConstants.POSITION.RIGHT) {
+						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT);
+					}
+				};
+
+				$document.bind('click', function click(event) {
+					var appBarHtml = element.html(),
+						targetElementHtml = angular.element(event.target).html();
+					if (appBarHtml.indexOf(targetElementHtml) !== -1) {
+						return;
+					}
+					scope.closeAllMenus();
+					scope.$digest();
+				});
+
+				scope.$watch('energyManagers', function watchEnergyManagers(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						updateMenus();
+					}
+				});
+
+				scope.$watch('container.offsetHeight', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						setContainerHeight();
+					}
+				});
+
+				// INIT
+				// ----
+
+				setContainerHeight();
+				updateMenus();
+
+			}
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
