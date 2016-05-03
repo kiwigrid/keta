@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.5.1
+
+_Released: 2016-05-03_
+
+* Added check for existing `AppContext` to `AppBar` directive
+* Fix for `TimeRangeSelector` directive to update display value after selection
+
 ## Version 0.5.0
 
 _Released: 2016-04-26_

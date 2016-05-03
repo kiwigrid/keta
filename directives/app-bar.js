@@ -461,7 +461,9 @@ angular.module('keta.directives.AppBar',
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
-					APP_ROOT: CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id),
+					APP_ROOT:
+						accessToken !== null && angular.isDefined(accessToken.user_id) ?
+							CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id) : '/',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};

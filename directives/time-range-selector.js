@@ -598,13 +598,32 @@ angular.module('keta.directives.TimeRangeSelector', [
 					var yearsChunked = [];
 
 					var now =
-						moment(scope.displayValue)
+						moment(new Date())
 							.month(0).date(1).hour(0).minute(0).second(0).millisecond(0)
 							.toDate();
 
 					var currentYear = parseInt($filter('date')(now, 'yyyy'), 10);
 					var yearStart = currentYear - scope.yearsBefore;
 					var yearEnd = currentYear + scope.yearsAfter;
+
+					var viewYear = parseInt($filter('date')(scope.displayValue, 'yyyy'), 10);
+					var range = scope.yearsBefore + scope.yearsAfter + 1;
+
+					// shift to the past until view year is within range
+					if (viewYear < yearStart) {
+						while (viewYear < yearStart) {
+							yearStart -= range;
+							yearEnd -= range;
+						}
+					}
+
+					// shift to the future until view year is within range
+					if (viewYear > yearEnd) {
+						while (viewYear > yearEnd) {
+							yearStart += range;
+							yearEnd += range;
+						}
+					}
 
 					for (var i = yearStart; i <= yearEnd; i++) {
 						now.setFullYear(i);
@@ -942,6 +961,11 @@ angular.module('keta.directives.TimeRangeSelector', [
 							scope.model.from, scope.model.to,
 							scope.minRangeLength, scope.maxRangeLength
 						);
+
+						// update display value
+						scope.displayValue =
+							lastSelected === LAST_SELECTED_FROM ?
+								angular.copy(scope.model.from) : angular.copy(scope.model.to);
 
 					}
 				};
