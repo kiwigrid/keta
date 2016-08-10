@@ -33,7 +33,7 @@ angular.module('keta.services.AccessToken',
 	 * @description Access Token Factory
 	 */
 	.factory('AccessToken', function AccessTokenFactory(
-		$http,
+		$http, $q,
 		AppContext, AccessTokenConstants
 	) {
 
@@ -48,6 +48,18 @@ angular.module('keta.services.AccessToken',
 		 * @description Decoded access token.
 		 */
 		var decodedAccessToken = null;
+
+		/**
+		 * @private
+		 * @description Refresh promise.
+		 */
+		var refreshPromise = null;
+
+		/**
+		 * @private
+		 * @description Flag if refresh call is currently in progress.
+		 */
+		var refreshInProgress = false;
 
 		/*eslint-disable no-magic-numbers */
 		var Base64 = {
@@ -296,11 +308,26 @@ angular.module('keta.services.AccessToken',
 			 *     });
 			 */
 			refresh: function() {
-				var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
-				return $http({
-					method: 'GET',
-					url: refreshUrl
-				});
+
+				if (refreshPromise === null || !refreshInProgress) {
+					refreshPromise = $q.defer();
+					refreshInProgress = true;
+
+					var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
+
+					$http({method: 'GET', url: refreshUrl}).then(
+						function(response) {
+							refreshPromise.resolve(response);
+							refreshInProgress = false;
+						},
+						function() {
+							refreshPromise.reject('Could not refresh access token');
+							refreshInProgress = false;
+						}
+					);
+				}
+
+				return refreshPromise.promise;
 			},
 
 			/**

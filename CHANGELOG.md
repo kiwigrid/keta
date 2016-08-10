@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.5.2
+
+_Released: 2016-08-10_
+
+* Fix for parallel calls to `AccessToken.refresh`
+
 ## Version 0.5.1
 
 _Released: 2016-05-03_
