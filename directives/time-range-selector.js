@@ -41,7 +41,7 @@
  *         $scope.cssClasses = TimeRangeSelectorConstants.CSS_CLASSES;
  *
  *         // current locale to use
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
  *
  *         // display mode to use (@see TimeRangeSelectorConstants.DISPLAY_MODE)
  *         $scope.displayMode = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
@@ -130,7 +130,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 	// message keys with default values
 	.constant('TimeRangeSelectorMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Days',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Months',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Years',
@@ -154,7 +154,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Week Number',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Wn'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Tage',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Monate',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jahre',
@@ -178,7 +178,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Kalenderwoche',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'KW'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Journées',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mois',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Années',
@@ -202,7 +202,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Numéro de la semaine',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Sem.'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Dagen',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Maanden',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jaren',
@@ -226,7 +226,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Weeknummer',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Wn'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Giorni',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mesi',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Anni',
@@ -343,7 +343,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				var ISO_PADDING = 2;
 				var LAST_SELECTED_FROM = 'from';
 				var LAST_SELECTED_TO = 'to';
-				var LOCALE_SHORT_LENGTH = 2;
+				var LOCALE_SHORT_LENGTH = 5;
 				var MONTHS_PER_ROW = 3;
 				var MONTHS_PER_YEAR = 12;
 				var YEARS_AFTER = 4;
@@ -378,7 +378,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 					angular.isObject(scope.cssClasses) ?
 						angular.extend(TimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
 						TimeRangeSelectorConstants.CSS_CLASSES;
-				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en';
+				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
 					angular.isDate(scope.displayValue) ?
@@ -404,7 +404,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 					) ?
 						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						TimeRangeSelectorMessageKeys.en;
+						TimeRangeSelectorMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -777,7 +777,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 						) ?
 							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							TimeRangeSelectorMessageKeys.en;
+							TimeRangeSelectorMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();

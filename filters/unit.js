@@ -209,6 +209,14 @@ angular.module('keta.filters.Unit',
 				unit === TagConstants.UNIT.KILOMETER ||
 				unit === TagConstants.UNIT.DOLLAR ||
 				unit === TagConstants.UNIT.POUND) {
+
+				if (separate) {
+					separated.numberFormatted = $filter('number')(input, precision);
+					separated.numberRaw = input;
+					separated.unit = unit;
+					return separated;
+				}
+
 				return $filter('number')(input, precision) + ' ' + unit;
 			}
 

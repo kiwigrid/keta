@@ -15,7 +15,7 @@ angular.module('keta.utils.Country', [])
 
 	// message keys with default values
 	.constant('CountryUtilsMessageKeys', {
-		'en': {
+		'en_GB': {
 			'AD': 'Andorra',
 			'AE': 'United Arab Emirates',
 			'AF': 'Afghanistan',
@@ -266,7 +266,7 @@ angular.module('keta.utils.Country', [])
 			'ZM': 'Zambia',
 			'ZW': 'Zimbabwe'
 		},
-		'de': {
+		'de_DE': {
 			'AD': 'Andorra',
 			'AE': 'Vereinigte Arabische Emirate',
 			'AF': 'Afghanistan',
@@ -538,20 +538,20 @@ angular.module('keta.utils.Country', [])
 		 * </p>
 		 * <p>
 		 *     Locales only match from specific > general > fallback
-		 *     e.g. 'de-AT' > 'de' > 'en'.
+		 *     e.g. 'de_AT' > 'de' > 'en'.
 		 * </p>
 		 * <p>
 		 *     Accessor provides the possibility to reformat the return value on per usage basis.
 		 *     The accessor is optional.
 		 * </p>
-		 * @param {string} currentLocale can be either in short ('en') or long ('en-US') format.
+		 * @param {string} currentLocale can be either in short ('en') or long ('en_US') format.
 		 * @param {function} accessor a function to format the output
 		 * @returns {Array} all countries
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
 		 *     .controller('ExampleController', function($scope, CountryUtils) {
 		 *
-		 *         $scope.currentLocale = 'en';
+		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {key: ..., value: ...}
 		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
@@ -561,7 +561,7 @@ angular.module('keta.utils.Country', [])
 		 * angular.module('exampleApp', ['keta.utils.Country'])
 		 *     .controller('ExampleController', function($scope, CountryUtils) {
 		 *
-		 *         $scope.currentLocale = 'en';
+		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
@@ -574,7 +574,7 @@ angular.module('keta.utils.Country', [])
 		factory.getCountryList = function getCountryList(currentLocale, accessor) {
 			var countries = [];
 
-			var LOCALE_LENGTH = 2;
+			var LOCALE_LENGTH = 5;
 
 			var shortLocale =
 				angular.isString(currentLocale) &&
@@ -582,7 +582,7 @@ angular.module('keta.utils.Country', [])
 					currentLocale.substr(0, LOCALE_LENGTH) : '';
 
 			if (!angular.isObject(CountryUtilsMessageKeys[currentLocale])) {
-				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en';
+				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
 			}
 
 			angular.forEach(CountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {

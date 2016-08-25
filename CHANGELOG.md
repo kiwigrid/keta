@@ -10,6 +10,18 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.0
+
+_Released: 2016-08-25_
+
+* `AppBar` directive:
+  * reads and writes currently active locale code into user profile
+  * `currentLocale` has to be in 5 chars format now, e.g. `en_GB`
+  * `locales` array also has to use 5 chars for `code` property
+  * new param `localeFallback` added, for cases where the locale code from user profile is not in the `locales` array 
+* `AppBarMessageKeys`, `ExtendedTableMessageKeys`, `CountryUtilsMessageKeys`, `DatePickerMessageKeys` and `TimeRangeSelectorMessageKeys` now also use 5 chars for their locale keys
+* unit filter now handles separation for currencies and distances correctly
+
 ## Version 0.5.2
 
 _Released: 2016-08-10_

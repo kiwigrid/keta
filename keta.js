@@ -46,6 +46,7 @@ angular.module('keta', [
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
+ *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
@@ -60,6 +61,7 @@ angular.module('keta', [
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
+ *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
@@ -79,25 +81,29 @@ angular.module('keta', [
  *         $scope.locales = [{
  *             name: 'Deutsch',
  *             nameShort: 'DE',
- *             code: 'de'
+ *             code: 'de_DE'
  *         }, {
  *             name: 'English',
  *             nameShort: 'EN',
- *             code: 'en'
+ *             code: 'en_GB'
  *         }];
  *
  *         // current locale
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
+ *
+ *         // fallback if locale from user profile is not
+ *         // found in the $scope.locales array.
+ *         $scope.fallbackLocale = 'en_GB';
  *
  *         // override default-labels if necessary
  *         // get default labels
  *         $scope.labels = AppBarMessageKeys;
  *
  *         // use case 1: overwrite specific key
- *         $scope.labels.de['__keta.directives.AppBar_app_title'] = 'Meine App';
+ *         $scope.labels.de_DE['__keta.directives.AppBar_app_title'] = 'Meine App';
  *
  *         // use case 2: add locale
- *         $scope.labels.fr = {
+ *         $scope.labels.fr_FR = {
  *             '__keta.directives.AppBar_app_title': 'Applications',
  *             '__keta.directives.AppBar_all_apps': 'Toutes les applications',
  *             '__keta.directives.AppBar_all_energy_managers': 'toutes les Energy-Managers',
@@ -196,12 +202,13 @@ angular.module('keta', [
 angular.module('keta.directives.AppBar',
 	[
 		'keta.directives.Sidebar',
-		'keta.services.EventBusManager',
+		'keta.services.AccessToken',
+		'keta.services.ApplicationSet',
 		'keta.services.Device',
 		'keta.services.DeviceSet',
-		'keta.services.ApplicationSet',
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
 		'keta.services.User',
-		'keta.services.AccessToken',
 		'keta.utils.Common'
 	])
 
@@ -233,7 +240,7 @@ angular.module('keta.directives.AppBar',
 
 	// message keys with default values
 	.constant('AppBarMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'All Apps',
 			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
@@ -243,7 +250,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
 			'__keta.directives.AppBar_drop_access': 'Drop access'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
 			'__keta.directives.AppBar_all_apps': 'Alle Apps',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
@@ -253,7 +260,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
 			'__keta.directives.AppBar_all_energy_managers': 'Tous les Energy-Managers',
@@ -263,7 +270,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
 			'__keta.directives.AppBar_drop_access': 'Déposez accès'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.AppBar_app_title': 'Applicatie',
 			'__keta.directives.AppBar_all_apps': 'Alle applicaties',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Managers',
@@ -273,7 +280,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'U bent tijdelijk aangemeld als',
 			'__keta.directives.AppBar_drop_access': 'Drop toegang'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Tutte le applicazioni',
 			'__keta.directives.AppBar_all_energy_managers': 'Tutti gli Energy-Managers',
@@ -287,7 +294,7 @@ angular.module('keta.directives.AppBar',
 
 	.directive('appBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter,
-		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
+		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
 	) {
 
@@ -305,6 +312,10 @@ angular.module('keta.directives.AppBar',
 
 				// current locale
 				currentLocale: '=?',
+
+				// fallback if locale from user profile is not
+				// found in the $scope.locales array.
+				fallbackLocale: '=?',
 
 				// object of labels to use in template
 				labels: '=?',
@@ -354,6 +365,9 @@ angular.module('keta.directives.AppBar',
 				var DECIMAL_RADIX = 10,
 					HIDDEN_CLASS_PREFIX = 'hidden-',
 					VISIBLE_CLASS_PREFIX = 'visible-';
+
+				var DEFAULT_LOCALE_FALLBACK = 'en_GB',
+					LOCALE_SHORT_LENGTH = 2;
 
 				// all sizes have NONE state
 				var sizesFullState = {};
@@ -474,9 +488,37 @@ angular.module('keta.directives.AppBar',
 							navbarSecondHeight + navbarSecondMarginBottom;
 				};
 
+				/**
+				 * @description
+				 * Checks if the given locale code is present
+				 * in the array of available locales (scope.locales).
+				 * @param {String} localeCode Locale code that should be checked
+				 * @returns {boolean} locale is available or not
+				 */
+				var isLocaleAvailable = function isLocaleAvailable(localeCode) {
+
+					var isAvailable = false;
+
+					angular.forEach(scope.locales, function(availableLocale) {
+						if (angular.isDefined(availableLocale.code) &&
+							availableLocale.code === localeCode) {
+							isAvailable = true;
+						}
+					});
+
+					return isAvailable;
+
+				};
+
 				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
-				scope.currentLocale = scope.currentLocale || 'en';
+				scope.fallbackLocale = scope.fallbackLocale || DEFAULT_LOCALE_FALLBACK;
+
+				scope.currentLocale = scope.currentLocale || scope.fallbackLocale;
+
+				if (!isLocaleAvailable(scope.currentLocale)) {
+					scope.currentLocale = scope.fallbackLocale;
+				}
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.AppBar';
@@ -552,7 +594,14 @@ angular.module('keta.directives.AppBar',
 											entryUri = app.entryUri;
 											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
 												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
-													name[locale] = app.meta.i18n[locale].name;
+													angular.forEach(scope.locales, function(availableLocale) {
+														if (angular.isDefined(availableLocale.code) &&
+															availableLocale.code.substr(0, LOCALE_SHORT_LENGTH)
+																=== locale) {
+															name[availableLocale.code] =
+																app.meta.i18n[locale].name;
+														}
+													});
 												});
 											}
 										}
@@ -733,6 +782,44 @@ angular.module('keta.directives.AppBar',
 				};
 
 				/**
+				 * @description
+				 * Searches in the object scope.user for the locale property and stores
+				 * it in the variable scope.currentLocale.
+				 * @returns {void} nothing
+				 */
+				var readLocaleFromUserProp = function readLocaleFromUserProp() {
+
+					if (CommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
+						isLocaleAvailable(scope.user.properties.locale.code)) {
+						scope.currentLocale = scope.user.properties.locale.code;
+					}
+
+				};
+
+				/**
+				 * @description
+				 * Stores the given locale code on the user property via API call.
+				 * @param {string} localeCode locale code
+				 * @returns {void} nothing
+				 */
+				var writeLocaleUserProp = function writeLocaleUserProp(localeCode) {
+
+					scope.user.properties = scope.user.properties || {};
+					scope.user.properties.locale = scope.user.properties.locale || {};
+					scope.user.properties.locale.code = localeCode;
+
+					EventBusDispatcher.send(eventBus, 'userservice', {
+						action: 'mergeUser',
+						body: {
+							properties: scope.user.properties
+						},
+						params: {
+							userId: scope.user.userId
+						}
+					});
+				};
+
+				/**
 				 * updates the open state and currently active entry in the language menu
 				 * @returns {void} nothing
 				 */
@@ -753,6 +840,7 @@ angular.module('keta.directives.AppBar',
 					User.getCurrent(eventBus)
 						.then(function(reply) {
 							scope.user = reply;
+							readLocaleFromUserProp();
 							getDevices();
 						});
 				}
@@ -852,6 +940,7 @@ angular.module('keta.directives.AppBar',
 				 */
 				scope.setLocale = function setLocale(locale) {
 					scope.currentLocale = locale.code;
+					writeLocaleUserProp(locale.code);
 					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].activeEntry = locale;
 					scope.closeAllMenus();
 				};
@@ -1142,7 +1231,7 @@ angular.module('keta.directives.AppBar')
  *         $scope.cssClasses = DatePickerConstants.CSS_CLASSES;
  *
  *         // current locale to use
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
  *
  *         // display mode to use (@see DatePickerConstants.DISPLAY_MODE)
  *         $scope.displayMode = DatePickerConstants.DISPLAY_MODE.DAY;
@@ -1217,7 +1306,7 @@ angular.module('keta.directives.DatePicker', [
 
 	// message keys with default values
 	.constant('DatePickerMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.DatePicker_selection': 'Selection',
 			'__keta.directives.DatePicker_today': 'Today',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -1238,7 +1327,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Week Number',
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.DatePicker_selection': 'Auswahl',
 			'__keta.directives.DatePicker_today': 'Heute',
 			'__keta.directives.DatePicker_week': 'Woche',
@@ -1259,7 +1348,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Kalenderwoche',
 			'__keta.directives.DatePicker_week_number_short': 'KW'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.DatePicker_selection': 'Sélection',
 			'__keta.directives.DatePicker_today': 'Aujourd’hui',
 			'__keta.directives.DatePicker_week': 'Semaine',
@@ -1280,7 +1369,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Numéro de la semaine',
 			'__keta.directives.DatePicker_week_number_short': 'Sem.'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.DatePicker_selection': 'Selectie',
 			'__keta.directives.DatePicker_today': 'Vandaag',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -1301,7 +1390,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Weeknummer',
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.DatePicker_selection': 'Selezione',
 			'__keta.directives.DatePicker_today': 'Oggi',
 			'__keta.directives.DatePicker_week': 'Settimana',
@@ -1401,7 +1490,7 @@ angular.module('keta.directives.DatePicker', [
 				var ISO_DATE_LENGTH_MONTH = 7;
 				var ISO_DATE_LENGTH_YEAR = 4;
 				var ISO_PADDING = 2;
-				var LOCALE_SHORT_LENGTH = 2;
+				var LOCALE_SHORT_LENGTH = 5;
 				var MONTHS_PER_ROW = 3;
 				var MONTHS_PER_YEAR = 12;
 				var YEARS_AFTER = 4;
@@ -1422,7 +1511,7 @@ angular.module('keta.directives.DatePicker', [
 					angular.isObject(scope.cssClasses) ?
 						angular.extend(DatePickerConstants.CSS_CLASSES, scope.cssClasses) :
 						DatePickerConstants.CSS_CLASSES;
-				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en';
+				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
 					angular.isDate(scope.displayValue) ?
@@ -1440,7 +1529,7 @@ angular.module('keta.directives.DatePicker', [
 				scope.currentLabels =
 					angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
 						DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						DatePickerMessageKeys.en;
+						DatePickerMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -1773,7 +1862,7 @@ angular.module('keta.directives.DatePicker', [
 					scope.currentLabels =
 						angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
 							DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							DatePickerMessageKeys.en;
+							DatePickerMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -2092,10 +2181,10 @@ angular.module('keta.directives.DatePicker')
  *         $scope.labels = ExtendedTableMessageKeys;
  *
  *         // use case 1: overwrite specific key
- *         $scope.labels.de['__keta.directives.ExtendedTable_search'] = 'Finde';
+ *         $scope.labels.de_DE['__keta.directives.ExtendedTable_search'] = 'Finde';
  *
  *         // use case 2: add locale
- *         $scope.labels.fr = {
+ *         $scope.labels.fr_FR = {
  *             '__keta.directives.ExtendedTable_search': 'Recherche',
  *             '__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
  *             '__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
@@ -2312,7 +2401,7 @@ angular.module('keta.directives.ExtendedTable',
 
 	// message keys with default values
 	.constant('ExtendedTableMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.ExtendedTable_search': 'Search',
 			'__keta.directives.ExtendedTable_add_column': 'Add column',
 			'__keta.directives.ExtendedTable_remove_column': 'Remove column',
@@ -2320,7 +2409,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'No entries',
 			'__keta.directives.ExtendedTable_of': 'of'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.ExtendedTable_search': 'Suche',
 			'__keta.directives.ExtendedTable_add_column': 'Spalte hinzufügen',
 			'__keta.directives.ExtendedTable_remove_column': 'Spalte entfernen',
@@ -2328,7 +2417,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
 			'__keta.directives.ExtendedTable_of': 'von'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.ExtendedTable_search': 'Recherche',
 			'__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
 			'__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
@@ -2336,7 +2425,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
 			'__keta.directives.ExtendedTable_of': 'de'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.ExtendedTable_search': 'Zoeken',
 			'__keta.directives.ExtendedTable_add_column': 'Kolom toevoegen',
 			'__keta.directives.ExtendedTable_remove_column': 'Kolom verwijderen',
@@ -2344,7 +2433,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Geen data',
 			'__keta.directives.ExtendedTable_of': 'van'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.ExtendedTable_search': 'Ricerca',
 			'__keta.directives.ExtendedTable_add_column': 'Aggiungi colonna',
 			'__keta.directives.ExtendedTable_remove_column': 'Rimuovere colonna',
@@ -2451,7 +2540,7 @@ angular.module('keta.directives.ExtendedTable',
 				scope.rows =
 					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ? scope.rows : [];
 
-				scope.currentLocale = scope.currentLocale || 'en';
+				scope.currentLocale = scope.currentLocale || 'en_GB';
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.ExtendedTable';
@@ -3615,7 +3704,7 @@ angular.module('keta.directives.Sidebar')
  *         $scope.cssClasses = TimeRangeSelectorConstants.CSS_CLASSES;
  *
  *         // current locale to use
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
  *
  *         // display mode to use (@see TimeRangeSelectorConstants.DISPLAY_MODE)
  *         $scope.displayMode = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
@@ -3704,7 +3793,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 	// message keys with default values
 	.constant('TimeRangeSelectorMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Days',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Months',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Years',
@@ -3728,7 +3817,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Week Number',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Wn'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Tage',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Monate',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jahre',
@@ -3752,7 +3841,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Kalenderwoche',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'KW'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Journées',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mois',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Années',
@@ -3776,7 +3865,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Numéro de la semaine',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Sem.'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Dagen',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Maanden',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jaren',
@@ -3800,7 +3889,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_week_number': 'Weeknummer',
 			'__keta.directives.TimeRangeSelector_week_number_short': 'Wn'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Giorni',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mesi',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Anni',
@@ -3917,7 +4006,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				var ISO_PADDING = 2;
 				var LAST_SELECTED_FROM = 'from';
 				var LAST_SELECTED_TO = 'to';
-				var LOCALE_SHORT_LENGTH = 2;
+				var LOCALE_SHORT_LENGTH = 5;
 				var MONTHS_PER_ROW = 3;
 				var MONTHS_PER_YEAR = 12;
 				var YEARS_AFTER = 4;
@@ -3952,7 +4041,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 					angular.isObject(scope.cssClasses) ?
 						angular.extend(TimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
 						TimeRangeSelectorConstants.CSS_CLASSES;
-				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en';
+				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
 					angular.isDate(scope.displayValue) ?
@@ -3978,7 +4067,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 					) ?
 						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						TimeRangeSelectorMessageKeys.en;
+						TimeRangeSelectorMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -4351,7 +4440,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 						) ?
 							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							TimeRangeSelectorMessageKeys.en;
+							TimeRangeSelectorMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -5094,6 +5183,14 @@ angular.module('keta.filters.Unit',
 				unit === TagConstants.UNIT.KILOMETER ||
 				unit === TagConstants.UNIT.DOLLAR ||
 				unit === TagConstants.UNIT.POUND) {
+
+				if (separate) {
+					separated.numberFormatted = $filter('number')(input, precision);
+					separated.numberRaw = input;
+					separated.unit = unit;
+					return separated;
+				}
+
 				return $filter('number')(input, precision) + ' ' + unit;
 			}
 
@@ -7678,26 +7775,28 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 					};
 
-					// call stub method
-					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
-						var eb = eventBus.getInstance();
-						if (eb !== null) {
-							waitForOpen(eventBus, true, function() {
-								eventBus.getInstance().send(address, message, handler);
-							}, function() {
-								replyHandler({
-									code: 408,
-									message: 'Request Time-out'
-								});
-							});
-						} else {
-							replyHandler({
-								code: 500,
-								message: 'Internal Server Error'
-							});
+					var callReplyHandler = function(reply) {
+						if (angular.isFunction(replyHandler)) {
+							replyHandler(reply);
 						}
+					};
+
+					// call stub method
+					var eb = eventBus.getInstance();
+					if (eb !== null) {
+						waitForOpen(eventBus, true, function() {
+							eventBus.getInstance().send(address, message, handler);
+						}, function() {
+							callReplyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
+						});
 					} else {
-						eventBus.getInstance().send(address, message, handler);
+						callReplyHandler({
+							code: 500,
+							message: 'Internal Server Error'
+						});
 					}
 
 				},
@@ -10038,7 +10137,7 @@ angular.module('keta.utils.Application',
 	 * @description Application Utils Factory
 	 */
 	.factory('ApplicationUtils', function ApplicationUtils(
-		$log, $q,
+		$q,
 		ApplicationSet, EventBusManager, CommonUtils,
 		ApplicationUtilsConstants
 	) {
@@ -10149,7 +10248,7 @@ angular.module('keta.utils.Application',
 			 * </p>
 			 * @param {object} app application instance
 			 * @param {string} uiLocale current locale
-			 * @returns {string} application localized application name
+			 * @returns {string|null} application localized application name
 			 */
 
 			getAppName: function getAppName(app, uiLocale) {
@@ -10172,14 +10271,24 @@ angular.module('keta.utils.Application',
 			 */
 			getAppIcon: function(app, language) {
 
-				var appIcon = null;
-
-				language = angular.isDefined(language) ? language : 'en';
+				var appIcon = null,
+					LOCALE_SHORT_LENGTH = 2;
 
 				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 					angular.isDefined(app.meta.i18n[language]) &&
 					angular.isDefined(app.meta.i18n[language].media) ?
 						app.meta.i18n[language].media : null;
+
+
+				if (mediaSource === null) {
+
+					var languageShort = angular.isDefined(language) ? language.substr(0, LOCALE_SHORT_LENGTH) : 'en';
+
+					mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+						angular.isDefined(app.meta.i18n[languageShort]) &&
+						angular.isDefined(app.meta.i18n[languageShort].media) ?
+							app.meta.i18n[languageShort].media : null;
+				}
 
 				if (mediaSource === null &&
 					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
@@ -10324,7 +10433,7 @@ angular.module('keta.utils.Common', [])
 		 * <p>
 		 *   The key can be either in short ('en') or long ('en-US') format.<br>
 		 *   Locales only match from specific > general > fallback<br>
-		 *   i. e. 'de-AT' > 'de' > 'en'<br>
+		 *   i. e. 'de_AT' > 'de' > 'en'<br>
 		 *   If a general locale is not defined go straight to fallback locale.
 		 * </p>
 		 * @param {string} key translation key to search for
@@ -10425,7 +10534,7 @@ angular.module('keta.utils.Country', [])
 
 	// message keys with default values
 	.constant('CountryUtilsMessageKeys', {
-		'en': {
+		'en_GB': {
 			'AD': 'Andorra',
 			'AE': 'United Arab Emirates',
 			'AF': 'Afghanistan',
@@ -10676,7 +10785,7 @@ angular.module('keta.utils.Country', [])
 			'ZM': 'Zambia',
 			'ZW': 'Zimbabwe'
 		},
-		'de': {
+		'de_DE': {
 			'AD': 'Andorra',
 			'AE': 'Vereinigte Arabische Emirate',
 			'AF': 'Afghanistan',
@@ -10948,20 +11057,20 @@ angular.module('keta.utils.Country', [])
 		 * </p>
 		 * <p>
 		 *     Locales only match from specific > general > fallback
-		 *     e.g. 'de-AT' > 'de' > 'en'.
+		 *     e.g. 'de_AT' > 'de' > 'en'.
 		 * </p>
 		 * <p>
 		 *     Accessor provides the possibility to reformat the return value on per usage basis.
 		 *     The accessor is optional.
 		 * </p>
-		 * @param {string} currentLocale can be either in short ('en') or long ('en-US') format.
+		 * @param {string} currentLocale can be either in short ('en') or long ('en_US') format.
 		 * @param {function} accessor a function to format the output
 		 * @returns {Array} all countries
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
 		 *     .controller('ExampleController', function($scope, CountryUtils) {
 		 *
-		 *         $scope.currentLocale = 'en';
+		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {key: ..., value: ...}
 		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
@@ -10971,7 +11080,7 @@ angular.module('keta.utils.Country', [])
 		 * angular.module('exampleApp', ['keta.utils.Country'])
 		 *     .controller('ExampleController', function($scope, CountryUtils) {
 		 *
-		 *         $scope.currentLocale = 'en';
+		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
@@ -10984,7 +11093,7 @@ angular.module('keta.utils.Country', [])
 		factory.getCountryList = function getCountryList(currentLocale, accessor) {
 			var countries = [];
 
-			var LOCALE_LENGTH = 2;
+			var LOCALE_LENGTH = 5;
 
 			var shortLocale =
 				angular.isString(currentLocale) &&
@@ -10992,7 +11101,7 @@ angular.module('keta.utils.Country', [])
 					currentLocale.substr(0, LOCALE_LENGTH) : '';
 
 			if (!angular.isObject(CountryUtilsMessageKeys[currentLocale])) {
-				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en';
+				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
 			}
 
 			angular.forEach(CountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {

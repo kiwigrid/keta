@@ -38,7 +38,7 @@
  *         $scope.cssClasses = DatePickerConstants.CSS_CLASSES;
  *
  *         // current locale to use
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
  *
  *         // display mode to use (@see DatePickerConstants.DISPLAY_MODE)
  *         $scope.displayMode = DatePickerConstants.DISPLAY_MODE.DAY;
@@ -113,7 +113,7 @@ angular.module('keta.directives.DatePicker', [
 
 	// message keys with default values
 	.constant('DatePickerMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.DatePicker_selection': 'Selection',
 			'__keta.directives.DatePicker_today': 'Today',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -134,7 +134,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Week Number',
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.DatePicker_selection': 'Auswahl',
 			'__keta.directives.DatePicker_today': 'Heute',
 			'__keta.directives.DatePicker_week': 'Woche',
@@ -155,7 +155,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Kalenderwoche',
 			'__keta.directives.DatePicker_week_number_short': 'KW'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.DatePicker_selection': 'Sélection',
 			'__keta.directives.DatePicker_today': 'Aujourd’hui',
 			'__keta.directives.DatePicker_week': 'Semaine',
@@ -176,7 +176,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Numéro de la semaine',
 			'__keta.directives.DatePicker_week_number_short': 'Sem.'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.DatePicker_selection': 'Selectie',
 			'__keta.directives.DatePicker_today': 'Vandaag',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -197,7 +197,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number': 'Weeknummer',
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.DatePicker_selection': 'Selezione',
 			'__keta.directives.DatePicker_today': 'Oggi',
 			'__keta.directives.DatePicker_week': 'Settimana',
@@ -297,7 +297,7 @@ angular.module('keta.directives.DatePicker', [
 				var ISO_DATE_LENGTH_MONTH = 7;
 				var ISO_DATE_LENGTH_YEAR = 4;
 				var ISO_PADDING = 2;
-				var LOCALE_SHORT_LENGTH = 2;
+				var LOCALE_SHORT_LENGTH = 5;
 				var MONTHS_PER_ROW = 3;
 				var MONTHS_PER_YEAR = 12;
 				var YEARS_AFTER = 4;
@@ -318,7 +318,7 @@ angular.module('keta.directives.DatePicker', [
 					angular.isObject(scope.cssClasses) ?
 						angular.extend(DatePickerConstants.CSS_CLASSES, scope.cssClasses) :
 						DatePickerConstants.CSS_CLASSES;
-				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en';
+				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
 					angular.isDate(scope.displayValue) ?
@@ -336,7 +336,7 @@ angular.module('keta.directives.DatePicker', [
 				scope.currentLabels =
 					angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
 						DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						DatePickerMessageKeys.en;
+						DatePickerMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -669,7 +669,7 @@ angular.module('keta.directives.DatePicker', [
 					scope.currentLabels =
 						angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
 							DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							DatePickerMessageKeys.en;
+							DatePickerMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();

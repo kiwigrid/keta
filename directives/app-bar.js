@@ -15,6 +15,7 @@
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
+ *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
@@ -29,6 +30,7 @@
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
+ *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
  *     data-links="links"
  *     data-worlds="worlds"
@@ -48,25 +50,29 @@
  *         $scope.locales = [{
  *             name: 'Deutsch',
  *             nameShort: 'DE',
- *             code: 'de'
+ *             code: 'de_DE'
  *         }, {
  *             name: 'English',
  *             nameShort: 'EN',
- *             code: 'en'
+ *             code: 'en_GB'
  *         }];
  *
  *         // current locale
- *         $scope.currentLocale = 'de';
+ *         $scope.currentLocale = 'de_DE';
+ *
+ *         // fallback if locale from user profile is not
+ *         // found in the $scope.locales array.
+ *         $scope.fallbackLocale = 'en_GB';
  *
  *         // override default-labels if necessary
  *         // get default labels
  *         $scope.labels = AppBarMessageKeys;
  *
  *         // use case 1: overwrite specific key
- *         $scope.labels.de['__keta.directives.AppBar_app_title'] = 'Meine App';
+ *         $scope.labels.de_DE['__keta.directives.AppBar_app_title'] = 'Meine App';
  *
  *         // use case 2: add locale
- *         $scope.labels.fr = {
+ *         $scope.labels.fr_FR = {
  *             '__keta.directives.AppBar_app_title': 'Applications',
  *             '__keta.directives.AppBar_all_apps': 'Toutes les applications',
  *             '__keta.directives.AppBar_all_energy_managers': 'toutes les Energy-Managers',
@@ -165,12 +171,13 @@
 angular.module('keta.directives.AppBar',
 	[
 		'keta.directives.Sidebar',
-		'keta.services.EventBusManager',
+		'keta.services.AccessToken',
+		'keta.services.ApplicationSet',
 		'keta.services.Device',
 		'keta.services.DeviceSet',
-		'keta.services.ApplicationSet',
+		'keta.services.EventBusDispatcher',
+		'keta.services.EventBusManager',
 		'keta.services.User',
-		'keta.services.AccessToken',
 		'keta.utils.Common'
 	])
 
@@ -202,7 +209,7 @@ angular.module('keta.directives.AppBar',
 
 	// message keys with default values
 	.constant('AppBarMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'All Apps',
 			'__keta.directives.AppBar_all_energy_managers': 'All Energy-Managers',
@@ -212,7 +219,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
 			'__keta.directives.AppBar_drop_access': 'Drop access'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
 			'__keta.directives.AppBar_all_apps': 'Alle Apps',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Manager',
@@ -222,7 +229,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
 			'__keta.directives.AppBar_all_energy_managers': 'Tous les Energy-Managers',
@@ -232,7 +239,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
 			'__keta.directives.AppBar_drop_access': 'Déposez accès'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.AppBar_app_title': 'Applicatie',
 			'__keta.directives.AppBar_all_apps': 'Alle applicaties',
 			'__keta.directives.AppBar_all_energy_managers': 'Alle Energy-Managers',
@@ -242,7 +249,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'U bent tijdelijk aangemeld als',
 			'__keta.directives.AppBar_drop_access': 'Drop toegang'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Tutte le applicazioni',
 			'__keta.directives.AppBar_all_energy_managers': 'Tutti gli Energy-Managers',
@@ -256,7 +263,7 @@ angular.module('keta.directives.AppBar',
 
 	.directive('appBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter,
-		EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
+		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
 	) {
 
@@ -274,6 +281,10 @@ angular.module('keta.directives.AppBar',
 
 				// current locale
 				currentLocale: '=?',
+
+				// fallback if locale from user profile is not
+				// found in the $scope.locales array.
+				fallbackLocale: '=?',
 
 				// object of labels to use in template
 				labels: '=?',
@@ -323,6 +334,9 @@ angular.module('keta.directives.AppBar',
 				var DECIMAL_RADIX = 10,
 					HIDDEN_CLASS_PREFIX = 'hidden-',
 					VISIBLE_CLASS_PREFIX = 'visible-';
+
+				var DEFAULT_LOCALE_FALLBACK = 'en_GB',
+					LOCALE_SHORT_LENGTH = 2;
 
 				// all sizes have NONE state
 				var sizesFullState = {};
@@ -443,9 +457,37 @@ angular.module('keta.directives.AppBar',
 							navbarSecondHeight + navbarSecondMarginBottom;
 				};
 
+				/**
+				 * @description
+				 * Checks if the given locale code is present
+				 * in the array of available locales (scope.locales).
+				 * @param {String} localeCode Locale code that should be checked
+				 * @returns {boolean} locale is available or not
+				 */
+				var isLocaleAvailable = function isLocaleAvailable(localeCode) {
+
+					var isAvailable = false;
+
+					angular.forEach(scope.locales, function(availableLocale) {
+						if (angular.isDefined(availableLocale.code) &&
+							availableLocale.code === localeCode) {
+							isAvailable = true;
+						}
+					});
+
+					return isAvailable;
+
+				};
+
 				scope.displayModes = mergeObjects(scope.displayModes, defaultDisplayModes);
 
-				scope.currentLocale = scope.currentLocale || 'en';
+				scope.fallbackLocale = scope.fallbackLocale || DEFAULT_LOCALE_FALLBACK;
+
+				scope.currentLocale = scope.currentLocale || scope.fallbackLocale;
+
+				if (!isLocaleAvailable(scope.currentLocale)) {
+					scope.currentLocale = scope.fallbackLocale;
+				}
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.AppBar';
@@ -521,7 +563,14 @@ angular.module('keta.directives.AppBar',
 											entryUri = app.entryUri;
 											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
 												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
-													name[locale] = app.meta.i18n[locale].name;
+													angular.forEach(scope.locales, function(availableLocale) {
+														if (angular.isDefined(availableLocale.code) &&
+															availableLocale.code.substr(0, LOCALE_SHORT_LENGTH)
+																=== locale) {
+															name[availableLocale.code] =
+																app.meta.i18n[locale].name;
+														}
+													});
 												});
 											}
 										}
@@ -702,6 +751,44 @@ angular.module('keta.directives.AppBar',
 				};
 
 				/**
+				 * @description
+				 * Searches in the object scope.user for the locale property and stores
+				 * it in the variable scope.currentLocale.
+				 * @returns {void} nothing
+				 */
+				var readLocaleFromUserProp = function readLocaleFromUserProp() {
+
+					if (CommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
+						isLocaleAvailable(scope.user.properties.locale.code)) {
+						scope.currentLocale = scope.user.properties.locale.code;
+					}
+
+				};
+
+				/**
+				 * @description
+				 * Stores the given locale code on the user property via API call.
+				 * @param {string} localeCode locale code
+				 * @returns {void} nothing
+				 */
+				var writeLocaleUserProp = function writeLocaleUserProp(localeCode) {
+
+					scope.user.properties = scope.user.properties || {};
+					scope.user.properties.locale = scope.user.properties.locale || {};
+					scope.user.properties.locale.code = localeCode;
+
+					EventBusDispatcher.send(eventBus, 'userservice', {
+						action: 'mergeUser',
+						body: {
+							properties: scope.user.properties
+						},
+						params: {
+							userId: scope.user.userId
+						}
+					});
+				};
+
+				/**
 				 * updates the open state and currently active entry in the language menu
 				 * @returns {void} nothing
 				 */
@@ -722,6 +809,7 @@ angular.module('keta.directives.AppBar',
 					User.getCurrent(eventBus)
 						.then(function(reply) {
 							scope.user = reply;
+							readLocaleFromUserProp();
 							getDevices();
 						});
 				}
@@ -821,6 +909,7 @@ angular.module('keta.directives.AppBar',
 				 */
 				scope.setLocale = function setLocale(locale) {
 					scope.currentLocale = locale.code;
+					writeLocaleUserProp(locale.code);
 					scope.menus[scope.MENU_ELEMENTS.LANGUAGE_MENU].activeEntry = locale;
 					scope.closeAllMenus();
 				};

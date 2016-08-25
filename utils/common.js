@@ -55,7 +55,7 @@ angular.module('keta.utils.Common', [])
 		 * <p>
 		 *   The key can be either in short ('en') or long ('en-US') format.<br>
 		 *   Locales only match from specific > general > fallback<br>
-		 *   i. e. 'de-AT' > 'de' > 'en'<br>
+		 *   i. e. 'de_AT' > 'de' > 'en'<br>
 		 *   If a general locale is not defined go straight to fallback locale.
 		 * </p>
 		 * @param {string} key translation key to search for

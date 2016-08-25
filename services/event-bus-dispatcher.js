@@ -492,26 +492,28 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 					};
 
-					// call stub method
-					if (angular.isDefined(replyHandler) && angular.isFunction(replyHandler)) {
-						var eb = eventBus.getInstance();
-						if (eb !== null) {
-							waitForOpen(eventBus, true, function() {
-								eventBus.getInstance().send(address, message, handler);
-							}, function() {
-								replyHandler({
-									code: 408,
-									message: 'Request Time-out'
-								});
-							});
-						} else {
-							replyHandler({
-								code: 500,
-								message: 'Internal Server Error'
-							});
+					var callReplyHandler = function(reply) {
+						if (angular.isFunction(replyHandler)) {
+							replyHandler(reply);
 						}
+					};
+
+					// call stub method
+					var eb = eventBus.getInstance();
+					if (eb !== null) {
+						waitForOpen(eventBus, true, function() {
+							eventBus.getInstance().send(address, message, handler);
+						}, function() {
+							callReplyHandler({
+								code: 408,
+								message: 'Request Time-out'
+							});
+						});
 					} else {
-						eventBus.getInstance().send(address, message, handler);
+						callReplyHandler({
+							code: 500,
+							message: 'Internal Server Error'
+						});
 					}
 
 				},

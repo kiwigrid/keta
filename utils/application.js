@@ -41,7 +41,7 @@ angular.module('keta.utils.Application',
 	 * @description Application Utils Factory
 	 */
 	.factory('ApplicationUtils', function ApplicationUtils(
-		$log, $q,
+		$q,
 		ApplicationSet, EventBusManager, CommonUtils,
 		ApplicationUtilsConstants
 	) {
@@ -152,7 +152,7 @@ angular.module('keta.utils.Application',
 			 * </p>
 			 * @param {object} app application instance
 			 * @param {string} uiLocale current locale
-			 * @returns {string} application localized application name
+			 * @returns {string|null} application localized application name
 			 */
 
 			getAppName: function getAppName(app, uiLocale) {
@@ -175,14 +175,24 @@ angular.module('keta.utils.Application',
 			 */
 			getAppIcon: function(app, language) {
 
-				var appIcon = null;
-
-				language = angular.isDefined(language) ? language : 'en';
+				var appIcon = null,
+					LOCALE_SHORT_LENGTH = 2;
 
 				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 					angular.isDefined(app.meta.i18n[language]) &&
 					angular.isDefined(app.meta.i18n[language].media) ?
 						app.meta.i18n[language].media : null;
+
+
+				if (mediaSource === null) {
+
+					var languageShort = angular.isDefined(language) ? language.substr(0, LOCALE_SHORT_LENGTH) : 'en';
+
+					mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+						angular.isDefined(app.meta.i18n[languageShort]) &&
+						angular.isDefined(app.meta.i18n[languageShort].media) ?
+							app.meta.i18n[languageShort].media : null;
+				}
 
 				if (mediaSource === null &&
 					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {

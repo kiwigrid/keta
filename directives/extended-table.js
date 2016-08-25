@@ -70,10 +70,10 @@
  *         $scope.labels = ExtendedTableMessageKeys;
  *
  *         // use case 1: overwrite specific key
- *         $scope.labels.de['__keta.directives.ExtendedTable_search'] = 'Finde';
+ *         $scope.labels.de_DE['__keta.directives.ExtendedTable_search'] = 'Finde';
  *
  *         // use case 2: add locale
- *         $scope.labels.fr = {
+ *         $scope.labels.fr_FR = {
  *             '__keta.directives.ExtendedTable_search': 'Recherche',
  *             '__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
  *             '__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
@@ -290,7 +290,7 @@ angular.module('keta.directives.ExtendedTable',
 
 	// message keys with default values
 	.constant('ExtendedTableMessageKeys', {
-		'en': {
+		'en_GB': {
 			'__keta.directives.ExtendedTable_search': 'Search',
 			'__keta.directives.ExtendedTable_add_column': 'Add column',
 			'__keta.directives.ExtendedTable_remove_column': 'Remove column',
@@ -298,7 +298,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'No entries',
 			'__keta.directives.ExtendedTable_of': 'of'
 		},
-		'de': {
+		'de_DE': {
 			'__keta.directives.ExtendedTable_search': 'Suche',
 			'__keta.directives.ExtendedTable_add_column': 'Spalte hinzufügen',
 			'__keta.directives.ExtendedTable_remove_column': 'Spalte entfernen',
@@ -306,7 +306,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
 			'__keta.directives.ExtendedTable_of': 'von'
 		},
-		'fr': {
+		'fr_FR': {
 			'__keta.directives.ExtendedTable_search': 'Recherche',
 			'__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
 			'__keta.directives.ExtendedTable_remove_column': 'Retirer la colonne',
@@ -314,7 +314,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Pas d’entrées',
 			'__keta.directives.ExtendedTable_of': 'de'
 		},
-		'nl': {
+		'nl_NL': {
 			'__keta.directives.ExtendedTable_search': 'Zoeken',
 			'__keta.directives.ExtendedTable_add_column': 'Kolom toevoegen',
 			'__keta.directives.ExtendedTable_remove_column': 'Kolom verwijderen',
@@ -322,7 +322,7 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Geen data',
 			'__keta.directives.ExtendedTable_of': 'van'
 		},
-		'it': {
+		'it_IT': {
 			'__keta.directives.ExtendedTable_search': 'Ricerca',
 			'__keta.directives.ExtendedTable_add_column': 'Aggiungi colonna',
 			'__keta.directives.ExtendedTable_remove_column': 'Rimuovere colonna',
@@ -429,7 +429,7 @@ angular.module('keta.directives.ExtendedTable',
 				scope.rows =
 					angular.isDefined(scope.rows) && angular.isArray(scope.rows) ? scope.rows : [];
 
-				scope.currentLocale = scope.currentLocale || 'en';
+				scope.currentLocale = scope.currentLocale || 'en_GB';
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.ExtendedTable';
