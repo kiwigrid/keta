@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: utils/application.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.6.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: utils/application.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.utils.Application
+ * @description
+ * &lt;p>
+ *   Application service utilities for cross-component usage.
+ * &lt;/p>
+ */
+
+angular.module('keta.utils.Application',
+	[
+		'keta.services.ApplicationSet',
+		'keta.utils.Common'
+	])
+
+	.constant('ApplicationUtilsConstants', {
+
+		// media type of assets
+		ASSET_MEDIA_TYPE: {
+			APPICON: 'APPICON',
+			FAVICON: 'FAVICON',
+			SCREENSHOT: 'SCREENSHOT',
+			TOUCHICON: 'TOUCHICON',
+			VIDEO: 'VIDEO'
+		},
+
+		// type of authors
+		AUTHOR_TYPE: {
+			DEVELOPER: 'DEVELOPER',
+			SELLER: 'SELLER'
+		}
+
+	})
+
+	/**
+	 * @class ApplicationUtils
+	 * @propertyOf keta.utils.Application
+	 * @description Application Utils Factory
+	 */
+	.factory('ApplicationUtils', function ApplicationUtils(
+		$q,
+		ApplicationSet, EventBusManager, CommonUtils,
+		ApplicationUtilsConstants
+	) {
+
+		var deferred = {
+			getAppList: null
+		};
+
+		return {
+
+			/**
+			 * @name getAppList
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns an array with all apps that are not blacklisted and have an entryUri. It is also
+			 *   possible to get apps for a specific user by providing an appropriate filter with key userId.
+			 * &lt;/p>
+			 * @param {object} options options to configure the API call
+			 * @returns {promise} app list promise
+			 * @example
+			 * angular.module('exampleApp', ['keta.utils.Application'])
+			 *     .controller('ExampleController', function(ApplicationUtils) {
+			 *
+			 *         // get apps with default options
+			 *         // eventBusId: kiwibus
+			 *         // forceRefresh: false
+			 *         // filter: {} (no filter applied)
+			 *         ApplicationUtils.getAppList().then(function(apps) {
+			 *             // ...
+			 *         });
+			 *
+			 *         // get apps with options in place
+			 *         ApplicationUtils.getAppList({
+			 *             eventBusId: 'myCustomEventBusId',
+			 *             forceRefresh: true,
+			 *             filter: {
+			 *                 userId: 'john.doe'
+			 *             },
+			 *             excludeAppIds: {
+			 *                 'kiwigrid.desktop': true
+			 *             }
+			 *         }).then(function(apps) {
+			 *             // ...
+			 *         });
+			 *
+			 *     });
+			 */
+			getAppList: function getAppList(options) {
+
+				var DEFAULT_OPTIONS = {
+					eventBusId: 'kiwibus',
+					forceRefresh: false,
+					filter: {},
+					excludeAppIds: {}
+				};
+
+				var usedOptions = angular.extend({}, DEFAULT_OPTIONS, options || {});
+
+				if (deferred.getAppList === null || usedOptions.forceRefresh === true) {
+					deferred.getAppList = $q.defer();
+
+					ApplicationSet.create(EventBusManager.get(usedOptions.eventBusId))
+						.filter(usedOptions.filter)
+						.query()
+						.then(function(reply) {
+
+							if (angular.isDefined(reply.result) &amp;&amp;
+								angular.isDefined(reply.result.items)) {
+
+								var filteredApps = [];
+								angular.forEach(reply.result.items, function(app) {
+									if (angular.isDefined(app.appId) &amp;&amp;
+										angular.isDefined(app.visible) &amp;&amp;
+										app.visible === true &amp;&amp;
+										!angular.isDefined(usedOptions.excludeAppIds[app.appId]) ||
+										usedOptions.excludeAppIds[app.appId] === false	&amp;&amp;
+										angular.isString(app.entryUri) &amp;&amp; app.entryUri !== '' &amp;&amp;
+										CommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
+
+										filteredApps.push(app);
+									}
+								});
+
+								deferred.getAppList.resolve(filteredApps);
+
+							} else {
+								var errorMessage = 'Something bad happened. Got no reply.';
+								deferred.getAppList.reject(errorMessage);
+							}
+						}, function() {
+							var errorMessage = 'Could not load application information.';
+							deferred.getAppList.reject(errorMessage);
+						});
+
+				}
+
+				return deferred.getAppList.promise;
+			},
+
+			/**
+			 * @name getAppName
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   uiLocale is the current (user set) UI language of the running app.
+			 *   Can be either short ('de') or long ('en-US') format.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} uiLocale current locale
+			 * @returns {string|null} application localized application name
+			 */
+
+			getAppName: function getAppName(app, uiLocale) {
+				return CommonUtils.doesPropertyExist(app, 'meta.i18n') ?
+					CommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
+			},
+
+			/**
+			 * @name getAppIcon
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns app icon source from app meta object by using
+			 *   link-element to easily access url params.
+			 *   If app has no icon informations it return &lt;code>null&lt;/code>.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} language current language
+			 * @returns {string} app icon src
+			 */
+			getAppIcon: function(app, language) {
+
+				var appIcon = null,
+					LOCALE_SHORT_LENGTH = 2;
+
+				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &amp;&amp;
+					angular.isDefined(app.meta.i18n[language]) &amp;&amp;
+					angular.isDefined(app.meta.i18n[language].media) ?
+						app.meta.i18n[language].media : null;
+
+
+				if (mediaSource === null) {
+
+					var languageShort = angular.isDefined(language) ? language.substr(0, LOCALE_SHORT_LENGTH) : 'en';
+
+					mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &amp;&amp;
+						angular.isDefined(app.meta.i18n[languageShort]) &amp;&amp;
+						angular.isDefined(app.meta.i18n[languageShort].media) ?
+							app.meta.i18n[languageShort].media : null;
+				}
+
+				if (mediaSource === null &amp;&amp;
+					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					mediaSource = app.meta.i18n.en.media;
+				}
+
+				if (angular.isDefined(app.entryUri)) {
+
+					var link = document.createElement('a');
+					link.href = app.entryUri;
+
+					var linkProtocol =
+						link.protocol +
+						(link.protocol[link.protocol.length - 1] === ':' ?
+							'//' : '://');
+
+					var linkPort =
+						link.port !== '' &amp;&amp; link.port !== '0' ?
+							':' + link.port : '';
+
+					// workaround for internet explorer not having "origin" property
+					var linkOrigin =
+						angular.isDefined(link.origin) ?
+							link.origin :
+							linkProtocol + link.hostname + linkPort;
+
+					angular.forEach(mediaSource, function(media) {
+
+						if (angular.isDefined(media.type) &amp;&amp;
+							media.type === ApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &amp;&amp;
+							angular.isDefined(media.src)) {
+
+							appIcon =
+								linkOrigin[linkOrigin.length - 1] !== '/' &amp;&amp; media.src[0] !== '/' ?
+								linkOrigin + '/' + media.src :
+								linkOrigin + media.src;
+
+						}
+
+					});
+
+				}
+
+				return appIcon;
+
+			},
+
+			/**
+			 * @name getAppAuthor
+			 * @function
+			 * @description
+			 * &lt;p>
+			 *   Returns author from type or the first author in app.meta.author array.
+			 * &lt;/p>
+			 * @param {object} app application instance
+			 * @param {string} type author type
+			 * @returns {string} app author name
+			 */
+			getAppAuthor: function(app, type) {
+
+				var appAuthor = null;
+
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
+
+				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
+
+					angular.forEach(app.meta.authors, function(author) {
+
+						if (author.type === type) {
+							appAuthor = author.name;
+						}
+
+					});
+
+					if (appAuthor === null) {
+						appAuthor = app.meta.authors[0].name;
+					}
+
+				}
+
+				return appAuthor;
+
+			}
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
