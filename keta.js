@@ -4330,24 +4330,15 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 */
 				scope.isOutOfBounds = function isOutOfBounds(date) {
 					var outOfBounds = false;
-
-					var isoDateLength = ISO_DATE_LENGTH_DAY;
-					if (scope.displayMode === scope.DISPLAY_MODE_MONTH) {
-						isoDateLength = ISO_DATE_LENGTH_MONTH;
-					}
-					if (scope.displayMode === scope.DISPLAY_MODE_YEAR) {
-						isoDateLength = ISO_DATE_LENGTH_YEAR;
-					}
-
-					var dateISO = getLocaleISO(date, isoDateLength);
+					var dateISO = getLocaleISO(date, ISO_DATE_LENGTH_DAY);
 
 					if (scope.minimum !== null &&
-						dateISO < getLocaleISO(scope.minimum, isoDateLength)) {
+						dateISO < getLocaleISO(scope.minimum, ISO_DATE_LENGTH_DAY)) {
 						outOfBounds = true;
 					}
 
 					if (scope.maximum !== null &&
-						dateISO > getLocaleISO(scope.maximum, isoDateLength)) {
+						dateISO > getLocaleISO(scope.maximum, ISO_DATE_LENGTH_DAY)) {
 						outOfBounds = true;
 					}
 
@@ -4366,11 +4357,23 @@ angular.module('keta.directives.TimeRangeSelector', [
 					var current = scope.displayValue;
 
 					var isoDateLength = ISO_DATE_LENGTH_DAY;
+					var outOfBoundDates = [
+						getLocaleISO(date, ISO_DATE_LENGTH_DAY),
+						getLocaleISO(date, ISO_DATE_LENGTH_DAY)
+					];
 					if (scope.displayMode === scope.DISPLAY_MODE_MONTH) {
 						isoDateLength = ISO_DATE_LENGTH_MONTH;
+						outOfBoundDates = [
+							getLocaleISO(moment(date).clone().startOf('month').toDate(), ISO_DATE_LENGTH_DAY),
+							getLocaleISO(moment(date).clone().endOf('month').toDate(), ISO_DATE_LENGTH_DAY)
+						];
 					}
 					if (scope.displayMode === scope.DISPLAY_MODE_YEAR) {
 						isoDateLength = ISO_DATE_LENGTH_YEAR;
+						outOfBoundDates = [
+							getLocaleISO(moment(date).clone().startOf('year').toDate(), ISO_DATE_LENGTH_DAY),
+							getLocaleISO(moment(date).clone().endOf('year').toDate(), ISO_DATE_LENGTH_DAY)
+						];
 					}
 
 					var selectedDateFromISO = scope.model.from !== null ?
@@ -4385,12 +4388,18 @@ angular.module('keta.directives.TimeRangeSelector', [
 						classes.push(scope.cssClasses.OUT_OF_MONTH);
 					}
 
-					if (scope.isOutOfBounds(date)) {
-						classes.push(scope.cssClasses.OUT_OF_BOUNDS);
-						if (scope.minimum !== null && dateISO < getLocaleISO(scope.minimum, isoDateLength)) {
+					if (scope.minimum !== null) {
+						var minimumISO = getLocaleISO(scope.minimum, ISO_DATE_LENGTH_DAY);
+						if (outOfBoundDates[0] < minimumISO && outOfBoundDates[1] < minimumISO) {
+							classes.push(scope.cssClasses.OUT_OF_BOUNDS);
 							classes.push(scope.cssClasses.OUT_OF_BOUNDS_BEFORE);
 						}
-						if (scope.maximum !== null && dateISO > getLocaleISO(scope.maximum, isoDateLength)) {
+					}
+
+					if (scope.maximum !== null) {
+						var maximumISO = getLocaleISO(scope.maximum, ISO_DATE_LENGTH_DAY);
+						if (outOfBoundDates[0] > maximumISO && outOfBoundDates[1] > maximumISO) {
+							classes.push(scope.cssClasses.OUT_OF_BOUNDS);
 							classes.push(scope.cssClasses.OUT_OF_BOUNDS_AFTER);
 						}
 					}
@@ -4565,72 +4574,101 @@ angular.module('keta.directives.TimeRangeSelector', [
 				};
 
 				/**
+				 * apply boundaries constraint (if enabled)
+				 * @param {date} from from date
+				 * @param {date} to to date
+				 * @param {number} min minimum as timestamp or null
+				 * @param {number} max maximum as timestamp or null
+				 * @returns {{from: *, to: *}} range
+				 */
+				var applyBoundaries = function applyBoundaries(from, to, min, max) {
+					var range = {
+						from: from,
+						to: to
+					};
+
+					if (min !== null && range.from < min) {
+						range.from = min;
+					}
+
+					if (max !== null && range.to > max) {
+						range.to = max;
+					}
+
+					return range;
+				};
+
+				/**
 				 * select given date
 				 * @param {date} date date selected
 				 * @returns {void} nothing
 				 */
 				scope.select = function select(date) {
-					if (!scope.isOutOfBounds(date)) {
 
-						if (scope.model.from === null && scope.model.to === null) {
+					if (scope.model.from === null && scope.model.to === null) {
 
-							// if we have no range at all, set from and to to date
-							scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-							scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-							lastSelected = LAST_SELECTED_FROM;
+						// if we have no range at all, set from and to to date
+						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
+						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
+						lastSelected = LAST_SELECTED_FROM;
 
-						} else if (angular.equals(scope.model.from, date)) {
+					} else if (angular.equals(scope.model.from, date)) {
 
-							// if we got a click on current from, set to to date
-							scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
-							lastSelected = LAST_SELECTED_TO;
+						// if we got a click on current from, set to to date
+						scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
+						lastSelected = LAST_SELECTED_TO;
 
-						} else if (angular.equals(scope.model.to, date)) {
+					} else if (angular.equals(scope.model.to, date)) {
 
-							// if we got a click on current to, set from to date
-							scope.model.from = getDisplayModeDate(scope.model.to, scope.displayMode, true);
-							lastSelected = LAST_SELECTED_FROM;
+						// if we got a click on current to, set from to date
+						scope.model.from = getDisplayModeDate(scope.model.to, scope.displayMode, true);
+						lastSelected = LAST_SELECTED_FROM;
 
-						} else if (date.getTime() < scope.model.from.getTime()) {
+					} else if (date.getTime() < scope.model.from.getTime()) {
 
-							// if we got a click before from, set from to date
-							scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-							lastSelected = LAST_SELECTED_FROM;
+						// if we got a click before from, set from to date
+						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
+						lastSelected = LAST_SELECTED_FROM;
 
-						} else if (date.getTime() > scope.model.to.getTime()) {
+					} else if (date.getTime() > scope.model.to.getTime()) {
 
-							// if we got a click after to, set to to date
-							scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-							lastSelected = LAST_SELECTED_TO;
+						// if we got a click after to, set to to date
+						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
+						lastSelected = LAST_SELECTED_TO;
 
-						} else if (lastSelected === LAST_SELECTED_FROM) {
+					} else if (lastSelected === LAST_SELECTED_FROM) {
 
-							// if we got a click in between and last selected is from, set to to date
-							// shorten range from from to date
-							scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-							lastSelected = LAST_SELECTED_TO;
+						// if we got a click in between and last selected is from, set to to date
+						// shorten range from from to date
+						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
+						lastSelected = LAST_SELECTED_TO;
 
-						} else {
+					} else {
 
-							// if we got a click in between and last selected is to, set from to date
-							// shorten range from date to to
-							scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-							lastSelected = LAST_SELECTED_FROM;
-
-						}
-
-						// apply minRangeLength and maxRangeLength
-						scope.model = applyRangeLength(
-							scope.model.from, scope.model.to,
-							scope.minRangeLength, scope.maxRangeLength
-						);
-
-						// update display value
-						scope.displayValue =
-							lastSelected === LAST_SELECTED_FROM ?
-								angular.copy(scope.model.from) : angular.copy(scope.model.to);
+						// if we got a click in between and last selected is to, set from to date
+						// shorten range from date to to
+						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
+						lastSelected = LAST_SELECTED_FROM;
 
 					}
+
+					// apply minRangeLength and maxRangeLength
+					scope.model = applyRangeLength(
+						scope.model.from, scope.model.to,
+						scope.minRangeLength, scope.maxRangeLength
+					);
+
+					// apply minimum and maximum
+					scope.model = applyBoundaries(
+						scope.model.from, scope.model.to,
+						scope.minimum, scope.maximum
+					);
+
+					// update display value
+					scope.displayValue =
+						lastSelected === LAST_SELECTED_FROM ?
+							angular.copy(scope.model.from) : angular.copy(scope.model.to);
+
 				};
 
 				/**
@@ -4694,10 +4732,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 * @return {void} nothing
 				 */
 				scope.setView = function setView(date, displayMode) {
-					if (!scope.isOutOfBounds(date)) {
-						scope.displayValue = angular.copy(date);
-						scope.displayMode = displayMode;
-					}
+					scope.displayValue = angular.copy(date);
+					scope.displayMode = displayMode;
 				};
 
 
@@ -4748,6 +4784,26 @@ angular.module('keta.directives.TimeRangeSelector', [
 						scope.model = applyRangeLength(
 							scope.model.from, scope.model.to,
 							newValue, scope.maxRangeLength
+						);
+					}
+				});
+
+				// watcher for maximum
+				scope.$watch('maximum', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						scope.model = applyBoundaries(
+							scope.model.from, scope.model.to,
+							scope.mininum, newValue
+						);
+					}
+				});
+
+				// watcher for mininum
+				scope.$watch('minimum', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						scope.model = applyBoundaries(
+							scope.model.from, scope.model.to,
+							newValue, scope.maximum
 						);
 					}
 				});
