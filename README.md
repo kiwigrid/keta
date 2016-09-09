@@ -18,7 +18,7 @@ See [changelog](CHANGELOG.md)
 
 ## Moment.js dependency
 
-The `TimeRangeSelector` component depends on [Moment.js](http://momentjs.com/) as an AngularJS constant.
+`DatePicker` and `TimeRangeSelector` components depend on [Moment.js](http://momentjs.com/) as an AngularJS constant.
 
 Add Moment.js source file to your `index.html`:
 
