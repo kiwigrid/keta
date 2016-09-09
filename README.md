@@ -6,17 +6,17 @@ Copyright Kiwigrid GmbH 2014-2016
 
 ---
 
-### Official page
+## Official page
 
 See [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/)
 
-### Changelog
+## Changelog
 
 See [changelog](CHANGELOG.md)
 
 ---
 
-# Moment.js dependency
+## Moment.js dependency
 
 The `TimeRangeSelector` component depends on [Moment.js](http://momentjs.com/) as an AngularJS constant.
 
