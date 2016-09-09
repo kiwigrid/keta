@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.2
+
+_Released: 2016-09-09_
+
+* Fix for separate component files to contain pre-populated template cache as well 
+
 ## Version 0.6.1
 
 _Released: 2016-09-05_
