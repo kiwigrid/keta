@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.3
+
+_Released: 2016-09-12_
+
+* Fix for `TimeRangeSelector` to respect boundaries in month and year mode too
+
 ## Version 0.6.2
 
 _Released: 2016-09-09_

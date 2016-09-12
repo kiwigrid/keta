@@ -847,7 +847,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				};
 
 				// save last selected range boundary ('from' | 'to')
-				var lastSelected = 'from';
+				var lastSelected = LAST_SELECTED_FROM;
 
 				/**
 				 * get display mode dependent date
@@ -941,6 +941,14 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 * @returns {void} nothing
 				 */
 				scope.select = function select(date) {
+
+					// keep date within boundaries
+					if (scope.minimum !== null && date.getTime() < scope.minimum) {
+						date = new Date(scope.minimum);
+					}
+					if (scope.maximum !== null && date.getTime() > scope.maximum) {
+						date = new Date(scope.maximum);
+					}
 
 					if (scope.model.from === null && scope.model.to === null) {
 
