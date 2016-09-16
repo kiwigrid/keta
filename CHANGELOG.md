@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.5
+
+_Released: 2016-09-16_
+
+* Added a missing query log for `AppBar` directive locale changes
+
 ## Version 0.6.4
 
 _Released: 2016-09-16_

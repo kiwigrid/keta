@@ -262,7 +262,7 @@ angular.module('keta.directives.AppBar',
 	})
 
 	.directive('appBar', function AppBarDirective(
-		$rootScope, $window, $document, $filter,
+		$rootScope, $window, $document, $filter, $log,
 		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
 		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
 	) {
@@ -777,13 +777,26 @@ angular.module('keta.directives.AppBar',
 					scope.user.properties.locale = scope.user.properties.locale || {};
 					scope.user.properties.locale.code = localeCode;
 
+					var params = {
+						userId: scope.user.userId
+					};
+
+					var body = {
+						properties: scope.user.properties
+					};
+
 					EventBusDispatcher.send(eventBus, 'userservice', {
 						action: 'mergeUser',
-						body: {
-							properties: scope.user.properties
-						},
-						params: {
-							userId: scope.user.userId
+						body: body,
+						params: params
+					}, function(reply) {
+						// log if in debug mode
+						if (EventBusManager.inDebugMode()) {
+							$log.request(['userservice', {
+								action: 'mergeUser',
+								params: params,
+								body: body
+							}, reply], $log.ADVANCED_FORMATTER);
 						}
 					});
 				};
