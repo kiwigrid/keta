@@ -960,6 +960,12 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
+				scope.$watch('currentLocale', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						updateMenus();
+					}
+				});
+
 				scope.$watch('container.offsetHeight', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
 						setContainerHeight();

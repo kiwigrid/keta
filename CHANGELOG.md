@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.4
+
+_Released: 2016-09-16_
+
+* Fix for `AppBar` directive to update selected locale in menu
+
 ## Version 0.6.3
 
 _Released: 2016-09-12_
