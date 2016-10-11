@@ -192,6 +192,7 @@ angular.module('keta.directives.AppBar',
 			ENERGY_MANAGER_MENU: 'energyManagerMenu',
 			COMPACT_MENU: 'compactMenu'
 		},
+		ROOT_APP_ID: 'kiwigrid.desktop',
 		SIZE: {
 			XXS: 'xxs',
 			XS: 'xs',
@@ -204,7 +205,18 @@ angular.module('keta.directives.AppBar',
 			FULL: 'full',
 			COMPACT: 'compact'
 		},
-		ROOT_APP_ID: 'kiwigrid.desktop'
+		TOGGLES: {
+			USER_PROFILE: 'USER_PROFILE',
+			USER_LOGOUT: 'USER_LOGOUT'
+		},
+		USER_ROLE: {
+			ADMIN: 'ADMIN',
+			DEMO_USER: 'DEMO_USER',
+			FITTER: 'FITTER',
+			SERVICE: 'SERVICE',
+			SUPER_ADMIN: 'SUPER_ADMIN',
+			USER: 'USER'
+		}
 	})
 
 	// message keys with default values
@@ -302,7 +314,10 @@ angular.module('keta.directives.AppBar',
 				// It will be set by the appBar directive itself and can be used by the parent scope afterwards
 				// (e.g. to set the logo link and title tag in the top left corner).
 				// The object-keys are 'name' (object with keys for all supported languages) and 'link'.
-				rootApp: '=?'
+				rootApp: '=?',
+
+				// feature toggles based on user role
+				toggles: '=?'
 
 			},
 			transclude: true,
@@ -530,6 +545,35 @@ angular.module('keta.directives.AppBar',
 
 				scope.links = angular.isDefined(scope.links) ?
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
+
+				var defaultToggles = {};
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER] = {};
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER][AppBarConstants.TOGGLES.USER_PROFILE] = false;
+
+				scope.AVAILABLE_TOGGLES = AppBarConstants.TOGGLES;
+
+				/**
+				 * update toggles
+				 * @returns {void} nothing
+				 */
+				var updateToggles = function updateToggles() {
+
+					if (angular.isDefined(scope.toggles)) {
+						var toggles = angular.copy(defaultToggles);
+						angular.forEach(scope.toggles, function(userRoleToggles, userRole) {
+							if (!angular.equals(scope.toggles[userRole], {})) {
+								toggles[userRole] =
+									angular.extend(toggles[userRole] || {}, scope.toggles[userRole]);
+							}
+						});
+						scope.toggles = toggles;
+					} else {
+						scope.toggles = angular.copy(defaultToggles);
+					}
+
+				};
+
+				updateToggles();
 
 				/**
 				 * set default links that can be overwritten by the scope.links property
@@ -848,6 +892,40 @@ angular.module('keta.directives.AppBar',
 				};
 
 				/**
+				 * checks if the given toggle is enabled
+				 * @param {string} toggle to check
+				 * @returns {boolean} true if enabled
+				 */
+				scope.isEnabled = function isEnabled(toggle) {
+					var enabled = true;
+
+					var userRoleScores = {};
+					userRoleScores[AppBarConstants.USER_ROLE.DEMO_USER] = 1;
+					userRoleScores[AppBarConstants.USER_ROLE.USER] = 2;
+					userRoleScores[AppBarConstants.USER_ROLE.FITTER] = 3;
+					userRoleScores[AppBarConstants.USER_ROLE.SERVICE] = 4;
+					userRoleScores[AppBarConstants.USER_ROLE.ADMIN] = 5;
+					userRoleScores[AppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
+
+					var userRole = AppBarConstants.USER_ROLE.DEMO_USER;
+
+					if (angular.isDefined(scope.user) && angular.isDefined(scope.user.roles)) {
+						scope.user.roles.forEach(function(role) {
+							if (userRoleScores[userRole] < userRoleScores[role]) {
+								userRole = role;
+							}
+						});
+					}
+
+					if (angular.isDefined(scope.toggles[userRole]) &&
+						angular.isDefined(scope.toggles[userRole][toggle])) {
+						enabled = scope.toggles[userRole][toggle];
+					}
+
+					return enabled;
+				};
+
+				/**
 				 * order elements by predicate
 				 * @param {string} type component type to order
 				 * @returns {function} ordering function that is used by ng-repeat in the template
@@ -979,6 +1057,12 @@ angular.module('keta.directives.AppBar',
 					}
 				});
 
+				scope.$watch('toggles', function(newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						updateToggles();
+					}
+				});
+
 				scope.$watch('container.offsetHeight', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
 						setContainerHeight();
@@ -1061,12 +1145,12 @@ angular.module('keta.directives.AppBar')
 '						<span class="caret"></span>' +
 '					</a>' +
 '					<ul class="dropdown-menu dropdown-menu-right">' +
-'						<li data-ng-if="links.USER_PROFILE">' +
+'						<li data-ng-if="isEnabled(AVAILABLE_TOGGLES.USER_PROFILE) && links.USER_PROFILE">' +
 '							<a data-ng-href="{{ links.USER_PROFILE }}" data-ng-click="closeAllMenus()">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_user_profile\') }}' +
 '							</a>' +
 '						</li>' +
-'						<li>' +
+'						<li data-ng-if="isEnabled(AVAILABLE_TOGGLES.USER_LOGOUT)">' +
 '							<a data-ng-href="{{ links.USER_LOGOUT }}" data-ng-click="closeAllMenus()">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_user_logout\') }}' +
 '							</a>' +

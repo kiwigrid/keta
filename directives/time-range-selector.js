@@ -426,10 +426,10 @@ angular.module('keta.directives.TimeRangeSelector', [
 						scope.showPager : true;
 				scope.showSelectionButton =
 					angular.isDefined(scope.showSelectionButton) ?
-						scope.showSelectionButton : true;
+						scope.showSelectionButton : false;
 				scope.showTodayButton =
 					angular.isDefined(scope.showTodayButton) ?
-						scope.showTodayButton : true;
+						scope.showTodayButton : false;
 				scope.showWeekNumbers =
 					angular.isDefined(scope.showWeekNumbers) ?
 						scope.showWeekNumbers : true;

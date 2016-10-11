@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.6
+
+_Released: 2016-10-11_
+
+* `DatePicker` and `TimeRangeSelector`: Changed default visibility settings for selection and today button to `false`
+* `AppBar`: Added option to disable certain navigation items by configuration
+
 ## Version 0.6.5
 
 _Released: 2016-09-16_

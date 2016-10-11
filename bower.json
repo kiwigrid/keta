@@ -1,7 +1,7 @@
 {
   "name": "keta",
   "main": "./keta.js",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "ignore": [],
   "homepage": "https://github.com/kiwigrid/keta",
   "authors": [
@@ -9,7 +9,8 @@
     "Jens Struwe <jens.struwe@kiwigrid.com> (https://github.com/kakenbok)",
     "Jan Uhlmann <jan.uhlmann@kiwigrid.com> (https://github.com/keshix)",
     "Maik Siegert <maik.siegert@kiwigrid.com>",
-    "Vincent Romanus <vincent.romanus@kiwigrid.com>"
+    "Vincent Romanus <vincent.romanus@kiwigrid.com>",
+    "Stefan Gottschalk <stefan.gottschalk@kiwigrid.com>"
   ],
   "description": "Frontend Components for Kiwigrid Platform based AngularJS Apps",
   "keywords": [
