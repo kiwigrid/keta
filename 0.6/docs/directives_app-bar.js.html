@@ -53,7 +53,7 @@
 
 	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
 		<nav>
-			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
 		</nav>
 	</div>
 
@@ -259,6 +259,7 @@ angular.module('keta.directives.AppBar',
 			ENERGY_MANAGER_MENU: 'energyManagerMenu',
 			COMPACT_MENU: 'compactMenu'
 		},
+		ROOT_APP_ID: 'kiwigrid.desktop',
 		SIZE: {
 			XXS: 'xxs',
 			XS: 'xs',
@@ -271,7 +272,18 @@ angular.module('keta.directives.AppBar',
 			FULL: 'full',
 			COMPACT: 'compact'
 		},
-		ROOT_APP_ID: 'kiwigrid.desktop'
+		TOGGLES: {
+			USER_PROFILE: 'USER_PROFILE',
+			USER_LOGOUT: 'USER_LOGOUT'
+		},
+		USER_ROLE: {
+			ADMIN: 'ADMIN',
+			DEMO_USER: 'DEMO_USER',
+			FITTER: 'FITTER',
+			SERVICE: 'SERVICE',
+			SUPER_ADMIN: 'SUPER_ADMIN',
+			USER: 'USER'
+		}
 	})
 
 	// message keys with default values
@@ -369,7 +381,10 @@ angular.module('keta.directives.AppBar',
 				// It will be set by the appBar directive itself and can be used by the parent scope afterwards
 				// (e.g. to set the logo link and title tag in the top left corner).
 				// The object-keys are 'name' (object with keys for all supported languages) and 'link'.
-				rootApp: '=?'
+				rootApp: '=?',
+
+				// feature toggles based on user role
+				toggles: '=?'
 
 			},
 			transclude: true,
@@ -597,6 +612,35 @@ angular.module('keta.directives.AppBar',
 
 				scope.links = angular.isDefined(scope.links) ?
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
+
+				var defaultToggles = {};
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER] = {};
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER][AppBarConstants.TOGGLES.USER_PROFILE] = false;
+
+				scope.AVAILABLE_TOGGLES = AppBarConstants.TOGGLES;
+
+				/**
+				 * update toggles
+				 * @returns {void} nothing
+				 */
+				var updateToggles = function updateToggles() {
+
+					if (angular.isDefined(scope.toggles)) {
+						var toggles = angular.copy(defaultToggles);
+						angular.forEach(scope.toggles, function(userRoleToggles, userRole) {
+							if (!angular.equals(scope.toggles[userRole], {})) {
+								toggles[userRole] =
+									angular.extend(toggles[userRole] || {}, scope.toggles[userRole]);
+							}
+						});
+						scope.toggles = toggles;
+					} else {
+						scope.toggles = angular.copy(defaultToggles);
+					}
+
+				};
+
+				updateToggles();
 
 				/**
 				 * set default links that can be overwritten by the scope.links property
@@ -915,6 +959,40 @@ angular.module('keta.directives.AppBar',
 				};
 
 				/**
+				 * checks if the given toggle is enabled
+				 * @param {string} toggle to check
+				 * @returns {boolean} true if enabled
+				 */
+				scope.isEnabled = function isEnabled(toggle) {
+					var enabled = true;
+
+					var userRoleScores = {};
+					userRoleScores[AppBarConstants.USER_ROLE.DEMO_USER] = 1;
+					userRoleScores[AppBarConstants.USER_ROLE.USER] = 2;
+					userRoleScores[AppBarConstants.USER_ROLE.FITTER] = 3;
+					userRoleScores[AppBarConstants.USER_ROLE.SERVICE] = 4;
+					userRoleScores[AppBarConstants.USER_ROLE.ADMIN] = 5;
+					userRoleScores[AppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
+
+					var userRole = AppBarConstants.USER_ROLE.DEMO_USER;
+
+					if (angular.isDefined(scope.user) &amp;&amp; angular.isDefined(scope.user.roles)) {
+						scope.user.roles.forEach(function(role) {
+							if (userRoleScores[userRole] &lt; userRoleScores[role]) {
+								userRole = role;
+							}
+						});
+					}
+
+					if (angular.isDefined(scope.toggles[userRole]) &amp;&amp;
+						angular.isDefined(scope.toggles[userRole][toggle])) {
+						enabled = scope.toggles[userRole][toggle];
+					}
+
+					return enabled;
+				};
+
+				/**
 				 * order elements by predicate
 				 * @param {string} type component type to order
 				 * @returns {function} ordering function that is used by ng-repeat in the template
@@ -1043,6 +1121,12 @@ angular.module('keta.directives.AppBar',
 				scope.$watch('currentLocale', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
 						updateMenus();
+					}
+				});
+
+				scope.$watch('toggles', function(newValue, oldValue) {
+					if (!angular.equals(newValue, oldValue)) {
+						updateToggles();
 					}
 				});
 
