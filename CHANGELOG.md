@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.7
+
+_Released: 2016-10-13_
+
+* `EventBus`: Added `offlineMode` option to EventBus configuration
+
 ## Version 0.6.6
 
 _Released: 2016-10-11_
