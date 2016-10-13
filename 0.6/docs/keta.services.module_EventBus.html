@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.6.6
+			Version 0.6.7
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.6" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.6" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.7" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.7" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.6" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.6" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.7" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.7" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -155,7 +155,7 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <ul class="list-unstyled"><li><a href="#~create"><span class="type-signature">&lt;inner> </span>create<span class="signature">(config)</span><span class="type-signature"> &rarr; {EventBus}</span></a></li><li><a href="#~getConfig"><span class="type-signature">&lt;inner> </span>getConfig<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></a></li><li><a href="#~getDefaultConfig"><span class="type-signature">&lt;inner> </span>getDefaultConfig<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></a></li><li><a href="#~getInstance"><span class="type-signature">&lt;inner> </span>getInstance<span class="signature">()</span><span class="type-signature"> &rarr; {vertx.EventBus}</span></a></li></ul>
+        <ul class="list-unstyled"><li><a href="#~create"><span class="type-signature">&lt;inner> </span>create<span class="signature">(config)</span><span class="type-signature"> &rarr; {EventBus}</span></a></li><li><a href="#~getConfig"><span class="type-signature">&lt;inner> </span>getConfig<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></a></li><li><a href="#~getDefaultConfig"><span class="type-signature">&lt;inner> </span>getDefaultConfig<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></a></li><li><a href="#~getInstance"><span class="type-signature">&lt;inner> </span>getInstance<span class="signature">()</span><span class="type-signature"> &rarr; {vertx.EventBus}</span></a></li><li><a href="#~inOfflineMode"><span class="type-signature">&lt;inner> </span>inOfflineMode<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></a></li></ul>
         
         <dl class="methods">
             
@@ -251,7 +251,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line135">line 135</a>
+        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line154">line 154</a>
     </li></ul></dd>
     
     
@@ -367,7 +367,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line63">line 63</a>
+        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line64">line 64</a>
     </li></ul></dd>
     
     
@@ -461,7 +461,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line39">line 39</a>
+        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line40">line 40</a>
     </li></ul></dd>
     
     
@@ -555,7 +555,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line87">line 87</a>
+        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line88">line 88</a>
     </li></ul></dd>
     
     
@@ -598,6 +598,100 @@
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.EventBus'])
     .controller('ExampleController', function(EventBus) {
         var instance = eventBus.getInstance();
+    });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h3 class="name" id="~inOfflineMode"><span class="type-signature">&lt;inner> </span>inOfflineMode<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h3>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>
+  Returns true if EventBus is configured to be in offline mode.
+</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="services_event-bus.js.html">services/event-bus.js</a>, <a href="services_event-bus.js.html#line106">line 106</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+	
+		
+<span class="param-type">boolean</span>
+
+
+	
+	
+    true if in offline mode
+    
+</div>
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.services.EventBus'])
+    .controller('ExampleController', function(EventBus) {
+        var inOfflineMode = eventBus.inOfflineMode();
     });</code></pre>
 
     
