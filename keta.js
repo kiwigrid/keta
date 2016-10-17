@@ -7948,22 +7948,26 @@ angular.module('keta.services.EventBusDispatcher',
 						}
 					};
 
-					// call stub method
-					var eb = eventBus.getInstance();
-					if (eb !== null) {
-						waitForOpen(eventBus, true, function() {
-							eventBus.getInstance().send(address, message, handler);
-						}, function() {
-							callReplyHandler({
-								code: 408,
-								message: 'Request Time-out'
+					if (!eventBus.inOfflineMode()) {
+
+						// call stub method
+						var eb = eventBus.getInstance();
+						if (eb !== null) {
+							waitForOpen(eventBus, true, function() {
+								eventBus.getInstance().send(address, message, handler);
+							}, function() {
+								callReplyHandler({
+									code: 408,
+									message: 'Request Time-out'
+								});
 							});
-						});
-					} else {
-						callReplyHandler({
-							code: 500,
-							message: 'Internal Server Error'
-						});
+						} else {
+							callReplyHandler({
+								code: 500,
+								message: 'Internal Server Error'
+							});
+						}
+
 					}
 
 				},
@@ -8381,7 +8385,8 @@ angular.module('keta.services.EventBus', [])
 				url: 'https://localhost:10443/kiwibus',
 				reconnect: true,
 				reconnectTimeout: 5,
-				requestTimeout: 10
+				requestTimeout: 10,
+				offlineMode: false
 			};
 
 			/**
@@ -8448,6 +8453,24 @@ angular.module('keta.services.EventBus', [])
 			 */
 			this.getInstance = function() {
 				return config.url !== false ? eb : null;
+			};
+
+			/**
+			 * @name inOfflineMode
+			 * @function
+			 * @description
+			 * <p>
+			 *   Returns true if EventBus is configured to be in offline mode.
+			 * </p>
+			 * @returns {boolean} true if in offline mode
+			 * @example
+			 * angular.module('exampleApp', ['keta.services.EventBus'])
+			 *     .controller('ExampleController', function(EventBus) {
+			 *         var inOfflineMode = eventBus.inOfflineMode();
+			 *     });
+			 */
+			this.inOfflineMode = function() {
+				return config.offlineMode;
 			};
 
 			// init vertx.EventBus
