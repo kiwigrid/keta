@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.8
+
+_Released: 2016-10-25_
+
+* `CountryUtils`: Added `es_ES`, `it_IT` and `nl_NL` country lists and updated existing ones
+
 ## Version 0.6.7
 
 _Released: 2016-10-13_
