@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/device-set.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.7.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.7.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.7.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.7.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.7.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/device-set.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.DeviceSet
+ * @description DeviceSet Provider
+ */
+
+angular.module('keta.services.DeviceSet',
+	[
+		'keta.services.Device',
+		'keta.services.DeviceEvent'
+	])
+
+	/**
+	 * @class ketaDeviceSetProvider
+	 * @propertyOf keta.services.DeviceSet
+	 * @description DeviceSet Provider
+	 */
+	.provider('ketaDeviceSet', function DeviceSetProvider() {
+
+		var DEFAULT_OFFSET = 0;
+		var DEFAULT_LIMIT = 50;
+
+		this.$get = function DeviceSetService(
+			$q, $rootScope, $log,
+			ketaDevice, ketaDeviceEvent, ketaEventBusDispatcher, ketaEventBusManager) {
+
+			// api reference
+			var api;
+
+			/**
+			 * @class DeviceSetInstance
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Instance
+			 * @param {EventBus} givenEventBus eventBus to use for DeviceSetInstance
+			 */
+			var DeviceSetInstance = function(givenEventBus) {
+
+				// keep reference
+				var that = this;
+
+				// save EventBus instance
+				var eventBus = givenEventBus;
+
+				// internal params object
+				var params = {};
+
+				// automatically register device set listener
+				var registerListener = false;
+
+				// internal set object
+				var set = {};
+
+				/**
+				 * @name filter
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a filter before DeviceSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} filter filter to use
+				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .filter({
+				 *                 guid: 'guid'
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.filter = function(filter) {
+					params.filter = filter;
+					return that;
+				};
+
+				/**
+				 * @name project
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a projection before DeviceSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} projection projection to use
+				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .project({
+				 *                 guid: 1,
+				 *                 tagValues: {
+				 *                     IdName: 1
+				 *                 }
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.project = function(projection) {
+					params.projection = projection;
+					return that;
+				};
+
+				/**
+				 * @name sort
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a sorting before DeviceSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} sorting sorting to use
+				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .sort({
+				 *                 'tagValue.IdName.value': 1
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.sort = function(sorting) {
+					params.sorting = sorting;
+					return that;
+				};
+
+				/**
+				 * @name paginate
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a pagination before DeviceSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} pagination pagination to use
+				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .paginate({
+				 *                 offset: 0,
+				 *                 limit: 50
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.paginate = function(pagination) {
+					if (angular.isDefined(pagination)) {
+						params.offset = angular.isDefined(pagination.offset) ? pagination.offset : DEFAULT_OFFSET;
+						params.limit = angular.isDefined(pagination.limit) ? pagination.limit : DEFAULT_LIMIT;
+					} else {
+						params.offset = DEFAULT_OFFSET;
+						params.limit = DEFAULT_LIMIT;
+					}
+					return that;
+				};
+
+				/**
+				 * @name live
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds live update capabilities by registering a DeviceSetListener.
+				 * &lt;/p>
+				 * @returns {promise} DeviceSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .live()
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 */
+				that.live = function() {
+					registerListener = true;
+					return that;
+				};
+
+				/**
+				 * @name query
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Finally executes DeviceSet query by sending it to the associated EventBus instance.
+				 * &lt;/p>
+				 * @returns {promise} Promise which is resolved when query is returned
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.query = function() {
+					var deferred = $q.defer();
+
+					// register device set listener if configured
+					if (registerListener) {
+
+						// generate UUID
+						var liveHandlerUUID = 'CLIENT_' + ketaEventBusDispatcher.generateUUID();
+
+						// register handler under created UUID
+						ketaEventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
+
+							// inject guid if missing
+							if (!angular.isDefined(event.value.guid) &amp;&amp;
+								angular.isDefined(event.value.tagValues)) {
+								var tagValueKeys = Object.keys(event.value.tagValues);
+								event.value.guid = event.value.tagValues[tagValueKeys[0]].guid;
+							}
+
+							// process event using sync
+							api.sync(set, ketaDeviceEvent.create(event.type, event.value), eventBus);
+
+							// log if in debug mode
+							if (ketaEventBusManager.inDebugMode()) {
+								$log.event([event], $log.ADVANCED_FORMATTER);
+							}
+
+						});
+
+						// register device set listener
+						ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
+							action: 'registerDeviceSetListener',
+							body: {
+								filter: params.filter,
+								projection: params.projection,
+								replyAddress: liveHandlerUUID
+							}
+						}, function(reply) {
+							// log if in debug mode
+							if (ketaEventBusManager.inDebugMode()) {
+								$log.request(['deviceservice', {
+									action: 'registerDeviceSetListener',
+									body: {
+										filter: params.filter,
+										projection: params.projection,
+										replyAddress: liveHandlerUUID
+									}
+								}, reply], $log.ADVANCED_FORMATTER);
+							}
+						});
+
+					}
+
+					ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
+						action: 'getDevices',
+						params: params
+					}, function(reply) {
+						if (reply) {
+							// inject used params
+							reply.params = params;
+
+							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
+
+								// create DeviceInstances
+								if (angular.isDefined(reply.result) &amp;&amp;
+									angular.isDefined(reply.result.items)) {
+									angular.forEach(reply.result.items, function(item, index) {
+										reply.result.items[index] = ketaDevice.create(eventBus, item);
+									});
+									set = reply;
+								} else {
+									set = {};
+								}
+
+								// log if in debug mode
+								if (ketaEventBusManager.inDebugMode()) {
+									$log.request(['deviceservice', {
+										action: 'getDevices',
+										params: params
+									}, reply], $log.ADVANCED_FORMATTER);
+								}
+
+								deferred.resolve(reply);
+								$rootScope.$digest();
+
+							} else {
+								deferred.reject(reply);
+							}
+						} else {
+							deferred.reject('Something bad happened. Got no reply.');
+						}
+					});
+
+					return deferred.promise;
+				};
+
+			};
+
+			/**
+			 * @class DeviceSet
+			 * @propertyOf DeviceSetProvider
+			 * @description DeviceSet Service
+			 */
+			api = {
+
+				/**
+				 * @name create
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Creates a DeviceSetInstance with given EventBus instance.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {DeviceSetInstance} DeviceSetInstance created
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         var deviceSet = ketaDeviceSet.create(eventBus);
+				 *     });
+				 */
+				create: function(eventBus) {
+					return new DeviceSetInstance(eventBus);
+				},
+
+				/**
+				 * @name indexOf
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns index of given Device in DeviceSet by comparing GUIDs.
+				 * &lt;/p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {DeviceInstance} device DeviceInstance to search for
+				 * @returns {number} index
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // index equals 0 after the call
+				 *                 var index = ketaDeviceSet.indexOf(reply, reply.result.items[0]);
+				 *             });
+				 *     });
+				 */
+				indexOf: function(set, device) {
+					var index = -1;
+					if (angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items)) {
+						angular.forEach(set.result.items, function(item, key) {
+							if (item.guid === device.guid) {
+								index = key;
+							}
+						});
+					}
+					return index;
+				},
+
+				/**
+				 * @name length
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns number of devices in given DeviceSet.
+				 * &lt;/p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {number} number of devices
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // length equals number of devices in DeviceSet
+				 *                 var length = ketaDeviceSet.length(reply);
+				 *             });
+				 *     });
+				 */
+				length: function(set) {
+					var length =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) &amp;&amp;
+						angular.isArray(set.result.items) ? set.result.items.length : 0;
+					return length;
+				},
+
+				/**
+				 * @name get
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns device in given DeviceSet by specified index.
+				 * &lt;/p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @param {number} index Index of device to return
+				 * @returns {DeviceInstance} DeviceInstance retrieved from set
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // device equals first item after the call
+				 *                 var device = ketaDeviceSet.get(reply, 0);
+				 *             });
+				 *     });
+				 */
+				get: function(set, index) {
+					var device =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) &amp;&amp;
+						angular.isDefined(set.result.items[index]) ? set.result.items[index] : null;
+					return device;
+				},
+
+				/**
+				 * @name getAll
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns all devices in given DeviceSet.
+				 * &lt;/p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to search in
+				 * @returns {Array} All DeviceInstances retrieved from set
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 var devices = ketaDeviceSet.getAll(reply);
+				 *             });
+				 *     });
+				 */
+				getAll: function(set) {
+					var devices =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) ? set.result.items : [];
+					return devices;
+				},
+
+				/**
+				 * @name sync
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Synchronizes given DeviceSet with given DeviceEvent.
+				 * &lt;/p>
+				 * @param {DeviceSetInstance} set DeviceSetInstance to sync
+				 * @param {DeviceEventInstance} event DeviceEventInstance to process
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {void} returns nothing
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
+				 *     .controller('ExampleController', function(ketaDeviceSet, ketaDeviceEvent, ketaDevice) {
+				 *         ketaDeviceSet.sync(
+				 *             ketaDeviceSet.create().query(),
+				 *             ketaDeviceEvent.create({
+				 *                 type: ketaDeviceEvent.CREATED,
+				 *                 device: ketaDevice.create(eventBus, {
+				 *                     guid: 'guid'
+				 *                 });
+				 *             });
+				 *         );
+				 *     });
+				 */
+				sync: function(set, event, eventBus) {
+
+					var modified = false;
+					var device = ketaDevice.create(eventBus, event.getDevice());
+
+					if (event.getType() === ketaDeviceEvent.CREATED) {
+						set.result.items.push(device);
+						modified = true;
+					} else if (event.getType() === ketaDeviceEvent.DELETED) {
+						set.result.items.splice(api.indexOf(set, device), 1);
+						modified = true;
+					} else if (event.getType() === ketaDeviceEvent.UPDATED) {
+						var index = api.indexOf(set, device);
+						if (index !== -1) {
+							angular.extend(api.get(set, index), device);
+							modified = true;
+						}
+					}
+
+					// trigger scope digest if anything was modified and not automatically triggered
+					if (modified &amp;&amp; !$rootScope.$$phase) {
+						$rootScope.$apply();
+					}
+
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

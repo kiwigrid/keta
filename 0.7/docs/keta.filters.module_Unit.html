@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Module: Unit</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 0.7.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.7.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.7.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.7.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.7.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Module: Unit</h1>
+		
+
+
+
+<section>
+    
+<header>
+    <h2>
+    Unit
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description"><p>
+  A filter using SI prefixes to format numeric values.
+</p>
+<p>
+  The filter takes a couple of parameters to configure it. <code>unit</code> defines the unit
+  as string to append to formatted value (e.g. <code>'W'</code>, defaults to empty string).
+  <code>precision</code> defines the number of digits to appear after the decimal point as integer
+  (e.g. <code>2</code>, defaults to <code>0</code>). <code>precisionRanges</code> defines used
+  precision in a more flexible way by defining an array of precisions with <code>min</code> (included)
+  and/or <code>max</code> (excluded) value. <code>precisionExcludeIntegers</code> defines if integers
+  should be excluded from precision. <code>precisionExclude</code> defines concrete values which are excluded
+  from precision. <code>isBytes</code> is a boolean flag tom specify if the given number is bytes and
+  therefor 1024-based (defaults to <code>false</code>). <code>separate</code> is a boolean flag
+  (defaults to <code>false</code>) which defines whether to return a single string or an object with
+  separated values <code>numberFormatted</code> (String), <code>numberRaw</code> (Number) and
+  <code>unit</code> (String).
+</p>
+<p>
+  If <code>precisionRanges</code> is set to:
+</p>
+<pre>[
+    {max: 1000, precision: 0},
+    {min: 1000, precision: 1}
+]</pre>
+<p>
+  If <code>precisionExclude</code> is set to:
+</p>
+<pre>[0.123456, 100.123456]</pre>
+<p>
+  values that are 0.123456 or 100.123456 wouldn't be cutted by precision.
+</p>
+<p>
+  numeric values which are less than 1000 are formatted with a precision of 0, as numeric values
+  equal or greater than 1000 are formatted with a precision of 1.
+</p>
+<p>
+  If <code>separate</code> is set to <code>true</code> the filter returns an object in the
+  following manner if for instance German is the current locale:
+</p>
+<pre>{
+    numberFormatted: '1,546',
+    numberRaw: 1.546,
+    unit: 'kW'
+}</pre></div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul class="list-unstyled">
+            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
+        </ul>
+    </dd>
+    
+    
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
+        <a href="filters_unit.js.html">filters/unit.js</a>, <a href="filters_unit.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+        
+        
+            <h3>Examples</h3>
+            
+    <pre class="prettyprint"><code>{{ 1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false} }}
+
+Number: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
+Unit: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}</code></pre>
+
+    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.filters.Unit'])
+    .controller('ExampleController', function($scope) {
+
+        // use unit filter to return formatted number value
+        // $scope.value equals string '1.2 kW'
+        $scope.value = $filter('ketaUnit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false
+        });
+
+        // use unit filter for integers that shouldn't be cutted by precision
+        // $scope.valuePrecisionIntegersExcluded equals string '123 W'
+        $scope.valuePrecisionIntegersExcluded = $filter('ketaUnit')(123, {
+            unit: 'W',
+            precision: 2,
+            precisionExcludeIntegers: true
+        });
+
+        // use unit filter for values that shouldn't be cutted by precision
+        // $scope.valuePrecisionExcluded equals string '0.123456 W'
+        $scope.valuePrecisionExcluded = $filter('ketaUnit')(0.123456, {
+            unit: 'W',
+            precision: 2,
+            precisionExclude: [0.123456]
+        });
+
+        // use unit filter to return object for number formatting
+        // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
+        // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
+        // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
+        $scope.valueSeparated = $filter('ketaUnit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            isBytes: false,
+            separate: true
+        });
+
+        // use unit filter with precision ranges
+        // for the example below all values which are less than 1000 are formatted with a precision of 0
+        // and all values equal or greater than 1000 are formatted with a precision of 1
+        $scope.valueRanges = $filter('ketaUnit')(1234.56, {
+            unit: 'W',
+            precision: 1,
+            precisionRanges: [
+                {max: 1000, precision: 0},
+                {min: 1000, precision: 1}
+            ],
+            isBytes: false
+        });
+
+    });</code></pre>
+
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
