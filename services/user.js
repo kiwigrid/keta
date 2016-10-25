@@ -19,22 +19,23 @@ angular.module('keta.services.User',
 	 * @propertyOf keta.services.User
 	 * @description User Provider
 	 */
-	.provider('User', function UserProvider() {
+	.provider('ketaUser', function UserProvider() {
 
-		this.$get = function UserService($q, $log, EventBusDispatcher, EventBusManager) {
+		this.$get = function UserService($q, $log, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			// send message and return promise
 			var sendMessage = function(eventBus, message) {
 				var deferred = $q.defer();
 
-				EventBusDispatcher.send(eventBus, 'userservice', message, function(reply) {
+				ketaEventBusDispatcher.send(eventBus, 'userservice', message, function(reply) {
 
 					// log if in debug mode
-					if (EventBusManager.inDebugMode()) {
+					if (ketaEventBusManager.inDebugMode()) {
 						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
-					if (angular.isUndefined(reply.code) || reply.code >= EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+					if (angular.isUndefined(reply.code) ||
+						reply.code >= ketaEventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 						deferred.reject(reply);
 					} else {
 						deferred.resolve(reply);
@@ -88,9 +89,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'userId'
 				 *         });
 				 *
@@ -134,9 +135,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -250,9 +251,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'userId'
 				 *         });
 				 *
@@ -286,9 +287,9 @@ angular.module('keta.services.User',
 				 * @returns {undefined} nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -339,7 +340,7 @@ angular.module('keta.services.User',
 			};
 
 			/**
-			 * @class User
+			 * @class ketaUser
 			 * @propertyOf UserProvider
 			 * @description User Service
 			 */
@@ -357,8 +358,8 @@ angular.module('keta.services.User',
 				 * @returns {UserInstance} created UserInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         var user = User.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         var user = ketaUser.create(eventBus, {
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -390,8 +391,8 @@ angular.module('keta.services.User',
 				 * @returns {String} channel name
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         User.getChannel(eventBus, 'channel-1')
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         ketaUser.getChannel(eventBus, 'channel-1')
 				 *             .then(function(reply) {
 				 *                 // reply is channel name
 				 *             });
@@ -425,8 +426,8 @@ angular.module('keta.services.User',
 				 * @returns {UserInstance} current logged-in user
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         User.getCurrentUser(eventBus)
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         ketaUser.getCurrentUser(eventBus)
 				 *             .then(function(reply) {
 				 *                 // reply is current UserInstance
 				 *             });

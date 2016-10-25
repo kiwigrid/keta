@@ -15,7 +15,7 @@
 
 angular.module('keta.utils.Api', [])
 
-	.constant('ApiUtilsConstants', {
+	.constant('ketaApiUtilsConstants', {
 
 		OPERATORS: {
 			OR: '$or',
@@ -42,7 +42,7 @@ angular.module('keta.utils.Api', [])
 	 * @propertyOf keta.utils.Api
 	 * @description Api Utils Factory
 	 */
-	.factory('ApiUtils', function ApiUtils(ApiUtilsConstants) {
+	.factory('ketaApiUtils', function ApiUtils(ketaApiUtilsConstants) {
 
 		var factory = {};
 
@@ -75,8 +75,8 @@ angular.module('keta.utils.Api', [])
 
 			// prevent double QUERY_DIVIDER_CHAR
 			var cleanedUpQuery = query.replace(
-					ApiUtilsConstants.CHARS.QUERY_DIVIDER + ApiUtilsConstants.CHARS.QUERY_DIVIDER,
-					ApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ApiUtilsConstants.CHARS.QUERY_DIVIDER
+					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER,
+					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER
 				) + '"';
 
 			return cleanedUpQuery;
@@ -93,19 +93,19 @@ angular.module('keta.utils.Api', [])
 
 			query = cleanUpQuery(query);
 
-			var components = query.match(ApiUtilsConstants.REGEX.KEY_DIVIDER);
+			var components = query.match(ketaApiUtilsConstants.REGEX.KEY_DIVIDER);
 
-			var	key = components[0].replace(ApiUtilsConstants.REGEX.QUOTES, '');
+			var	key = components[0].replace(ketaApiUtilsConstants.REGEX.QUOTES, '');
 			var	value = angular.isDefined(components[1]) ?
-				components[1].replace(ApiUtilsConstants.REGEX.QUOTES, '') : null;
+				components[1].replace(ketaApiUtilsConstants.REGEX.QUOTES, '') : null;
 
-			if (components.length > ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
+			if (components.length > ketaApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
 
 				var extendedValues =
-					components.slice(ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
+					components.slice(ketaApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
 				angular.forEach(extendedValues, function(extendedValue) {
-					value += ApiUtilsConstants.CHARS.QUERY_DIVIDER +
-						extendedValue.replace(ApiUtilsConstants.REGEX.QUOTES, '');
+					value += ketaApiUtilsConstants.CHARS.QUERY_DIVIDER +
+						extendedValue.replace(ketaApiUtilsConstants.REGEX.QUOTES, '');
 				});
 
 			}
@@ -123,10 +123,10 @@ angular.module('keta.utils.Api', [])
 		var getLikeSearchParam = function getLikeSearchString(searchString) {
 			var likeSearchParam = [];
 
-			likeSearchParam[ApiUtilsConstants.OPERATORS.LIKE] =
-				ApiUtilsConstants.CHARS.LIKE_EXTENDER +
+			likeSearchParam[ketaApiUtilsConstants.OPERATORS.LIKE] =
+				ketaApiUtilsConstants.CHARS.LIKE_EXTENDER +
 				searchString +
-				ApiUtilsConstants.CHARS.LIKE_EXTENDER;
+				ketaApiUtilsConstants.CHARS.LIKE_EXTENDER;
 
 			return angular.extend({}, likeSearchParam);
 
@@ -180,7 +180,7 @@ angular.module('keta.utils.Api', [])
 			if (!isBlankObject(acrossParams) &&
 				!isBlankObject(transformedParams)) {
 
-				params[ApiUtilsConstants.OPERATORS.AND] = [
+				params[ketaApiUtilsConstants.OPERATORS.AND] = [
 					angular.extend({}, acrossParams),
 					angular.extend({}, transformedParams)
 				];
@@ -220,7 +220,7 @@ angular.module('keta.utils.Api', [])
 		 *         'keta.services.DeviceSet'
 		 *     ])
 		 *     .controller('ExampleController', function(
-		 *         ApiUtils, EventBusManager, DeviceSet,
+		 *         ketaApiUtils, ketaEventBusManager, ketaDeviceSet,
 		 *     ) {
 		 *
 		 *         // search scope model for an input to get the search string
@@ -233,10 +233,10 @@ angular.module('keta.utils.Api', [])
 		 *          };
 		 *
 		 *          // get filter params
-		 *          var filter = ApiUtils.getFilterParams($scope.searchString, searchCriteria);
+		 *          var filter = ketaApiUtils.getFilterParams($scope.searchString, searchCriteria);
 		 *
 		 *         // get reply by filter
-		 *        DeviceSet.create(EventBusManager.get('kiwibus'))
+		 *        ketaDeviceSet.create(ketaEventBusManager.get('kiwibus'))
 		 *          .filter(filter)
 		 *          .project({
 		 *              tagValues: {
@@ -263,7 +263,7 @@ angular.module('keta.utils.Api', [])
 				var transformedParams = {};
 				var acrossParams = {};
 
-				var queries = filterString.match(ApiUtilsConstants.REGEX.QUERY_DIVIDER);
+				var queries = filterString.match(ketaApiUtilsConstants.REGEX.QUERY_DIVIDER);
 
 				angular.forEach(queries, function(query) {
 
@@ -284,13 +284,13 @@ angular.module('keta.utils.Api', [])
 
 					} else if (!isBlankObject(acrossParams)) {
 
-						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
-							acrossParams[ApiUtilsConstants.OPERATORS.OR]
+						acrossParams[ketaApiUtilsConstants.OPERATORS.OR] =
+							acrossParams[ketaApiUtilsConstants.OPERATORS.OR]
 								.concat(getCriteriaParams(queryComponents.key, criteriaMapping));
 
 					} else {
 
-						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+						acrossParams[ketaApiUtilsConstants.OPERATORS.OR] =
 							getCriteriaParams(queryComponents.key, criteriaMapping);
 
 					}
@@ -298,7 +298,7 @@ angular.module('keta.utils.Api', [])
 				});
 
 				if (transformedFilter.length > 1) {
-					transformedParams[ApiUtilsConstants.OPERATORS.AND] = transformedFilter;
+					transformedParams[ketaApiUtilsConstants.OPERATORS.AND] = transformedFilter;
 				} else {
 					transformedParams = angular.extend({}, transformedFilter[0]);
 				}

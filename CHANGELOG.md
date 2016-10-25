@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.7.0
+
+_Released: 2016-10-25_
+
+* **Breaking change**: All services, constants, directives and so on are now prefixed with `keta`.
+
 ## Version 0.6.8
 
 _Released: 2016-10-25_

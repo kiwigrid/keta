@@ -15,7 +15,7 @@ angular.module('keta.utils.Country', [])
 
 	// message keys with default values
 	// last updated: Tue, 25 Oct 2016 12:43:35 GMT
-	.constant('CountryUtilsMessageKeys', {
+	.constant('ketaCountryUtilsMessageKeys', {
 		'de_DE': {
 			'AF': 'Afghanistan',
 			'EG': 'Ägypten',
@@ -1553,7 +1553,7 @@ angular.module('keta.utils.Country', [])
 	 * @propertyOf keta.utils.Country
 	 * @description Country Utils Factory
 	 */
-	.factory('CountryUtils', function CountryUtils(CountryUtilsMessageKeys) {
+	.factory('ketaCountryUtils', function CountryUtils(ketaCountryUtilsMessageKeys) {
 
 		var factory = {};
 
@@ -1578,23 +1578,23 @@ angular.module('keta.utils.Country', [])
 		 * @returns {Array} all countries
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
-		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *     .controller('ExampleController', function($scope, ketaCountryUtils) {
 		 *
 		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {key: ..., value: ...}
-		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
+		 *         $scope.countries = ketaCountryUtils.getCountryList($scope.currentLocale);
 		 *
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
-		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *     .controller('ExampleController', function($scope, ketaCountryUtils) {
 		 *
 		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
-		 *             CountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
+		 *             ketaCountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
 		 *                 return {value: countryCode, name: countryName};
 		 *             });
 		 *
@@ -1610,11 +1610,11 @@ angular.module('keta.utils.Country', [])
 				currentLocale.length >= LOCALE_LENGTH ?
 					currentLocale.substr(0, LOCALE_LENGTH) : '';
 
-			if (!angular.isObject(CountryUtilsMessageKeys[currentLocale])) {
-				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
+			if (!angular.isObject(ketaCountryUtilsMessageKeys[currentLocale])) {
+				currentLocale = angular.isObject(ketaCountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
 			}
 
-			angular.forEach(CountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {
+			angular.forEach(ketaCountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {
 				countries.push(
 					angular.isFunction(accessor) ?
 						accessor(countryName, countryIsoCode) : {key: countryIsoCode, value: countryName});

@@ -9,7 +9,7 @@
 
 angular.module('keta.services.Tag', [])
 
-	.constant('TagConstants', {
+	.constant('ketaTagConstants', {
 		// TODO: include full tag unit list
 		UNIT: {
 			WATTS: 'W',
@@ -23,11 +23,11 @@ angular.module('keta.services.Tag', [])
 	})
 
 	/**
-	 * @class TagProvider
+	 * @class ketaTagProvider
 	 * @propertyOf keta.services.Tag
 	 * @description Tag Provider
 	 */
-	.provider('Tag', function TagProvider() {
+	.provider('ketaTag', function TagProvider() {
 
 		this.$get = function TagService() {
 
@@ -52,8 +52,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {string} guid
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -78,8 +78,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {string} name
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -108,8 +108,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {number} sampleRate
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -141,8 +141,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {TagInstance} TagInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'IdName',
 				 *             sampleRate: 10

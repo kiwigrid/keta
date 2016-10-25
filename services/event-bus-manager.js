@@ -10,11 +10,11 @@
 angular.module('keta.services.EventBusManager', [])
 
 	/**
-	 * @class EventBusManagerProvider
+	 * @class ketaEventBusManagerProvider
 	 * @propertyOf keta.services.EventBusManager
 	 * @description EventBusManager Provider
 	 */
-	.provider('EventBusManager', function EventBusManagerProvider() {
+	.provider('ketaEventBusManager', function EventBusManagerProvider() {
 
 		// keep reference
 		var that = this;
@@ -42,8 +42,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .remove(eventBus);
 		 *     });
@@ -64,8 +64,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .remove(eventBus);
 		 *     });
@@ -87,8 +87,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .removeAll();
 		 *     });
@@ -109,8 +109,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBus} EventBus instance if found, otherwise null
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         var eventBus = EventBusManagerProvider.get('eventBus');
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBus = ketaEventBusManagerProvider.get('eventBus');
 		 *     });
 		 */
 		this.get = function(eventBusId) {
@@ -127,8 +127,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {Object} EventBus instances map (id as key)
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         var eventBuses = EventBusManagerProvider.getAll();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBuses = ketaEventBusManagerProvider.getAll();
 		 *     });
 		 */
 		this.getAll = function() {
@@ -145,8 +145,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {void} returns nothing
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider.enableDebug();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.enableDebug();
 		 *     });
 		 */
 		this.enableDebug = function() {
@@ -163,8 +163,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {void} returns nothing
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider.disableDebug();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.disableDebug();
 		 *     });
 		 */
 		this.disableDebug = function() {
@@ -181,8 +181,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {Boolean} true if debug mode is enabled
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         if (EventBusManagerProvider.inDebugMode()) {
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         if (ketaEventBusManagerProvider.inDebugMode()) {
 		 *             // do something useful
 		 *         }
 		 *     });
@@ -194,7 +194,7 @@ angular.module('keta.services.EventBusManager', [])
 		this.$get = function EventBusManagerService() {
 
 			/**
-			 * @class EventBusManager
+			 * @class ketaEventBusManager
 			 * @propertyOf EventBusManagerProvider
 			 * @description EventBusManager Service
 			 */

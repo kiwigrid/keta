@@ -14,7 +14,7 @@ angular.module('keta.services.Device',
 		'keta.services.Logger'
 	])
 
-	.constant('DeviceConstants', {
+	.constant('ketaDeviceConstants', {
 		STATE: {
 			OK: 'OK',
 			ERROR: 'ERROR',
@@ -44,13 +44,13 @@ angular.module('keta.services.Device',
 	})
 
 	/**
-	 * @class DeviceProvider
+	 * @class ketaDeviceProvider
 	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
-	.provider('Device', function DeviceProvider() {
+	.provider('ketaDevice', function DeviceProvider() {
 
-		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
+		this.$get = function DeviceService($q, $log, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			/**
 			 * @class DeviceInstance
@@ -83,14 +83,14 @@ angular.module('keta.services.Device',
 				var sendMessage = function(message) {
 					var deferred = $q.defer();
 
-					EventBusDispatcher.send(eventBus, 'deviceservice', message, function(reply) {
+					ketaEventBusDispatcher.send(eventBus, 'deviceservice', message, function(reply) {
 
 						// log if in debug mode
-						if (EventBusManager.inDebugMode()) {
+						if (ketaEventBusManager.inDebugMode()) {
 							$log.request(['deviceservice', message, reply], $log.ADVANCED_FORMATTER);
 						}
 
-						if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
+						if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
@@ -120,8 +120,8 @@ angular.module('keta.services.Device',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid',
 				 *             tagValues: {
 				 *                 IdName: {
@@ -212,8 +212,8 @@ angular.module('keta.services.Device',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid'
 				 *         });
 				 *         device.$delete()
@@ -245,8 +245,8 @@ angular.module('keta.services.Device',
 				 * @returns {undefined} nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid',
 				 *             tagValues: {
 				 *                 IdName: {
@@ -305,8 +305,8 @@ angular.module('keta.services.Device',
 				 * @returns {DeviceInstance} DeviceInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
 				 *                     name: 'IdName',

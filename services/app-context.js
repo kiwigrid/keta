@@ -10,11 +10,11 @@
 angular.module('keta.services.AppContext', [])
 
 	/**
-	 * @class AppContextProvider
+	 * @class ketaAppContextProvider
 	 * @propertyOf keta.services.AppContext
 	 * @description App Context Provider
 	 */
-	.provider('AppContext', function AppContextProvider() {
+	.provider('ketaAppContext', function AppContextProvider() {
 
 		/**
 		 * @private
@@ -34,8 +34,8 @@ angular.module('keta.services.AppContext', [])
 		 * @returns {*} Object extracted from AppContext
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.AppContext'])
-		 *     .config(function(AppContextProvider) {
-		 *         var socketURL = AppContextProvider.get('bus.url');
+		 *     .config(function(ketaAppContextProvider) {
+		 *         var socketURL = ketaAppContextProvider.get('bus.url');
 		 *     });
 		 */
 		this.get = function(key) {
@@ -54,8 +54,8 @@ angular.module('keta.services.AppContext', [])
 		this.$get = function AppContextService() {
 
 			/**
-			 * @class AppContext
-			 * @propertyOf AppContextProvider
+			 * @class ketaAppContext
+			 * @propertyOf ketaAppContextProvider
 			 * @description AppContext Service
 			 */
 			var api = {
