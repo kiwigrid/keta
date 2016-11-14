@@ -137,14 +137,16 @@
   data-current-locale="currentLocale"
   data-display-mode="displayMode"
   data-display-value="displayValue"
+  data-element-identifier="elementIdentifier"
   data-enable-display-mode-switch="enableDisplayModeSwitch"
   data-first-day-of-week="firstDayOfWeek"
   data-labels="labels"
   data-minimum="minimum"
   data-maximum="maximum"
   data-show-pager="showPager"
-  data-show-selection-button="showSelectionButton"
-  data-show-today-button="showTodayButton"
+  data-show-jump-to-selection-button="showJumpToSelectionButton"
+  data-show-jump-to-today-button="showJumpToTodayButton"
+  data-show-select-button="showSelectButton"
   data-show-week-numbers="showWeekNumbers"
   data-years-after="yearsAfter"
   data-years-before="yearsBefore"&gt;&lt;/div&gt;</code></pre>
@@ -156,22 +158,25 @@
         $scope.model = new Date(2016, 3, 20, 9, 0, 0, 0);
 
         // css classes to use
-        $scope.cssClasses = DatePickerConstants.CSS_CLASSES;
+        $scope.cssClasses = ketaDatePickerConstants.CSS_CLASSES;
 
         // current locale to use
         $scope.currentLocale = 'de_DE';
 
-        // display mode to use (@see DatePickerConstants.DISPLAY_MODE)
-        $scope.displayMode = DatePickerConstants.DISPLAY_MODE.DAY;
+        // display mode to use (@see ketaDatePickerConstants.DISPLAY_MODE)
+        $scope.displayMode = ketaDatePickerConstants.DISPLAY_MODE.DAY;
 
         // display value to use
         $scope.displayValue = angular.copy($scope.model);
+
+        // element identifier
+        $scope.elementIdentifier = 'myDatePicker';
 
         // enable display mode switch
         $scope.enableDisplayModeSwitch = true;
 
         // define first day of week
-        $scope.firstDayOfWeek = DatePickerConstants.DAY.SUNDAY;
+        $scope.firstDayOfWeek = ketaDatePickerConstants.DAY.SUNDAY;
 
         // define labels to use
         $scope.labels = DatePickerMessageKeys;
@@ -185,11 +190,14 @@
         // show pager above
         $scope.showPager = true;
 
-        // show selection button under calendar sheet
-        $scope.showSelectionButton = true;
+        // show jump to selection button under calendar sheet
+        $scope.showJumpToSelectionButton = true;
 
-        // show today button under calendar sheet
-        $scope.showTodayButton = true;
+        // show jump to today button under calendar sheet
+        $scope.showJumpToTodayButton = true;
+
+        // show select button under calendar sheet
+        $scope.showSelectButton = true;
 
         // show week number row
         $scope.showWeekNumbers = true;

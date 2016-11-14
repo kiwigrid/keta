@@ -137,8 +137,10 @@
   data-current-locale="currentLocale"
   data-display-mode="displayMode"
   data-display-value="displayValue"
+  data-element-identifier="elementIdentifier"
   data-enable-display-mode-switch="enableDisplayModeSwitch"
   data-enable-week-selection="enableWeekSelection"
+  data-first-click="firstClick"
   data-first-day-of-week="firstDayOfWeek"
   data-labels="labels"
   data-maximum="maximum"
@@ -146,15 +148,16 @@
   data-minimum="minimum"
   data-min-range-length="minRangeLength"
   data-show-pager="showPager"
-  data-show-selection-button="showSelectionButton"
-  data-show-today-button="showTodayButton"
+  data-show-jump-to-selection-button="showJumpToSelectionButton"
+  data-show-jump-to-today-button="showJumpToTodayButton"
+  data-show-select-button="showSelectButton"
   data-show-week-numbers="showWeekNumbers"
   data-years-after="yearsAfter"
   data-years-before="yearsBefore"&gt;&lt;/div&gt;</code></pre>
 
     <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.directives.TimeRangeSelector'])
     .controller('ExampleController', function(
-    $scope, ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys
+        $scope, ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys
     ) {
 
         // current range to use
@@ -172,11 +175,17 @@
         // display value to use
         $scope.displayValue = angular.copy($scope.model);
 
+        // element identifier
+        $scope.elementIdentifier = 'myTimeRangeSelector';
+
         // enable display mode switch
         $scope.enableDisplayModeSwitch = true;
 
         // enable week selection
-        $scope.enableWeekSelection = false;
+        $scope.enableWeekSelection = true;
+
+        // define first click flag
+        $scope.firstClick = true;
 
         // define first day of week
         $scope.firstDayOfWeek = ketaTimeRangeSelectorConstants.DAY.SUNDAY;
@@ -202,11 +211,14 @@
         // show pager above
         $scope.showPager = true;
 
-        // show selection button under calendar sheet
-        $scope.showSelectionButton = true;
+        // show jump to selection button under calendar sheet
+        $scope.showJumpToSelectionButton = true;
 
-        // show today button under calendar sheet
-        $scope.showTodayButton = true;
+        // show jump to today button under calendar sheet
+        $scope.showJumpToTodayButton = true;
+
+        // show select button under calendar sheet
+        $scope.showSelectButton = true;
 
         // show week number row
         $scope.showWeekNumbers = true;
