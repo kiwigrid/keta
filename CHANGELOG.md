@@ -10,6 +10,15 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.6.9
+
+_Released: 2016-11-14_
+
+* `DatePicker`: Added `DatePickerConstants.EVENT.SELECT` event, which is emitted if a date is selected
+* `TimeRangeSelector`:
+  * Added `TimeRangeSelectorConstants.EVENT.SELECT` event, which is emitted if a date is selected by clicking on the select button
+  * Refactored selection mechanism
+
 ## Version 0.6.8
 
 _Released: 2016-10-25_

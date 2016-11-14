@@ -16,8 +16,10 @@
  *   data-current-locale="currentLocale"
  *   data-display-mode="displayMode"
  *   data-display-value="displayValue"
+ *   data-element-identifier="elementIdentifier"
  *   data-enable-display-mode-switch="enableDisplayModeSwitch"
  *   data-enable-week-selection="enableWeekSelection"
+ *   data-first-click="firstClick"
  *   data-first-day-of-week="firstDayOfWeek"
  *   data-labels="labels"
  *   data-maximum="maximum"
@@ -25,8 +27,9 @@
  *   data-minimum="minimum"
  *   data-min-range-length="minRangeLength"
  *   data-show-pager="showPager"
- *   data-show-selection-button="showSelectionButton"
- *   data-show-today-button="showTodayButton"
+ *   data-show-jump-to-selection-button="showJumpToSelectionButton"
+ *   data-show-jump-to-today-button="showJumpToTodayButton"
+ *   data-show-select-button="showSelectButton"
  *   data-show-week-numbers="showWeekNumbers"
  *   data-years-after="yearsAfter"
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
@@ -49,11 +52,17 @@
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
  *
+ *         // element identifier
+ *         $scope.elementIdentifier = 'myTimeRangeSelector';
+ *
  *         // enable display mode switch
  *         $scope.enableDisplayModeSwitch = true;
  *
  *         // enable week selection
- *         $scope.enableWeekSelection = false;
+ *         $scope.enableWeekSelection = true;
+ *
+ *         // define first click flag
+ *         $scope.firstClick = true;
  *
  *         // define first day of week
  *         $scope.firstDayOfWeek = TimeRangeSelectorConstants.DAY.SUNDAY;
@@ -79,11 +88,14 @@
  *         // show pager above
  *         $scope.showPager = true;
  *
- *         // show selection button under calendar sheet
- *         $scope.showSelectionButton = true;
+ *         // show jump to selection button under calendar sheet
+ *         $scope.showJumpToSelectionButton = true;
  *
- *         // show today button under calendar sheet
- *         $scope.showTodayButton = true;
+ *         // show jump to today button under calendar sheet
+ *         $scope.showJumpToTodayButton = true;
+ *
+ *         // show select button under calendar sheet
+ *         $scope.showSelectButton = true;
  *
  *         // show week number row
  *         $scope.showWeekNumbers = true;
@@ -125,6 +137,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 			DAY: 'day',
 			MONTH: 'month',
 			YEAR: 'year'
+		},
+		EVENT: {
+			SELECT: 'keta.directives.TimeRangeSelector.Event.Selected'
 		}
 	})
 
@@ -134,6 +149,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Days',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Months',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Years',
+			'__keta.directives.TimeRangeSelector_select': 'Select',
 			'__keta.directives.TimeRangeSelector_selection': 'Selection',
 			'__keta.directives.TimeRangeSelector_today': 'Today',
 			'__keta.directives.TimeRangeSelector_week': 'Week',
@@ -158,6 +174,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Tage',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Monate',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jahre',
+			'__keta.directives.TimeRangeSelector_select': 'Auswählen',
 			'__keta.directives.TimeRangeSelector_selection': 'Auswahl',
 			'__keta.directives.TimeRangeSelector_today': 'Heute',
 			'__keta.directives.TimeRangeSelector_week': 'Woche',
@@ -182,6 +199,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Journées',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mois',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Années',
+			'__keta.directives.TimeRangeSelector_select': 'Choisir',
 			'__keta.directives.TimeRangeSelector_selection': 'Sélection',
 			'__keta.directives.TimeRangeSelector_today': 'Aujourd’hui',
 			'__keta.directives.TimeRangeSelector_week': 'Semaine',
@@ -206,6 +224,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Dagen',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Maanden',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Jaren',
+			'__keta.directives.TimeRangeSelector_select': 'Kiezen',
 			'__keta.directives.TimeRangeSelector_selection': 'Selectie',
 			'__keta.directives.TimeRangeSelector_today': 'Vandaag',
 			'__keta.directives.TimeRangeSelector_week': 'Week',
@@ -230,6 +249,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Giorni',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Mesi',
 			'__keta.directives.TimeRangeSelector_display_mode_years': 'Anni',
+			'__keta.directives.TimeRangeSelector_select': 'Scegliere',
 			'__keta.directives.TimeRangeSelector_selection': 'Selezione',
 			'__keta.directives.TimeRangeSelector_today': 'Oggi',
 			'__keta.directives.TimeRangeSelector_week': 'Settimana',
@@ -274,11 +294,17 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// display value (date)
 				displayValue: '=?',
 
+				// element identifier
+				elementIdentifier: '=?',
+
 				// enable display mode switch
 				enableDisplayModeSwitch: '=?',
 
 				// enable week selection
 				enableWeekSelection: '=?',
+
+				// first click flag
+				firstClick: '=?',
 
 				// first day of week (0...Sun, 1...Mon, 2...Tue, 3...Wed, 4...Thu, 5...Fri, 6...Sat)
 				firstDayOfWeek: '=?',
@@ -307,11 +333,14 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// show pager above
 				showPager: '=?',
 
-				// show selection button
-				showSelectionButton: '=?',
+				// show jump to selection button
+				showJumpToSelectionButton: '=?',
 
-				// show today button
-				showTodayButton: '=?',
+				// show jump to today button
+				showJumpToTodayButton: '=?',
+
+				// show select button
+				showSelectButton: '=?',
 
 				// show week numbers
 				showWeekNumbers: '=?',
@@ -341,8 +370,6 @@ angular.module('keta.directives.TimeRangeSelector', [
 				var ISO_DATE_LENGTH_MONTH = 7;
 				var ISO_DATE_LENGTH_YEAR = 4;
 				var ISO_PADDING = 2;
-				var LAST_SELECTED_FROM = 'from';
-				var LAST_SELECTED_TO = 'to';
 				var LOCALE_SHORT_LENGTH = 5;
 				var MONTHS_PER_ROW = 3;
 				var MONTHS_PER_YEAR = 12;
@@ -357,10 +384,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 				var today = new Date();
 				today.setHours(0, 0, 0, 0);
 
-				var defaultModel = {
-					from: null,
-					to: null
-				};
+				var defaultModel = {from: null, to: null};
+
+				scope.firstClick = true;
 
 				scope.model =
 					angular.isDefined(scope.model.from) && angular.isDate(scope.model.from) &&
@@ -369,9 +395,11 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				if (scope.model.from !== null) {
 					scope.model.from.setHours(0, 0, 0, 0);
+					scope.firstClick = false;
 				}
 				if (scope.model.to !== null) {
 					scope.model.to.setHours(0, 0, 0, 0);
+					scope.firstClick = true;
 				}
 
 				scope.cssClasses =
@@ -386,12 +414,15 @@ angular.module('keta.directives.TimeRangeSelector', [
 				if (scope.displayValue === null) {
 					scope.displayValue = today;
 				}
+				scope.elementIdentifier =
+					angular.isDefined(scope.elementIdentifier) ?
+						scope.elementIdentifier : null;
 				scope.enableDisplayModeSwitch =
 					angular.isDefined(scope.enableDisplayModeSwitch) ?
 						scope.enableDisplayModeSwitch : false;
 				scope.enableWeekSelection =
 					angular.isDefined(scope.enableWeekSelection) ?
-						scope.enableWeekSelection : false;
+						scope.enableWeekSelection : true;
 				scope.firstDayOfWeek = scope.firstDayOfWeek || TimeRangeSelectorConstants.DAY.SUNDAY;
 
 				// object of labels
@@ -424,12 +455,15 @@ angular.module('keta.directives.TimeRangeSelector', [
 				scope.showPager =
 					angular.isDefined(scope.showPager) ?
 						scope.showPager : true;
-				scope.showSelectionButton =
-					angular.isDefined(scope.showSelectionButton) ?
-						scope.showSelectionButton : false;
-				scope.showTodayButton =
-					angular.isDefined(scope.showTodayButton) ?
-						scope.showTodayButton : false;
+				scope.showJumpToSelectionButton =
+					angular.isDefined(scope.showJumpToSelectionButton) ?
+						scope.showJumpToSelectionButton : false;
+				scope.showJumpToTodayButton =
+					angular.isDefined(scope.showJumpToTodayButton) ?
+						scope.showJumpToTodayButton : false;
+				scope.showSelectButton =
+					angular.isDefined(scope.showSelectButton) ?
+						scope.showSelectButton : false;
 				scope.showWeekNumbers =
 					angular.isDefined(scope.showWeekNumbers) ?
 						scope.showWeekNumbers : true;
@@ -846,9 +880,6 @@ angular.module('keta.directives.TimeRangeSelector', [
 					move(1);
 				};
 
-				// save last selected range boundary ('from' | 'to')
-				var lastSelected = LAST_SELECTED_FROM;
-
 				/**
 				 * get display mode dependent date
 				 * @param {date} date date to convert to a display mode dependent value
@@ -873,44 +904,6 @@ angular.module('keta.directives.TimeRangeSelector', [
 				};
 
 				/**
-				 * apply range length constraint (if enabled)
-				 * @param {date} from from date
-				 * @param {date} to to date
-				 * @param {number} min minimum range length in days or null
-				 * @param {number} max maximum range length in days or null
-				 * @returns {{from: *, to: *}} range
-				 */
-				var applyRangeLength = function applyRangeLength(from, to, min, max) {
-					var range = {
-						from: from,
-						to: to
-					};
-
-					// get duration in days
-					var days = moment(to).diff(moment(from), 'days');
-
-					// selection is longer than the valid max value (!== 0)
-					if (max !== 0 && days >= max) {
-						if (lastSelected === LAST_SELECTED_FROM) {
-							range.to = moment(from).add(max - 1, 'days').toDate();
-						} else {
-							range.from = moment(to).subtract(max - 1, 'days').toDate();
-						}
-					}
-
-					// selection is shorter than the valid min value (!== 0)
-					if (min !== 0 && days <= min) {
-						if (lastSelected === LAST_SELECTED_FROM) {
-							range.to = moment(from).add(min - 1, 'days').toDate();
-						} else {
-							range.from = moment(to).subtract(min - 1, 'days').toDate();
-						}
-					}
-
-					return range;
-				};
-
-				/**
 				 * apply boundaries constraint (if enabled)
 				 * @param {date} from from date
 				 * @param {date} to to date
@@ -919,15 +912,12 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 * @returns {{from: *, to: *}} range
 				 */
 				var applyBoundaries = function applyBoundaries(from, to, min, max) {
-					var range = {
-						from: from,
-						to: to
-					};
+
+					var range = {from: from, to: to};
 
 					if (min !== null && range.from < min) {
 						range.from = min;
 					}
-
 					if (max !== null && range.to > max) {
 						range.to = max;
 					}
@@ -936,84 +926,49 @@ angular.module('keta.directives.TimeRangeSelector', [
 				};
 
 				/**
-				 * select given date
-				 * @param {date} date date selected
+				 * apply range length constraint (if enabled)
+				 * @param {date} from from date
+				 * @param {date} to to date
+				 * @param {number} min minimum range length in days or null
+				 * @param {number} max maximum range length in days or null
+				 * @returns {{from: *, to: *}} range
+				 */
+				var applyRangeLength = function applyRangeLength(from, to, min, max) {
+
+					var range = {from: from, to: to};
+
+					// get duration in days
+					var days = moment(to).diff(moment(from), 'days');
+
+					// selection is longer than the valid max value (!== 0)
+					if (max !== 0 && days >= max) {
+						range.to = moment(from).add(max - 1, 'days').toDate();
+					}
+
+					// selection is shorter than the valid min value (!== 0)
+					if (min !== 0 && days <= min) {
+						range.to = moment(from).add(min - 1, 'days').toDate();
+					}
+
+					return range;
+				};
+
+				/**
+				 * set display mode by display mode switcher or sheet title
+				 * @param {string} mode to set
 				 * @returns {void} nothing
 				 */
-				scope.select = function select(date) {
+				scope.setDisplayMode = function(mode) {
+					if (mode !== scope.displayMode) {
 
-					// keep date within boundaries
-					if (scope.minimum !== null && date.getTime() < scope.minimum) {
-						date = new Date(scope.minimum);
-					}
-					if (scope.maximum !== null && date.getTime() > scope.maximum) {
-						date = new Date(scope.maximum);
-					}
+						// reset selection if display mode changes
+						scope.model = {from: null, to: null};
+						scope.firstClick = true;
 
-					if (scope.model.from === null && scope.model.to === null) {
-
-						// if we have no range at all, set from and to to date
-						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-						lastSelected = LAST_SELECTED_FROM;
-
-					} else if (angular.equals(scope.model.from, date)) {
-
-						// if we got a click on current from, set to to date
-						scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
-						lastSelected = LAST_SELECTED_TO;
-
-					} else if (angular.equals(scope.model.to, date)) {
-
-						// if we got a click on current to, set from to date
-						scope.model.from = getDisplayModeDate(scope.model.to, scope.displayMode, true);
-						lastSelected = LAST_SELECTED_FROM;
-
-					} else if (date.getTime() < scope.model.from.getTime()) {
-
-						// if we got a click before from, set from to date
-						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-						lastSelected = LAST_SELECTED_FROM;
-
-					} else if (date.getTime() > scope.model.to.getTime()) {
-
-						// if we got a click after to, set to to date
-						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-						lastSelected = LAST_SELECTED_TO;
-
-					} else if (lastSelected === LAST_SELECTED_FROM) {
-
-						// if we got a click in between and last selected is from, set to to date
-						// shorten range from from to date
-						scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
-						lastSelected = LAST_SELECTED_TO;
-
-					} else {
-
-						// if we got a click in between and last selected is to, set from to date
-						// shorten range from date to to
-						scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
-						lastSelected = LAST_SELECTED_FROM;
+						scope.displayMode = mode;
+						update();
 
 					}
-
-					// apply minRangeLength and maxRangeLength
-					scope.model = applyRangeLength(
-						scope.model.from, scope.model.to,
-						scope.minRangeLength, scope.maxRangeLength
-					);
-
-					// apply minimum and maximum
-					scope.model = applyBoundaries(
-						scope.model.from, scope.model.to,
-						scope.minimum, scope.maximum
-					);
-
-					// update display value
-					scope.displayValue =
-						lastSelected === LAST_SELECTED_FROM ?
-							angular.copy(scope.model.from) : angular.copy(scope.model.to);
-
 				};
 
 				/**
@@ -1035,6 +990,54 @@ angular.module('keta.directives.TimeRangeSelector', [
 						scope.enableWeekSelection) {
 						scope.model.from = getDisplayModeDate(firstOfWeek, scope.displayMode, true);
 						scope.model.to = getDisplayModeDate(lastOfWeek, scope.displayMode, false);
+						scope.firstClick = true;
+					}
+
+				};
+
+				/**
+				 * select given date as from or to depending on first click flag
+				 * @param {date} date date selected
+				 * @returns {void} nothing
+				 */
+				scope.select = function select(date) {
+
+					// check out of bounds
+					if (!scope.isOutOfBounds(date)) {
+
+						if (scope.firstClick) {
+							scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
+							scope.model.to = null;
+							scope.firstClick = false;
+						} else {
+							var toBeforeFrom = date.getTime() < scope.model.from.getTime();
+							if (toBeforeFrom) {
+								scope.model.from = getDisplayModeDate(date, scope.displayMode, true);
+								scope.model.to = null;
+								scope.firstClick = false;
+							} else {
+								scope.model.to = getDisplayModeDate(date, scope.displayMode, false);
+								scope.firstClick = true;
+							}
+						}
+
+						// apply minRangeLength and maxRangeLength
+						scope.model = applyRangeLength(
+							scope.model.from, scope.model.to,
+							scope.minRangeLength, scope.maxRangeLength
+						);
+
+						// apply minimum and maximum
+						scope.model = applyBoundaries(
+							scope.model.from, scope.model.to,
+							scope.minimum, scope.maximum
+						);
+
+						// update display value
+						scope.displayValue =
+							scope.firstClick ?
+								angular.copy(scope.model.to) : angular.copy(scope.model.from);
+
 					}
 
 				};
@@ -1045,8 +1048,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 */
 				scope.goToSelection = function goToSelection() {
 					if (scope.model.from !== null) {
-						scope.displayValue = lastSelected === LAST_SELECTED_FROM ?
-							angular.copy(scope.model.from) : angular.copy(scope.model.to);
+						scope.displayValue = angular.copy(scope.model.from);
 					}
 				};
 
@@ -1061,24 +1063,25 @@ angular.module('keta.directives.TimeRangeSelector', [
 				};
 
 				/**
-				 * set display mode
-				 * @param {string} mode new display mode
+				 * submit
 				 * @returns {void} nothing
 				 */
-				scope.setDisplayMode = function setDisplayMode(mode) {
-					scope.displayMode = mode;
-					update();
-				};
+				scope.submit = function submit() {
 
-				/**
-				 * set view and display after click on month or year
-				 * @param {date} date date to show on calender
-				 * @param {string} displayMode which display mode should be shown after click
-				 * @return {void} nothing
-				 */
-				scope.setView = function setView(date, displayMode) {
-					scope.displayValue = angular.copy(date);
-					scope.displayMode = displayMode;
+					// if only from was selected and submitted afterwards automatically set to
+					if (scope.model.from !== null && scope.model.to === null) {
+						scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
+					}
+
+					// emit event
+					scope.$emit(
+						TimeRangeSelectorConstants.EVENT.SELECT,
+						{
+							id: scope.elementIdentifier,
+							model: scope.model
+						}
+					);
+
 				};
 
 
@@ -1113,26 +1116,6 @@ angular.module('keta.directives.TimeRangeSelector', [
 					}
 				});
 
-				// watcher for max range length
-				scope.$watch('maxRangeLength', function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						scope.model = applyRangeLength(
-							scope.model.from, scope.model.to,
-							scope.minRangeLength, newValue
-						);
-					}
-				});
-
-				// watcher for min range length
-				scope.$watch('minRangeLength', function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						scope.model = applyRangeLength(
-							scope.model.from, scope.model.to,
-							newValue, scope.maxRangeLength
-						);
-					}
-				});
-
 				// watcher for maximum
 				scope.$watch('maximum', function(newValue, oldValue) {
 					if (newValue !== oldValue) {
@@ -1149,6 +1132,26 @@ angular.module('keta.directives.TimeRangeSelector', [
 						scope.model = applyBoundaries(
 							scope.model.from, scope.model.to,
 							newValue, scope.maximum
+						);
+					}
+				});
+
+				// watcher for max range length
+				scope.$watch('maxRangeLength', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						scope.model = applyRangeLength(
+							scope.model.from, scope.model.to,
+							scope.minRangeLength, newValue
+						);
+					}
+				});
+
+				// watcher for min range length
+				scope.$watch('minRangeLength', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						scope.model = applyRangeLength(
+							scope.model.from, scope.model.to,
+							newValue, scope.maxRangeLength
 						);
 					}
 				});
@@ -1180,13 +1183,13 @@ angular.module('keta.directives.TimeRangeSelector')
 '	<p class="text-center display-mode-switcher" data-ng-if="showDisplayModeSwitcher">' +
 '		<strong data-ng-if="displayMode === DISPLAY_MODE_DAY">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_days\'] }}</strong>' +
 '		<a href="" data-ng-if="displayMode !== DISPLAY_MODE_DAY"' +
-'			data-ng-click="setView(displayValue, DISPLAY_MODE_DAY)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_days\'] }}</a> |' +
+'			data-ng-click="setDisplayMode(DISPLAY_MODE_DAY)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_days\'] }}</a> |' +
 '		<strong data-ng-if="displayMode === DISPLAY_MODE_MONTH">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_months\'] }}</strong>' +
 '		<a href="" data-ng-if="displayMode !== DISPLAY_MODE_MONTH"' +
-'			data-ng-click="setView(displayValue, DISPLAY_MODE_MONTH)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_months\'] }}</a> |' +
+'			data-ng-click="setDisplayMode(DISPLAY_MODE_MONTH)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_months\'] }}</a> |' +
 '		<strong data-ng-if="displayMode === DISPLAY_MODE_YEAR">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_years\'] }}</strong>' +
 '		<a href="" data-ng-if="displayMode !== DISPLAY_MODE_YEAR"' +
-'			data-ng-click="setView(displayValue, DISPLAY_MODE_YEAR)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_years\'] }}</a>' +
+'			data-ng-click="setDisplayMode(DISPLAY_MODE_YEAR)">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_display_mode_years\'] }}</a>' +
 '	</p>' +
 '' +
 '	<!-- pager -->' +
@@ -1259,12 +1262,15 @@ angular.module('keta.directives.TimeRangeSelector')
 '	</table>' +
 '' +
 '	<!-- quick links -->' +
-'	<ul class="pager pager-quick-links" data-ng-if="showSelectionButton || showTodayButton">' +
+'	<ul class="pager pager-quick-links"' +
+'		data-ng-if="showJumpToSelectionButton || showJumpToTodayButton || showSelectButton">' +
 '		<li class="text-center">' +
-'			<a href="" data-ng-if="showTodayButton"' +
+'			<a href="" data-ng-if="showJumpToTodayButton"' +
 '				data-ng-click="goToToday()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_today\'] }}</a>' +
-'			<a href="" data-ng-if="showSelectionButton"' +
+'			<a href="" data-ng-if="showJumpToSelectionButton"' +
 '				data-ng-click="goToSelection()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_selection\'] }}</a>' +
+'			<a href="" data-ng-if="showSelectButton"' +
+'				data-ng-click="submit()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_select\'] }}</a>' +
 '		</li>' +
 '	</ul>' +
 '' +

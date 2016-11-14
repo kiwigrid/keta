@@ -16,14 +16,16 @@
  *   data-current-locale="currentLocale"
  *   data-display-mode="displayMode"
  *   data-display-value="displayValue"
+ *   data-element-identifier="elementIdentifier"
  *   data-enable-display-mode-switch="enableDisplayModeSwitch"
  *   data-first-day-of-week="firstDayOfWeek"
  *   data-labels="labels"
  *   data-minimum="minimum"
  *   data-maximum="maximum"
  *   data-show-pager="showPager"
- *   data-show-selection-button="showSelectionButton"
- *   data-show-today-button="showTodayButton"
+ *   data-show-jump-to-selection-button="showJumpToSelectionButton"
+ *   data-show-jump-to-today-button="showJumpToTodayButton"
+ *   data-show-select-button="showSelectButton"
  *   data-show-week-numbers="showWeekNumbers"
  *   data-years-after="yearsAfter"
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
@@ -46,6 +48,9 @@
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
  *
+ *         // element identifier
+ *         $scope.elementIdentifier = 'myDatePicker';
+ *
  *         // enable display mode switch
  *         $scope.enableDisplayModeSwitch = true;
  *
@@ -64,11 +69,14 @@
  *         // show pager above
  *         $scope.showPager = true;
  *
- *         // show selection button under calendar sheet
- *         $scope.showSelectionButton = true;
+ *         // show jump to selection button under calendar sheet
+ *         $scope.showJumpToSelectionButton = true;
  *
- *         // show today button under calendar sheet
- *         $scope.showTodayButton = true;
+ *         // show jump to today button under calendar sheet
+ *         $scope.showJumpToTodayButton = true;
+ *
+ *         // show select button under calendar sheet
+ *         $scope.showSelectButton = true;
  *
  *         // show week number row
  *         $scope.showWeekNumbers = true;
@@ -108,12 +116,16 @@ angular.module('keta.directives.DatePicker', [
 			DAY: 'day',
 			MONTH: 'month',
 			YEAR: 'year'
+		},
+		EVENT: {
+			SELECT: 'keta.directives.DatePicker.Event.Selected'
 		}
 	})
 
 	// message keys with default values
 	.constant('DatePickerMessageKeys', {
 		'en_GB': {
+			'__keta.directives.DatePicker_select': 'Select',
 			'__keta.directives.DatePicker_selection': 'Selection',
 			'__keta.directives.DatePicker_today': 'Today',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -135,6 +147,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
 		'de_DE': {
+			'__keta.directives.DatePicker_select': 'Auswählen',
 			'__keta.directives.DatePicker_selection': 'Auswahl',
 			'__keta.directives.DatePicker_today': 'Heute',
 			'__keta.directives.DatePicker_week': 'Woche',
@@ -156,6 +169,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number_short': 'KW'
 		},
 		'fr_FR': {
+			'__keta.directives.DatePicker_select': 'Choisir',
 			'__keta.directives.DatePicker_selection': 'Sélection',
 			'__keta.directives.DatePicker_today': 'Aujourd’hui',
 			'__keta.directives.DatePicker_week': 'Semaine',
@@ -177,6 +191,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number_short': 'Sem.'
 		},
 		'nl_NL': {
+			'__keta.directives.DatePicker_select': 'Kiezen',
 			'__keta.directives.DatePicker_selection': 'Selectie',
 			'__keta.directives.DatePicker_today': 'Vandaag',
 			'__keta.directives.DatePicker_week': 'Week',
@@ -198,6 +213,7 @@ angular.module('keta.directives.DatePicker', [
 			'__keta.directives.DatePicker_week_number_short': 'Wn'
 		},
 		'it_IT': {
+			'__keta.directives.DatePicker_select': 'Scegliere',
 			'__keta.directives.DatePicker_selection': 'Selezione',
 			'__keta.directives.DatePicker_today': 'Oggi',
 			'__keta.directives.DatePicker_week': 'Settimana',
@@ -242,6 +258,9 @@ angular.module('keta.directives.DatePicker', [
 				// display value (date)
 				displayValue: '=?',
 
+				// element identifier
+				elementIdentifier: '=?',
+
 				// enable display mode switch
 				enableDisplayModeSwitch: '=?',
 
@@ -263,11 +282,14 @@ angular.module('keta.directives.DatePicker', [
 				// show pager above
 				showPager: '=?',
 
-				// show selection button
-				showSelectionButton: '=?',
+				// show jump to selection button
+				showJumpToSelectionButton: '=?',
 
-				// show today button
-				showTodayButton: '=?',
+				// show jump to today button
+				showJumpToTodayButton: '=?',
+
+				// show select button
+				showSelectButton: '=?',
 
 				// show week numbers
 				showWeekNumbers: '=?',
@@ -323,6 +345,9 @@ angular.module('keta.directives.DatePicker', [
 				scope.displayValue =
 					angular.isDate(scope.displayValue) ?
 						new Date(scope.displayValue.setHours(0, 0, 0, 0)) : angular.copy(scope.model);
+				scope.elementIdentifier =
+					angular.isDefined(scope.elementIdentifier) ?
+						scope.elementIdentifier : null;
 				scope.enableDisplayModeSwitch =
 					angular.isDefined(scope.enableDisplayModeSwitch) ?
 						scope.enableDisplayModeSwitch : true;
@@ -347,12 +372,15 @@ angular.module('keta.directives.DatePicker', [
 				scope.showPager =
 					angular.isDefined(scope.showPager) ?
 						scope.showPager : true;
-				scope.showSelectionButton =
-					angular.isDefined(scope.showSelectionButton) ?
-						scope.showSelectionButton : false;
-				scope.showTodayButton =
-					angular.isDefined(scope.showTodayButton) ?
-						scope.showTodayButton : false;
+				scope.showJumpToSelectionButton =
+					angular.isDefined(scope.showJumpToSelectionButton) ?
+						scope.showJumpToSelectionButton : false;
+				scope.showJumpToTodayButton =
+					angular.isDefined(scope.showJumpToTodayButton) ?
+						scope.showJumpToTodayButton : false;
+				scope.showSelectButton =
+					angular.isDefined(scope.showSelectButton) ?
+						scope.showSelectButton : false;
 				scope.showWeekNumbers =
 					angular.isDefined(scope.showWeekNumbers) ?
 						scope.showWeekNumbers : true;
@@ -730,6 +758,20 @@ angular.module('keta.directives.DatePicker', [
 				};
 
 				/**
+				 * submit
+				 * @returns {void} nothing
+				 */
+				scope.submit = function submit() {
+					scope.$emit(
+						DatePickerConstants.EVENT.SELECT,
+						{
+							id: scope.elementIdentifier,
+							model: scope.model
+						}
+					);
+				};
+
+				/**
 				 * select date as from or to or disable selection
 				 * @param {date} date date selected
 				 * @returns {void} nothing
@@ -737,6 +779,7 @@ angular.module('keta.directives.DatePicker', [
 				scope.select = function select(date) {
 					if (!scope.isOutOfBounds(date)) {
 						scope.model = date;
+						scope.submit();
 					}
 				};
 
@@ -904,12 +947,15 @@ angular.module('keta.directives.DatePicker')
 '		</tr>' +
 '	</table>' +
 '' +
-'	<ul class="pager pager-quick-links" data-ng-if="showSelectionButton || showTodayButton">' +
+'	<ul class="pager pager-quick-links"' +
+'		data-ng-if="showJumpToSelectionButton || showJumpToTodayButton || showSelectButton">' +
 '		<li class="text-center">' +
-'			<a href="" data-ng-if="showTodayButton"' +
+'			<a href="" data-ng-if="showJumpToTodayButton"' +
 '				data-ng-click="goToToday()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_today\'] }}</a>' +
-'			<a href="" data-ng-if="showSelectionButton"' +
+'			<a href="" data-ng-if="showJumpToSelectionButton"' +
 '				data-ng-click="goToSelection()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_selection\'] }}</a>' +
+'			<a href="" data-ng-if="showSelectButton"' +
+'				data-ng-click="submit()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_select\'] }}</a>' +
 '		</li>' +
 '	</ul>' +
 '' +
