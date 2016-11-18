@@ -11,7 +11,7 @@
  *   Toggle, App Title, User Menu, Language Menu and Energy Manager Menu).
  * </p>
  * @example
- * &lt;div data-keta-app-bar
+ * &lt;div data-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
@@ -26,7 +26,7 @@
  *     &lt;/a&gt;
  * &lt;/div&gt;
  * @example
- * &lt;div data-keta-app-bar
+ * &lt;div data-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
@@ -41,7 +41,7 @@
  * &lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.AppBar'])
- *     .controller('ExampleController', function($scope, ketaAppBarMessageKeys) {
+ *     .controller('ExampleController', function($scope, AppBarMessageKeys) {
  *
  *         // id of eventBus instance to use to retrieve data
  *         $scope.eventBusId = 'kiwibus';
@@ -66,7 +66,7 @@
  *
  *         // override default-labels if necessary
  *         // get default labels
- *         $scope.labels = ketaAppBarMessageKeys;
+ *         $scope.labels = AppBarMessageKeys;
  *
  *         // use case 1: overwrite specific key
  *         $scope.labels.de_DE['__keta.directives.AppBar_app_title'] = 'Meine App';
@@ -178,10 +178,11 @@ angular.module('keta.directives.AppBar',
 		'keta.services.EventBusDispatcher',
 		'keta.services.EventBusManager',
 		'keta.services.User',
+		'keta.utils.Application',
 		'keta.utils.Common'
 	])
 
-	.constant('ketaAppBarConstants', {
+	.constant('AppBarConstants', {
 		COMPONENT: {
 			WORLD_SWITCHER: 'worldSwitcher',
 			MENU_BAR_TOGGLE: 'menuBarToggle',
@@ -220,7 +221,7 @@ angular.module('keta.directives.AppBar',
 	})
 
 	// message keys with default values
-	.constant('ketaAppBarMessageKeys', {
+	.constant('AppBarMessageKeys', {
 		'en_GB': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'All Apps',
@@ -273,11 +274,10 @@ angular.module('keta.directives.AppBar',
 		}
 	})
 
-	.directive('ketaAppBar', function AppBarDirective(
+	.directive('appBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter, $log,
-		ketaEventBusDispatcher, ketaEventBusManager, ketaDeviceSet, ketaApplicationSet, ketaUser, ketaAccessToken,
-		ketaAccessTokenConstants, ketaAppBarConstants, ketaAppBarMessageKeys, ketaDeviceConstants,
-		ketaSidebarConstants, ketaCommonUtils
+		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
+		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, ApplicationUtils, CommonUtils
 	) {
 
 		return {
@@ -338,21 +338,20 @@ angular.module('keta.directives.AppBar',
 
 				// event bus
 				scope.eventBusId = scope.eventBusId || 'kiwibus';
-				var eventBus = ketaEventBusManager.get(scope.eventBusId);
+				var eventBus = EventBusManager.get(scope.eventBusId);
 
-				var STATES = ketaAppBarConstants.STATE;
-				var SIZES = ketaAppBarConstants.SIZE;
+				var STATES = AppBarConstants.STATE;
+				var SIZES = AppBarConstants.SIZE;
 
 				var DEFAULT_CONTAINER_HEIGHT = 120;
 
-				scope.MENU_ELEMENTS = ketaAppBarConstants.COMPONENT;
+				scope.MENU_ELEMENTS = AppBarConstants.COMPONENT;
 
 				var DECIMAL_RADIX = 10,
 					HIDDEN_CLASS_PREFIX = 'hidden-',
 					VISIBLE_CLASS_PREFIX = 'visible-';
 
-				var DEFAULT_LOCALE_FALLBACK = 'en_GB',
-					LOCALE_SHORT_LENGTH = 2;
+				var DEFAULT_LOCALE_FALLBACK = 'en_GB';
 
 				// all sizes have NONE state
 				var sizesFullState = {};
@@ -507,21 +506,21 @@ angular.module('keta.directives.AppBar',
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.AppBar';
-				scope.labels = angular.extend(ketaAppBarMessageKeys, scope.labels);
+				scope.labels = angular.extend(AppBarMessageKeys, scope.labels);
 
 				scope.getLabel = function getLabel(key) {
-					return ketaCommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
+					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
 
 				// get access token
-				var accessToken = ketaAccessToken.decode(ketaAccessToken.get());
+				var accessToken = AccessToken.decode(AccessToken.get());
 
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
 					APP_ROOT:
 						accessToken !== null && angular.isDefined(accessToken.user_id) ?
-							ketaCommonUtils.addUrlParameter('/', 'userId', accessToken.user_id) : '/',
+							CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id) : '/',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
@@ -548,11 +547,10 @@ angular.module('keta.directives.AppBar',
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
 
 				var defaultToggles = {};
-				defaultToggles[ketaAppBarConstants.USER_ROLE.DEMO_USER] = {};
-				defaultToggles[ketaAppBarConstants.USER_ROLE.DEMO_USER]
-					[ketaAppBarConstants.TOGGLES.USER_PROFILE] = false;
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER] = {};
+				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER][AppBarConstants.TOGGLES.USER_PROFILE] = false;
 
-				scope.AVAILABLE_TOGGLES = ketaAppBarConstants.TOGGLES;
+				scope.AVAILABLE_TOGGLES = AppBarConstants.TOGGLES;
 
 				/**
 				 * update toggles
@@ -586,83 +584,80 @@ angular.module('keta.directives.AppBar',
 					scope.links.USER_LOGOUT =
 						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
-					// TODO: re-enable filter if it is used on backend
-					if (eventBus !== null) {
-						ketaApplicationSet.create(eventBus)
-							/*
-							.filter({
-								appId: ketaAppBarConstants.ROOT_APP_ID
-							})
-							*/
-							.query()
-							.then(function(reply) {
-								if (angular.isDefined(reply.result) &&
-									angular.isDefined(reply.result.items)) {
+					ApplicationUtils.getAppList({
+						eventBusId: scope.eventBusId,
+						filter: {
+							appId: AppBarConstants.ROOT_APP_ID
+						}
+					}).then(function(reply) {
 
-									var entryUri = null;
-									var name = {};
-									scope.rootApp = null;
-									angular.forEach(reply.result.items, function(app) {
-										if (angular.isDefined(app.appId) &&
-											app.appId === ketaAppBarConstants.ROOT_APP_ID &&
-											angular.isDefined(app.entryUri)) {
-											entryUri = app.entryUri;
-											if (ketaCommonUtils.doesPropertyExist(app, 'meta.i18n')) {
-												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
-													angular.forEach(scope.locales, function(availableLocale) {
-														if (angular.isDefined(availableLocale.code) &&
-															availableLocale.code.substr(0, LOCALE_SHORT_LENGTH)
-																=== locale) {
-															name[availableLocale.code] =
-																app.meta.i18n[locale].name;
-														}
-													});
-												});
+						var entryUri = null;
+						var name = {};
+						scope.rootApp = null;
+
+						angular.forEach(reply.result.items, function(app) {
+							if (angular.isDefined(app.appId) &&
+								app.appId === AppBarConstants.ROOT_APP_ID &&
+								angular.isDefined(app.entryUri)) {
+
+								// set entry uri
+								entryUri = app.entryUri;
+
+								// set name
+								if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
+									angular.forEach(Object.keys(app.meta.i18n), function(locale) {
+										angular.forEach(scope.locales, function(availableLocale) {
+											if (angular.isDefined(availableLocale.code) &&
+												availableLocale.code === locale) {
+												name[availableLocale.code] = app.meta.i18n[locale].name;
 											}
-										}
-									});
-
-									// use link-element to easily access url params
-									var link = document.createElement('a');
-									link.href = entryUri;
-
-									if (entryUri !== null) {
-										scope.rootApp = {};
-										scope.rootApp.link =
-											ketaCommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
-										scope.rootApp.name = name;
-										scope.worlds.unshift({
-											name: 'Desktop',
-											link: scope.rootApp.link
 										});
-									}
-
-									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS :
-										ketaCommonUtils.addUrlParameter(
-											entryUri + '#/applications', 'userId', accessToken.user_id
-										);
-
-									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE :
-										ketaCommonUtils.addUrlParameter(
-											entryUri + '#/user', 'userId', accessToken.user_id
-										);
-
-									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										var allManagersUri =
-											ketaCommonUtils.addUrlParameter(
-												entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
-											);
-										scope.links.ALL_ENERGY_MANAGERS =
-											ketaCommonUtils.addUrlParameter(
-												allManagersUri + '#/devices', 'userId', accessToken.user_id
-											);
-									}
-
+									});
 								}
+
+							}
+						});
+
+						// use link-element to easily access url params
+						var link = document.createElement('a');
+						link.href = entryUri;
+
+						if (entryUri !== null) {
+							scope.rootApp = {};
+							scope.rootApp.link =
+								CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
+							scope.rootApp.name = name;
+							scope.worlds.unshift({
+								name: 'Desktop',
+								link: scope.rootApp.link
 							});
-					}
+						}
+
+						scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
+							scope.links.ALL_APPS :
+							CommonUtils.addUrlParameter(
+								entryUri + '#/applications', 'userId', accessToken.user_id
+							);
+
+						scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
+							scope.links.USER_PROFILE :
+							CommonUtils.addUrlParameter(
+								entryUri + '#/user', 'userId', accessToken.user_id
+							);
+
+						if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
+							var allManagersUri =
+								CommonUtils.addUrlParameter(
+									entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
+								);
+							scope.links.ALL_ENERGY_MANAGERS =
+								CommonUtils.addUrlParameter(
+									allManagersUri + '#/devices', 'userId', accessToken.user_id
+								);
+						}
+
+					});
+
 				};
 
 				var allLinkKeysAlreadySet = true;
@@ -739,10 +734,10 @@ angular.module('keta.directives.AppBar',
 						angular.isDefined(scope.user.userId) &&
 						isMenuVisible(scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU)) {
 
-						ketaDeviceSet.create(eventBus)
+						DeviceSet.create(eventBus)
 							.filter({
 								'deviceModel.deviceClass': {
-									'$in': [ketaDeviceConstants.CLASS.ENERGY_MANAGER]
+									'$in': [DeviceConstants.CLASS.ENERGY_MANAGER]
 								},
 								owner: scope.user.userId
 							})
@@ -804,7 +799,7 @@ angular.module('keta.directives.AppBar',
 				 */
 				var readLocaleFromUserProp = function readLocaleFromUserProp() {
 
-					if (ketaCommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
+					if (CommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
 						isLocaleAvailable(scope.user.properties.locale.code)) {
 						scope.currentLocale = scope.user.properties.locale.code;
 					}
@@ -831,13 +826,13 @@ angular.module('keta.directives.AppBar',
 						properties: scope.user.properties
 					};
 
-					ketaEventBusDispatcher.send(eventBus, 'userservice', {
+					EventBusDispatcher.send(eventBus, 'userservice', {
 						action: 'mergeUser',
 						body: body,
 						params: params
 					}, function(reply) {
 						// log if in debug mode
-						if (ketaEventBusManager.inDebugMode()) {
+						if (EventBusManager.inDebugMode()) {
 							$log.request(['userservice', {
 								action: 'mergeUser',
 								params: params,
@@ -865,7 +860,7 @@ angular.module('keta.directives.AppBar',
 
 				// query current user
 				if (eventBus !== null) {
-					ketaUser.getCurrent(eventBus)
+					User.getCurrent(eventBus)
 						.then(function(reply) {
 							scope.user = reply;
 							readLocaleFromUserProp();
@@ -882,10 +877,10 @@ angular.module('keta.directives.AppBar',
 				 */
 				scope.isImpersonated = function isImpersonated() {
 					var result = false;
-					if (ketaAccessToken.isType(ketaAccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+					if (AccessToken.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
 						scope.impersonationInfo = {
-							userId: ketaAccessToken.getUserId(),
-							backUrl: ketaAccessToken.getBackUrl()
+							userId: AccessToken.getUserId(),
+							backUrl: AccessToken.getBackUrl()
 						};
 						result = true;
 					}
@@ -902,14 +897,14 @@ angular.module('keta.directives.AppBar',
 					var enabled = true;
 
 					var userRoleScores = {};
-					userRoleScores[ketaAppBarConstants.USER_ROLE.DEMO_USER] = 1;
-					userRoleScores[ketaAppBarConstants.USER_ROLE.USER] = 2;
-					userRoleScores[ketaAppBarConstants.USER_ROLE.FITTER] = 3;
-					userRoleScores[ketaAppBarConstants.USER_ROLE.SERVICE] = 4;
-					userRoleScores[ketaAppBarConstants.USER_ROLE.ADMIN] = 5;
-					userRoleScores[ketaAppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
+					userRoleScores[AppBarConstants.USER_ROLE.DEMO_USER] = 1;
+					userRoleScores[AppBarConstants.USER_ROLE.USER] = 2;
+					userRoleScores[AppBarConstants.USER_ROLE.FITTER] = 3;
+					userRoleScores[AppBarConstants.USER_ROLE.SERVICE] = 4;
+					userRoleScores[AppBarConstants.USER_ROLE.ADMIN] = 5;
+					userRoleScores[AppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
 
-					var userRole = ketaAppBarConstants.USER_ROLE.DEMO_USER;
+					var userRole = AppBarConstants.USER_ROLE.DEMO_USER;
 
 					if (angular.isDefined(scope.user) && angular.isDefined(scope.user.roles)) {
 						scope.user.roles.forEach(function(role) {
@@ -1030,10 +1025,10 @@ angular.module('keta.directives.AppBar',
 				scope.toggleSidebar = function toggleSidebar($event, position) {
 					$event.stopPropagation();
 					scope.closeAllMenus();
-					if (position === ketaSidebarConstants.POSITION.LEFT) {
-						$rootScope.$broadcast(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT);
-					} else if (position === ketaSidebarConstants.POSITION.RIGHT) {
-						$rootScope.$broadcast(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT);
+					if (position === SidebarConstants.POSITION.LEFT) {
+						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT);
+					} else if (position === SidebarConstants.POSITION.RIGHT) {
+						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT);
 					}
 				};
 

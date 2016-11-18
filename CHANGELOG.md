@@ -10,20 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
-## Version 0.7.1
+## Version 0.6.10
 
-_Released: 2016-11-14_
+_Released: 2016-11-18_
 
-* `ketaDatePicker`: Added `ketaDatePickerConstants.EVENT.SELECT` event, which is emitted if a date is selected
-* `ketaTimeRangeSelector`:
-  * Added `ketaTimeRangeSelectorConstants.EVENT.SELECT` event, which is emitted if a date is selected by clicking on the select button
-  * Refactored selection mechanism
-
-## Version 0.7.0
-
-_Released: 2016-10-25_
-
-* **Breaking change**: All services, constants, directives and so on are now prefixed with `keta`.
+* Refactored `AppBar` directive to use `ApplicationUtils`
+* Added check for valid reply to `EventBusDispatcher.send` method
 
 ## Version 0.6.9
 

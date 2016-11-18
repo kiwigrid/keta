@@ -18,16 +18,16 @@
  *     .controller('ExampleController', function($scope) {
  *
  *         // return object values in given order (all other values are dismissed)
- *         $scope.orderedProps = $filter('ketaOrderObjectBy')($scope.row, ['col1', 'col2']);
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
  *
  *         // return object keys in given order (all other keys are dismissed)
- *         $scope.orderedProps = $filter('ketaOrderObjectBy')($scope.row, ['col1', 'col2'], true);
+ *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
  *
  *     });
  */
 
 angular.module('keta.filters.OrderObjectBy', [])
-	.filter('ketaOrderObjectBy', function() {
+	.filter('orderObjectBy', function() {
 		return function(input, order, returnKey) {
 
 			if (!angular.isObject(input)) {

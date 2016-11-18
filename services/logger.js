@@ -41,7 +41,7 @@ angular.module('keta.services.Logger',
 	 * @propertyOf keta.services.Logger
 	 * @description Logger Config
 	 */
-	.config(function LoggerConfig($provide, ketaAppContextProvider) {
+	.config(function LoggerConfig($provide, AppContextProvider) {
 
 		/**
 		 * @class LoggerDecorator
@@ -109,9 +109,9 @@ angular.module('keta.services.Logger',
 					var args = Array.prototype.slice.call(arguments);
 
 					// check logLevel and adjust console output accordingly through bitmask
-					if (ketaAppContextProvider.get('common.logLevel') === null ||
-						ketaAppContextProvider.get('common.logLevel') === 0 ||
-						(ketaAppContextProvider.get('common.logLevel') & bitValue) === bitValue) {
+					if (AppContextProvider.get('common.logLevel') === null ||
+						AppContextProvider.get('common.logLevel') === 0 ||
+						(AppContextProvider.get('common.logLevel') & bitValue) === bitValue) {
 						originalFn.apply(null, args);
 					}
 				};

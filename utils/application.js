@@ -16,7 +16,7 @@ angular.module('keta.utils.Application',
 		'keta.utils.Common'
 	])
 
-	.constant('ketaApplicationUtilsConstants', {
+	.constant('ApplicationUtilsConstants', {
 
 		// media type of assets
 		ASSET_MEDIA_TYPE: {
@@ -40,10 +40,10 @@ angular.module('keta.utils.Application',
 	 * @propertyOf keta.utils.Application
 	 * @description Application Utils Factory
 	 */
-	.factory('ketaApplicationUtils', function ApplicationUtils(
+	.factory('ApplicationUtils', function ApplicationUtils(
 		$q,
-		ketaApplicationSet, ketaEventBusManager, ketaCommonUtils,
-		ketaApplicationUtilsConstants
+		ApplicationSet, EventBusManager, CommonUtils,
+		ApplicationUtilsConstants
 	) {
 
 		var deferred = {
@@ -64,18 +64,18 @@ angular.module('keta.utils.Application',
 			 * @returns {promise} app list promise
 			 * @example
 			 * angular.module('exampleApp', ['keta.utils.Application'])
-			 *     .controller('ExampleController', function(ketaApplicationUtils) {
+			 *     .controller('ExampleController', function(ApplicationUtils) {
 			 *
 			 *         // get apps with default options
 			 *         // eventBusId: kiwibus
 			 *         // forceRefresh: false
 			 *         // filter: {} (no filter applied)
-			 *         ketaApplicationUtils.getAppList().then(function(apps) {
+			 *         ApplicationUtils.getAppList().then(function(apps) {
 			 *             // ...
 			 *         });
 			 *
 			 *         // get apps with options in place
-			 *         ketaApplicationUtils.getAppList({
+			 *         ApplicationUtils.getAppList({
 			 *             eventBusId: 'myCustomEventBusId',
 			 *             forceRefresh: true,
 			 *             filter: {
@@ -104,7 +104,7 @@ angular.module('keta.utils.Application',
 				if (deferred.getAppList === null || usedOptions.forceRefresh === true) {
 					deferred.getAppList = $q.defer();
 
-					ketaApplicationSet.create(ketaEventBusManager.get(usedOptions.eventBusId))
+					ApplicationSet.create(EventBusManager.get(usedOptions.eventBusId))
 						.filter(usedOptions.filter)
 						.query()
 						.then(function(reply) {
@@ -120,7 +120,7 @@ angular.module('keta.utils.Application',
 										!angular.isDefined(usedOptions.excludeAppIds[app.appId]) ||
 										usedOptions.excludeAppIds[app.appId] === false	&&
 										angular.isString(app.entryUri) && app.entryUri !== '' &&
-										ketaCommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
+										CommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
 
 										filteredApps.push(app);
 									}
@@ -156,8 +156,8 @@ angular.module('keta.utils.Application',
 			 */
 
 			getAppName: function getAppName(app, uiLocale) {
-				return ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') ?
-					ketaCommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
+				return CommonUtils.doesPropertyExist(app, 'meta.i18n') ?
+					CommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
 			},
 
 			/**
@@ -178,7 +178,7 @@ angular.module('keta.utils.Application',
 				var appIcon = null,
 					LOCALE_SHORT_LENGTH = 2;
 
-				var mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 					angular.isDefined(app.meta.i18n[language]) &&
 					angular.isDefined(app.meta.i18n[language].media) ?
 						app.meta.i18n[language].media : null;
@@ -188,14 +188,14 @@ angular.module('keta.utils.Application',
 
 					var languageShort = angular.isDefined(language) ? language.substr(0, LOCALE_SHORT_LENGTH) : 'en';
 
-					mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+					mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 						angular.isDefined(app.meta.i18n[languageShort]) &&
 						angular.isDefined(app.meta.i18n[languageShort].media) ?
 							app.meta.i18n[languageShort].media : null;
 				}
 
 				if (mediaSource === null &&
-					ketaCommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
 					mediaSource = app.meta.i18n.en.media;
 				}
 
@@ -222,7 +222,7 @@ angular.module('keta.utils.Application',
 					angular.forEach(mediaSource, function(media) {
 
 						if (angular.isDefined(media.type) &&
-							media.type === ketaApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &&
+							media.type === ApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &&
 							angular.isDefined(media.src)) {
 
 							appIcon =
@@ -255,9 +255,9 @@ angular.module('keta.utils.Application',
 
 				var appAuthor = null;
 
-				type = angular.isDefined(type) ? type : ketaApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
+				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
 
-				if (ketaCommonUtils.doesPropertyExist(app, 'meta.authors')) {
+				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
 
 					angular.forEach(app.meta.authors, function(author) {
 

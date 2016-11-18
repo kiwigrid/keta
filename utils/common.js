@@ -18,7 +18,7 @@ angular.module('keta.utils.Common', [])
 	 * @propertyOf keta.utils.Common
 	 * @description Common Utils Factory
 	 */
-	.factory('ketaCommonUtils', function CommonUtils() {
+	.factory('CommonUtils', function CommonUtils() {
 
 		var factory = {};
 

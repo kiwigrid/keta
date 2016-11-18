@@ -17,13 +17,13 @@
  *     .controller('ExampleController', function($scope) {
  *
  *         // extract 5 elements starting at offset 0
- *         $scope.pagedRows = $filter('ketaSlice')($scope.rows, 0, 5);
+ *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
  *
  *     });
  */
 
 angular.module('keta.filters.Slice', [])
-	.filter('ketaSlice', function() {
+	.filter('slice', function() {
 		return function(arr, offset, limit) {
 			if (!angular.isDefined(arr) || !angular.isArray(arr)) {
 				arr = [];
