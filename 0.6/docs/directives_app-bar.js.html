@@ -245,6 +245,7 @@ angular.module('keta.directives.AppBar',
 		'keta.services.EventBusDispatcher',
 		'keta.services.EventBusManager',
 		'keta.services.User',
+		'keta.utils.Application',
 		'keta.utils.Common'
 	])
 
@@ -343,7 +344,7 @@ angular.module('keta.directives.AppBar',
 	.directive('appBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter, $log,
 		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
-		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, CommonUtils
+		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, ApplicationUtils, CommonUtils
 	) {
 
 		return {
@@ -417,8 +418,7 @@ angular.module('keta.directives.AppBar',
 					HIDDEN_CLASS_PREFIX = 'hidden-',
 					VISIBLE_CLASS_PREFIX = 'visible-';
 
-				var DEFAULT_LOCALE_FALLBACK = 'en_GB',
-					LOCALE_SHORT_LENGTH = 2;
+				var DEFAULT_LOCALE_FALLBACK = 'en_GB';
 
 				// all sizes have NONE state
 				var sizesFullState = {};
@@ -651,83 +651,80 @@ angular.module('keta.directives.AppBar',
 					scope.links.USER_LOGOUT =
 						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
-					// TODO: re-enable filter if it is used on backend
-					if (eventBus !== null) {
-						ApplicationSet.create(eventBus)
-							/*
-							.filter({
-								appId: AppBarConstants.ROOT_APP_ID
-							})
-							*/
-							.query()
-							.then(function(reply) {
-								if (angular.isDefined(reply.result) &amp;&amp;
-									angular.isDefined(reply.result.items)) {
+					ApplicationUtils.getAppList({
+						eventBusId: scope.eventBusId,
+						filter: {
+							appId: AppBarConstants.ROOT_APP_ID
+						}
+					}).then(function(reply) {
 
-									var entryUri = null;
-									var name = {};
-									scope.rootApp = null;
-									angular.forEach(reply.result.items, function(app) {
-										if (angular.isDefined(app.appId) &amp;&amp;
-											app.appId === AppBarConstants.ROOT_APP_ID &amp;&amp;
-											angular.isDefined(app.entryUri)) {
-											entryUri = app.entryUri;
-											if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
-												angular.forEach(Object.keys(app.meta.i18n), function(locale) {
-													angular.forEach(scope.locales, function(availableLocale) {
-														if (angular.isDefined(availableLocale.code) &amp;&amp;
-															availableLocale.code.substr(0, LOCALE_SHORT_LENGTH)
-																=== locale) {
-															name[availableLocale.code] =
-																app.meta.i18n[locale].name;
-														}
-													});
-												});
+						var entryUri = null;
+						var name = {};
+						scope.rootApp = null;
+
+						angular.forEach(reply.result.items, function(app) {
+							if (angular.isDefined(app.appId) &amp;&amp;
+								app.appId === AppBarConstants.ROOT_APP_ID &amp;&amp;
+								angular.isDefined(app.entryUri)) {
+
+								// set entry uri
+								entryUri = app.entryUri;
+
+								// set name
+								if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
+									angular.forEach(Object.keys(app.meta.i18n), function(locale) {
+										angular.forEach(scope.locales, function(availableLocale) {
+											if (angular.isDefined(availableLocale.code) &amp;&amp;
+												availableLocale.code === locale) {
+												name[availableLocale.code] = app.meta.i18n[locale].name;
 											}
-										}
-									});
-
-									// use link-element to easily access url params
-									var link = document.createElement('a');
-									link.href = entryUri;
-
-									if (entryUri !== null) {
-										scope.rootApp = {};
-										scope.rootApp.link =
-											CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
-										scope.rootApp.name = name;
-										scope.worlds.unshift({
-											name: 'Desktop',
-											link: scope.rootApp.link
 										});
-									}
-
-									scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
-										scope.links.ALL_APPS :
-										CommonUtils.addUrlParameter(
-											entryUri + '#/applications', 'userId', accessToken.user_id
-										);
-
-									scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
-										scope.links.USER_PROFILE :
-										CommonUtils.addUrlParameter(
-											entryUri + '#/user', 'userId', accessToken.user_id
-										);
-
-									if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
-										var allManagersUri =
-											CommonUtils.addUrlParameter(
-												entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
-											);
-										scope.links.ALL_ENERGY_MANAGERS =
-											CommonUtils.addUrlParameter(
-												allManagersUri + '#/devices', 'userId', accessToken.user_id
-											);
-									}
-
+									});
 								}
+
+							}
+						});
+
+						// use link-element to easily access url params
+						var link = document.createElement('a');
+						link.href = entryUri;
+
+						if (entryUri !== null) {
+							scope.rootApp = {};
+							scope.rootApp.link =
+								CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
+							scope.rootApp.name = name;
+							scope.worlds.unshift({
+								name: 'Desktop',
+								link: scope.rootApp.link
 							});
-					}
+						}
+
+						scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
+							scope.links.ALL_APPS :
+							CommonUtils.addUrlParameter(
+								entryUri + '#/applications', 'userId', accessToken.user_id
+							);
+
+						scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
+							scope.links.USER_PROFILE :
+							CommonUtils.addUrlParameter(
+								entryUri + '#/user', 'userId', accessToken.user_id
+							);
+
+						if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
+							var allManagersUri =
+								CommonUtils.addUrlParameter(
+									entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
+								);
+							scope.links.ALL_ENERGY_MANAGERS =
+								CommonUtils.addUrlParameter(
+									allManagersUri + '#/devices', 'userId', accessToken.user_id
+								);
+						}
+
+					});
+
 				};
 
 				var allLinkKeysAlreadySet = true;

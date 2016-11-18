@@ -555,7 +555,14 @@ angular.module('keta.services.EventBusDispatcher',
 								$window.location.reload();
 							});
 						} else if (angular.isFunction(replyHandler)) {
-							replyHandler(reply);
+							if (reply) {
+								replyHandler(reply);
+							} else {
+								replyHandler({
+									code: 408,
+									message: 'Request Time-out'
+								});
+							}
 						}
 					};
 
