@@ -13,11 +13,11 @@ angular.module('keta.services.AccessToken',
 	])
 
 	/**
-	 * @class AccessTokenConstants
+	 * @class ketaAccessTokenConstants
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Constants
 	 */
-	.constant('AccessTokenConstants', {
+	.constant('ketaAccessTokenConstants', {
 
 		// session types
 		SESSION_TYPE: {
@@ -28,20 +28,20 @@ angular.module('keta.services.AccessToken',
 	})
 
 	/**
-	 * @class AccessToken
+	 * @class ketaAccessToken
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('AccessToken', function AccessTokenFactory(
+	.factory('ketaAccessToken', function AccessTokenFactory(
 		$http, $q,
-		AppContext, AccessTokenConstants
+		ketaAppContext, ketaAccessTokenConstants
 	) {
 
 		/**
 		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = AppContext.get('oauth.accessToken');
+		var accessToken = ketaAppContext.get('oauth.accessToken');
 
 		/**
 		 * @private
@@ -210,8 +210,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessToken = AccessToken.get();
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessToken = ketaAccessToken.get();
 			 *     });
 			 */
 			get: function(decoded) {
@@ -229,8 +229,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         AccessToken.set('new-token');
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         ketaAccessToken.set('new-token');
 			 *     });
 			 */
 			set: function(token) {
@@ -248,8 +248,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {Object} access token properties
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessTokenProps = AccessToken.decode(AccessToken.get());
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessTokenProps = ketaAccessToken.decode(AccessToken.get());
 			 *     });
 			 */
 			decode: function(token) {
@@ -277,10 +277,10 @@ angular.module('keta.services.AccessToken',
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessTokenProps = AccessToken.decode(AccessToken.get());
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessTokenProps = ketaAccessToken.decode(ketaAccessToken.get());
 			 *         accessTokenProps.loaded = true;
-			 *         var accessToken = AccessToken.encode(accessTokenProps);
+			 *         var accessToken = ketaAccessToken.encode(accessTokenProps);
 			 *     });
 			 */
 			encode: function(props) {
@@ -313,7 +313,7 @@ angular.module('keta.services.AccessToken',
 					refreshPromise = $q.defer();
 					refreshInProgress = true;
 
-					var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
+					var refreshUrl = ketaAppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
 
 					$http({method: 'GET', url: refreshUrl}).then(
 						function(response) {
@@ -353,7 +353,7 @@ angular.module('keta.services.AccessToken',
 			 * @name isType
 			 * @function
 			 * @description Checks if session is of a certain type.
-			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
+			 * @param {string} type session type (use ketaAccessTokenConstants.SESSION_TYPE)
 			 * @returns {boolean} result
 			 */
 			isType: function(type) {
@@ -375,7 +375,7 @@ angular.module('keta.services.AccessToken',
 			getBackUrl: function() {
 				var backUrl = null;
 
-				if (api.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+				if (api.isType(ketaAccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
 					var decoded = api.get(true);
 					if (decoded !== null &&
 						angular.isDefined(decoded.session) &&

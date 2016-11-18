@@ -10,7 +10,7 @@
  *   A simple date picker component to select a single date.
  * </p>
  * @example
- * &lt;div data-date-picker
+ * &lt;div data-keta-date-picker
  *   data-ng-model="model"
  *   data-css-classes="cssClasses"
  *   data-current-locale="currentLocale"
@@ -31,19 +31,19 @@
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.DatePicker'])
- *     .controller('ExampleController', function($scope, DatePickerConstants, DatePickerMessageKeys) {
+ *     .controller('ExampleController', function($scope, ketaDatePickerConstants, ketaDatePickerMessageKeys) {
  *
  *         // current value to use
  *         $scope.model = new Date(2016, 3, 20, 9, 0, 0, 0);
  *
  *         // css classes to use
- *         $scope.cssClasses = DatePickerConstants.CSS_CLASSES;
+ *         $scope.cssClasses = ketaDatePickerConstants.CSS_CLASSES;
  *
  *         // current locale to use
  *         $scope.currentLocale = 'de_DE';
  *
- *         // display mode to use (@see DatePickerConstants.DISPLAY_MODE)
- *         $scope.displayMode = DatePickerConstants.DISPLAY_MODE.DAY;
+ *         // display mode to use (@see ketaDatePickerConstants.DISPLAY_MODE)
+ *         $scope.displayMode = ketaDatePickerConstants.DISPLAY_MODE.DAY;
  *
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
@@ -55,7 +55,7 @@
  *         $scope.enableDisplayModeSwitch = true;
  *
  *         // define first day of week
- *         $scope.firstDayOfWeek = DatePickerConstants.DAY.SUNDAY;
+ *         $scope.firstDayOfWeek = ketaDatePickerConstants.DAY.SUNDAY;
  *
  *         // define labels to use
  *         $scope.labels = DatePickerMessageKeys;
@@ -94,7 +94,7 @@ angular.module('keta.directives.DatePicker', [
 	'moment'
 ])
 
-	.constant('DatePickerConstants', {
+	.constant('ketaDatePickerConstants', {
 		CSS_CLASSES: {
 			CURRENT_DATE: 'current-date',
 			OUT_OF_BOUNDS: 'out-of-bounds',
@@ -123,7 +123,7 @@ angular.module('keta.directives.DatePicker', [
 	})
 
 	// message keys with default values
-	.constant('DatePickerMessageKeys', {
+	.constant('ketaDatePickerMessageKeys', {
 		'en_GB': {
 			'__keta.directives.DatePicker_select': 'Select',
 			'__keta.directives.DatePicker_selection': 'Selection',
@@ -236,9 +236,9 @@ angular.module('keta.directives.DatePicker', [
 		}
 	})
 
-	.directive('datePicker', function DatePickerDirective(
+	.directive('ketaDatePicker', function DatePickerDirective(
 		$filter,
-		DatePickerConstants, DatePickerMessageKeys, moment
+		ketaDatePickerConstants, ketaDatePickerMessageKeys, moment
 	) {
 		return {
 			restrict: 'EA',
@@ -252,7 +252,7 @@ angular.module('keta.directives.DatePicker', [
 				// current locale
 				currentLocale: '=?',
 
-				// display mode (@see DatePickerConstants.DISPLAY)
+				// display mode (@see ketaDatePickerConstants.DISPLAY)
 				displayMode: '=?',
 
 				// display value (date)
@@ -310,9 +310,9 @@ angular.module('keta.directives.DatePicker', [
 				// CONSTANTS
 				// ---------
 
-				scope.DISPLAY_MODE_DAY = DatePickerConstants.DISPLAY_MODE.DAY;
-				scope.DISPLAY_MODE_MONTH = DatePickerConstants.DISPLAY_MODE.MONTH;
-				scope.DISPLAY_MODE_YEAR = DatePickerConstants.DISPLAY_MODE.YEAR;
+				scope.DISPLAY_MODE_DAY = ketaDatePickerConstants.DISPLAY_MODE.DAY;
+				scope.DISPLAY_MODE_MONTH = ketaDatePickerConstants.DISPLAY_MODE.MONTH;
+				scope.DISPLAY_MODE_YEAR = ketaDatePickerConstants.DISPLAY_MODE.YEAR;
 
 				var DAYS_PER_WEEK = 7;
 				var ISO_DATE_LENGTH_DAY = 10;
@@ -338,8 +338,8 @@ angular.module('keta.directives.DatePicker', [
 						new Date(scope.model.setHours(0, 0, 0, 0)) : today;
 				scope.cssClasses =
 					angular.isObject(scope.cssClasses) ?
-						angular.extend(DatePickerConstants.CSS_CLASSES, scope.cssClasses) :
-						DatePickerConstants.CSS_CLASSES;
+						angular.extend(ketaDatePickerConstants.CSS_CLASSES, scope.cssClasses) :
+						ketaDatePickerConstants.CSS_CLASSES;
 				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
@@ -351,17 +351,17 @@ angular.module('keta.directives.DatePicker', [
 				scope.enableDisplayModeSwitch =
 					angular.isDefined(scope.enableDisplayModeSwitch) ?
 						scope.enableDisplayModeSwitch : true;
-				scope.firstDayOfWeek = scope.firstDayOfWeek || DatePickerConstants.DAY.SUNDAY;
+				scope.firstDayOfWeek = scope.firstDayOfWeek || ketaDatePickerConstants.DAY.SUNDAY;
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.DatePicker';
 				scope.labels =
 					angular.isObject(scope.labels) ?
-						angular.extend(DatePickerMessageKeys, scope.labels) : DatePickerMessageKeys;
+						angular.extend(ketaDatePickerMessageKeys, scope.labels) : ketaDatePickerMessageKeys;
 				scope.currentLabels =
-					angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
-						DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						DatePickerMessageKeys.en_GB;
+					angular.isDefined(ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
+						ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+						ketaDatePickerMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -695,9 +695,9 @@ angular.module('keta.directives.DatePicker', [
 
 					// update current labels
 					scope.currentLabels =
-						angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
-							DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							DatePickerMessageKeys.en_GB;
+						angular.isDefined(ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)])
+							? ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+							ketaDatePickerMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -763,7 +763,7 @@ angular.module('keta.directives.DatePicker', [
 				 */
 				scope.submit = function submit() {
 					scope.$emit(
-						DatePickerConstants.EVENT.SELECT,
+						ketaDatePickerConstants.EVENT.SELECT,
 						{
 							id: scope.elementIdentifier,
 							model: scope.model

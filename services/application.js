@@ -15,11 +15,11 @@ angular.module('keta.services.Application',
 	])
 
 	/**
-	 * @class ApplicationProvider
+	 * @class ketaApplicationProvider
 	 * @propertyOf keta.services.Application
 	 * @description Application Provider
 	 */
-	.provider('Application', function ApplicationProvider() {
+	.provider('ketaApplication', function ApplicationProvider() {
 
 		this.$get = function ApplicationService() {
 
@@ -53,7 +53,7 @@ angular.module('keta.services.Application',
 			};
 
 			/**
-			 * @class Application
+			 * @class ketaApplication
 			 * @propertyOf ApplicationProvider
 			 * @description Application Service
 			 */
@@ -71,8 +71,8 @@ angular.module('keta.services.Application',
 				 * @returns {ApplicationInstance} ApplicationInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Application'])
-				 *     .controller('ExampleController', function(Application) {
-				 *         var application = Application.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaApplication) {
+				 *         var application = ketaApplication.create(eventBus, {
 				 *             appId: 'company.app',
 				 *             entryUri: 'https://...',
 				 *             redirectUri: 'https://...',

@@ -13,13 +13,13 @@ angular.module('keta.services.EventBusDispatcher',
 	])
 
 	/**
-	 * @class EventBusDispatcherProvider
+	 * @class ketaEventBusDispatcherProvider
 	 * @propertyOf keta.services.EventBusDispatcher
 	 * @description EventBusDispatcher Provider
 	 */
-	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
+	.provider('ketaEventBusDispatcher', function EventBusDispatcherProvider() {
 
-		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
+		this.$get = function EventBusDispatcherService($window, $timeout, ketaAccessToken) {
 
 			/**
 			 * @private
@@ -73,7 +73,7 @@ angular.module('keta.services.EventBusDispatcher',
 			};
 
 			/**
-			 * @class EventBusDispatcher
+			 * @class ketaEventBusDispatcher
 			 * @propertyOf EventBusDispatcherProvider
 			 * @description EventBusDispatcher Service
 			 */
@@ -88,8 +88,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CONNECTING) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CONNECTING) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -105,8 +105,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_OPEN) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_OPEN) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -122,8 +122,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CLOSING) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CLOSING) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -139,8 +139,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CLOSED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CLOSED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -156,8 +156,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_OK) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -173,8 +173,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -190,8 +190,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_OK) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_OK) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -207,8 +207,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -224,8 +224,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -241,8 +241,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -258,8 +258,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -275,8 +275,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -292,8 +292,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -309,8 +309,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -326,8 +326,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -343,8 +343,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -360,8 +360,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -377,8 +377,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -394,8 +394,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -411,8 +411,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -428,8 +428,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -458,8 +458,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.send(eventBus, 'address', {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.send(eventBus, 'address', {
 				 *             action: 'action',
 				 *             body: {
 				 *                 guid: 'guid'
@@ -472,14 +472,14 @@ angular.module('keta.services.EventBusDispatcher',
 				send: function(eventBus, address, message, replyHandler) {
 
 					// inject access token
-					message.accessToken = AccessToken.get();
+					message.accessToken = ketaAccessToken.get();
 
 					var handler = function(reply) {
 						if (reply && reply.code === api.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 							// refresh access token
-							AccessToken.refresh().then(function(response) {
+							ketaAccessToken.refresh().then(function(response) {
 								if (angular.isDefined(response.data.accessToken)) {
-									AccessToken.set(response.data.accessToken);
+									ketaAccessToken.set(response.data.accessToken);
 									api.send(eventBus, address, message, replyHandler);
 								} else {
 									$window.location.reload();
@@ -542,8 +542,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.publish(eventBus, 'address', {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.publish(eventBus, 'address', {
 				 *             action: 'action',
 				 *             body: {
 				 *                 guid: 'guid'
@@ -554,7 +554,7 @@ angular.module('keta.services.EventBusDispatcher',
 				publish: function(eventBus, address, message) {
 
 					// inject access token and call stub method
-					message.accessToken = AccessToken.get();
+					message.accessToken = ketaAccessToken.get();
 
 					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().publish(address, message);
@@ -575,8 +575,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
 				 *             // ...
 				 *         });
 				 *     });
@@ -600,8 +600,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
 				 *             // ...
 				 *         });
 				 *     });
@@ -623,8 +623,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.close(eventBus);
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.close(eventBus);
 				 *     });
 				 */
 				close: function(eventBus) {
@@ -642,8 +642,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {number} connection state
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         var state = EventBusDispatcher.readyState(eventBus);
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         var state = ketaEventBusDispatcher.readyState(eventBus);
 				 *     });
 				 */
 				readyState: function(eventBus) {
@@ -660,7 +660,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {string} uuid
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
 				 *         var handlerUUID = ketaEventBus.generateUUID();
 				 *     });
 				 */

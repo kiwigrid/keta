@@ -42,7 +42,7 @@ angular.module('keta', [
  *   Toggle, App Title, User Menu, Language Menu and Energy Manager Menu).
  * </p>
  * @example
- * &lt;div data-app-bar
+ * &lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
@@ -57,7 +57,7 @@ angular.module('keta', [
  *     &lt;/a&gt;
  * &lt;/div&gt;
  * @example
- * &lt;div data-app-bar
+ * &lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
  *     data-current-locale="currentLocale"
@@ -72,7 +72,7 @@ angular.module('keta', [
  * &lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.AppBar'])
- *     .controller('ExampleController', function($scope, AppBarMessageKeys) {
+ *     .controller('ExampleController', function($scope, ketaAppBarMessageKeys) {
  *
  *         // id of eventBus instance to use to retrieve data
  *         $scope.eventBusId = 'kiwibus';
@@ -97,7 +97,7 @@ angular.module('keta', [
  *
  *         // override default-labels if necessary
  *         // get default labels
- *         $scope.labels = AppBarMessageKeys;
+ *         $scope.labels = ketaAppBarMessageKeys;
  *
  *         // use case 1: overwrite specific key
  *         $scope.labels.de_DE['__keta.directives.AppBar_app_title'] = 'Meine App';
@@ -213,7 +213,7 @@ angular.module('keta.directives.AppBar',
 		'keta.utils.Common'
 	])
 
-	.constant('AppBarConstants', {
+	.constant('ketaAppBarConstants', {
 		COMPONENT: {
 			WORLD_SWITCHER: 'worldSwitcher',
 			MENU_BAR_TOGGLE: 'menuBarToggle',
@@ -252,7 +252,7 @@ angular.module('keta.directives.AppBar',
 	})
 
 	// message keys with default values
-	.constant('AppBarMessageKeys', {
+	.constant('ketaAppBarMessageKeys', {
 		'en_GB': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'All Apps',
@@ -305,10 +305,11 @@ angular.module('keta.directives.AppBar',
 		}
 	})
 
-	.directive('appBar', function AppBarDirective(
+	.directive('ketaAppBar', function AppBarDirective(
 		$rootScope, $window, $document, $filter, $log,
-		EventBusDispatcher, EventBusManager, DeviceSet, ApplicationSet, User, AccessToken, AccessTokenConstants,
-		AppBarConstants, AppBarMessageKeys, DeviceConstants, SidebarConstants, ApplicationUtils, CommonUtils
+		ketaEventBusDispatcher, ketaEventBusManager, ketaDeviceSet, ketaApplicationSet, ketaUser, ketaAccessToken,
+		ketaAccessTokenConstants, ketaAppBarConstants, ketaAppBarMessageKeys, ketaDeviceConstants,
+		ketaSidebarConstants, ketaCommonUtils, ketaApplicationUtils
 	) {
 
 		return {
@@ -369,14 +370,14 @@ angular.module('keta.directives.AppBar',
 
 				// event bus
 				scope.eventBusId = scope.eventBusId || 'kiwibus';
-				var eventBus = EventBusManager.get(scope.eventBusId);
+				var eventBus = ketaEventBusManager.get(scope.eventBusId);
 
-				var STATES = AppBarConstants.STATE;
-				var SIZES = AppBarConstants.SIZE;
+				var STATES = ketaAppBarConstants.STATE;
+				var SIZES = ketaAppBarConstants.SIZE;
 
 				var DEFAULT_CONTAINER_HEIGHT = 120;
 
-				scope.MENU_ELEMENTS = AppBarConstants.COMPONENT;
+				scope.MENU_ELEMENTS = ketaAppBarConstants.COMPONENT;
 
 				var DECIMAL_RADIX = 10,
 					HIDDEN_CLASS_PREFIX = 'hidden-',
@@ -537,21 +538,21 @@ angular.module('keta.directives.AppBar',
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.AppBar';
-				scope.labels = angular.extend(AppBarMessageKeys, scope.labels);
+				scope.labels = angular.extend(ketaAppBarMessageKeys, scope.labels);
 
 				scope.getLabel = function getLabel(key) {
-					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
+					return ketaCommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
 
 				// get access token
-				var accessToken = AccessToken.decode(AccessToken.get());
+				var accessToken = ketaAccessToken.decode(ketaAccessToken.get());
 
 				var defaultLinks = {
 					ALL_APPS: null,
 					ALL_ENERGY_MANAGERS: null,
 					APP_ROOT:
 						accessToken !== null && angular.isDefined(accessToken.user_id) ?
-							CommonUtils.addUrlParameter('/', 'userId', accessToken.user_id) : '/',
+							ketaCommonUtils.addUrlParameter('/', 'userId', accessToken.user_id) : '/',
 					USER_PROFILE: null,
 					USER_LOGOUT: null
 				};
@@ -578,10 +579,11 @@ angular.module('keta.directives.AppBar',
 					angular.extend(defaultLinks, scope.links) : defaultLinks;
 
 				var defaultToggles = {};
-				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER] = {};
-				defaultToggles[AppBarConstants.USER_ROLE.DEMO_USER][AppBarConstants.TOGGLES.USER_PROFILE] = false;
+				defaultToggles[ketaAppBarConstants.USER_ROLE.DEMO_USER] = {};
+				defaultToggles[ketaAppBarConstants.USER_ROLE.DEMO_USER]
+					[ketaAppBarConstants.TOGGLES.USER_PROFILE] = false;
 
-				scope.AVAILABLE_TOGGLES = AppBarConstants.TOGGLES;
+				scope.AVAILABLE_TOGGLES = ketaAppBarConstants.TOGGLES;
 
 				/**
 				 * update toggles
@@ -615,10 +617,10 @@ angular.module('keta.directives.AppBar',
 					scope.links.USER_LOGOUT =
 						angular.isString(scope.links.USER_LOGOUT) ? scope.links.USER_LOGOUT : '/rest/auth/logout';
 
-					ApplicationUtils.getAppList({
+					ketaApplicationUtils.getAppList({
 						eventBusId: scope.eventBusId,
 						filter: {
-							appId: AppBarConstants.ROOT_APP_ID
+							appId: ketaAppBarConstants.ROOT_APP_ID
 						}
 					}).then(function(reply) {
 
@@ -628,14 +630,14 @@ angular.module('keta.directives.AppBar',
 
 						angular.forEach(reply.result.items, function(app) {
 							if (angular.isDefined(app.appId) &&
-								app.appId === AppBarConstants.ROOT_APP_ID &&
+								app.appId === ketaAppBarConstants.ROOT_APP_ID &&
 								angular.isDefined(app.entryUri)) {
 
 								// set entry uri
 								entryUri = app.entryUri;
 
 								// set name
-								if (CommonUtils.doesPropertyExist(app, 'meta.i18n')) {
+								if (ketaCommonUtils.doesPropertyExist(app, 'meta.i18n')) {
 									angular.forEach(Object.keys(app.meta.i18n), function(locale) {
 										angular.forEach(scope.locales, function(availableLocale) {
 											if (angular.isDefined(availableLocale.code) &&
@@ -656,7 +658,7 @@ angular.module('keta.directives.AppBar',
 						if (entryUri !== null) {
 							scope.rootApp = {};
 							scope.rootApp.link =
-								CommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
+								ketaCommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
 							scope.rootApp.name = name;
 							scope.worlds.unshift({
 								name: 'Desktop',
@@ -666,23 +668,23 @@ angular.module('keta.directives.AppBar',
 
 						scope.links.ALL_APPS = angular.isString(scope.links.ALL_APPS) ?
 							scope.links.ALL_APPS :
-							CommonUtils.addUrlParameter(
+							ketaCommonUtils.addUrlParameter(
 								entryUri + '#/applications', 'userId', accessToken.user_id
 							);
 
 						scope.links.USER_PROFILE = angular.isString(scope.links.USER_PROFILE) ?
 							scope.links.USER_PROFILE :
-							CommonUtils.addUrlParameter(
+							ketaCommonUtils.addUrlParameter(
 								entryUri + '#/user', 'userId', accessToken.user_id
 							);
 
 						if (!angular.isString(scope.links.ALL_ENERGY_MANAGERS)) {
 							var allManagersUri =
-								CommonUtils.addUrlParameter(
+								ketaCommonUtils.addUrlParameter(
 									entryUri, 'deviceClass', 'com.kiwigrid.devices.em.EnergyManager'
 								);
 							scope.links.ALL_ENERGY_MANAGERS =
-								CommonUtils.addUrlParameter(
+								ketaCommonUtils.addUrlParameter(
 									allManagersUri + '#/devices', 'userId', accessToken.user_id
 								);
 						}
@@ -765,10 +767,10 @@ angular.module('keta.directives.AppBar',
 						angular.isDefined(scope.user.userId) &&
 						isMenuVisible(scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU)) {
 
-						DeviceSet.create(eventBus)
+						ketaDeviceSet.create(eventBus)
 							.filter({
 								'deviceModel.deviceClass': {
-									'$in': [DeviceConstants.CLASS.ENERGY_MANAGER]
+									'$in': [ketaDeviceConstants.CLASS.ENERGY_MANAGER]
 								},
 								owner: scope.user.userId
 							})
@@ -830,7 +832,7 @@ angular.module('keta.directives.AppBar',
 				 */
 				var readLocaleFromUserProp = function readLocaleFromUserProp() {
 
-					if (CommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
+					if (ketaCommonUtils.doesPropertyExist(scope.user, 'properties.locale.code') &&
 						isLocaleAvailable(scope.user.properties.locale.code)) {
 						scope.currentLocale = scope.user.properties.locale.code;
 					}
@@ -857,13 +859,13 @@ angular.module('keta.directives.AppBar',
 						properties: scope.user.properties
 					};
 
-					EventBusDispatcher.send(eventBus, 'userservice', {
+					ketaEventBusDispatcher.send(eventBus, 'userservice', {
 						action: 'mergeUser',
 						body: body,
 						params: params
 					}, function(reply) {
 						// log if in debug mode
-						if (EventBusManager.inDebugMode()) {
+						if (ketaEventBusManager.inDebugMode()) {
 							$log.request(['userservice', {
 								action: 'mergeUser',
 								params: params,
@@ -891,7 +893,7 @@ angular.module('keta.directives.AppBar',
 
 				// query current user
 				if (eventBus !== null) {
-					User.getCurrent(eventBus)
+					ketaUser.getCurrent(eventBus)
 						.then(function(reply) {
 							scope.user = reply;
 							readLocaleFromUserProp();
@@ -908,10 +910,10 @@ angular.module('keta.directives.AppBar',
 				 */
 				scope.isImpersonated = function isImpersonated() {
 					var result = false;
-					if (AccessToken.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+					if (ketaAccessToken.isType(ketaAccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
 						scope.impersonationInfo = {
-							userId: AccessToken.getUserId(),
-							backUrl: AccessToken.getBackUrl()
+							userId: ketaAccessToken.getUserId(),
+							backUrl: ketaAccessToken.getBackUrl()
 						};
 						result = true;
 					}
@@ -928,14 +930,14 @@ angular.module('keta.directives.AppBar',
 					var enabled = true;
 
 					var userRoleScores = {};
-					userRoleScores[AppBarConstants.USER_ROLE.DEMO_USER] = 1;
-					userRoleScores[AppBarConstants.USER_ROLE.USER] = 2;
-					userRoleScores[AppBarConstants.USER_ROLE.FITTER] = 3;
-					userRoleScores[AppBarConstants.USER_ROLE.SERVICE] = 4;
-					userRoleScores[AppBarConstants.USER_ROLE.ADMIN] = 5;
-					userRoleScores[AppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.DEMO_USER] = 1;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.USER] = 2;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.FITTER] = 3;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.SERVICE] = 4;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.ADMIN] = 5;
+					userRoleScores[ketaAppBarConstants.USER_ROLE.SUPER_ADMIN] = 6;
 
-					var userRole = AppBarConstants.USER_ROLE.DEMO_USER;
+					var userRole = ketaAppBarConstants.USER_ROLE.DEMO_USER;
 
 					if (angular.isDefined(scope.user) && angular.isDefined(scope.user.roles)) {
 						scope.user.roles.forEach(function(role) {
@@ -1056,10 +1058,10 @@ angular.module('keta.directives.AppBar',
 				scope.toggleSidebar = function toggleSidebar($event, position) {
 					$event.stopPropagation();
 					scope.closeAllMenus();
-					if (position === SidebarConstants.POSITION.LEFT) {
-						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT);
-					} else if (position === SidebarConstants.POSITION.RIGHT) {
-						$rootScope.$broadcast(SidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT);
+					if (position === ketaSidebarConstants.POSITION.LEFT) {
+						$rootScope.$broadcast(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT);
+					} else if (position === ketaSidebarConstants.POSITION.RIGHT) {
+						$rootScope.$broadcast(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT);
 					}
 				};
 
@@ -1303,7 +1305,7 @@ angular.module('keta.directives.AppBar')
  *   A simple date picker component to select a single date.
  * </p>
  * @example
- * &lt;div data-date-picker
+ * &lt;div data-keta-date-picker
  *   data-ng-model="model"
  *   data-css-classes="cssClasses"
  *   data-current-locale="currentLocale"
@@ -1324,19 +1326,19 @@ angular.module('keta.directives.AppBar')
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.DatePicker'])
- *     .controller('ExampleController', function($scope, DatePickerConstants, DatePickerMessageKeys) {
+ *     .controller('ExampleController', function($scope, ketaDatePickerConstants, ketaDatePickerMessageKeys) {
  *
  *         // current value to use
  *         $scope.model = new Date(2016, 3, 20, 9, 0, 0, 0);
  *
  *         // css classes to use
- *         $scope.cssClasses = DatePickerConstants.CSS_CLASSES;
+ *         $scope.cssClasses = ketaDatePickerConstants.CSS_CLASSES;
  *
  *         // current locale to use
  *         $scope.currentLocale = 'de_DE';
  *
- *         // display mode to use (@see DatePickerConstants.DISPLAY_MODE)
- *         $scope.displayMode = DatePickerConstants.DISPLAY_MODE.DAY;
+ *         // display mode to use (@see ketaDatePickerConstants.DISPLAY_MODE)
+ *         $scope.displayMode = ketaDatePickerConstants.DISPLAY_MODE.DAY;
  *
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
@@ -1348,7 +1350,7 @@ angular.module('keta.directives.AppBar')
  *         $scope.enableDisplayModeSwitch = true;
  *
  *         // define first day of week
- *         $scope.firstDayOfWeek = DatePickerConstants.DAY.SUNDAY;
+ *         $scope.firstDayOfWeek = ketaDatePickerConstants.DAY.SUNDAY;
  *
  *         // define labels to use
  *         $scope.labels = DatePickerMessageKeys;
@@ -1387,7 +1389,7 @@ angular.module('keta.directives.DatePicker', [
 	'moment'
 ])
 
-	.constant('DatePickerConstants', {
+	.constant('ketaDatePickerConstants', {
 		CSS_CLASSES: {
 			CURRENT_DATE: 'current-date',
 			OUT_OF_BOUNDS: 'out-of-bounds',
@@ -1416,7 +1418,7 @@ angular.module('keta.directives.DatePicker', [
 	})
 
 	// message keys with default values
-	.constant('DatePickerMessageKeys', {
+	.constant('ketaDatePickerMessageKeys', {
 		'en_GB': {
 			'__keta.directives.DatePicker_select': 'Select',
 			'__keta.directives.DatePicker_selection': 'Selection',
@@ -1529,9 +1531,9 @@ angular.module('keta.directives.DatePicker', [
 		}
 	})
 
-	.directive('datePicker', function DatePickerDirective(
+	.directive('ketaDatePicker', function DatePickerDirective(
 		$filter,
-		DatePickerConstants, DatePickerMessageKeys, moment
+		ketaDatePickerConstants, ketaDatePickerMessageKeys, moment
 	) {
 		return {
 			restrict: 'EA',
@@ -1545,7 +1547,7 @@ angular.module('keta.directives.DatePicker', [
 				// current locale
 				currentLocale: '=?',
 
-				// display mode (@see DatePickerConstants.DISPLAY)
+				// display mode (@see ketaDatePickerConstants.DISPLAY)
 				displayMode: '=?',
 
 				// display value (date)
@@ -1603,9 +1605,9 @@ angular.module('keta.directives.DatePicker', [
 				// CONSTANTS
 				// ---------
 
-				scope.DISPLAY_MODE_DAY = DatePickerConstants.DISPLAY_MODE.DAY;
-				scope.DISPLAY_MODE_MONTH = DatePickerConstants.DISPLAY_MODE.MONTH;
-				scope.DISPLAY_MODE_YEAR = DatePickerConstants.DISPLAY_MODE.YEAR;
+				scope.DISPLAY_MODE_DAY = ketaDatePickerConstants.DISPLAY_MODE.DAY;
+				scope.DISPLAY_MODE_MONTH = ketaDatePickerConstants.DISPLAY_MODE.MONTH;
+				scope.DISPLAY_MODE_YEAR = ketaDatePickerConstants.DISPLAY_MODE.YEAR;
 
 				var DAYS_PER_WEEK = 7;
 				var ISO_DATE_LENGTH_DAY = 10;
@@ -1631,8 +1633,8 @@ angular.module('keta.directives.DatePicker', [
 						new Date(scope.model.setHours(0, 0, 0, 0)) : today;
 				scope.cssClasses =
 					angular.isObject(scope.cssClasses) ?
-						angular.extend(DatePickerConstants.CSS_CLASSES, scope.cssClasses) :
-						DatePickerConstants.CSS_CLASSES;
+						angular.extend(ketaDatePickerConstants.CSS_CLASSES, scope.cssClasses) :
+						ketaDatePickerConstants.CSS_CLASSES;
 				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
@@ -1644,17 +1646,17 @@ angular.module('keta.directives.DatePicker', [
 				scope.enableDisplayModeSwitch =
 					angular.isDefined(scope.enableDisplayModeSwitch) ?
 						scope.enableDisplayModeSwitch : true;
-				scope.firstDayOfWeek = scope.firstDayOfWeek || DatePickerConstants.DAY.SUNDAY;
+				scope.firstDayOfWeek = scope.firstDayOfWeek || ketaDatePickerConstants.DAY.SUNDAY;
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.DatePicker';
 				scope.labels =
 					angular.isObject(scope.labels) ?
-						angular.extend(DatePickerMessageKeys, scope.labels) : DatePickerMessageKeys;
+						angular.extend(ketaDatePickerMessageKeys, scope.labels) : ketaDatePickerMessageKeys;
 				scope.currentLabels =
-					angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
-						DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						DatePickerMessageKeys.en_GB;
+					angular.isDefined(ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
+						ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+						ketaDatePickerMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -1988,9 +1990,9 @@ angular.module('keta.directives.DatePicker', [
 
 					// update current labels
 					scope.currentLabels =
-						angular.isDefined(DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]) ?
-							DatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							DatePickerMessageKeys.en_GB;
+						angular.isDefined(ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)])
+							? ketaDatePickerMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+							ketaDatePickerMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -2056,7 +2058,7 @@ angular.module('keta.directives.DatePicker', [
 				 */
 				scope.submit = function submit() {
 					scope.$emit(
-						DatePickerConstants.EVENT.SELECT,
+						ketaDatePickerConstants.EVENT.SELECT,
 						{
 							id: scope.elementIdentifier,
 							model: scope.model
@@ -2272,7 +2274,7 @@ angular.module('keta.directives.DatePicker')
  *   flexible API for customizing the table to you very own needs.
  * </p>
  * @example
- * &lt;div data-extended-table
+ * &lt;div data-keta-extended-table
  *     data-rows="rows"
  *     data-current-locale="currentLocale"
  *     data-label-add-column="labelAddColumn"
@@ -2302,7 +2304,7 @@ angular.module('keta.directives.DatePicker')
  * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device'])
  *     .controller('ExampleController', function(
  *         $scope,
- *         ExtendedTableConstants, ExtendedTableMessageKeys, DeviceConstants) {
+ *         ketaExtendedTableConstants, ketaExtendedTableMessageKeys, ketaDeviceConstants) {
  *
  *         // data as array of objects, keys from first element are taken as headers
  *         $scope.rows = [{
@@ -2324,7 +2326,7 @@ angular.module('keta.directives.DatePicker')
  *
  *         // override default-labels if necessary
  *         // get default labels
- *         $scope.labels = ExtendedTableMessageKeys;
+ *         $scope.labels = ketaExtendedTableMessageKeys;
  *
  *         // use case 1: overwrite specific key
  *         $scope.labels.de_DE['__keta.directives.ExtendedTable_search'] = 'Finde';
@@ -2341,13 +2343,13 @@ angular.module('keta.directives.DatePicker')
  *         // array of disabled components (default: everything except the table itself is disabled)
  *         $scope.disabledComponents = [
  *             // the table itself
- *             ExtendedTableConstants.COMPONENT.TABLE,
+ *             ketaExtendedTableConstants.COMPONENT.TABLE,
  *             // an input field to search throughout the full dataset
- *             ExtendedTableConstants.COMPONENT.FILTER,
+ *             ketaExtendedTableConstants.COMPONENT.FILTER,
  *             // a selector to add columns to table
- *             ExtendedTableConstants.COMPONENT.SELECTOR,
+ *             ketaExtendedTableConstants.COMPONENT.SELECTOR,
  *             // a pager to navigate through paged data
- *             ExtendedTableConstants.COMPONENT.PAGER
+ *             ketaExtendedTableConstants.COMPONENT.PAGER
  *         ];
  *
  *         // array of switchable columns (empty by default)
@@ -2382,7 +2384,7 @@ angular.module('keta.directives.DatePicker')
  *         // by defining operations mode as "view" the directive itself manages sorting,
  *         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
  *         // dataset by querying a backend, you have to use "data"
- *         $scope.operationsMode = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
+ *         $scope.operationsMode = ketaExtendedTableConstants.OPERATIONS_MODE.VIEW;
  *
  *         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
  *         $scope.rowSortEnabled = true;
@@ -2416,7 +2418,7 @@ angular.module('keta.directives.DatePicker')
  *                 return 'Edit';
  *             },
  *             icon: 'glyphicon glyphicon-pencil',
- *             type: ExtendedTableConstants.ACTION_LIST_TYPE.LINK
+ *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
  *             runAction: function(row) {
  *                 console.log('action called with ', row);
@@ -2425,7 +2427,7 @@ angular.module('keta.directives.DatePicker')
  *                 return 'Remove';
  *             },
  *             icon: 'glyphicon glyphicon-remove'
- *             type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
+ *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
  *             display: function(row) {
  *                 return row.type !== 'EnergyManager';
  *             }
@@ -2449,13 +2451,13 @@ angular.module('keta.directives.DatePicker')
  *             var columnClass = '';
  *             if (column === 'stateDevice') {
  *                 columnClass = 'state';
- *                 if (row.state === DeviceConstants.STATE.OK && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.OK && !isHeader) {
  *                     columnClass+= ' state-success';
  *                 }
- *                 if (row.state === DeviceConstants.STATE.ERROR && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.ERROR && !isHeader) {
  *                     columnClass+= ' state-warning';
  *                 }
- *                 if (row.state === DeviceConstants.STATE.FATAL && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.FATAL && !isHeader) {
  *                     columnClass+= ' state-danger';
  *                 }
  *             }
@@ -2490,9 +2492,9 @@ angular.module('keta.directives.DatePicker')
  *         // limit is the number of rows shown per page
  *         // offset is the index in the dataset to start from
  *         var pager = {};
- *         pager[ExtendedTableConstants.PAGER.TOTAL] = $scope.allRows.length;
- *         pager[ExtendedTableConstants.PAGER.LIMIT] = 5;
- *         pager[ExtendedTableConstants.PAGER.OFFSET] = 0;
+ *         pager[ketaExtendedTableConstants.PAGER.TOTAL] = $scope.allRows.length;
+ *         pager[ketaExtendedTableConstants.PAGER.LIMIT] = 5;
+ *         pager[ketaExtendedTableConstants.PAGER.OFFSET] = 0;
  *         $scope.pager = pager;
  *
  *         // search term to filter the table
@@ -2523,7 +2525,7 @@ angular.module('keta.directives.ExtendedTable',
 		'keta.utils.Common'
 	])
 
-	.constant('ExtendedTableConstants', {
+	.constant('ketaExtendedTableConstants', {
 		COMPONENT: {
 			TABLE: 'table',
 			FILTER: 'filter',
@@ -2546,7 +2548,7 @@ angular.module('keta.directives.ExtendedTable',
 	})
 
 	// message keys with default values
-	.constant('ExtendedTableMessageKeys', {
+	.constant('ketaExtendedTableMessageKeys', {
 		'en_GB': {
 			'__keta.directives.ExtendedTable_search': 'Search',
 			'__keta.directives.ExtendedTable_add_column': 'Add column',
@@ -2589,9 +2591,9 @@ angular.module('keta.directives.ExtendedTable',
 		}
 	})
 
-	.directive('extendedTable', function ExtendedTableDirective(
+	.directive('ketaExtendedTable', function ExtendedTableDirective(
 		$compile, $filter,
-		ExtendedTableConstants, ExtendedTableMessageKeys, CommonUtils) {
+		ketaExtendedTableConstants, ketaExtendedTableMessageKeys, ketaCommonUtils) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -2690,10 +2692,10 @@ angular.module('keta.directives.ExtendedTable',
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.ExtendedTable';
-				scope.labels = angular.extend(ExtendedTableMessageKeys, scope.labels);
+				scope.labels = angular.extend(ketaExtendedTableMessageKeys, scope.labels);
 
 				scope.getLabel = function getLabel(key) {
-					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
+					return ketaCommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
 
 				// headers to save
@@ -2813,20 +2815,20 @@ angular.module('keta.directives.ExtendedTable',
 
 				var KEYCODE_ENTER = 13;
 
-				$scope.COMPONENTS_FILTER = ExtendedTableConstants.COMPONENT.FILTER;
-				$scope.COMPONENTS_SELECTOR = ExtendedTableConstants.COMPONENT.SELECTOR;
-				$scope.COMPONENTS_TABLE = ExtendedTableConstants.COMPONENT.TABLE;
-				$scope.COMPONENTS_PAGER = ExtendedTableConstants.COMPONENT.PAGER;
+				$scope.COMPONENTS_FILTER = ketaExtendedTableConstants.COMPONENT.FILTER;
+				$scope.COMPONENTS_SELECTOR = ketaExtendedTableConstants.COMPONENT.SELECTOR;
+				$scope.COMPONENTS_TABLE = ketaExtendedTableConstants.COMPONENT.TABLE;
+				$scope.COMPONENTS_PAGER = ketaExtendedTableConstants.COMPONENT.PAGER;
 
-				$scope.OPERATIONS_MODE_DATA = ExtendedTableConstants.OPERATIONS_MODE.DATA;
-				$scope.OPERATIONS_MODE_VIEW = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
+				$scope.OPERATIONS_MODE_DATA = ketaExtendedTableConstants.OPERATIONS_MODE.DATA;
+				$scope.OPERATIONS_MODE_VIEW = ketaExtendedTableConstants.OPERATIONS_MODE.VIEW;
 
-				$scope.PAGER_TOTAL = ExtendedTableConstants.PAGER.TOTAL;
-				$scope.PAGER_LIMIT = ExtendedTableConstants.PAGER.LIMIT;
-				$scope.PAGER_OFFSET = ExtendedTableConstants.PAGER.OFFSET;
+				$scope.PAGER_TOTAL = ketaExtendedTableConstants.PAGER.TOTAL;
+				$scope.PAGER_LIMIT = ketaExtendedTableConstants.PAGER.LIMIT;
+				$scope.PAGER_OFFSET = ketaExtendedTableConstants.PAGER.OFFSET;
 
-				$scope.ACTION_LIST_TYPE_LINK = ExtendedTableConstants.ACTION_LIST_TYPE.LINK;
-				$scope.ACTION_LIST_TYPE_ACTION = ExtendedTableConstants.ACTION_LIST_TYPE.ACTION;
+				$scope.ACTION_LIST_TYPE_LINK = ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK;
+				$scope.ACTION_LIST_TYPE_ACTION = ketaExtendedTableConstants.ACTION_LIST_TYPE.ACTION;
 
 				// VARIABLES ---
 
@@ -3292,7 +3294,7 @@ angular.module('keta.directives.ExtendedTable')
 '					<thead>' +
 '						<tr class="{{rowClassCallback(null, true)}}">' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
-'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-repeat="column in headers | ketaOrderObjectBy:visibleColumns:true"' +
 '								data-ng-if="rowSortEnabled"' +
 '								data-ng-class="{' +
 '									sort: isSortCriteria(column),' +
@@ -3336,7 +3338,7 @@ angular.module('keta.directives.ExtendedTable')
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
-'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-repeat="column in headers | ketaOrderObjectBy:visibleColumns:true"' +
 '								data-ng-if="!rowSortEnabled">' +
 '								{{headerLabelCallback(column)}}' +
 '								<a class="operation" data-ng-if="isSwitchable(column)"' +
@@ -3356,7 +3358,7 @@ angular.module('keta.directives.ExtendedTable')
 '							data-ng-repeat="row in rows" data-ng-click="selectRow(row)"' +
 '							data-ng-class="{\'active\' : isSelected(row)}"' +
 '							class="{{rowClassCallback(row, false)}}">' +
-'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'							<td data-ng-repeat="column in row | ketaOrderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
@@ -3385,11 +3387,11 @@ angular.module('keta.directives.ExtendedTable')
 '								row in rows |' +
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
+'								ketaSlice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
 '							data-ng-class="{\'active\' : isSelected(row)}"' +
 '							data-ng-click="selectRow(row)"' +
 '							class="{{rowClassCallback(row, false)}}">' +
-'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'							<td data-ng-repeat="column in row | ketaOrderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
@@ -3417,8 +3419,8 @@ angular.module('keta.directives.ExtendedTable')
 '							(rows |' +
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
-'							<td colspan="{{(rows[0] | orderObjectBy:visibleColumns:true).length + 1}}">' +
+'								ketaSlice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
+'							<td colspan="{{(rows[0] | ketaOrderObjectBy:visibleColumns:true).length + 1}}">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_no_entries\') }}' +
 '							</td>' +
 '						</tr>' +
@@ -3476,10 +3478,10 @@ angular.module('keta.directives.ExtendedTable')
  *   the sidebar (if the current path-route is the same as in the clicked link).
  * </p>
  * @example
- * &lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
+ * &lt;div data-keta-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.directives.Sidebar'])
- *     .controller('ExampleController', function($scope, SidebarConfig) {
+ *     .controller('ExampleController', function($scope, ketaSidebarConfig) {
  *
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
@@ -3505,7 +3507,7 @@ angular.module('keta.directives.ExtendedTable')
  *                 }]
  *             }],
  *             compactMode: false,
- *             toggleBroadcast: SidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
+ *             toggleBroadcast: ketaSidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
  *         };
  *
  *         // return app-title depending on current language
@@ -3517,7 +3519,7 @@ angular.module('keta.directives.ExtendedTable')
  */
 
 angular.module('keta.directives.MainMenu', [])
-	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
+	.directive('ketaMainMenu', function MainMenuDirective($location, $rootScope) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -3665,12 +3667,12 @@ angular.module('keta.directives.MainMenu')
  *   Sidebar with expand/fold functionality, configurable position and toggle area label.
  * </p>
  * @example
- * &lt;div data-sidebar data-configuration="{position: 'left', label: 'Fold'}"&gt;&lt;/div&gt;
+ * &lt;div data-keta-sidebar data-configuration="{position: 'left', label: 'Fold'}"&gt;&lt;/div&gt;
  */
 
 angular.module('keta.directives.Sidebar', [])
 
-	.constant('SidebarConstants', {
+	.constant('ketaSidebarConstants', {
 		POSITION: {
 			LEFT: 'left',
 			RIGHT: 'right'
@@ -3689,7 +3691,7 @@ angular.module('keta.directives.Sidebar', [])
 		}
 	})
 
-	.directive('sidebar', function SidebarDirective($document, SidebarConstants) {
+	.directive('ketaSidebar', function SidebarDirective($document, ketaSidebarConstants) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -3704,7 +3706,7 @@ angular.module('keta.directives.Sidebar', [])
 				scope.configuration.position =
 					angular.isDefined(scope.configuration.position) ?
 						scope.configuration.position :
-						SidebarConstants.POSITION.LEFT;
+						ketaSidebarConstants.POSITION.LEFT;
 
 				// flag for showing toggle area in sidebar
 				scope.showToggleArea = angular.isDefined(scope.configuration.label);
@@ -3716,49 +3718,49 @@ angular.module('keta.directives.Sidebar', [])
 
 				// toggle css class on body element
 				scope.toggleSideBar = function() {
-					bodyElem.toggleClass(SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
+					bodyElem.toggleClass(ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
 				};
 
 				// close open sidebars if location change starts
 				scope.$on('$locationChangeStart', function() {
-					bodyElem.removeClass(SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
+					bodyElem.removeClass(ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
 				});
 
 				// if sidebars are toggled from outside toggle css class on body element
 				var toggleBodyClass = function(position) {
 					if (scope.configuration.position === position) {
 						bodyElem.toggleClass(
-							SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
+							ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
 						);
 					}
 				};
 
 				// sidebar left
-				scope.$on(SidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT, function() {
-					toggleBodyClass(SidebarConstants.POSITION.LEFT);
+				scope.$on(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT, function() {
+					toggleBodyClass(ketaSidebarConstants.POSITION.LEFT);
 				});
 
 				// sidebar right
-				scope.$on(SidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT, function() {
-					toggleBodyClass(SidebarConstants.POSITION.RIGHT);
+				scope.$on(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT, function() {
+					toggleBodyClass(ketaSidebarConstants.POSITION.RIGHT);
 				});
 
 				// position toggle area according to height of brand bar
 				if (scope.showToggleArea) {
 
 					// determine brand bar height
-					var brandBarElem = bodyElem[0].getElementsByClassName(SidebarConstants.CSS.BRAND_BAR);
+					var brandBarElem = bodyElem[0].getElementsByClassName(ketaSidebarConstants.CSS.BRAND_BAR);
 					var brandBarHeight = angular.isDefined(brandBarElem[0]) ? brandBarElem[0].clientHeight : 0;
 
-					scope.toggleAreaTop = brandBarHeight + SidebarConstants.OFFSET.TOGGLE_AREA;
-					scope.transcludeTop = SidebarConstants.OFFSET.TRANSCLUDE;
+					scope.toggleAreaTop = brandBarHeight + ketaSidebarConstants.OFFSET.TOGGLE_AREA;
+					scope.transcludeTop = ketaSidebarConstants.OFFSET.TRANSCLUDE;
 
 				}
 
 				// close on click outside
 				$document.bind('click', function(event) {
 					if (bodyElem.hasClass(
-							SidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
+							ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
 						)) {
 						var sideBarHtml = element.html(),
 							targetElementHtml = angular.element(event.target).html();
@@ -3819,7 +3821,7 @@ angular.module('keta.directives.Sidebar')
  *   A simple time range selector component to select a time range.
  * </p>
  * @example
- * &lt;div data-time-range-selector
+ * &lt;div data-keta-time-range-selector
  *   data-ng-model="model"
  *   data-css-classes="cssClasses"
  *   data-current-locale="currentLocale"
@@ -3844,19 +3846,21 @@ angular.module('keta.directives.Sidebar')
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.TimeRangeSelector'])
- *     .controller('ExampleController', function($scope, TimeRangeSelectorConstants, TimeRangeSelectorMessageKeys) {
+ *     .controller('ExampleController', function(
+ *         $scope, ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys
+ *     ) {
  *
  *         // current range to use
  *         $scope.model = new Date(2016, 3, 20, 9, 0, 0, 0);
  *
  *         // css classes to use
- *         $scope.cssClasses = TimeRangeSelectorConstants.CSS_CLASSES;
+ *         $scope.cssClasses = ketaTimeRangeSelectorConstants.CSS_CLASSES;
  *
  *         // current locale to use
  *         $scope.currentLocale = 'de_DE';
  *
- *         // display mode to use (@see TimeRangeSelectorConstants.DISPLAY_MODE)
- *         $scope.displayMode = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
+ *         // display mode to use (@see ketaTimeRangeSelectorConstants.DISPLAY_MODE)
+ *         $scope.displayMode = ketaTimeRangeSelectorConstants.DISPLAY_MODE.DAY;
  *
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
@@ -3874,7 +3878,7 @@ angular.module('keta.directives.Sidebar')
  *         $scope.firstClick = true;
  *
  *         // define first day of week
- *         $scope.firstDayOfWeek = TimeRangeSelectorConstants.DAY.SUNDAY;
+ *         $scope.firstDayOfWeek = ketaTimeRangeSelectorConstants.DAY.SUNDAY;
  *
  *         // define labels to use
  *         $scope.labels = TimeRangeSelectorMessageKeys;
@@ -3922,7 +3926,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 	'moment'
 ])
 
-	.constant('TimeRangeSelectorConstants', {
+	.constant('ketaTimeRangeSelectorConstants', {
 		CSS_CLASSES: {
 			CURRENT_DATE: 'current-date',
 			OUT_OF_BOUNDS: 'out-of-bounds',
@@ -3953,7 +3957,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 	})
 
 	// message keys with default values
-	.constant('TimeRangeSelectorMessageKeys', {
+	.constant('ketaTimeRangeSelectorMessageKeys', {
 		'en_GB': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Days',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Months',
@@ -4081,9 +4085,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 		}
 	})
 
-	.directive('timeRangeSelector', function TimeRangeSelectorDirective(
+	.directive('ketaTimeRangeSelector', function TimeRangeSelectorDirective(
 		$filter,
-		TimeRangeSelectorConstants, TimeRangeSelectorMessageKeys, moment
+		ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys, moment
 	) {
 		return {
 			restrict: 'EA',
@@ -4097,7 +4101,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// current locale
 				currentLocale: '=?',
 
-				// display mode (@see TimeRangeSelectorConstants.DISPLAY)
+				// display mode (@see ketaTimeRangeSelectorConstants.DISPLAY)
 				displayMode: '=?',
 
 				// display value (date)
@@ -4170,9 +4174,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// CONSTANTS
 				// ---------
 
-				scope.DISPLAY_MODE_DAY = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
-				scope.DISPLAY_MODE_MONTH = TimeRangeSelectorConstants.DISPLAY_MODE.MONTH;
-				scope.DISPLAY_MODE_YEAR = TimeRangeSelectorConstants.DISPLAY_MODE.YEAR;
+				scope.DISPLAY_MODE_DAY = ketaTimeRangeSelectorConstants.DISPLAY_MODE.DAY;
+				scope.DISPLAY_MODE_MONTH = ketaTimeRangeSelectorConstants.DISPLAY_MODE.MONTH;
+				scope.DISPLAY_MODE_YEAR = ketaTimeRangeSelectorConstants.DISPLAY_MODE.YEAR;
 
 				var DAYS_PER_WEEK = 7;
 				var ISO_DATE_LENGTH_DAY = 10;
@@ -4213,8 +4217,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				scope.cssClasses =
 					angular.isObject(scope.cssClasses) ?
-						angular.extend(TimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
-						TimeRangeSelectorConstants.CSS_CLASSES;
+						angular.extend(ketaTimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
+						ketaTimeRangeSelectorConstants.CSS_CLASSES;
 				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
@@ -4232,19 +4236,20 @@ angular.module('keta.directives.TimeRangeSelector', [
 				scope.enableWeekSelection =
 					angular.isDefined(scope.enableWeekSelection) ?
 						scope.enableWeekSelection : true;
-				scope.firstDayOfWeek = scope.firstDayOfWeek || TimeRangeSelectorConstants.DAY.SUNDAY;
+				scope.firstDayOfWeek = scope.firstDayOfWeek || ketaTimeRangeSelectorConstants.DAY.SUNDAY;
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.TimeRangeSelector';
 				scope.labels =
 					angular.isObject(scope.labels) ?
-						angular.extend(TimeRangeSelectorMessageKeys, scope.labels) : TimeRangeSelectorMessageKeys;
+						angular.extend(ketaTimeRangeSelectorMessageKeys, scope.labels) :
+						ketaTimeRangeSelectorMessageKeys;
 				scope.currentLabels =
 					angular.isDefined(
-						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
+						ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 					) ?
-						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						TimeRangeSelectorMessageKeys.en_GB;
+						ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+						ketaTimeRangeSelectorMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -4527,7 +4532,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * get date classes
-				 * @param {date} date date to get classes for
+				 * @param {Date} date date to get classes for
 				 * @returns {string} classes as space-separated strings
 				 */
 				scope.getDateClasses = function getDateClasses(date) {
@@ -4626,10 +4631,10 @@ angular.module('keta.directives.TimeRangeSelector', [
 					// update current labels
 					scope.currentLabels =
 						angular.isDefined(
-							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
+							ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 						) ?
-							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							TimeRangeSelectorMessageKeys.en_GB;
+							ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+							ketaTimeRangeSelectorMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -4691,18 +4696,18 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * get display mode dependent date
-				 * @param {date} date date to convert to a display mode dependent value
+				 * @param {Date} date date to convert to a display mode dependent value
 				 * @param {string} mode display mode
 				 * @param {boolean} from from or to value
-				 * @returns {date} converted date
+				 * @returns {Date} converted date
 				 */
 				var getDisplayModeDate = function getDisplayModeDate(date, mode, from) {
 					var displayModeDate = null;
 
-					if (mode === TimeRangeSelectorConstants.DISPLAY_MODE.MONTH) {
+					if (mode === ketaTimeRangeSelectorConstants.DISPLAY_MODE.MONTH) {
 						displayModeDate = from ?
 							date : moment(date).endOf('month').hour(0).minute(0).second(0).millisecond(0).toDate();
-					} else if (mode === TimeRangeSelectorConstants.DISPLAY_MODE.YEAR) {
+					} else if (mode === ketaTimeRangeSelectorConstants.DISPLAY_MODE.YEAR) {
 						displayModeDate = from ?
 							date : moment(date).endOf('year').hour(0).minute(0).second(0).millisecond(0).toDate();
 					} else {
@@ -4714,8 +4719,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * apply boundaries constraint (if enabled)
-				 * @param {date} from from date
-				 * @param {date} to to date
+				 * @param {Date} from from date
+				 * @param {Date} to to date
 				 * @param {number} min minimum as timestamp or null
 				 * @param {number} max maximum as timestamp or null
 				 * @returns {{from: *, to: *}} range
@@ -4736,8 +4741,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * apply range length constraint (if enabled)
-				 * @param {date} from from date
-				 * @param {date} to to date
+				 * @param {Date} from from date
+				 * @param {Date} to to date
 				 * @param {number} min minimum range length in days or null
 				 * @param {number} max maximum range length in days or null
 				 * @returns {{from: *, to: *}} range
@@ -4782,7 +4787,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * select week for given date
-				 * @param {date} date date selected
+				 * @param {Date} date date selected
 				 * @returns {void} nothing
 				 */
 				scope.selectWeek = function selectWeek(date) {
@@ -4884,7 +4889,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 					// emit event
 					scope.$emit(
-						TimeRangeSelectorConstants.EVENT.SELECT,
+						ketaTimeRangeSelectorConstants.EVENT.SELECT,
 						{
 							id: scope.elementIdentifier,
 							model: scope.model
@@ -5106,16 +5111,16 @@ angular.module('keta.directives.TimeRangeSelector')
  *     .controller('ExampleController', function($scope) {
  *
  *         // return object values in given order (all other values are dismissed)
- *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2']);
+ *         $scope.orderedProps = $filter('ketaOrderObjectBy')($scope.row, ['col1', 'col2']);
  *
  *         // return object keys in given order (all other keys are dismissed)
- *         $scope.orderedProps = $filter('orderObjectBy')($scope.row, ['col1', 'col2'], true);
+ *         $scope.orderedProps = $filter('ketaOrderObjectBy')($scope.row, ['col1', 'col2'], true);
  *
  *     });
  */
 
 angular.module('keta.filters.OrderObjectBy', [])
-	.filter('orderObjectBy', function() {
+	.filter('ketaOrderObjectBy', function() {
 		return function(input, order, returnKey) {
 
 			if (!angular.isObject(input)) {
@@ -5168,13 +5173,13 @@ angular.module('keta.filters.OrderObjectBy', [])
  *     .controller('ExampleController', function($scope) {
  *
  *         // extract 5 elements starting at offset 0
- *         $scope.pagedRows = $filter('slice')($scope.rows, 0, 5);
+ *         $scope.pagedRows = $filter('ketaSlice')($scope.rows, 0, 5);
  *
  *     });
  */
 
 angular.module('keta.filters.Slice', [])
-	.filter('slice', function() {
+	.filter('ketaSlice', function() {
 		return function(arr, offset, limit) {
 			if (!angular.isDefined(arr) || !angular.isArray(arr)) {
 				arr = [];
@@ -5241,17 +5246,17 @@ angular.module('keta.filters.Slice', [])
  *     unit: 'kW'
  * }</pre>
  * @example
- * {{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
+ * {{ 1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false} }}
  *
- * Number: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
- * Unit: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}
+ * Number: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
+ * Unit: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}
  * @example
  * angular.module('exampleApp', ['keta.filters.Unit'])
  *     .controller('ExampleController', function($scope) {
  *
  *         // use unit filter to return formatted number value
  *         // $scope.value equals string '1.2 kW'
- *         $scope.value = $filter('unit')(1234.56, {
+ *         $scope.value = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false
@@ -5259,7 +5264,7 @@ angular.module('keta.filters.Slice', [])
  *
  *         // use unit filter for integers that shouldn't be cutted by precision
  *         // $scope.valuePrecisionIntegersExcluded equals string '123 W'
- *         $scope.valuePrecisionIntegersExcluded = $filter('unit')(123, {
+ *         $scope.valuePrecisionIntegersExcluded = $filter('ketaUnit')(123, {
  *             unit: 'W',
  *             precision: 2,
  *             precisionExcludeIntegers: true
@@ -5267,7 +5272,7 @@ angular.module('keta.filters.Slice', [])
  *
  *         // use unit filter for values that shouldn't be cutted by precision
  *         // $scope.valuePrecisionExcluded equals string '0.123456 W'
- *         $scope.valuePrecisionExcluded = $filter('unit')(0.123456, {
+ *         $scope.valuePrecisionExcluded = $filter('ketaUnit')(0.123456, {
  *             unit: 'W',
  *             precision: 2,
  *             precisionExclude: [0.123456]
@@ -5277,7 +5282,7 @@ angular.module('keta.filters.Slice', [])
  *         // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
  *         // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
  *         // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
- *         $scope.valueSeparated = $filter('unit')(1234.56, {
+ *         $scope.valueSeparated = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false,
@@ -5287,7 +5292,7 @@ angular.module('keta.filters.Slice', [])
  *         // use unit filter with precision ranges
  *         // for the example below all values which are less than 1000 are formatted with a precision of 0
  *         // and all values equal or greater than 1000 are formatted with a precision of 1
- *         $scope.valueRanges = $filter('unit')(1234.56, {
+ *         $scope.valueRanges = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             precisionRanges: [
@@ -5304,7 +5309,7 @@ angular.module('keta.filters.Unit',
 	[
 		'keta.services.Tag'
 	])
-	.filter('unit', function($filter, TagConstants) {
+	.filter('ketaUnit', function($filter, ketaTagConstants) {
 
 		var unitFilter = function unitFilter(input, configuration) {
 
@@ -5395,10 +5400,10 @@ angular.module('keta.filters.Unit',
 			var sizes = isBytes ? ['Bytes', 'KB', 'MB', 'GB', 'TB'] : ['', 'k', 'M', 'G', 'T'];
 
 			// directly return currencies and distances
-			if (unit === TagConstants.UNIT.EURO ||
-				unit === TagConstants.UNIT.KILOMETER ||
-				unit === TagConstants.UNIT.DOLLAR ||
-				unit === TagConstants.UNIT.POUND) {
+			if (unit === ketaTagConstants.UNIT.EURO ||
+				unit === ketaTagConstants.UNIT.KILOMETER ||
+				unit === ketaTagConstants.UNIT.DOLLAR ||
+				unit === ketaTagConstants.UNIT.POUND) {
 
 				if (separate) {
 					separated.numberFormatted = $filter('number')(input, precision);
@@ -5486,11 +5491,11 @@ angular.module('keta.services.AccessToken',
 	])
 
 	/**
-	 * @class AccessTokenConstants
+	 * @class ketaAccessTokenConstants
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Constants
 	 */
-	.constant('AccessTokenConstants', {
+	.constant('ketaAccessTokenConstants', {
 
 		// session types
 		SESSION_TYPE: {
@@ -5501,20 +5506,20 @@ angular.module('keta.services.AccessToken',
 	})
 
 	/**
-	 * @class AccessToken
+	 * @class ketaAccessToken
 	 * @propertyOf keta.services.AccessToken
 	 * @description Access Token Factory
 	 */
-	.factory('AccessToken', function AccessTokenFactory(
+	.factory('ketaAccessToken', function AccessTokenFactory(
 		$http, $q,
-		AppContext, AccessTokenConstants
+		ketaAppContext, ketaAccessTokenConstants
 	) {
 
 		/**
 		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = AppContext.get('oauth.accessToken');
+		var accessToken = ketaAppContext.get('oauth.accessToken');
 
 		/**
 		 * @private
@@ -5683,8 +5688,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessToken = AccessToken.get();
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessToken = ketaAccessToken.get();
 			 *     });
 			 */
 			get: function(decoded) {
@@ -5702,8 +5707,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {void} returns nothing
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         AccessToken.set('new-token');
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         ketaAccessToken.set('new-token');
 			 *     });
 			 */
 			set: function(token) {
@@ -5721,8 +5726,8 @@ angular.module('keta.services.AccessToken',
 			 * @returns {Object} access token properties
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessTokenProps = AccessToken.decode(AccessToken.get());
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessTokenProps = ketaAccessToken.decode(AccessToken.get());
 			 *     });
 			 */
 			decode: function(token) {
@@ -5750,10 +5755,10 @@ angular.module('keta.services.AccessToken',
 			 * @returns {string} access token
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
-			 *     .controller('ExampleController', function(AccessToken) {
-			 *         var accessTokenProps = AccessToken.decode(AccessToken.get());
+			 *     .controller('ExampleController', function(ketaAccessToken) {
+			 *         var accessTokenProps = ketaAccessToken.decode(ketaAccessToken.get());
 			 *         accessTokenProps.loaded = true;
-			 *         var accessToken = AccessToken.encode(accessTokenProps);
+			 *         var accessToken = ketaAccessToken.encode(accessTokenProps);
 			 *     });
 			 */
 			encode: function(props) {
@@ -5786,7 +5791,7 @@ angular.module('keta.services.AccessToken',
 					refreshPromise = $q.defer();
 					refreshInProgress = true;
 
-					var refreshUrl = AppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
+					var refreshUrl = ketaAppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
 
 					$http({method: 'GET', url: refreshUrl}).then(
 						function(response) {
@@ -5826,7 +5831,7 @@ angular.module('keta.services.AccessToken',
 			 * @name isType
 			 * @function
 			 * @description Checks if session is of a certain type.
-			 * @param {string} type session type (use AccessTokenConstants.SESSION_TYPE)
+			 * @param {string} type session type (use ketaAccessTokenConstants.SESSION_TYPE)
 			 * @returns {boolean} result
 			 */
 			isType: function(type) {
@@ -5848,7 +5853,7 @@ angular.module('keta.services.AccessToken',
 			getBackUrl: function() {
 				var backUrl = null;
 
-				if (api.isType(AccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
+				if (api.isType(ketaAccessTokenConstants.SESSION_TYPE.IMPERSONATED)) {
 					var decoded = api.get(true);
 					if (decoded !== null &&
 						angular.isDefined(decoded.session) &&
@@ -5897,11 +5902,11 @@ angular.module('keta.services.AccessToken',
 angular.module('keta.services.AppContext', [])
 
 	/**
-	 * @class AppContextProvider
+	 * @class ketaAppContextProvider
 	 * @propertyOf keta.services.AppContext
 	 * @description App Context Provider
 	 */
-	.provider('AppContext', function AppContextProvider() {
+	.provider('ketaAppContext', function AppContextProvider() {
 
 		/**
 		 * @private
@@ -5921,8 +5926,8 @@ angular.module('keta.services.AppContext', [])
 		 * @returns {*} Object extracted from AppContext
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.AppContext'])
-		 *     .config(function(AppContextProvider) {
-		 *         var socketURL = AppContextProvider.get('bus.url');
+		 *     .config(function(ketaAppContextProvider) {
+		 *         var socketURL = ketaAppContextProvider.get('bus.url');
 		 *     });
 		 */
 		this.get = function(key) {
@@ -5941,8 +5946,8 @@ angular.module('keta.services.AppContext', [])
 		this.$get = function AppContextService() {
 
 			/**
-			 * @class AppContext
-			 * @propertyOf AppContextProvider
+			 * @class ketaAppContext
+			 * @propertyOf ketaAppContextProvider
 			 * @description AppContext Service
 			 */
 			var api = {
@@ -5975,17 +5980,17 @@ angular.module('keta.services.ApplicationSet',
 	 * @propertyOf keta.services.ApplicationSet
 	 * @description ApplicationSet Provider
 	 */
-	.provider('ApplicationSet', function ApplicationSetProvider() {
+	.provider('ketaApplicationSet', function ApplicationSetProvider() {
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
 
 		this.$get = function ApplicationSetService(
 			$q, $rootScope, $log,
-			Application, EventBusDispatcher, EventBusManager) {
+			ketaApplication, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			/**
-			 * @class ApplicationSetInstance
+			 * @class ketaApplicationSetInstance
 			 * @propertyOf ApplicationSetProvider
 			 * @description ApplicationSet Instance
 			 * @param {EventBus} givenEventBus eventBus to use for ApplicationSetInstance
@@ -6012,8 +6017,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -6043,8 +6048,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -6077,8 +6082,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -6111,8 +6116,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -6151,8 +6156,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {promise} Promise which is resolved when query is returned
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -6169,7 +6174,7 @@ angular.module('keta.services.ApplicationSet',
 				that.query = function() {
 					var deferred = $q.defer();
 
-					EventBusDispatcher.send(eventBus, 'appservice', {
+					ketaEventBusDispatcher.send(eventBus, 'appservice', {
 						action: 'getAppsInfo',
 						params: params
 					}, function(reply) {
@@ -6177,18 +6182,18 @@ angular.module('keta.services.ApplicationSet',
 							// inject used params
 							reply.params = params;
 
-							if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
+							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 
 								// create ApplicationInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
 									angular.forEach(reply.result.items, function(item, index) {
-										reply.result.items[index] = Application.create(eventBus, item);
+										reply.result.items[index] = ketaApplication.create(eventBus, item);
 									});
 								}
 
 								// log if in debug mode
-								if (EventBusManager.inDebugMode()) {
+								if (ketaEventBusManager.inDebugMode()) {
 									$log.request(['appservice', {
 										action: 'getAppsInfo',
 										params: params
@@ -6212,7 +6217,7 @@ angular.module('keta.services.ApplicationSet',
 			};
 
 			/**
-			 * @class ApplicationSet
+			 * @class ketaApplicationSet
 			 * @propertyOf ApplicationSetProvider
 			 * @description ApplicationSet Service
 			 */
@@ -6229,8 +6234,8 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationSetInstance} ApplicationSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         var applicationSet = ApplicationSet.create(eventBus);
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         var applicationSet = ketaApplicationSet.create(eventBus);
 				 *     });
 				 */
 				create: function(eventBus) {
@@ -6249,11 +6254,11 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {number} index
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // index equals 0 after the call
-				 *                 var index = ApplicationSet.indexOf(reply, reply.result.items[0]);
+				 *                 var index = ketaApplicationSet.indexOf(reply, reply.result.items[0]);
 				 *             });
 				 *     });
 				 */
@@ -6281,11 +6286,11 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {number} number of applications
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // length equals number of applications in ApplicationSet
-				 *                 var length = ApplicationSet.length(reply);
+				 *                 var length = ketaApplicationSet.length(reply);
 				 *             });
 				 *     });
 				 */
@@ -6309,11 +6314,11 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {ApplicationInstance} ApplicationInstance retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // application equals first item after the call
-				 *                 var application = ApplicationSet.get(reply, 0);
+				 *                 var application = ketaApplicationSet.get(reply, 0);
 				 *             });
 				 *     });
 				 */
@@ -6336,10 +6341,10 @@ angular.module('keta.services.ApplicationSet',
 				 * @returns {Array} All ApplicationInstances retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
-				 *     .controller('ExampleController', function(ApplicationSet) {
-				 *         ApplicationSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
 				 *             .then(function(reply) {
-				 *                 var applications = ApplicationSet.getAll(reply);
+				 *                 var applications = ketaApplicationSet.getAll(reply);
 				 *             });
 				 *     });
 				 */
@@ -6374,11 +6379,11 @@ angular.module('keta.services.Application',
 	])
 
 	/**
-	 * @class ApplicationProvider
+	 * @class ketaApplicationProvider
 	 * @propertyOf keta.services.Application
 	 * @description Application Provider
 	 */
-	.provider('Application', function ApplicationProvider() {
+	.provider('ketaApplication', function ApplicationProvider() {
 
 		this.$get = function ApplicationService() {
 
@@ -6412,7 +6417,7 @@ angular.module('keta.services.Application',
 			};
 
 			/**
-			 * @class Application
+			 * @class ketaApplication
 			 * @propertyOf ApplicationProvider
 			 * @description Application Service
 			 */
@@ -6430,8 +6435,8 @@ angular.module('keta.services.Application',
 				 * @returns {ApplicationInstance} ApplicationInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Application'])
-				 *     .controller('ExampleController', function(Application) {
-				 *         var application = Application.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaApplication) {
+				 *         var application = ketaApplication.create(eventBus, {
 				 *             appId: 'company.app',
 				 *             entryUri: 'https://...',
 				 *             redirectUri: 'https://...',
@@ -6466,11 +6471,11 @@ angular.module('keta.services.Application',
 angular.module('keta.services.DeviceEvent', [])
 
 	/**
-	 * @class DeviceEventProvider
+	 * @class ketaDeviceEventProvider
 	 * @propertyOf keta.services.DeviceEvent
 	 * @description DeviceEvent Provider
 	 */
-	.provider('DeviceEvent', function DeviceEventProvider() {
+	.provider('ketaDeviceEvent', function DeviceEventProvider() {
 
 		this.$get = function DeviceEventService() {
 
@@ -6499,11 +6504,11 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {string} type
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(Device, DeviceEvent) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid'
 				 *         });
-				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = ketaDeviceEvent.create(ketaDeviceEvent.TYPE_CREATED, device);
 				 *         var deviceEventType = deviceEvent.getType();
 				 *     });
 				 */
@@ -6524,11 +6529,11 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {DeviceInstance} device
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(Device, DeviceEvent) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid'
 				 *         });
-				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = ketaDeviceEvent.create(ketaDeviceEvent.TYPE_CREATED, device);
 				 *         var deviceEventDevice = deviceEvent.getDevice();
 				 *     });
 				 */
@@ -6554,8 +6559,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(DeviceEvent) {
-				 *         if (type === DeviceEvent.CREATED) {
+				 *     .controller('ExampleController', function(ketaDeviceEvent) {
+				 *         if (type === ketaDeviceEvent.CREATED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -6571,8 +6576,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(DeviceEvent) {
-				 *         if (type === DeviceEvent.UPDATED) {
+				 *     .controller('ExampleController', function(ketaDeviceEvent) {
+				 *         if (type === ketaDeviceEvent.UPDATED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -6588,8 +6593,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(DeviceEvent) {
-				 *         if (type === DeviceEvent.DELETED) {
+				 *     .controller('ExampleController', function(ketaDeviceEvent) {
+				 *         if (type === ketaDeviceEvent.DELETED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -6608,8 +6613,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {DeviceEventInstance} DeviceEventInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(Device, DeviceEvent) {
-				 *         var device = Device.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
+				 *         var device = ketaDevice.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
 				 *                     name: 'IdName',
@@ -6619,7 +6624,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 *                 }
 				 *             }
 				 *         });
-				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = ketaDeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
 				 *     });
 				 */
 				create: function(type, device) {
@@ -6649,18 +6654,18 @@ angular.module('keta.services.DeviceSet',
 	])
 
 	/**
-	 * @class DeviceSetProvider
+	 * @class ketaDeviceSetProvider
 	 * @propertyOf keta.services.DeviceSet
 	 * @description DeviceSet Provider
 	 */
-	.provider('DeviceSet', function DeviceSetProvider() {
+	.provider('ketaDeviceSet', function DeviceSetProvider() {
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
 
 		this.$get = function DeviceSetService(
 			$q, $rootScope, $log,
-			Device, DeviceEvent, EventBusDispatcher, EventBusManager) {
+			ketaDevice, ketaDeviceEvent, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			// api reference
 			var api;
@@ -6699,8 +6704,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .filter({
 				 *                 guid: 'guid'
 				 *             })
@@ -6730,8 +6735,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .project({
 				 *                 guid: 1,
 				 *                 tagValues: {
@@ -6764,8 +6769,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .sort({
 				 *                 'tagValue.IdName.value': 1
 				 *             })
@@ -6795,8 +6800,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceSetInstance} DeviceSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .paginate({
 				 *                 offset: 0,
 				 *                 limit: 50
@@ -6832,8 +6837,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {promise} DeviceSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .live()
 				 *             .query()
 				 *             .then(function(reply) {
@@ -6859,8 +6864,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {promise} Promise which is resolved when query is returned
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus)
 				 *             .query()
 				 *             .then(function(reply) {
 				 *                 // success handler
@@ -6878,10 +6883,10 @@ angular.module('keta.services.DeviceSet',
 					if (registerListener) {
 
 						// generate UUID
-						var liveHandlerUUID = 'CLIENT_' + EventBusDispatcher.generateUUID();
+						var liveHandlerUUID = 'CLIENT_' + ketaEventBusDispatcher.generateUUID();
 
 						// register handler under created UUID
-						EventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
+						ketaEventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
 
 							// inject guid if missing
 							if (!angular.isDefined(event.value.guid) &&
@@ -6891,17 +6896,17 @@ angular.module('keta.services.DeviceSet',
 							}
 
 							// process event using sync
-							api.sync(set, DeviceEvent.create(event.type, event.value), eventBus);
+							api.sync(set, ketaDeviceEvent.create(event.type, event.value), eventBus);
 
 							// log if in debug mode
-							if (EventBusManager.inDebugMode()) {
+							if (ketaEventBusManager.inDebugMode()) {
 								$log.event([event], $log.ADVANCED_FORMATTER);
 							}
 
 						});
 
 						// register device set listener
-						EventBusDispatcher.send(eventBus, 'deviceservice', {
+						ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
 							action: 'registerDeviceSetListener',
 							body: {
 								filter: params.filter,
@@ -6910,7 +6915,7 @@ angular.module('keta.services.DeviceSet',
 							}
 						}, function(reply) {
 							// log if in debug mode
-							if (EventBusManager.inDebugMode()) {
+							if (ketaEventBusManager.inDebugMode()) {
 								$log.request(['deviceservice', {
 									action: 'registerDeviceSetListener',
 									body: {
@@ -6924,7 +6929,7 @@ angular.module('keta.services.DeviceSet',
 
 					}
 
-					EventBusDispatcher.send(eventBus, 'deviceservice', {
+					ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
 						action: 'getDevices',
 						params: params
 					}, function(reply) {
@@ -6932,13 +6937,13 @@ angular.module('keta.services.DeviceSet',
 							// inject used params
 							reply.params = params;
 
-							if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
+							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 
 								// create DeviceInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
 									angular.forEach(reply.result.items, function(item, index) {
-										reply.result.items[index] = Device.create(eventBus, item);
+										reply.result.items[index] = ketaDevice.create(eventBus, item);
 									});
 									set = reply;
 								} else {
@@ -6946,7 +6951,7 @@ angular.module('keta.services.DeviceSet',
 								}
 
 								// log if in debug mode
-								if (EventBusManager.inDebugMode()) {
+								if (ketaEventBusManager.inDebugMode()) {
 									$log.request(['deviceservice', {
 										action: 'getDevices',
 										params: params
@@ -6987,8 +6992,8 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceSetInstance} DeviceSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         var deviceSet = DeviceSet.create(eventBus);
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         var deviceSet = ketaDeviceSet.create(eventBus);
 				 *     });
 				 */
 				create: function(eventBus) {
@@ -7007,11 +7012,11 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {number} index
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // index equals 0 after the call
-				 *                 var index = DeviceSet.indexOf(reply, reply.result.items[0]);
+				 *                 var index = ketaDeviceSet.indexOf(reply, reply.result.items[0]);
 				 *             });
 				 *     });
 				 */
@@ -7039,11 +7044,11 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {number} number of devices
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // length equals number of devices in DeviceSet
-				 *                 var length = DeviceSet.length(reply);
+				 *                 var length = ketaDeviceSet.length(reply);
 				 *             });
 				 *     });
 				 */
@@ -7067,11 +7072,11 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {DeviceInstance} DeviceInstance retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // device equals first item after the call
-				 *                 var device = DeviceSet.get(reply, 0);
+				 *                 var device = ketaDeviceSet.get(reply, 0);
 				 *             });
 				 *     });
 				 */
@@ -7094,10 +7099,10 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {Array} All DeviceInstances retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaDeviceSet) {
+				 *         ketaDeviceSet.create(eventBus).query()
 				 *             .then(function(reply) {
-				 *                 var devices = DeviceSet.getAll(reply);
+				 *                 var devices = ketaDeviceSet.getAll(reply);
 				 *             });
 				 *     });
 				 */
@@ -7121,30 +7126,30 @@ angular.module('keta.services.DeviceSet',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceSet'])
-				 *     .controller('ExampleController', function(DeviceSet) {
-				 *         DeviceSet.sync(
-				 *             DeviceSet.create().query(),
-				 *             DeviceEvent.create({
-				 *                 type: DeviceEvent.CREATED,
-				 *                 device: Device.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaDeviceSet, ketaDeviceEvent, ketaDevice) {
+				 *         ketaDeviceSet.sync(
+				 *             ketaDeviceSet.create().query(),
+				 *             ketaDeviceEvent.create({
+				 *                 type: ketaDeviceEvent.CREATED,
+				 *                 device: ketaDevice.create(eventBus, {
 				 *                     guid: 'guid'
-				 *                 })
-				 *             })
+				 *                 });
+				 *             });
 				 *         );
 				 *     });
 				 */
 				sync: function(set, event, eventBus) {
 
 					var modified = false;
-					var device = Device.create(eventBus, event.getDevice());
+					var device = ketaDevice.create(eventBus, event.getDevice());
 
-					if (event.getType() === DeviceEvent.CREATED) {
+					if (event.getType() === ketaDeviceEvent.CREATED) {
 						set.result.items.push(device);
 						modified = true;
-					} else if (event.getType() === DeviceEvent.DELETED) {
+					} else if (event.getType() === ketaDeviceEvent.DELETED) {
 						set.result.items.splice(api.indexOf(set, device), 1);
 						modified = true;
-					} else if (event.getType() === DeviceEvent.UPDATED) {
+					} else if (event.getType() === ketaDeviceEvent.UPDATED) {
 						var index = api.indexOf(set, device);
 						if (index !== -1) {
 							angular.extend(api.get(set, index), device);
@@ -7182,7 +7187,7 @@ angular.module('keta.services.Device',
 		'keta.services.Logger'
 	])
 
-	.constant('DeviceConstants', {
+	.constant('ketaDeviceConstants', {
 		STATE: {
 			OK: 'OK',
 			ERROR: 'ERROR',
@@ -7212,13 +7217,13 @@ angular.module('keta.services.Device',
 	})
 
 	/**
-	 * @class DeviceProvider
+	 * @class ketaDeviceProvider
 	 * @propertyOf keta.services.Device
 	 * @description Device Provider
 	 */
-	.provider('Device', function DeviceProvider() {
+	.provider('ketaDevice', function DeviceProvider() {
 
-		this.$get = function DeviceService($q, $log, EventBusDispatcher, EventBusManager) {
+		this.$get = function DeviceService($q, $log, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			/**
 			 * @class DeviceInstance
@@ -7251,14 +7256,14 @@ angular.module('keta.services.Device',
 				var sendMessage = function(message) {
 					var deferred = $q.defer();
 
-					EventBusDispatcher.send(eventBus, 'deviceservice', message, function(reply) {
+					ketaEventBusDispatcher.send(eventBus, 'deviceservice', message, function(reply) {
 
 						// log if in debug mode
-						if (EventBusManager.inDebugMode()) {
+						if (ketaEventBusManager.inDebugMode()) {
 							$log.request(['deviceservice', message, reply], $log.ADVANCED_FORMATTER);
 						}
 
-						if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
+						if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 							deferred.resolve(reply);
 						} else {
 							deferred.reject(reply);
@@ -7288,8 +7293,8 @@ angular.module('keta.services.Device',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid',
 				 *             tagValues: {
 				 *                 IdName: {
@@ -7380,8 +7385,8 @@ angular.module('keta.services.Device',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid'
 				 *         });
 				 *         device.$delete()
@@ -7413,8 +7418,8 @@ angular.module('keta.services.Device',
 				 * @returns {undefined} nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create({
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create({
 				 *             guid: 'guid',
 				 *             tagValues: {
 				 *                 IdName: {
@@ -7473,8 +7478,8 @@ angular.module('keta.services.Device',
 				 * @returns {DeviceInstance} DeviceInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device'])
-				 *     .controller('ExampleController', function(Device) {
-				 *         var device = Device.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaDevice) {
+				 *         var device = ketaDevice.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
 				 *                     name: 'IdName',
@@ -7512,13 +7517,13 @@ angular.module('keta.services.EventBusDispatcher',
 	])
 
 	/**
-	 * @class EventBusDispatcherProvider
+	 * @class ketaEventBusDispatcherProvider
 	 * @propertyOf keta.services.EventBusDispatcher
 	 * @description EventBusDispatcher Provider
 	 */
-	.provider('EventBusDispatcher', function EventBusDispatcherProvider() {
+	.provider('ketaEventBusDispatcher', function EventBusDispatcherProvider() {
 
-		this.$get = function EventBusDispatcherService($window, $timeout, AccessToken) {
+		this.$get = function EventBusDispatcherService($window, $timeout, ketaAccessToken) {
 
 			/**
 			 * @private
@@ -7572,7 +7577,7 @@ angular.module('keta.services.EventBusDispatcher',
 			};
 
 			/**
-			 * @class EventBusDispatcher
+			 * @class ketaEventBusDispatcher
 			 * @propertyOf EventBusDispatcherProvider
 			 * @description EventBusDispatcher Service
 			 */
@@ -7587,8 +7592,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CONNECTING) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CONNECTING) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7604,8 +7609,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_OPEN) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_OPEN) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7621,8 +7626,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CLOSING) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CLOSING) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7638,8 +7643,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (state === EventBusDispatcher.STATE_CLOSED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (state === ketaEventBusDispatcher.STATE_CLOSED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7655,8 +7660,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_OK) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7672,8 +7677,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_NO_CONTENT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7689,8 +7694,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_OK) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_OK) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7706,8 +7711,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7723,8 +7728,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_BAD_REQUEST) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7740,8 +7745,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_UNAUTHORIZED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7757,8 +7762,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_UNAUTHORIZED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7774,8 +7779,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_NOT_FOUND) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7791,8 +7796,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_NOT_FOUND) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7808,8 +7813,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_REQUEST_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7825,8 +7830,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_REQUEST_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7842,8 +7847,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7859,8 +7864,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_AUTHENTICATION_TIMEOUT) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7876,8 +7881,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_INTERNAL_SERVER_ERROR) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7893,8 +7898,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_INTERNAL_SERVER_ERROR) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7910,8 +7915,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseCode === EventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseCode === ketaEventBusDispatcher.RESPONSE_CODE_SERVICE_UNAVAILABLE) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7927,8 +7932,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         if (responseMessage === EventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         if (responseMessage === ketaEventBusDispatcher.RESPONSE_MESSAGE_SERVICE_UNAVAILABLE) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -7957,8 +7962,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.send(eventBus, 'address', {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.send(eventBus, 'address', {
 				 *             action: 'action',
 				 *             body: {
 				 *                 guid: 'guid'
@@ -7971,14 +7976,14 @@ angular.module('keta.services.EventBusDispatcher',
 				send: function(eventBus, address, message, replyHandler) {
 
 					// inject access token
-					message.accessToken = AccessToken.get();
+					message.accessToken = ketaAccessToken.get();
 
 					var handler = function(reply) {
 						if (reply && reply.code === api.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 							// refresh access token
-							AccessToken.refresh().then(function(response) {
+							ketaAccessToken.refresh().then(function(response) {
 								if (angular.isDefined(response.data.accessToken)) {
-									AccessToken.set(response.data.accessToken);
+									ketaAccessToken.set(response.data.accessToken);
 									api.send(eventBus, address, message, replyHandler);
 								} else {
 									$window.location.reload();
@@ -8041,8 +8046,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.publish(eventBus, 'address', {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.publish(eventBus, 'address', {
 				 *             action: 'action',
 				 *             body: {
 				 *                 guid: 'guid'
@@ -8053,7 +8058,7 @@ angular.module('keta.services.EventBusDispatcher',
 				publish: function(eventBus, address, message) {
 
 					// inject access token and call stub method
-					message.accessToken = AccessToken.get();
+					message.accessToken = ketaAccessToken.get();
 
 					waitForOpen(eventBus, false, function() {
 						eventBus.getInstance().publish(address, message);
@@ -8074,8 +8079,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.registerHandler(eventBus, 'address', function(event) {
 				 *             // ...
 				 *         });
 				 *     });
@@ -8099,8 +8104,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.unregisterHandler(eventBus, 'address', function(event) {
 				 *             // ...
 				 *         });
 				 *     });
@@ -8122,8 +8127,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {void} returns nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         EventBusDispatcher.close(eventBus);
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         ketaEventBusDispatcher.close(eventBus);
 				 *     });
 				 */
 				close: function(eventBus) {
@@ -8141,8 +8146,8 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {number} connection state
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
-				 *         var state = EventBusDispatcher.readyState(eventBus);
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
+				 *         var state = ketaEventBusDispatcher.readyState(eventBus);
 				 *     });
 				 */
 				readyState: function(eventBus) {
@@ -8159,7 +8164,7 @@ angular.module('keta.services.EventBusDispatcher',
 				 * @returns {string} uuid
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.EventBusDispatcher'])
-				 *     .controller('ExampleController', function(EventBusDispatcher) {
+				 *     .controller('ExampleController', function(ketaEventBusDispatcher) {
 				 *         var handlerUUID = ketaEventBus.generateUUID();
 				 *     });
 				 */
@@ -8193,11 +8198,11 @@ angular.module('keta.services.EventBusDispatcher',
 angular.module('keta.services.EventBusManager', [])
 
 	/**
-	 * @class EventBusManagerProvider
+	 * @class ketaEventBusManagerProvider
 	 * @propertyOf keta.services.EventBusManager
 	 * @description EventBusManager Provider
 	 */
-	.provider('EventBusManager', function EventBusManagerProvider() {
+	.provider('ketaEventBusManager', function EventBusManagerProvider() {
 
 		// keep reference
 		var that = this;
@@ -8225,8 +8230,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .remove(eventBus);
 		 *     });
@@ -8247,8 +8252,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .remove(eventBus);
 		 *     });
@@ -8270,8 +8275,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
 		 *             .add(eventBus)
 		 *             .removeAll();
 		 *     });
@@ -8292,8 +8297,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {EventBus} EventBus instance if found, otherwise null
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         var eventBus = EventBusManagerProvider.get('eventBus');
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBus = ketaEventBusManagerProvider.get('eventBus');
 		 *     });
 		 */
 		this.get = function(eventBusId) {
@@ -8310,8 +8315,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {Object} EventBus instances map (id as key)
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         var eventBuses = EventBusManagerProvider.getAll();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBuses = ketaEventBusManagerProvider.getAll();
 		 *     });
 		 */
 		this.getAll = function() {
@@ -8328,8 +8333,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {void} returns nothing
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider.enableDebug();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.enableDebug();
 		 *     });
 		 */
 		this.enableDebug = function() {
@@ -8346,8 +8351,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {void} returns nothing
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         EventBusManagerProvider.disableDebug();
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.disableDebug();
 		 *     });
 		 */
 		this.disableDebug = function() {
@@ -8364,8 +8369,8 @@ angular.module('keta.services.EventBusManager', [])
 		 * @returns {Boolean} true if debug mode is enabled
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
-		 *     .config(function(EventBusManagerProvider) {
-		 *         if (EventBusManagerProvider.inDebugMode()) {
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         if (ketaEventBusManagerProvider.inDebugMode()) {
 		 *             // do something useful
 		 *         }
 		 *     });
@@ -8377,7 +8382,7 @@ angular.module('keta.services.EventBusManager', [])
 		this.$get = function EventBusManagerService() {
 
 			/**
-			 * @class EventBusManager
+			 * @class ketaEventBusManager
 			 * @propertyOf EventBusManagerProvider
 			 * @description EventBusManager Service
 			 */
@@ -8418,14 +8423,14 @@ angular.module('keta.services.EventBusManager', [])
 angular.module('keta.services.EventBus', [])
 
 	/**
-	 * @class EventBusProvider
+	 * @class ketaEventBusProvider
 	 * @propertyOf keta.services.EventBus
 	 * @description EventBus Provider
 	 */
-	.provider('EventBus', function EventBusProvider() {
+	.provider('ketaEventBus', function EventBusProvider() {
 
 		/**
-		 * @class EventBus
+		 * @class ketaEventBus
 		 * @propertyOf keta.services.EventBus
 		 * @description EventBus Instance
 		 * @param {Object} givenConfig Config to use for EventBus
@@ -8455,8 +8460,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {Object} default configuration
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var defaultConfig = eventBus.getDefaultConfig();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var defaultConfig = ketaEventBus.getDefaultConfig();
 			 *     });
 			 */
 			this.getDefaultConfig = function() {
@@ -8479,8 +8484,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {Object} effective configuration
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var effectiveConfig = eventBus.getConfig();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var effectiveConfig = ketaEventBus.getConfig();
 			 *     });
 			 */
 			this.getConfig = function() {
@@ -8503,8 +8508,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {vertx.EventBus} vertx.EventBus instance
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var instance = eventBus.getInstance();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var instance = ketaEventBus.getInstance();
 			 *     });
 			 */
 			this.getInstance = function() {
@@ -8521,8 +8526,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {boolean} true if in offline mode
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var inOfflineMode = eventBus.inOfflineMode();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var inOfflineMode = ketaEventBus.inOfflineMode();
 			 *     });
 			 */
 			this.inOfflineMode = function() {
@@ -8570,23 +8575,23 @@ angular.module('keta.services.EventBus', [])
 		 * @returns {EventBus} EventBus created
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *         // create with default config
-		 *         var eventBus = EventBusProvider.create();
+		 *         var eventBus = ketaEventBusProvider.create();
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *         // create with custom id
-		 *         var eventBus = EventBusProvider.create({id: 'myEventBus'});
+		 *         var eventBus = ketaEventBusProvider.create({id: 'myEventBus'});
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *
 		 *         // create with custom config
 		 *         // in this case it's exactly the default config
-		 *         var eventBus = EventBusProvider.create({
+		 *         var eventBus = ketaEventBusProvider.create({
 		 *             id: 'kiwibus',
 		 *             url: 'https://localhost:10443/kiwibus',
 		 *             reconnect: true,
@@ -8646,7 +8651,7 @@ angular.module('keta.services.Logger',
 	 * @propertyOf keta.services.Logger
 	 * @description Logger Config
 	 */
-	.config(function LoggerConfig($provide, AppContextProvider) {
+	.config(function LoggerConfig($provide, ketaAppContextProvider) {
 
 		/**
 		 * @class LoggerDecorator
@@ -8714,9 +8719,9 @@ angular.module('keta.services.Logger',
 					var args = Array.prototype.slice.call(arguments);
 
 					// check logLevel and adjust console output accordingly through bitmask
-					if (AppContextProvider.get('common.logLevel') === null ||
-						AppContextProvider.get('common.logLevel') === 0 ||
-						(AppContextProvider.get('common.logLevel') & bitValue) === bitValue) {
+					if (ketaAppContextProvider.get('common.logLevel') === null ||
+						ketaAppContextProvider.get('common.logLevel') === 0 ||
+						(ketaAppContextProvider.get('common.logLevel') & bitValue) === bitValue) {
 						originalFn.apply(null, args);
 					}
 				};
@@ -8852,11 +8857,11 @@ angular.module('keta.services.TagSet',
 	])
 
 	/**
-	 * @class TagSetProvider
+	 * @class ketaTagSetProvider
 	 * @propertyOf keta.services.TagSet
 	 * @description TagSet Provider
 	 */
-	.provider('TagSet', function TagSetProvider() {
+	.provider('ketaTagSet', function TagSetProvider() {
 
 		this.$get = function TagSetService() {
 
@@ -8886,8 +8891,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {Array} tags
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(TagSet) {
-				 *         var tagSet = TagSet.create();
+				 *     .controller('ExampleController', function(ketaTagSet) {
+				 *         var tagSet = ketaTagSet.create();
 				 *         var tags = tagSet.getTags();
 				 *     });
 				 */
@@ -8907,8 +8912,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {Object} tagsAsHierarchy
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(TagSet) {
-				 *         var tagSet = TagSet.create();
+				 *     .controller('ExampleController', function(ketaTagSet) {
+				 *         var tagSet = ketaTagSet.create();
 				 *         var hierarchy = tagSet.getTagsAsHierarchy();
 				 *     });
 				 */
@@ -8928,8 +8933,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance with added TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(TagSet) {
-				 *         TagSet
+				 *     .controller('ExampleController', function(ketaTagSet) {
+				 *         ketaTagSet
 				 *             .create()
 				 *             .add(Tag.create({
 				 *                 guid: 'guid',
@@ -8962,13 +8967,13 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance with removed TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(TagSet) {
+				 *     .controller('ExampleController', function(ketaTagSet) {
 				 *         var tag = Tag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
 				 *         });
-				 *         TagSet
+				 *         ketaTagSet
 				 *             .create()
 				 *             .add(tag)
 				 *             .remove(tag);
@@ -9004,8 +9009,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(TagSet) {
-				 *         var tagSet = TagSet.create();
+				 *     .controller('ExampleController', function(ketaTagSet) {
+				 *         var tagSet = ketaTagSet.create();
 				 *     });
 				 */
 				create: function() {
@@ -9030,7 +9035,7 @@ angular.module('keta.services.TagSet',
 
 angular.module('keta.services.Tag', [])
 
-	.constant('TagConstants', {
+	.constant('ketaTagConstants', {
 		// TODO: include full tag unit list
 		UNIT: {
 			WATTS: 'W',
@@ -9044,11 +9049,11 @@ angular.module('keta.services.Tag', [])
 	})
 
 	/**
-	 * @class TagProvider
+	 * @class ketaTagProvider
 	 * @propertyOf keta.services.Tag
 	 * @description Tag Provider
 	 */
-	.provider('Tag', function TagProvider() {
+	.provider('ketaTag', function TagProvider() {
 
 		this.$get = function TagService() {
 
@@ -9073,8 +9078,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {string} guid
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -9099,8 +9104,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {string} name
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -9129,8 +9134,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {number} sampleRate
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
@@ -9162,8 +9167,8 @@ angular.module('keta.services.Tag', [])
 				 * @returns {TagInstance} TagInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Tag'])
-				 *     .controller('ExampleController', function(Tag) {
-				 *         var tag = Tag.create({
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
 				 *             guid: 'guid',
 				 *             name: 'IdName',
 				 *             sampleRate: 10
@@ -9196,18 +9201,18 @@ angular.module('keta.services.UserSet',
 	])
 
 	/**
-	 * @class UserSetProvider
+	 * @class ketaUserSetProvider
 	 * @propertyOf keta.services.UserSet
 	 * @description UserSet Provider
 	 */
-	.provider('UserSet', function UserSetProvider() {
+	.provider('ketaUserSet', function UserSetProvider() {
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
 
 		this.$get = function UserSetService(
 			$q, $rootScope, $log,
-			User, EventBusDispatcher, EventBusManager) {
+			ketaUser, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			/**
 			 * @class UserSetInstance
@@ -9237,8 +9242,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -9268,8 +9273,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus)
 				 *             .project({
 				 *                 userId: 1
 				 *             })
@@ -9299,8 +9304,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus)
 				 *             .sort({
 				 *                 'userId': 1
 				 *             })
@@ -9330,8 +9335,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus)
 				 *             .paginate({
 				 *                 offset: 0,
 				 *                 limit: 50
@@ -9367,8 +9372,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {promise} Promise which is resolved when query is returned
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus)
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus)
 				 *             .query()
 				 *             .then(function(reply) {
 				 *                 // success handler
@@ -9382,7 +9387,7 @@ angular.module('keta.services.UserSet',
 				that.query = function() {
 					var deferred = $q.defer();
 
-					EventBusDispatcher.send(eventBus, 'userservice', {
+					ketaEventBusDispatcher.send(eventBus, 'userservice', {
 						action: 'getUsers',
 						params: params
 					}, function(reply) {
@@ -9390,18 +9395,18 @@ angular.module('keta.services.UserSet',
 							// inject used params
 							reply.params = params;
 
-							if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
+							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
 
 								// create UserInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
 									angular.forEach(reply.result.items, function(item, index) {
-										reply.result.items[index] = User.create(eventBus, item);
+										reply.result.items[index] = ketaUser.create(eventBus, item);
 									});
 								}
 
 								// log if in debug mode
-								if (EventBusManager.inDebugMode()) {
+								if (ketaEventBusManager.inDebugMode()) {
 									$log.request(['userservice', {
 										action: 'getUsers',
 										params: params
@@ -9425,7 +9430,7 @@ angular.module('keta.services.UserSet',
 			};
 
 			/**
-			 * @class UserSet
+			 * @class ketaUserSet
 			 * @propertyOf UserSetProvider
 			 * @description UserSet Service
 			 */
@@ -9442,8 +9447,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         var userSet = UserSet.create(eventBus);
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         var userSet = ketaUserSet.create(eventBus);
 				 *     });
 				 */
 				create: function(eventBus) {
@@ -9461,12 +9466,12 @@ angular.module('keta.services.UserSet',
 				 * @param {UserInstance} user UserInstance to search for
 				 * @returns {number} index
 				 * @example
-				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus).query()
+				 * angular.module('exampleApp', ['keta.services.ketaUserSet'])
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // index equals 0 after the call
-				 *                 var index = UserSet.indexOf(reply, reply.result.items[0]);
+				 *                 var index = ketaUserSet.indexOf(reply, reply.result.items[0]);
 				 *             });
 				 *     });
 				 */
@@ -9494,11 +9499,11 @@ angular.module('keta.services.UserSet',
 				 * @returns {number} number of users
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // length equals number of users in UserSet
-				 *                 var length = UserSet.length(reply);
+				 *                 var length = ketaUserSet.length(reply);
 				 *             });
 				 *     });
 				 */
@@ -9522,11 +9527,11 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserInstance} UserInstance retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // user equals first item after the call
-				 *                 var user = UserSet.get(reply, 0);
+				 *                 var user = ketaUserSet.get(reply, 0);
 				 *             });
 				 *     });
 				 */
@@ -9549,10 +9554,10 @@ angular.module('keta.services.UserSet',
 				 * @returns {Array} All UserInstances retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(UserSet) {
-				 *         UserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(ketaUserSet) {
+				 *         ketaUserSet.create(eventBus).query()
 				 *             .then(function(reply) {
-				 *                 var users = UserSet.getAll(reply);
+				 *                 var users = ketaUserSet.getAll(reply);
 				 *             });
 				 *     });
 				 */
@@ -9591,22 +9596,23 @@ angular.module('keta.services.User',
 	 * @propertyOf keta.services.User
 	 * @description User Provider
 	 */
-	.provider('User', function UserProvider() {
+	.provider('ketaUser', function UserProvider() {
 
-		this.$get = function UserService($q, $log, EventBusDispatcher, EventBusManager) {
+		this.$get = function UserService($q, $log, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			// send message and return promise
 			var sendMessage = function(eventBus, message) {
 				var deferred = $q.defer();
 
-				EventBusDispatcher.send(eventBus, 'userservice', message, function(reply) {
+				ketaEventBusDispatcher.send(eventBus, 'userservice', message, function(reply) {
 
 					// log if in debug mode
-					if (EventBusManager.inDebugMode()) {
+					if (ketaEventBusManager.inDebugMode()) {
 						$log.request(['userservice', message, reply], $log.ADVANCED_FORMATTER);
 					}
 
-					if (angular.isUndefined(reply.code) || reply.code >= EventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
+					if (angular.isUndefined(reply.code) ||
+						reply.code >= ketaEventBusDispatcher.RESPONSE_CODE_BAD_REQUEST) {
 						deferred.reject(reply);
 					} else {
 						deferred.resolve(reply);
@@ -9660,9 +9666,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'userId'
 				 *         });
 				 *
@@ -9706,9 +9712,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -9822,9 +9828,9 @@ angular.module('keta.services.User',
 				 * @returns {promise} promise
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'userId'
 				 *         });
 				 *
@@ -9858,9 +9864,9 @@ angular.module('keta.services.User',
 				 * @returns {undefined} nothing
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
+				 *     .controller('ExampleController', function(ketaUser) {
 				 *
-				 *         var user = User.create({
+				 *         var user = ketaUser.create({
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -9911,7 +9917,7 @@ angular.module('keta.services.User',
 			};
 
 			/**
-			 * @class User
+			 * @class ketaUser
 			 * @propertyOf UserProvider
 			 * @description User Service
 			 */
@@ -9929,8 +9935,8 @@ angular.module('keta.services.User',
 				 * @returns {UserInstance} created UserInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         var user = User.create(eventBus, {
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         var user = ketaUser.create(eventBus, {
 				 *             userId: 'john.doe',
 				 *             channel: 'channel',
 				 *             givenName: 'John',
@@ -9962,8 +9968,8 @@ angular.module('keta.services.User',
 				 * @returns {String} channel name
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         User.getChannel(eventBus, 'channel-1')
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         ketaUser.getChannel(eventBus, 'channel-1')
 				 *             .then(function(reply) {
 				 *                 // reply is channel name
 				 *             });
@@ -9997,8 +10003,8 @@ angular.module('keta.services.User',
 				 * @returns {UserInstance} current logged-in user
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.User'])
-				 *     .controller('ExampleController', function(User) {
-				 *         User.getCurrentUser(eventBus)
+				 *     .controller('ExampleController', function(ketaUser) {
+				 *         ketaUser.getCurrentUser(eventBus)
 				 *             .then(function(reply) {
 				 *                 // reply is current UserInstance
 				 *             });
@@ -10042,7 +10048,7 @@ angular.module('keta.services.User',
 
 angular.module('keta.utils.Api', [])
 
-	.constant('ApiUtilsConstants', {
+	.constant('ketaApiUtilsConstants', {
 
 		OPERATORS: {
 			OR: '$or',
@@ -10069,7 +10075,7 @@ angular.module('keta.utils.Api', [])
 	 * @propertyOf keta.utils.Api
 	 * @description Api Utils Factory
 	 */
-	.factory('ApiUtils', function ApiUtils(ApiUtilsConstants) {
+	.factory('ketaApiUtils', function ApiUtils(ketaApiUtilsConstants) {
 
 		var factory = {};
 
@@ -10102,8 +10108,8 @@ angular.module('keta.utils.Api', [])
 
 			// prevent double QUERY_DIVIDER_CHAR
 			var cleanedUpQuery = query.replace(
-					ApiUtilsConstants.CHARS.QUERY_DIVIDER + ApiUtilsConstants.CHARS.QUERY_DIVIDER,
-					ApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ApiUtilsConstants.CHARS.QUERY_DIVIDER
+					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER,
+					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER
 				) + '"';
 
 			return cleanedUpQuery;
@@ -10120,19 +10126,19 @@ angular.module('keta.utils.Api', [])
 
 			query = cleanUpQuery(query);
 
-			var components = query.match(ApiUtilsConstants.REGEX.KEY_DIVIDER);
+			var components = query.match(ketaApiUtilsConstants.REGEX.KEY_DIVIDER);
 
-			var	key = components[0].replace(ApiUtilsConstants.REGEX.QUOTES, '');
+			var	key = components[0].replace(ketaApiUtilsConstants.REGEX.QUOTES, '');
 			var	value = angular.isDefined(components[1]) ?
-				components[1].replace(ApiUtilsConstants.REGEX.QUOTES, '') : null;
+				components[1].replace(ketaApiUtilsConstants.REGEX.QUOTES, '') : null;
 
-			if (components.length > ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
+			if (components.length > ketaApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH) {
 
 				var extendedValues =
-					components.slice(ApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
+					components.slice(ketaApiUtilsConstants.NUMBERS.MAX_COMPONENTS_LENGTH, components.length);
 				angular.forEach(extendedValues, function(extendedValue) {
-					value += ApiUtilsConstants.CHARS.QUERY_DIVIDER +
-						extendedValue.replace(ApiUtilsConstants.REGEX.QUOTES, '');
+					value += ketaApiUtilsConstants.CHARS.QUERY_DIVIDER +
+						extendedValue.replace(ketaApiUtilsConstants.REGEX.QUOTES, '');
 				});
 
 			}
@@ -10150,10 +10156,10 @@ angular.module('keta.utils.Api', [])
 		var getLikeSearchParam = function getLikeSearchString(searchString) {
 			var likeSearchParam = [];
 
-			likeSearchParam[ApiUtilsConstants.OPERATORS.LIKE] =
-				ApiUtilsConstants.CHARS.LIKE_EXTENDER +
+			likeSearchParam[ketaApiUtilsConstants.OPERATORS.LIKE] =
+				ketaApiUtilsConstants.CHARS.LIKE_EXTENDER +
 				searchString +
-				ApiUtilsConstants.CHARS.LIKE_EXTENDER;
+				ketaApiUtilsConstants.CHARS.LIKE_EXTENDER;
 
 			return angular.extend({}, likeSearchParam);
 
@@ -10207,7 +10213,7 @@ angular.module('keta.utils.Api', [])
 			if (!isBlankObject(acrossParams) &&
 				!isBlankObject(transformedParams)) {
 
-				params[ApiUtilsConstants.OPERATORS.AND] = [
+				params[ketaApiUtilsConstants.OPERATORS.AND] = [
 					angular.extend({}, acrossParams),
 					angular.extend({}, transformedParams)
 				];
@@ -10247,7 +10253,7 @@ angular.module('keta.utils.Api', [])
 		 *         'keta.services.DeviceSet'
 		 *     ])
 		 *     .controller('ExampleController', function(
-		 *         ApiUtils, EventBusManager, DeviceSet,
+		 *         ketaApiUtils, ketaEventBusManager, ketaDeviceSet,
 		 *     ) {
 		 *
 		 *         // search scope model for an input to get the search string
@@ -10260,10 +10266,10 @@ angular.module('keta.utils.Api', [])
 		 *          };
 		 *
 		 *          // get filter params
-		 *          var filter = ApiUtils.getFilterParams($scope.searchString, searchCriteria);
+		 *          var filter = ketaApiUtils.getFilterParams($scope.searchString, searchCriteria);
 		 *
 		 *         // get reply by filter
-		 *        DeviceSet.create(EventBusManager.get('kiwibus'))
+		 *        ketaDeviceSet.create(ketaEventBusManager.get('kiwibus'))
 		 *          .filter(filter)
 		 *          .project({
 		 *              tagValues: {
@@ -10290,7 +10296,7 @@ angular.module('keta.utils.Api', [])
 				var transformedParams = {};
 				var acrossParams = {};
 
-				var queries = filterString.match(ApiUtilsConstants.REGEX.QUERY_DIVIDER);
+				var queries = filterString.match(ketaApiUtilsConstants.REGEX.QUERY_DIVIDER);
 
 				angular.forEach(queries, function(query) {
 
@@ -10311,13 +10317,13 @@ angular.module('keta.utils.Api', [])
 
 					} else if (!isBlankObject(acrossParams)) {
 
-						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
-							acrossParams[ApiUtilsConstants.OPERATORS.OR]
+						acrossParams[ketaApiUtilsConstants.OPERATORS.OR] =
+							acrossParams[ketaApiUtilsConstants.OPERATORS.OR]
 								.concat(getCriteriaParams(queryComponents.key, criteriaMapping));
 
 					} else {
 
-						acrossParams[ApiUtilsConstants.OPERATORS.OR] =
+						acrossParams[ketaApiUtilsConstants.OPERATORS.OR] =
 							getCriteriaParams(queryComponents.key, criteriaMapping);
 
 					}
@@ -10325,7 +10331,7 @@ angular.module('keta.utils.Api', [])
 				});
 
 				if (transformedFilter.length > 1) {
-					transformedParams[ApiUtilsConstants.OPERATORS.AND] = transformedFilter;
+					transformedParams[ketaApiUtilsConstants.OPERATORS.AND] = transformedFilter;
 				} else {
 					transformedParams = angular.extend({}, transformedFilter[0]);
 				}
@@ -10358,7 +10364,7 @@ angular.module('keta.utils.Application',
 		'keta.utils.Common'
 	])
 
-	.constant('ApplicationUtilsConstants', {
+	.constant('ketaApplicationUtilsConstants', {
 
 		// media type of assets
 		ASSET_MEDIA_TYPE: {
@@ -10382,10 +10388,10 @@ angular.module('keta.utils.Application',
 	 * @propertyOf keta.utils.Application
 	 * @description Application Utils Factory
 	 */
-	.factory('ApplicationUtils', function ApplicationUtils(
+	.factory('ketaApplicationUtils', function ApplicationUtils(
 		$q,
-		ApplicationSet, EventBusManager, CommonUtils,
-		ApplicationUtilsConstants
+		ketaApplicationSet, ketaEventBusManager, ketaCommonUtils,
+		ketaApplicationUtilsConstants
 	) {
 
 		var deferred = {
@@ -10406,18 +10412,18 @@ angular.module('keta.utils.Application',
 			 * @returns {promise} app list promise
 			 * @example
 			 * angular.module('exampleApp', ['keta.utils.Application'])
-			 *     .controller('ExampleController', function(ApplicationUtils) {
+			 *     .controller('ExampleController', function(ketaApplicationUtils) {
 			 *
 			 *         // get apps with default options
 			 *         // eventBusId: kiwibus
 			 *         // forceRefresh: false
 			 *         // filter: {} (no filter applied)
-			 *         ApplicationUtils.getAppList().then(function(apps) {
+			 *         ketaApplicationUtils.getAppList().then(function(apps) {
 			 *             // ...
 			 *         });
 			 *
 			 *         // get apps with options in place
-			 *         ApplicationUtils.getAppList({
+			 *         ketaApplicationUtils.getAppList({
 			 *             eventBusId: 'myCustomEventBusId',
 			 *             forceRefresh: true,
 			 *             filter: {
@@ -10446,7 +10452,7 @@ angular.module('keta.utils.Application',
 				if (deferred.getAppList === null || usedOptions.forceRefresh === true) {
 					deferred.getAppList = $q.defer();
 
-					ApplicationSet.create(EventBusManager.get(usedOptions.eventBusId))
+					ketaApplicationSet.create(ketaEventBusManager.get(usedOptions.eventBusId))
 						.filter(usedOptions.filter)
 						.query()
 						.then(function(reply) {
@@ -10462,7 +10468,7 @@ angular.module('keta.utils.Application',
 										!angular.isDefined(usedOptions.excludeAppIds[app.appId]) ||
 										usedOptions.excludeAppIds[app.appId] === false	&&
 										angular.isString(app.entryUri) && app.entryUri !== '' &&
-										CommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
+										ketaCommonUtils.doesPropertyExist(app, 'meta.i18n.en.name')) {
 
 										filteredApps.push(app);
 									}
@@ -10498,8 +10504,8 @@ angular.module('keta.utils.Application',
 			 */
 
 			getAppName: function getAppName(app, uiLocale) {
-				return CommonUtils.doesPropertyExist(app, 'meta.i18n') ?
-					CommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
+				return ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') ?
+					ketaCommonUtils.getLabelByLocale('name', app.meta.i18n, uiLocale) : null;
 			},
 
 			/**
@@ -10520,7 +10526,7 @@ angular.module('keta.utils.Application',
 				var appIcon = null,
 					LOCALE_SHORT_LENGTH = 2;
 
-				var mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+				var mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 					angular.isDefined(app.meta.i18n[language]) &&
 					angular.isDefined(app.meta.i18n[language].media) ?
 						app.meta.i18n[language].media : null;
@@ -10530,14 +10536,14 @@ angular.module('keta.utils.Application',
 
 					var languageShort = angular.isDefined(language) ? language.substr(0, LOCALE_SHORT_LENGTH) : 'en';
 
-					mediaSource = CommonUtils.doesPropertyExist(app, 'meta.i18n') &&
+					mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 						angular.isDefined(app.meta.i18n[languageShort]) &&
 						angular.isDefined(app.meta.i18n[languageShort].media) ?
 							app.meta.i18n[languageShort].media : null;
 				}
 
 				if (mediaSource === null &&
-					CommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
+					ketaCommonUtils.doesPropertyExist(app, 'meta.i18n.en.media')) {
 					mediaSource = app.meta.i18n.en.media;
 				}
 
@@ -10564,7 +10570,7 @@ angular.module('keta.utils.Application',
 					angular.forEach(mediaSource, function(media) {
 
 						if (angular.isDefined(media.type) &&
-							media.type === ApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &&
+							media.type === ketaApplicationUtilsConstants.ASSET_MEDIA_TYPE.APPICON &&
 							angular.isDefined(media.src)) {
 
 							appIcon =
@@ -10597,9 +10603,9 @@ angular.module('keta.utils.Application',
 
 				var appAuthor = null;
 
-				type = angular.isDefined(type) ? type : ApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
+				type = angular.isDefined(type) ? type : ketaApplicationUtilsConstants.AUTHOR_TYPE.SELLER;
 
-				if (CommonUtils.doesPropertyExist(app, 'meta.authors')) {
+				if (ketaCommonUtils.doesPropertyExist(app, 'meta.authors')) {
 
 					angular.forEach(app.meta.authors, function(author) {
 
@@ -10642,7 +10648,7 @@ angular.module('keta.utils.Common', [])
 	 * @propertyOf keta.utils.Common
 	 * @description Common Utils Factory
 	 */
-	.factory('CommonUtils', function CommonUtils() {
+	.factory('ketaCommonUtils', function CommonUtils() {
 
 		var factory = {};
 
@@ -10780,7 +10786,7 @@ angular.module('keta.utils.Country', [])
 
 	// message keys with default values
 	// last updated: Tue, 25 Oct 2016 12:43:35 GMT
-	.constant('CountryUtilsMessageKeys', {
+	.constant('ketaCountryUtilsMessageKeys', {
 		'de_DE': {
 			'AF': 'Afghanistan',
 			'EG': 'Ägypten',
@@ -12318,7 +12324,7 @@ angular.module('keta.utils.Country', [])
 	 * @propertyOf keta.utils.Country
 	 * @description Country Utils Factory
 	 */
-	.factory('CountryUtils', function CountryUtils(CountryUtilsMessageKeys) {
+	.factory('ketaCountryUtils', function CountryUtils(ketaCountryUtilsMessageKeys) {
 
 		var factory = {};
 
@@ -12343,23 +12349,23 @@ angular.module('keta.utils.Country', [])
 		 * @returns {Array} all countries
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
-		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *     .controller('ExampleController', function($scope, ketaCountryUtils) {
 		 *
 		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {key: ..., value: ...}
-		 *         $scope.countries = CountryUtils.getCountryList($scope.currentLocale);
+		 *         $scope.countries = ketaCountryUtils.getCountryList($scope.currentLocale);
 		 *
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.utils.Country'])
-		 *     .controller('ExampleController', function($scope, CountryUtils) {
+		 *     .controller('ExampleController', function($scope, ketaCountryUtils) {
 		 *
 		 *         $scope.currentLocale = 'en_GB';
 		 *
 		 *         // countries as array of objects {value: ..., name: ...}
 		 *         $scope.countries =
-		 *             CountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
+		 *             ketaCountryUtils.getCountryList($scope.currentLocale, function(countryName, countryCode) {
 		 *                 return {value: countryCode, name: countryName};
 		 *             });
 		 *
@@ -12375,11 +12381,11 @@ angular.module('keta.utils.Country', [])
 				currentLocale.length >= LOCALE_LENGTH ?
 					currentLocale.substr(0, LOCALE_LENGTH) : '';
 
-			if (!angular.isObject(CountryUtilsMessageKeys[currentLocale])) {
-				currentLocale = angular.isObject(CountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
+			if (!angular.isObject(ketaCountryUtilsMessageKeys[currentLocale])) {
+				currentLocale = angular.isObject(ketaCountryUtilsMessageKeys[shortLocale]) ? shortLocale : 'en_GB';
 			}
 
-			angular.forEach(CountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {
+			angular.forEach(ketaCountryUtilsMessageKeys[currentLocale], function(countryName, countryIsoCode) {
 				countries.push(
 					angular.isFunction(accessor) ?
 						accessor(countryName, countryIsoCode) : {key: countryIsoCode, value: countryName});

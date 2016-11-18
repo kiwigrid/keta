@@ -10,14 +10,14 @@
 angular.module('keta.services.EventBus', [])
 
 	/**
-	 * @class EventBusProvider
+	 * @class ketaEventBusProvider
 	 * @propertyOf keta.services.EventBus
 	 * @description EventBus Provider
 	 */
-	.provider('EventBus', function EventBusProvider() {
+	.provider('ketaEventBus', function EventBusProvider() {
 
 		/**
-		 * @class EventBus
+		 * @class ketaEventBus
 		 * @propertyOf keta.services.EventBus
 		 * @description EventBus Instance
 		 * @param {Object} givenConfig Config to use for EventBus
@@ -47,8 +47,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {Object} default configuration
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var defaultConfig = eventBus.getDefaultConfig();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var defaultConfig = ketaEventBus.getDefaultConfig();
 			 *     });
 			 */
 			this.getDefaultConfig = function() {
@@ -71,8 +71,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {Object} effective configuration
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var effectiveConfig = eventBus.getConfig();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var effectiveConfig = ketaEventBus.getConfig();
 			 *     });
 			 */
 			this.getConfig = function() {
@@ -95,8 +95,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {vertx.EventBus} vertx.EventBus instance
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var instance = eventBus.getInstance();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var instance = ketaEventBus.getInstance();
 			 *     });
 			 */
 			this.getInstance = function() {
@@ -113,8 +113,8 @@ angular.module('keta.services.EventBus', [])
 			 * @returns {boolean} true if in offline mode
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
-			 *     .controller('ExampleController', function(EventBus) {
-			 *         var inOfflineMode = eventBus.inOfflineMode();
+			 *     .controller('ExampleController', function(ketaEventBus) {
+			 *         var inOfflineMode = ketaEventBus.inOfflineMode();
 			 *     });
 			 */
 			this.inOfflineMode = function() {
@@ -162,23 +162,23 @@ angular.module('keta.services.EventBus', [])
 		 * @returns {EventBus} EventBus created
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *         // create with default config
-		 *         var eventBus = EventBusProvider.create();
+		 *         var eventBus = ketaEventBusProvider.create();
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *         // create with custom id
-		 *         var eventBus = EventBusProvider.create({id: 'myEventBus'});
+		 *         var eventBus = ketaEventBusProvider.create({id: 'myEventBus'});
 		 *     });
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
-		 *     .config(function(EventBusProvider) {
+		 *     .config(function(ketaEventBusProvider) {
 		 *
 		 *         // create with custom config
 		 *         // in this case it's exactly the default config
-		 *         var eventBus = EventBusProvider.create({
+		 *         var eventBus = ketaEventBusProvider.create({
 		 *             id: 'kiwibus',
 		 *             url: 'https://localhost:10443/kiwibus',
 		 *             reconnect: true,

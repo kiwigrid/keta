@@ -15,7 +15,7 @@
  *   flexible API for customizing the table to you very own needs.
  * </p>
  * @example
- * &lt;div data-extended-table
+ * &lt;div data-keta-extended-table
  *     data-rows="rows"
  *     data-current-locale="currentLocale"
  *     data-label-add-column="labelAddColumn"
@@ -45,7 +45,7 @@
  * angular.module('exampleApp', ['keta.directives.ExtendedTable', 'keta.services.Device'])
  *     .controller('ExampleController', function(
  *         $scope,
- *         ExtendedTableConstants, ExtendedTableMessageKeys, DeviceConstants) {
+ *         ketaExtendedTableConstants, ketaExtendedTableMessageKeys, ketaDeviceConstants) {
  *
  *         // data as array of objects, keys from first element are taken as headers
  *         $scope.rows = [{
@@ -67,7 +67,7 @@
  *
  *         // override default-labels if necessary
  *         // get default labels
- *         $scope.labels = ExtendedTableMessageKeys;
+ *         $scope.labels = ketaExtendedTableMessageKeys;
  *
  *         // use case 1: overwrite specific key
  *         $scope.labels.de_DE['__keta.directives.ExtendedTable_search'] = 'Finde';
@@ -84,13 +84,13 @@
  *         // array of disabled components (default: everything except the table itself is disabled)
  *         $scope.disabledComponents = [
  *             // the table itself
- *             ExtendedTableConstants.COMPONENT.TABLE,
+ *             ketaExtendedTableConstants.COMPONENT.TABLE,
  *             // an input field to search throughout the full dataset
- *             ExtendedTableConstants.COMPONENT.FILTER,
+ *             ketaExtendedTableConstants.COMPONENT.FILTER,
  *             // a selector to add columns to table
- *             ExtendedTableConstants.COMPONENT.SELECTOR,
+ *             ketaExtendedTableConstants.COMPONENT.SELECTOR,
  *             // a pager to navigate through paged data
- *             ExtendedTableConstants.COMPONENT.PAGER
+ *             ketaExtendedTableConstants.COMPONENT.PAGER
  *         ];
  *
  *         // array of switchable columns (empty by default)
@@ -125,7 +125,7 @@
  *         // by defining operations mode as "view" the directive itself manages sorting,
  *         // paging and filtering; if you just pass a pre-sorted, pre-paged and pre-filtered
  *         // dataset by querying a backend, you have to use "data"
- *         $scope.operationsMode = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
+ *         $scope.operationsMode = ketaExtendedTableConstants.OPERATIONS_MODE.VIEW;
  *
  *         // boolean flag to enable or disable row sorting in frontend by showing appropriate icons
  *         $scope.rowSortEnabled = true;
@@ -159,7 +159,7 @@
  *                 return 'Edit';
  *             },
  *             icon: 'glyphicon glyphicon-pencil',
- *             type: ExtendedTableConstants.ACTION_LIST_TYPE.LINK
+ *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
  *             runAction: function(row) {
  *                 console.log('action called with ', row);
@@ -168,7 +168,7 @@
  *                 return 'Remove';
  *             },
  *             icon: 'glyphicon glyphicon-remove'
- *             type: ExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
+ *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.ACTION,
  *             display: function(row) {
  *                 return row.type !== 'EnergyManager';
  *             }
@@ -192,13 +192,13 @@
  *             var columnClass = '';
  *             if (column === 'stateDevice') {
  *                 columnClass = 'state';
- *                 if (row.state === DeviceConstants.STATE.OK && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.OK && !isHeader) {
  *                     columnClass+= ' state-success';
  *                 }
- *                 if (row.state === DeviceConstants.STATE.ERROR && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.ERROR && !isHeader) {
  *                     columnClass+= ' state-warning';
  *                 }
- *                 if (row.state === DeviceConstants.STATE.FATAL && !isHeader) {
+ *                 if (row.state === ketaDeviceConstants.STATE.FATAL && !isHeader) {
  *                     columnClass+= ' state-danger';
  *                 }
  *             }
@@ -233,9 +233,9 @@
  *         // limit is the number of rows shown per page
  *         // offset is the index in the dataset to start from
  *         var pager = {};
- *         pager[ExtendedTableConstants.PAGER.TOTAL] = $scope.allRows.length;
- *         pager[ExtendedTableConstants.PAGER.LIMIT] = 5;
- *         pager[ExtendedTableConstants.PAGER.OFFSET] = 0;
+ *         pager[ketaExtendedTableConstants.PAGER.TOTAL] = $scope.allRows.length;
+ *         pager[ketaExtendedTableConstants.PAGER.LIMIT] = 5;
+ *         pager[ketaExtendedTableConstants.PAGER.OFFSET] = 0;
  *         $scope.pager = pager;
  *
  *         // search term to filter the table
@@ -266,7 +266,7 @@ angular.module('keta.directives.ExtendedTable',
 		'keta.utils.Common'
 	])
 
-	.constant('ExtendedTableConstants', {
+	.constant('ketaExtendedTableConstants', {
 		COMPONENT: {
 			TABLE: 'table',
 			FILTER: 'filter',
@@ -289,7 +289,7 @@ angular.module('keta.directives.ExtendedTable',
 	})
 
 	// message keys with default values
-	.constant('ExtendedTableMessageKeys', {
+	.constant('ketaExtendedTableMessageKeys', {
 		'en_GB': {
 			'__keta.directives.ExtendedTable_search': 'Search',
 			'__keta.directives.ExtendedTable_add_column': 'Add column',
@@ -332,9 +332,9 @@ angular.module('keta.directives.ExtendedTable',
 		}
 	})
 
-	.directive('extendedTable', function ExtendedTableDirective(
+	.directive('ketaExtendedTable', function ExtendedTableDirective(
 		$compile, $filter,
-		ExtendedTableConstants, ExtendedTableMessageKeys, CommonUtils) {
+		ketaExtendedTableConstants, ketaExtendedTableMessageKeys, ketaCommonUtils) {
 		return {
 			restrict: 'EA',
 			replace: true,
@@ -433,10 +433,10 @@ angular.module('keta.directives.ExtendedTable',
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.ExtendedTable';
-				scope.labels = angular.extend(ExtendedTableMessageKeys, scope.labels);
+				scope.labels = angular.extend(ketaExtendedTableMessageKeys, scope.labels);
 
 				scope.getLabel = function getLabel(key) {
-					return CommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
+					return ketaCommonUtils.getLabelByLocale(key, scope.labels, scope.currentLocale);
 				};
 
 				// headers to save
@@ -556,20 +556,20 @@ angular.module('keta.directives.ExtendedTable',
 
 				var KEYCODE_ENTER = 13;
 
-				$scope.COMPONENTS_FILTER = ExtendedTableConstants.COMPONENT.FILTER;
-				$scope.COMPONENTS_SELECTOR = ExtendedTableConstants.COMPONENT.SELECTOR;
-				$scope.COMPONENTS_TABLE = ExtendedTableConstants.COMPONENT.TABLE;
-				$scope.COMPONENTS_PAGER = ExtendedTableConstants.COMPONENT.PAGER;
+				$scope.COMPONENTS_FILTER = ketaExtendedTableConstants.COMPONENT.FILTER;
+				$scope.COMPONENTS_SELECTOR = ketaExtendedTableConstants.COMPONENT.SELECTOR;
+				$scope.COMPONENTS_TABLE = ketaExtendedTableConstants.COMPONENT.TABLE;
+				$scope.COMPONENTS_PAGER = ketaExtendedTableConstants.COMPONENT.PAGER;
 
-				$scope.OPERATIONS_MODE_DATA = ExtendedTableConstants.OPERATIONS_MODE.DATA;
-				$scope.OPERATIONS_MODE_VIEW = ExtendedTableConstants.OPERATIONS_MODE.VIEW;
+				$scope.OPERATIONS_MODE_DATA = ketaExtendedTableConstants.OPERATIONS_MODE.DATA;
+				$scope.OPERATIONS_MODE_VIEW = ketaExtendedTableConstants.OPERATIONS_MODE.VIEW;
 
-				$scope.PAGER_TOTAL = ExtendedTableConstants.PAGER.TOTAL;
-				$scope.PAGER_LIMIT = ExtendedTableConstants.PAGER.LIMIT;
-				$scope.PAGER_OFFSET = ExtendedTableConstants.PAGER.OFFSET;
+				$scope.PAGER_TOTAL = ketaExtendedTableConstants.PAGER.TOTAL;
+				$scope.PAGER_LIMIT = ketaExtendedTableConstants.PAGER.LIMIT;
+				$scope.PAGER_OFFSET = ketaExtendedTableConstants.PAGER.OFFSET;
 
-				$scope.ACTION_LIST_TYPE_LINK = ExtendedTableConstants.ACTION_LIST_TYPE.LINK;
-				$scope.ACTION_LIST_TYPE_ACTION = ExtendedTableConstants.ACTION_LIST_TYPE.ACTION;
+				$scope.ACTION_LIST_TYPE_LINK = ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK;
+				$scope.ACTION_LIST_TYPE_ACTION = ketaExtendedTableConstants.ACTION_LIST_TYPE.ACTION;
 
 				// VARIABLES ---
 
@@ -1035,7 +1035,7 @@ angular.module('keta.directives.ExtendedTable')
 '					<thead>' +
 '						<tr class="{{rowClassCallback(null, true)}}">' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
-'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-repeat="column in headers | ketaOrderObjectBy:visibleColumns:true"' +
 '								data-ng-if="rowSortEnabled"' +
 '								data-ng-class="{' +
 '									sort: isSortCriteria(column),' +
@@ -1079,7 +1079,7 @@ angular.module('keta.directives.ExtendedTable')
 '									class="glyphicon glyphicon-minus-sign"></span></a>' +
 '							</th>' +
 '							<th class="{{columnClassCallback(headers, column, true)}}"' +
-'								data-ng-repeat="column in headers | orderObjectBy:visibleColumns:true"' +
+'								data-ng-repeat="column in headers | ketaOrderObjectBy:visibleColumns:true"' +
 '								data-ng-if="!rowSortEnabled">' +
 '								{{headerLabelCallback(column)}}' +
 '								<a class="operation" data-ng-if="isSwitchable(column)"' +
@@ -1099,7 +1099,7 @@ angular.module('keta.directives.ExtendedTable')
 '							data-ng-repeat="row in rows" data-ng-click="selectRow(row)"' +
 '							data-ng-class="{\'active\' : isSelected(row)}"' +
 '							class="{{rowClassCallback(row, false)}}">' +
-'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'							<td data-ng-repeat="column in row | ketaOrderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
@@ -1128,11 +1128,11 @@ angular.module('keta.directives.ExtendedTable')
 '								row in rows |' +
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
+'								ketaSlice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]"' +
 '							data-ng-class="{\'active\' : isSelected(row)}"' +
 '							data-ng-click="selectRow(row)"' +
 '							class="{{rowClassCallback(row, false)}}">' +
-'							<td data-ng-repeat="column in row | orderObjectBy:visibleColumns:true"' +
+'							<td data-ng-repeat="column in row | ketaOrderObjectBy:visibleColumns:true"' +
 '								class="{{columnClassCallback(row, column, false)}}">' +
 '								<span data-ng-bind-html="cellRenderer(row, column)"></span>' +
 '							</td>' +
@@ -1160,8 +1160,8 @@ angular.module('keta.directives.ExtendedTable')
 '							(rows |' +
 '								filter:searchIn |' +
 '								orderBy:rowSortCriteria:!rowSortOrderAscending |' +
-'								slice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
-'							<td colspan="{{(rows[0] | orderObjectBy:visibleColumns:true).length + 1}}">' +
+'								ketaSlice:pager[PAGER_OFFSET]:pager[PAGER_LIMIT]).length === 0">' +
+'							<td colspan="{{(rows[0] | ketaOrderObjectBy:visibleColumns:true).length + 1}}">' +
 '								{{ getLabel(MESSAGE_KEY_PREFIX + \'_no_entries\') }}' +
 '							</td>' +
 '						</tr>' +
