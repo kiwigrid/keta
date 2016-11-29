@@ -13,11 +13,11 @@ angular.module('keta.services.TagSet',
 	])
 
 	/**
-	 * @class ketaTagSetProvider
+	 * @class TagSetProvider
 	 * @propertyOf keta.services.TagSet
 	 * @description TagSet Provider
 	 */
-	.provider('ketaTagSet', function TagSetProvider() {
+	.provider('TagSet', function TagSetProvider() {
 
 		this.$get = function TagSetService() {
 
@@ -47,8 +47,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {Array} tags
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(ketaTagSet) {
-				 *         var tagSet = ketaTagSet.create();
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
 				 *         var tags = tagSet.getTags();
 				 *     });
 				 */
@@ -68,8 +68,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {Object} tagsAsHierarchy
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(ketaTagSet) {
-				 *         var tagSet = ketaTagSet.create();
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
 				 *         var hierarchy = tagSet.getTagsAsHierarchy();
 				 *     });
 				 */
@@ -89,8 +89,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance with added TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(ketaTagSet) {
-				 *         ketaTagSet
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         TagSet
 				 *             .create()
 				 *             .add(Tag.create({
 				 *                 guid: 'guid',
@@ -123,13 +123,13 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance with removed TagInstance
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(ketaTagSet) {
+				 *     .controller('ExampleController', function(TagSet) {
 				 *         var tag = Tag.create({
 				 *             guid: 'guid',
 				 *             name: 'name',
 				 *             sampleRate: 10
 				 *         });
-				 *         ketaTagSet
+				 *         TagSet
 				 *             .create()
 				 *             .add(tag)
 				 *             .remove(tag);
@@ -165,8 +165,8 @@ angular.module('keta.services.TagSet',
 				 * @returns {TagSetInstance} TagSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.TagSet'])
-				 *     .controller('ExampleController', function(ketaTagSet) {
-				 *         var tagSet = ketaTagSet.create();
+				 *     .controller('ExampleController', function(TagSet) {
+				 *         var tagSet = TagSet.create();
 				 *     });
 				 */
 				create: function() {

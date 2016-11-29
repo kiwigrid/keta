@@ -10,7 +10,7 @@
  *   A simple time range selector component to select a time range.
  * </p>
  * @example
- * &lt;div data-keta-time-range-selector
+ * &lt;div data-time-range-selector
  *   data-ng-model="model"
  *   data-css-classes="cssClasses"
  *   data-current-locale="currentLocale"
@@ -35,21 +35,19 @@
  *   data-years-before="yearsBefore"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.TimeRangeSelector'])
- *     .controller('ExampleController', function(
- *         $scope, ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys
- *     ) {
+ *     .controller('ExampleController', function($scope, TimeRangeSelectorConstants, TimeRangeSelectorMessageKeys) {
  *
  *         // current range to use
  *         $scope.model = new Date(2016, 3, 20, 9, 0, 0, 0);
  *
  *         // css classes to use
- *         $scope.cssClasses = ketaTimeRangeSelectorConstants.CSS_CLASSES;
+ *         $scope.cssClasses = TimeRangeSelectorConstants.CSS_CLASSES;
  *
  *         // current locale to use
  *         $scope.currentLocale = 'de_DE';
  *
- *         // display mode to use (@see ketaTimeRangeSelectorConstants.DISPLAY_MODE)
- *         $scope.displayMode = ketaTimeRangeSelectorConstants.DISPLAY_MODE.DAY;
+ *         // display mode to use (@see TimeRangeSelectorConstants.DISPLAY_MODE)
+ *         $scope.displayMode = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
  *
  *         // display value to use
  *         $scope.displayValue = angular.copy($scope.model);
@@ -67,7 +65,7 @@
  *         $scope.firstClick = true;
  *
  *         // define first day of week
- *         $scope.firstDayOfWeek = ketaTimeRangeSelectorConstants.DAY.SUNDAY;
+ *         $scope.firstDayOfWeek = TimeRangeSelectorConstants.DAY.SUNDAY;
  *
  *         // define labels to use
  *         $scope.labels = TimeRangeSelectorMessageKeys;
@@ -115,7 +113,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 	'moment'
 ])
 
-	.constant('ketaTimeRangeSelectorConstants', {
+	.constant('TimeRangeSelectorConstants', {
 		CSS_CLASSES: {
 			CURRENT_DATE: 'current-date',
 			OUT_OF_BOUNDS: 'out-of-bounds',
@@ -146,7 +144,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 	})
 
 	// message keys with default values
-	.constant('ketaTimeRangeSelectorMessageKeys', {
+	.constant('TimeRangeSelectorMessageKeys', {
 		'en_GB': {
 			'__keta.directives.TimeRangeSelector_display_mode_days': 'Days',
 			'__keta.directives.TimeRangeSelector_display_mode_months': 'Months',
@@ -274,9 +272,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 		}
 	})
 
-	.directive('ketaTimeRangeSelector', function TimeRangeSelectorDirective(
+	.directive('timeRangeSelector', function TimeRangeSelectorDirective(
 		$filter,
-		ketaTimeRangeSelectorConstants, ketaTimeRangeSelectorMessageKeys, moment
+		TimeRangeSelectorConstants, TimeRangeSelectorMessageKeys, moment
 	) {
 		return {
 			restrict: 'EA',
@@ -290,7 +288,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// current locale
 				currentLocale: '=?',
 
-				// display mode (@see ketaTimeRangeSelectorConstants.DISPLAY)
+				// display mode (@see TimeRangeSelectorConstants.DISPLAY)
 				displayMode: '=?',
 
 				// display value (date)
@@ -363,9 +361,9 @@ angular.module('keta.directives.TimeRangeSelector', [
 				// CONSTANTS
 				// ---------
 
-				scope.DISPLAY_MODE_DAY = ketaTimeRangeSelectorConstants.DISPLAY_MODE.DAY;
-				scope.DISPLAY_MODE_MONTH = ketaTimeRangeSelectorConstants.DISPLAY_MODE.MONTH;
-				scope.DISPLAY_MODE_YEAR = ketaTimeRangeSelectorConstants.DISPLAY_MODE.YEAR;
+				scope.DISPLAY_MODE_DAY = TimeRangeSelectorConstants.DISPLAY_MODE.DAY;
+				scope.DISPLAY_MODE_MONTH = TimeRangeSelectorConstants.DISPLAY_MODE.MONTH;
+				scope.DISPLAY_MODE_YEAR = TimeRangeSelectorConstants.DISPLAY_MODE.YEAR;
 
 				var DAYS_PER_WEEK = 7;
 				var ISO_DATE_LENGTH_DAY = 10;
@@ -406,8 +404,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				scope.cssClasses =
 					angular.isObject(scope.cssClasses) ?
-						angular.extend(ketaTimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
-						ketaTimeRangeSelectorConstants.CSS_CLASSES;
+						angular.extend(TimeRangeSelectorConstants.CSS_CLASSES, scope.cssClasses) :
+						TimeRangeSelectorConstants.CSS_CLASSES;
 				scope.currentLocale = angular.isString(scope.currentLocale) ? scope.currentLocale : 'en_GB';
 				scope.displayMode = scope.displayMode || scope.DISPLAY_MODE_DAY;
 				scope.displayValue =
@@ -425,20 +423,19 @@ angular.module('keta.directives.TimeRangeSelector', [
 				scope.enableWeekSelection =
 					angular.isDefined(scope.enableWeekSelection) ?
 						scope.enableWeekSelection : true;
-				scope.firstDayOfWeek = scope.firstDayOfWeek || ketaTimeRangeSelectorConstants.DAY.SUNDAY;
+				scope.firstDayOfWeek = scope.firstDayOfWeek || TimeRangeSelectorConstants.DAY.SUNDAY;
 
 				// object of labels
 				scope.MESSAGE_KEY_PREFIX = '__keta.directives.TimeRangeSelector';
 				scope.labels =
 					angular.isObject(scope.labels) ?
-						angular.extend(ketaTimeRangeSelectorMessageKeys, scope.labels) :
-						ketaTimeRangeSelectorMessageKeys;
+						angular.extend(TimeRangeSelectorMessageKeys, scope.labels) : TimeRangeSelectorMessageKeys;
 				scope.currentLabels =
 					angular.isDefined(
-						ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
+						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 					) ?
-						ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-						ketaTimeRangeSelectorMessageKeys.en_GB;
+						TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+						TimeRangeSelectorMessageKeys.en_GB;
 
 				scope.maximum =
 					angular.isDate(scope.maximum) ?
@@ -721,7 +718,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * get date classes
-				 * @param {Date} date date to get classes for
+				 * @param {date} date date to get classes for
 				 * @returns {string} classes as space-separated strings
 				 */
 				scope.getDateClasses = function getDateClasses(date) {
@@ -820,10 +817,10 @@ angular.module('keta.directives.TimeRangeSelector', [
 					// update current labels
 					scope.currentLabels =
 						angular.isDefined(
-							ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
+							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)]
 						) ?
-							ketaTimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
-							ketaTimeRangeSelectorMessageKeys.en_GB;
+							TimeRangeSelectorMessageKeys[scope.currentLocale.substr(0, LOCALE_SHORT_LENGTH)] :
+							TimeRangeSelectorMessageKeys.en_GB;
 
 					// init week days
 					getWeekDays();
@@ -885,18 +882,18 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * get display mode dependent date
-				 * @param {Date} date date to convert to a display mode dependent value
+				 * @param {date} date date to convert to a display mode dependent value
 				 * @param {string} mode display mode
 				 * @param {boolean} from from or to value
-				 * @returns {Date} converted date
+				 * @returns {date} converted date
 				 */
 				var getDisplayModeDate = function getDisplayModeDate(date, mode, from) {
 					var displayModeDate = null;
 
-					if (mode === ketaTimeRangeSelectorConstants.DISPLAY_MODE.MONTH) {
+					if (mode === TimeRangeSelectorConstants.DISPLAY_MODE.MONTH) {
 						displayModeDate = from ?
 							date : moment(date).endOf('month').hour(0).minute(0).second(0).millisecond(0).toDate();
-					} else if (mode === ketaTimeRangeSelectorConstants.DISPLAY_MODE.YEAR) {
+					} else if (mode === TimeRangeSelectorConstants.DISPLAY_MODE.YEAR) {
 						displayModeDate = from ?
 							date : moment(date).endOf('year').hour(0).minute(0).second(0).millisecond(0).toDate();
 					} else {
@@ -908,8 +905,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * apply boundaries constraint (if enabled)
-				 * @param {Date} from from date
-				 * @param {Date} to to date
+				 * @param {date} from from date
+				 * @param {date} to to date
 				 * @param {number} min minimum as timestamp or null
 				 * @param {number} max maximum as timestamp or null
 				 * @returns {{from: *, to: *}} range
@@ -930,8 +927,8 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * apply range length constraint (if enabled)
-				 * @param {Date} from from date
-				 * @param {Date} to to date
+				 * @param {date} from from date
+				 * @param {date} to to date
 				 * @param {number} min minimum range length in days or null
 				 * @param {number} max maximum range length in days or null
 				 * @returns {{from: *, to: *}} range
@@ -976,7 +973,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 				/**
 				 * select week for given date
-				 * @param {Date} date date selected
+				 * @param {date} date date selected
 				 * @returns {void} nothing
 				 */
 				scope.selectWeek = function selectWeek(date) {
@@ -1078,7 +1075,7 @@ angular.module('keta.directives.TimeRangeSelector', [
 
 					// emit event
 					scope.$emit(
-						ketaTimeRangeSelectorConstants.EVENT.SELECT,
+						TimeRangeSelectorConstants.EVENT.SELECT,
 						{
 							id: scope.elementIdentifier,
 							model: scope.model

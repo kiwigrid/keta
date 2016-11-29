@@ -16,10 +16,10 @@
  *   the sidebar (if the current path-route is the same as in the clicked link).
  * </p>
  * @example
- * &lt;div data-keta-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
+ * &lt;div data-main-menu data-configuration="menuConfiguration" data-title-callback="getAppTitle"&gt;&lt;/div&gt;
  * @example
  * angular.module('exampleApp', ['keta.directives.MainMenu', 'keta.directives.Sidebar'])
- *     .controller('ExampleController', function($scope, ketaSidebarConfig) {
+ *     .controller('ExampleController', function($scope, SidebarConfig) {
  *
  *         // menu object to use as input for directive
  *         $scope.menuConfiguration = {
@@ -45,7 +45,7 @@
  *                 }]
  *             }],
  *             compactMode: false,
- *             toggleBroadcast: ketaSidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
+ *             toggleBroadcast: SidebarConfig.EVENT.TOGGLE_SIDEBAR_LEFT
  *         };
  *
  *         // return app-title depending on current language
@@ -57,7 +57,7 @@
  */
 
 angular.module('keta.directives.MainMenu', [])
-	.directive('ketaMainMenu', function MainMenuDirective($location, $rootScope) {
+	.directive('mainMenu', function MainMenuDirective($location, $rootScope) {
 		return {
 			restrict: 'EA',
 			replace: true,

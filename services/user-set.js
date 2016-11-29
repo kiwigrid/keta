@@ -13,18 +13,18 @@ angular.module('keta.services.UserSet',
 	])
 
 	/**
-	 * @class ketaUserSetProvider
+	 * @class UserSetProvider
 	 * @propertyOf keta.services.UserSet
 	 * @description UserSet Provider
 	 */
-	.provider('ketaUserSet', function UserSetProvider() {
+	.provider('UserSet', function UserSetProvider() {
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
 
 		this.$get = function UserSetService(
 			$q, $rootScope, $log,
-			ketaUser, ketaEventBusDispatcher, ketaEventBusManager) {
+			User, EventBusDispatcher, EventBusManager) {
 
 			/**
 			 * @class UserSetInstance
@@ -54,8 +54,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus)
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus)
 				 *             .filter({
 				 *                 userId: 'login'
 				 *             })
@@ -85,8 +85,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus)
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus)
 				 *             .project({
 				 *                 userId: 1
 				 *             })
@@ -116,8 +116,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus)
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus)
 				 *             .sort({
 				 *                 'userId': 1
 				 *             })
@@ -147,8 +147,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance to chain
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus)
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus)
 				 *             .paginate({
 				 *                 offset: 0,
 				 *                 limit: 50
@@ -184,8 +184,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {promise} Promise which is resolved when query is returned
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus)
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus)
 				 *             .query()
 				 *             .then(function(reply) {
 				 *                 // success handler
@@ -199,7 +199,7 @@ angular.module('keta.services.UserSet',
 				that.query = function() {
 					var deferred = $q.defer();
 
-					ketaEventBusDispatcher.send(eventBus, 'userservice', {
+					EventBusDispatcher.send(eventBus, 'userservice', {
 						action: 'getUsers',
 						params: params
 					}, function(reply) {
@@ -207,18 +207,18 @@ angular.module('keta.services.UserSet',
 							// inject used params
 							reply.params = params;
 
-							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
+							if (reply.code === EventBusDispatcher.RESPONSE_CODE_OK) {
 
 								// create UserInstances
 								if (angular.isDefined(reply.result) &&
 									angular.isDefined(reply.result.items)) {
 									angular.forEach(reply.result.items, function(item, index) {
-										reply.result.items[index] = ketaUser.create(eventBus, item);
+										reply.result.items[index] = User.create(eventBus, item);
 									});
 								}
 
 								// log if in debug mode
-								if (ketaEventBusManager.inDebugMode()) {
+								if (EventBusManager.inDebugMode()) {
 									$log.request(['userservice', {
 										action: 'getUsers',
 										params: params
@@ -242,7 +242,7 @@ angular.module('keta.services.UserSet',
 			};
 
 			/**
-			 * @class ketaUserSet
+			 * @class UserSet
 			 * @propertyOf UserSetProvider
 			 * @description UserSet Service
 			 */
@@ -259,8 +259,8 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserSetInstance} UserSetInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         var userSet = ketaUserSet.create(eventBus);
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         var userSet = UserSet.create(eventBus);
 				 *     });
 				 */
 				create: function(eventBus) {
@@ -278,12 +278,12 @@ angular.module('keta.services.UserSet',
 				 * @param {UserInstance} user UserInstance to search for
 				 * @returns {number} index
 				 * @example
-				 * angular.module('exampleApp', ['keta.services.ketaUserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus).query()
+				 * angular.module('exampleApp', ['keta.services.UserSet'])
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // index equals 0 after the call
-				 *                 var index = ketaUserSet.indexOf(reply, reply.result.items[0]);
+				 *                 var index = UserSet.indexOf(reply, reply.result.items[0]);
 				 *             });
 				 *     });
 				 */
@@ -311,11 +311,11 @@ angular.module('keta.services.UserSet',
 				 * @returns {number} number of users
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // length equals number of users in UserSet
-				 *                 var length = ketaUserSet.length(reply);
+				 *                 var length = UserSet.length(reply);
 				 *             });
 				 *     });
 				 */
@@ -339,11 +339,11 @@ angular.module('keta.services.UserSet',
 				 * @returns {UserInstance} UserInstance retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus).query()
 				 *             .then(function(reply) {
 				 *                 // user equals first item after the call
-				 *                 var user = ketaUserSet.get(reply, 0);
+				 *                 var user = UserSet.get(reply, 0);
 				 *             });
 				 *     });
 				 */
@@ -366,10 +366,10 @@ angular.module('keta.services.UserSet',
 				 * @returns {Array} All UserInstances retrieved from set
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.UserSet'])
-				 *     .controller('ExampleController', function(ketaUserSet) {
-				 *         ketaUserSet.create(eventBus).query()
+				 *     .controller('ExampleController', function(UserSet) {
+				 *         UserSet.create(eventBus).query()
 				 *             .then(function(reply) {
-				 *                 var users = ketaUserSet.getAll(reply);
+				 *                 var users = UserSet.getAll(reply);
 				 *             });
 				 *     });
 				 */

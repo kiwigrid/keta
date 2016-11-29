@@ -10,11 +10,11 @@
 angular.module('keta.services.DeviceEvent', [])
 
 	/**
-	 * @class ketaDeviceEventProvider
+	 * @class DeviceEventProvider
 	 * @propertyOf keta.services.DeviceEvent
 	 * @description DeviceEvent Provider
 	 */
-	.provider('ketaDeviceEvent', function DeviceEventProvider() {
+	.provider('DeviceEvent', function DeviceEventProvider() {
 
 		this.$get = function DeviceEventService() {
 
@@ -43,11 +43,11 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {string} type
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
-				 *         var device = ketaDevice.create({
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
 				 *             guid: 'guid'
 				 *         });
-				 *         var deviceEvent = ketaDeviceEvent.create(ketaDeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
 				 *         var deviceEventType = deviceEvent.getType();
 				 *     });
 				 */
@@ -68,11 +68,11 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {DeviceInstance} device
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
-				 *         var device = ketaDevice.create({
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create({
 				 *             guid: 'guid'
 				 *         });
-				 *         var deviceEvent = ketaDeviceEvent.create(ketaDeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
 				 *         var deviceEventDevice = deviceEvent.getDevice();
 				 *     });
 				 */
@@ -98,8 +98,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDeviceEvent) {
-				 *         if (type === ketaDeviceEvent.CREATED) {
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.CREATED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -115,8 +115,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDeviceEvent) {
-				 *         if (type === ketaDeviceEvent.UPDATED) {
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.UPDATED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -132,8 +132,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * </p>
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDeviceEvent) {
-				 *         if (type === ketaDeviceEvent.DELETED) {
+				 *     .controller('ExampleController', function(DeviceEvent) {
+				 *         if (type === DeviceEvent.DELETED) {
 				 *             // ...
 				 *         }
 				 *     });
@@ -152,8 +152,8 @@ angular.module('keta.services.DeviceEvent', [])
 				 * @returns {DeviceEventInstance} DeviceEventInstance created
 				 * @example
 				 * angular.module('exampleApp', ['keta.services.Device', 'keta.services.DeviceEvent'])
-				 *     .controller('ExampleController', function(ketaDevice, ketaDeviceEvent) {
-				 *         var device = ketaDevice.create(eventBus, {
+				 *     .controller('ExampleController', function(Device, DeviceEvent) {
+				 *         var device = Device.create(eventBus, {
 				 *             tagValues: {
 				 *                 IdName: {
 				 *                     name: 'IdName',
@@ -163,7 +163,7 @@ angular.module('keta.services.DeviceEvent', [])
 				 *                 }
 				 *             }
 				 *         });
-				 *         var deviceEvent = ketaDeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
+				 *         var deviceEvent = DeviceEvent.create(DeviceEvent.TYPE_CREATED, device);
 				 *     });
 				 */
 				create: function(type, device) {
