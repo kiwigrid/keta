@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.7.3
+
+_Released: 2016-11-29_
+
+* Fix for `AppBar` directive to iterate over app list instead of raw reply
+
 ## Version 0.7.2
 
 _Released: 2016-11-18_

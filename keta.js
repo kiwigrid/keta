@@ -622,13 +622,13 @@ angular.module('keta.directives.AppBar',
 						filter: {
 							appId: ketaAppBarConstants.ROOT_APP_ID
 						}
-					}).then(function(reply) {
+					}).then(function(apps) {
 
 						var entryUri = null;
 						var name = {};
 						scope.rootApp = null;
 
-						angular.forEach(reply.result.items, function(app) {
+						angular.forEach(apps, function(app) {
 							if (angular.isDefined(app.appId) &&
 								app.appId === ketaAppBarConstants.ROOT_APP_ID &&
 								angular.isDefined(app.entryUri)) {
