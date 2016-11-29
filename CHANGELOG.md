@@ -38,6 +38,12 @@ _Released: 2016-10-25_
 
 * **Breaking change**: All services, constants, directives and so on are now prefixed with `keta`.
 
+## Version 0.6.11
+
+_Released: 2016-11-29_
+
+* Fix for `AppBar` directive to iterate over app list instead of raw reply
+
 ## Version 0.6.10
 
 _Released: 2016-11-18_
