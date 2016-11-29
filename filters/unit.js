@@ -51,17 +51,17 @@
  *     unit: 'kW'
  * }</pre>
  * @example
- * {{ 1234.56 | unit:{unit: 'W', precision: 1, isBytes: false} }}
+ * {{ 1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false} }}
  *
- * Number: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
- * Unit: {{ (1234.56 | unit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}
+ * Number: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).numberFormatted }}
+ * Unit: {{ (1234.56 | ketaUnit:{unit: 'W', precision: 1, isBytes: false, separate:true}).unit }}
  * @example
  * angular.module('exampleApp', ['keta.filters.Unit'])
  *     .controller('ExampleController', function($scope) {
  *
  *         // use unit filter to return formatted number value
  *         // $scope.value equals string '1.2 kW'
- *         $scope.value = $filter('unit')(1234.56, {
+ *         $scope.value = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false
@@ -69,7 +69,7 @@
  *
  *         // use unit filter for integers that shouldn't be cutted by precision
  *         // $scope.valuePrecisionIntegersExcluded equals string '123 W'
- *         $scope.valuePrecisionIntegersExcluded = $filter('unit')(123, {
+ *         $scope.valuePrecisionIntegersExcluded = $filter('ketaUnit')(123, {
  *             unit: 'W',
  *             precision: 2,
  *             precisionExcludeIntegers: true
@@ -77,7 +77,7 @@
  *
  *         // use unit filter for values that shouldn't be cutted by precision
  *         // $scope.valuePrecisionExcluded equals string '0.123456 W'
- *         $scope.valuePrecisionExcluded = $filter('unit')(0.123456, {
+ *         $scope.valuePrecisionExcluded = $filter('ketaUnit')(0.123456, {
  *             unit: 'W',
  *             precision: 2,
  *             precisionExclude: [0.123456]
@@ -87,7 +87,7 @@
  *         // $scope.valueSeparated equals object {numberFormatted: '1.2', numberRaw: 1.2, unit: 'kW'}
  *         // as numberFormatted is locale-aware, numberRaw remains a real number to calculate with
  *         // e.g. for German numberFormatted would be formatted to '1,2' and numberRaw would still be 1.2
- *         $scope.valueSeparated = $filter('unit')(1234.56, {
+ *         $scope.valueSeparated = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             isBytes: false,
@@ -97,7 +97,7 @@
  *         // use unit filter with precision ranges
  *         // for the example below all values which are less than 1000 are formatted with a precision of 0
  *         // and all values equal or greater than 1000 are formatted with a precision of 1
- *         $scope.valueRanges = $filter('unit')(1234.56, {
+ *         $scope.valueRanges = $filter('ketaUnit')(1234.56, {
  *             unit: 'W',
  *             precision: 1,
  *             precisionRanges: [
@@ -114,7 +114,7 @@ angular.module('keta.filters.Unit',
 	[
 		'keta.services.Tag'
 	])
-	.filter('unit', function($filter, TagConstants) {
+	.filter('ketaUnit', function($filter, ketaTagConstants) {
 
 		var unitFilter = function unitFilter(input, configuration) {
 
@@ -205,10 +205,10 @@ angular.module('keta.filters.Unit',
 			var sizes = isBytes ? ['Bytes', 'KB', 'MB', 'GB', 'TB'] : ['', 'k', 'M', 'G', 'T'];
 
 			// directly return currencies and distances
-			if (unit === TagConstants.UNIT.EURO ||
-				unit === TagConstants.UNIT.KILOMETER ||
-				unit === TagConstants.UNIT.DOLLAR ||
-				unit === TagConstants.UNIT.POUND) {
+			if (unit === ketaTagConstants.UNIT.EURO ||
+				unit === ketaTagConstants.UNIT.KILOMETER ||
+				unit === ketaTagConstants.UNIT.DOLLAR ||
+				unit === ketaTagConstants.UNIT.POUND) {
 
 				if (separate) {
 					separated.numberFormatted = $filter('number')(input, precision);
