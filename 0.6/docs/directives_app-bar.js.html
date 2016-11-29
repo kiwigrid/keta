@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 0.6.8
+			Version 0.6.11
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.8" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.8" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.11" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.11" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.8" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.8" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/0.6.11" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/0.6.11" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -656,13 +656,13 @@ angular.module('keta.directives.AppBar',
 						filter: {
 							appId: AppBarConstants.ROOT_APP_ID
 						}
-					}).then(function(reply) {
+					}).then(function(apps) {
 
 						var entryUri = null;
 						var name = {};
 						scope.rootApp = null;
 
-						angular.forEach(reply.result.items, function(app) {
+						angular.forEach(apps, function(app) {
 							if (angular.isDefined(app.appId) &amp;&amp;
 								app.appId === AppBarConstants.ROOT_APP_ID &amp;&amp;
 								angular.isDefined(app.entryUri)) {
