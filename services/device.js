@@ -172,7 +172,7 @@ angular.module('keta.services.Device',
 							body: changes
 						}).then(function(reply) {
 
-							// update $pristine copies of succeeded tag values
+							// process reply
 							if (angular.isDefined(reply.result) &&
 								angular.isDefined(reply.result.value) &&
 								angular.isDefined(reply.result.value.tagValues)) {
@@ -183,9 +183,15 @@ angular.module('keta.services.Device',
 										angular.isDefined(reply.result.value.failedTagValues) &&
 										angular.isDefined(reply.result.value.failedTagValues[tag.tagName]);
 
-									if (angular.isDefined(that.tagValues[tag.tagName]) && !failed) {
+									if (!failed) {
+
+										// update tag values (e.g. OCA)
+										that.tagValues[tag.tagName] = tag;
+
+										// update $pristine copy
 										that.$pristine.tagValues[tag.tagName] =
 											angular.copy(that.tagValues[tag.tagName]);
+
 									}
 
 								});

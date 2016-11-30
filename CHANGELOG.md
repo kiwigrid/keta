@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.7.4
+
+_Released: 2016-11-30_
+
+* Change for `Device` service: device instance is now automatically synced with reply if you call `$update` on it
+
 ## Version 0.7.3
 
 _Released: 2016-11-29_
