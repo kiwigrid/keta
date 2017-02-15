@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 0.7.5
+
+_Released: 2017-02-15_
+
+* Fix for `unit` filter: Correct handling for numbers < 1 when property `seperate` is set to `true`
+
 ## Version 0.7.4
 
 _Released: 2016-11-30_

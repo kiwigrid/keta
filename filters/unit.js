@@ -251,14 +251,13 @@ angular.module('keta.filters.Unit',
 				separated.numberRaw = siInputFixed;
 				separated.unit = sizes[i] + unit;
 
-				input =
-					separated.numberFormatted +
+				input =	separated.numberFormatted +
 						(sizes[i] !== '' ? ' ' + sizes[i] : '');
 
 			} else {
 
 				separated.numberFormatted = $filter('number')(input, precision);
-				separated.numberRaw = input;
+				separated.numberRaw = Number(input.toFixed(precision));
 				separated.unit = unit;
 
 				input = separated.numberFormatted;
