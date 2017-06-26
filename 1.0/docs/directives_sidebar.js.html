@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: directives/sidebar.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.0.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: directives/sidebar.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @name keta.directives.Sidebar
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.directives.Sidebar
+ * @description
+ * &lt;p>
+ *   Sidebar with expand/fold functionality, configurable position and toggle area label.
+ * &lt;/p>
+ * @example
+ * &amp;lt;div data-keta-sidebar data-configuration="{position: 'left', label: 'Fold'}"&amp;gt;&amp;lt;/div&amp;gt;
+ */
+
+angular.module('keta.directives.Sidebar', [])
+
+	.constant('ketaSidebarConstants', {
+		POSITION: {
+			LEFT: 'left',
+			RIGHT: 'right'
+		},
+		CSS: {
+			OFFCANVAS: 'offcanvas',
+			BRAND_BAR: 'brand-bar'
+		},
+		OFFSET: {
+			TOGGLE_AREA: 5,
+			TRANSCLUDE: 15
+		},
+		EVENT: {
+			TOGGLE_SIDEBAR_LEFT: 'TOGGLE_SIDEBAR_LEFT',
+			TOGGLE_SIDEBAR_RIGHT: 'TOGGLE_SIDEBAR_RIGHT'
+		}
+	})
+
+	.directive('ketaSidebar', function SidebarDirective($document, ketaSidebarConstants) {
+		return {
+			restrict: 'EA',
+			replace: true,
+			scope: {
+				configuration: '='
+			},
+			templateUrl: '/components/directives/sidebar.html',
+			transclude: true,
+			link: function(scope, element) {
+
+				// set default values
+				scope.configuration.position =
+					angular.isDefined(scope.configuration.position) ?
+						scope.configuration.position :
+						ketaSidebarConstants.POSITION.LEFT;
+
+				// flag for showing toggle area in sidebar
+				scope.showToggleArea = angular.isDefined(scope.configuration.label);
+				scope.toggleAreaTop = 0;
+				scope.transcludeTop = 0;
+
+				// get body element to toggle css classes
+				var bodyElem = angular.element(document).find('body');
+
+				// toggle css class on body element
+				scope.toggleSideBar = function() {
+					bodyElem.toggleClass(ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
+				};
+
+				// close open sidebars if location change starts
+				scope.$on('$locationChangeStart', function() {
+					bodyElem.removeClass(ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position);
+				});
+
+				// if sidebars are toggled from outside toggle css class on body element
+				var toggleBodyClass = function(position) {
+					if (scope.configuration.position === position) {
+						bodyElem.toggleClass(
+							ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
+						);
+					}
+				};
+
+				// sidebar left
+				scope.$on(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_LEFT, function() {
+					toggleBodyClass(ketaSidebarConstants.POSITION.LEFT);
+				});
+
+				// sidebar right
+				scope.$on(ketaSidebarConstants.EVENT.TOGGLE_SIDEBAR_RIGHT, function() {
+					toggleBodyClass(ketaSidebarConstants.POSITION.RIGHT);
+				});
+
+				// position toggle area according to height of brand bar
+				if (scope.showToggleArea) {
+
+					// determine brand bar height
+					var brandBarElem = bodyElem[0].getElementsByClassName(ketaSidebarConstants.CSS.BRAND_BAR);
+					var brandBarHeight = angular.isDefined(brandBarElem[0]) ? brandBarElem[0].clientHeight : 0;
+
+					scope.toggleAreaTop = brandBarHeight + ketaSidebarConstants.OFFSET.TOGGLE_AREA;
+					scope.transcludeTop = ketaSidebarConstants.OFFSET.TRANSCLUDE;
+
+				}
+
+				// close on click outside
+				$document.bind('click', function(event) {
+					if (bodyElem.hasClass(
+							ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
+						)) {
+						var sideBarHtml = element.html(),
+							targetElementHtml = angular.element(event.target).html();
+
+						if (sideBarHtml.indexOf(targetElementHtml) !== -1 &amp;&amp; targetElementHtml.length !== 0) {
+							return;
+						}
+						scope.toggleSideBar();
+					}
+				});
+
+			}
+		};
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

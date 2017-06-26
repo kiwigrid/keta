@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/tag.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.0.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/tag.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.Tag
+ * @description Tag Provider
+ */
+
+angular.module('keta.services.Tag', [])
+
+	.constant('ketaTagConstants', {
+		// TODO: include full tag unit list
+		UNIT: {
+			WATTS: 'W',
+			WATTHOURS: 'Wh',
+			PERCENT: '%',
+			EURO: '€',
+			DOLLAR: '$',
+			POUND: '£',
+			KILOMETER: 'km'
+		}
+	})
+
+	/**
+	 * @class ketaTagProvider
+	 * @propertyOf keta.services.Tag
+	 * @description Tag Provider
+	 */
+	.provider('ketaTag', function TagProvider() {
+
+		this.$get = function TagService() {
+
+			/**
+			 * @class TagInstance
+			 * @propertyOf TagSetProvider
+			 * @description Tag Instance
+			 * @param {Object} properties Properties to inject into TagInstance
+			 */
+			var TagInstance = function(properties) {
+
+				// guid of device tag belongs to
+				var guid = angular.isDefined(properties.guid) ? properties.guid : null;
+
+				/**
+				 * @name getGuid
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>guid&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {string} guid
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagGuid = tag.getGuid();
+				 *     });
+				 */
+				this.getGuid = function() {
+					return guid;
+				};
+
+				// tag name
+				var name = angular.isDefined(properties.name) ? properties.name : null;
+
+				/**
+				 * @name getName
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>name&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {string} name
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagName = tag.getName();
+				 *     });
+				 */
+				this.getName = function() {
+					return name;
+				};
+
+				var MINIMUM_SAMPLE_RATE = 5;
+
+				// sample rate
+				var sampleRate =
+					angular.isDefined(properties.sampleRate) &amp;&amp; properties.sampleRate >= MINIMUM_SAMPLE_RATE ?
+						properties.sampleRate : null;
+
+				/**
+				 * @name getSampleRate
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns &lt;code>sampleRate&lt;/code> property of Tag.
+				 * &lt;/p>
+				 * @returns {number} sampleRate
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
+				 *             guid: 'guid',
+				 *             name: 'name',
+				 *             sampleRate: 10
+				 *         });
+				 *         var tagSampleRate = tag.getSampleRate();
+				 *     });
+				 */
+				this.getSampleRate = function() {
+					return sampleRate;
+				};
+
+			};
+
+			/**
+			 * @class Tag
+			 * @propertyOf TagProvider
+			 * @description Tag Service
+			 */
+			var api = {
+
+				/**
+				 * @name create
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Creates a TagInstance.
+				 * &lt;/p>
+				 * @param {Object} properties Properties to inject into TagInstance
+				 * @returns {TagInstance} TagInstance created
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.Tag'])
+				 *     .controller('ExampleController', function(ketaTag) {
+				 *         var tag = ketaTag.create({
+				 *             guid: 'guid',
+				 *             name: 'IdName',
+				 *             sampleRate: 10
+				 *         });
+				 *     });
+				 */
+				create: function(properties) {
+					return new TagInstance(properties);
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

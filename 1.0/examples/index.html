@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Examples</title>
+	<meta name="description" content="Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link rel="shortcut icon" href="/keta/icons/keta-favicon-32x32.ico">
+
+	<link rel="apple-touch-icon" sizes="57x57" href="/keta/icons/keta-touchicon-57x57.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/keta/icons/keta-touchicon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/keta/icons/keta-touchicon-114x114.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/keta/icons/keta-touchicon-144x144.png">
+
+	<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+
+	<div class="col-xs-12 col-sm-3 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.0.0
+		</p>
+		<p class="text-center hidden-xs">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li class="active"><a href="../examples/">Examples</a></li>
+			<li><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-9 col-md-9 col-sm-offset-3 canvas" id="top">
+		<div class="button-header">
+			<p class="pull-left">
+				<a class="btn btn-default" href="../index.html" role="button">Back home</a>
+			</p>
+		</div>
+		<div class="page-header clearfix">
+			<h1>Examples</h1>
+			<blockquote>
+				<p>Some examples are worth ten thousand words</p>
+			</blockquote>
+			<p class="text">
+				The examples give you a glimpse of what currently is developed and what it will look like.
+			</p>
+		</div>
+
+		<ul class="nav nav-pills">
+			<li><a href="#buttons">Buttons</a></li>
+			<li><a href="#tables">Tables</a></li>
+			<li><a href="#forms">Forms</a></li>
+			<li><a href="#indicators">Indicators</a></li>
+			<li><a href="#alerts">Alerts</a></li>
+			<li><a href="#color-palette">Color palette</a></li>
+		</ul>
+
+		<h2 id="buttons">Buttons<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+		<div class="text">
+			<button type="button" class="btn btn-default">Default</button>
+			<button type="button" class="btn btn-primary">Primary</button>
+			<button type="button" class="btn btn-success">Success</button>
+			<button type="button" class="btn btn-info">Info</button>
+			<button type="button" class="btn btn-warning">Warning</button>
+			<button type="button" class="btn btn-danger">Danger</button>
+			<button type="button" class="btn btn-link">Link</button>
+		</div>
+		<div class="text">
+			<button type="button" class="btn btn-default" disabled="disabled">Disabled</button>
+			<button type="button" class="btn btn-default active">:active</button>
+		</div>
+		<div class="text">
+			<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> I like</button>
+			<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-heart"></span></button>
+		</div>
+		<div class="text">
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary">Current state</button>
+				<button type="button" class="btn btn-default">Alternate state</button>
+				<button type="button" class="btn btn-default" disabled="disabled">Impossible state</button>
+			</div>
+		</div>
+		<div class="alert alert-info text" role="alert">
+			All buttons are also usable as anchors using the button class like this: <code>&lt;a class="btn btn-primary"&gt;&lt;/a&gt;</code>.
+		</div>
+		<div class="text">
+			<div class="toggle toggle-squared">
+				<input type="checkbox" name="toggle-squared-1" class="toggle-checkbox" id="toggle-squared-1">
+				<label class="toggle-label" for="toggle-squared-1">
+					<span class="toggle-inner">
+						<span class="on">On</span>
+						<span class="off">Off</span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-squared">
+				<input type="checkbox" name="toggle-squared-2" class="toggle-checkbox" id="toggle-squared-2">
+				<label class="toggle-label" for="toggle-squared-2">
+					<span class="toggle-inner">
+						<span class="on"></span>
+						<span class="off"></span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-squared disabled">
+				<input type="checkbox" name="toggle-squared-3" class="toggle-checkbox" id="toggle-squared-3" disabled="disabled">
+				<label class="toggle-label" for="toggle-squared-3">
+					<span class="toggle-inner">
+						<span class="on">On</span>
+						<span class="off">Off</span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-squared disabled">
+				<input type="checkbox" name="toggle-squared-4" class="toggle-checkbox" id="toggle-squared-4" disabled="disabled">
+				<label class="toggle-label" for="toggle-squared-4">
+					<span class="toggle-inner">
+						<span class="on"></span>
+						<span class="off"></span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+		</div>
+		<div class="text">
+			<div class="toggle toggle-rounded">
+				<input type="checkbox" name="toggle-rounded-1" class="toggle-checkbox" id="toggle-rounded-1">
+				<label class="toggle-label" for="toggle-rounded-1">
+					<span class="toggle-inner">
+						<span class="on">On</span>
+						<span class="off">Off</span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-rounded">
+				<input type="checkbox" name="toggle-rounded-2" class="toggle-checkbox" id="toggle-rounded-2">
+				<label class="toggle-label" for="toggle-rounded-2">
+					<span class="toggle-inner">
+						<span class="on"></span>
+						<span class="off"></span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-rounded disabled">
+				<input type="checkbox" name="toggle-rounded-3" class="toggle-checkbox" id="toggle-rounded-3" disabled="disabled">
+				<label class="toggle-label" for="toggle-rounded-3">
+					<span class="toggle-inner">
+						<span class="on">On</span>
+						<span class="off">Off</span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+			<div class="toggle toggle-rounded disabled">
+				<input type="checkbox" name="toggle-rounded-4" class="toggle-checkbox" id="toggle-rounded-4" disabled="disabled">
+				<label class="toggle-label" for="toggle-rounded-4">
+					<span class="toggle-inner">
+						<span class="on"></span>
+						<span class="off"></span>
+					</span>
+					<span class="toggle-switch"></span>
+				</label>
+			</div>
+		</div>
+		<div class="alert alert-info text" role="alert">
+			These toggle buttons are implemented with pure CSS 3 and transformations.
+		</div>
+
+		<h2 id="tables">Tables<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+		<h3>Default table</h3>
+		<div class="table-responsive text">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Column 1<span class="glyphicon glyphicon-chevron-down"><span></span></span></th>
+						<th>Column 2<span class="glyphicon glyphicon-chevron-up"><span></span></span></th>
+						<th>Column 3<span class="glyphicon glyphicon-chevron-down"><span></span></span></th>
+						<th>Column 4<span class="glyphicon glyphicon-chevron-down"><span></span></span></th>
+					</tr>
+				</thead>
+			  	<tbody>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<h3>Condensed table</h3>
+		<div class="table-responsive text">
+			<table class="table table-condensed table-striped">
+				<thead>
+					<tr>
+						<th>Column 1</th>
+						<th>Column 2</th>
+						<th>Column 3</th>
+						<th>Column 4</th>
+					</tr>
+				</thead>
+			  	<tbody>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+					<tr>
+						<td>Row1</td>
+						<td>Row2</td>
+						<td>Row3</td>
+						<td>Row4</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="alert alert-info text" role="alert">
+			All tables are fully responsive and get scrolling abilities if available space is too small.
+		</div>
+
+		<h2 id="forms">Forms<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+
+		<h3>Input field with placeholder and help block</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="exampleInputEmail1">Email address<span class="required-indicator">*<span></span></span></label>
+						<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+						<span class="help-block">Please enter your email address.</span>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h3>Invalid input field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-error">
+						<label for="exampleInputPassword1">Invalid input</label>
+						<input class="form-control" id="exampleInputPassword1" type="text" placeholder="Invalid input...">
+						<span class="help-block">Given data isn't valid.</span>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h3>Disabled input field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Disabled input</label>
+						<input class="form-control" id="" type="text" placeholder="Disabled input here..." disabled="disabled">
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h3>Input field with icon</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group has-feedback">
+						<label class="control-label" for="inputWithIcon">Input with icon</label>
+						<input type="text" class="form-control" id="inputWithIcon" placeholder="Search...">
+						<span class="glyphicon glyphicon-search form-control-feedback"></span>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h3>Input field with unit</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="input-group">
+							<input type="number" class="form-control">
+							<span class="input-group-addon">kWh</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h3>Select field</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="disabledSelect">Select menu</label>
+						<select id="disabledSelect" class="form-control">
+							<option disabled="disabled" value="Disabled option">Disabled option</option>
+							<option value="Option 1">Option 1</option>
+							<option value="Option 2">Option 2</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<!--
+		<h3>Tags</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="">Tags<span class="required-indicator"><span></span></span></label>
+						<input type="text" class="form-control" id="" placeholder="Enter tag">
+						<div class="tags">
+							<div class="tag label label-default">
+								<span class="tag-value">Ein gaaaanz langer tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-primary">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-info">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-warning">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+							<div class="tag label label-danger">
+								<span class="tag-value">Tag</span><a href="" class="close">
+								<span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		 -->
+
+		<h3>Check boxes</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset>
+						<legend>Legend for check boxes</legend>
+						<div class="checkbox disabled">
+							<label>
+								<input type="checkbox" disabled="disabled">
+								Can't check this
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox">
+								But this
+							</label>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+
+		<h3>Radio boxes</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset>
+						<legend>Legend for radio boxes</legend>
+						<div class="radio">
+							<label>
+								<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="checked">
+								Option one
+							</label>
+						</div>
+						<div class="radio">
+							<label>
+								<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								Option two
+							</label>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+
+		<h3>Text area</h3>
+		<form role="form" class="text">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group">
+						<textarea class="form-control" rows="3"></textarea>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<h2 id="indicators">Indicators<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+
+		<h3>Loading Bar</h3>
+		<div class="progress progress-condensed">
+			<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:60%;">
+				<span class="sr-only">60% Complete</span>
+			</div>
+		</div>
+
+		<h3>Spinner</h3>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="loading-spinner">
+					<div class="spinner spinner-small"></div>
+				</div>
+				<div class="loading-spinner">
+					<div class="spinner"></div>
+				</div>
+				<div class="loading-spinner">
+					<div class="spinner spinner-large"></div>
+				</div>
+			</div>
+		</div>
+
+		<h2 id="alerts">Alerts<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+		<div class="alert alert-info">
+			<strong>Information</strong>
+			<p>
+				Just a notice to inform the user about something trivial.
+			</p>
+		</div>
+		<div class="alert alert-success">
+			<strong>Perfect</strong>
+			<p>
+				Settings were saved successfully.
+			</p>
+		</div>
+		<div class="alert alert-warning">
+			<strong>Be aware</strong>
+			<p>
+				Something may be misconfigured. But we are not sure.
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<strong>Oh no</strong>
+			<p>
+				Can not connect to your combined heat pump.
+			</p>
+		</div>
+
+		<h2 id="color-palette">Color palette<a href="#top" class="btn btn-primary pull-right">Top</a></h2>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-yellow-light"></div>
+				<div class="color-name">Yellow Light<br>#f5ce49</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-yellow-lighter"></div>
+				<div class="color-name">Yellow Lighter<br>#f3c831</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-yellow"></div>
+				<div class="color-name">Yellow<br>#f2c119</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-yellow-darker"></div>
+				<div class="color-name">Yellow Darker<br>#e5b40d</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-yellow-dark"></div>
+				<div class="color-name">Yellow Dark<br>#cca10c</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-orange-light"></div>
+				<div class="color-name">Orange Light<br>#f7b251</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-orange-lighter"></div>
+				<div class="color-name">Orange Lighter<br>#f6a838</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-orange"></div>
+				<div class="color-name">Orange<br>#f59d20</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-orange-darker"></div>
+				<div class="color-name">Orange Darker<br>#f1920b</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-orange-dark"></div>
+				<div class="color-name">Orange Dark<br>#d8830a</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-red-light"></div>
+				<div class="color-name">Red Light<br>#ee7750</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-red-lighter"></div>
+				<div class="color-name">Red Lighter<br>#eb6539</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-red"></div>
+				<div class="color-name">Red<br>#e95322</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-red-darker"></div>
+				<div class="color-name">Red Darker<br>#dc4716</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-red-dark"></div>
+				<div class="color-name">Red Dark<br>#c43f14</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-moss-light"></div>
+				<div class="color-name">Moss Light<br>#98b452</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-moss-lighter"></div>
+				<div class="color-name">Moss Lighter<br>#8aa548</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-moss"></div>
+				<div class="color-name">Moss<br>#7b9340</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-moss-darker"></div>
+				<div class="color-name">Moss Darker<br>#6c8138</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-moss-dark"></div>
+				<div class="color-name">Moss Dark<br>#5d6f31</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-citron-light"></div>
+				<div class="color-name">Citron Light<br>#c1d34f</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-citron-lighter"></div>
+				<div class="color-name">Citron Lighter<br>#bace3b</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-citron"></div>
+				<div class="color-name">Citron<br>#acbf30</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-citron-darker"></div>
+				<div class="color-name">Citron Darker<br>#9aab2b</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-citron-dark"></div>
+				<div class="color-name">Citron Dark<br>#879626</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-ice-light"></div>
+				<div class="color-name">Ice Light<br>#cbdedb</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-ice-lighter"></div>
+				<div class="color-name">Ice Lighter<br>#bbd5d0</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-ice"></div>
+				<div class="color-name">Ice<br>#abcbc5</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-ice-darker"></div>
+				<div class="color-name">Ice Darker<br>#9bc1ba</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-ice-dark"></div>
+				<div class="color-name">Ice Dark<br>#8bb8af</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-blue-light"></div>
+				<div class="color-name">Blue Light<br>#618cc8</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-blue-lighter"></div>
+				<div class="color-name">Blue Lighter<br>#4e7ec2</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-blue"></div>
+				<div class="color-name">Blue<br>#3f71b7</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-blue-darker"></div>
+				<div class="color-name">Blue Darker<br>#3865a4</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-blue-dark"></div>
+				<div class="color-name">Blue Dark<br>#325a91</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-platina-light"></div>
+				<div class="color-name">Platina Light<br>#a28c86</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-platina-lighter"></div>
+				<div class="color-name">Platina Lighter<br>#967e78</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-platina"></div>
+				<div class="color-name">Platina<br>#8a716b</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-platina-darker"></div>
+				<div class="color-name">Platina Darker<br>#7c6560</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-platina-dark"></div>
+				<div class="color-name">Platina Dark<br>#6d5955</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-rust-light"></div>
+				<div class="color-name">Rust Light<br>#b55128</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-rust-lighter"></div>
+				<div class="color-name">Rust Lighter<br>#a04724</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-rust"></div>
+				<div class="color-name">Rust<br>#8b3e1f</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-rust-darker"></div>
+				<div class="color-name">Rust Darker<br>#76351a</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-rust-dark"></div>
+				<div class="color-name">Rust Dark<br>#612b16</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-charcoal-light"></div>
+				<div class="color-name">Charcoal Light<br>#505050</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-charcoal-lighter"></div>
+				<div class="color-name">Charcoal Lighter<br>#434343</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-charcoal"></div>
+				<div class="color-name">Charcoal<br>#363636</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-charcoal-darker"></div>
+				<div class="color-name">Charcoal Darker<br>#292929</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-charcoal-dark"></div>
+				<div class="color-name">Charcoal Dark<br>#1c1c1c</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-silver-light"></div>
+				<div class="color-name">Silver Light<br>#929292</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-silver-lighter"></div>
+				<div class="color-name">Silver Lighter<br>#858585</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-silver"></div>
+				<div class="color-name">Silver<br>#787878</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-silver-darker"></div>
+				<div class="color-name">Silver Darker<br>#6b6b6b</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-silver-dark"></div>
+				<div class="color-name">Silver Dark<br>#5f5f5f</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-cumulus-light"></div>
+				<div class="color-name">Cumulus Light<br>#d3d3d3</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-cumulus-lighter"></div>
+				<div class="color-name">Cumulus Lighter<br>#c7c7c7</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-cumulus"></div>
+				<div class="color-name">Cumulus<br>#bababa</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-cumulus-darker"></div>
+				<div class="color-name">Cumulus Darker<br>#adadad</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-cumulus-dark"></div>
+				<div class="color-name">Cumulus Dark<br>#a1a1a1</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="text">
+			<div class="color-box">
+				<div class="color color-paper"></div>
+				<div class="color-name">Paper<br>#f4f0e7</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-grey"></div>
+				<div class="color-name">Grey<br>#eeeeee</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-black"></div>
+				<div class="color-name">Black<br>#000000</div>
+			</div>
+			<div class="color-box">
+				<div class="color color-white"></div>
+				<div class="color-name">White<br>#ffffff</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="alert alert-info text" role="alert">
+			You can download the color palette as Adobe Swatch Exchange <a href="../downloads/colors.ase">here</a>.
+		</div>
+
+		<footer class="text-right">
+			<hr>
+			<small>Copyright © Kiwigrid GmbH 2014-2016</small>
+		</footer>
+	</div>
+
+	<div class="col-xs-12 visible-xs sidebar sidebar-bottom">
+		<p class="footer text-center">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			This project is maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<script src="/keta/js/jquery.min.js"></script>
+	<script src="/keta/js/bootstrap.min.js"></script>
+</body>
+</html>

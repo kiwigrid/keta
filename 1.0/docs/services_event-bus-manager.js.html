@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/event-bus-manager.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.0.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/event-bus-manager.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.EventBusManager
+ * @description EventBusManager Provider
+ */
+
+angular.module('keta.services.EventBusManager', [])
+
+	/**
+	 * @class ketaEventBusManagerProvider
+	 * @propertyOf keta.services.EventBusManager
+	 * @description EventBusManager Provider
+	 */
+	.provider('ketaEventBusManager', function EventBusManagerProvider() {
+
+		// keep reference
+		var that = this;
+
+		/**
+		 * @private
+		 * @description Internal list of EventBus instances.
+		 */
+		var eventBuses = {};
+
+		/**
+		 * @private
+		 * @description Debug mode enabled or not.
+		 */
+		var debug = false;
+
+		/**
+		 * @name add
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Adds an EventBus instance to internal list, from which it can be retrieved later on by it's id.
+		 * &lt;/p>
+		 * @param {EventBus} eventBus EventBus instance to add
+		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
+		 */
+		this.add = function(eventBus) {
+			eventBuses[eventBus.getConfig().id] = eventBus;
+			return that;
+		};
+
+		/**
+		 * @name remove
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Removes an EventBus instance from internal list.
+		 * &lt;/p>
+		 * @param {EventBus} eventBus EventBus instance to remove
+		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .remove(eventBus);
+		 *     });
+		 */
+		this.remove = function(eventBus) {
+			if (angular.isDefined(eventBuses[eventBus.getConfig().id])) {
+				delete eventBuses[eventBus.getConfig().id];
+			}
+			return that;
+		};
+
+		/**
+		 * @name removeAll
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Removes all EventBus instances from internal list.
+		 * &lt;/p>
+		 * @returns {EventBusManagerProvider} EventBusManagerProvider to chain
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider
+		 *             .add(eventBus)
+		 *             .removeAll();
+		 *     });
+		 */
+		this.removeAll = function() {
+			eventBuses = {};
+			return that;
+		};
+
+		/**
+		 * @name get
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Gets an EventBus instance from internal list by specified id.
+		 * &lt;/p>
+		 * @param {string} eventBusId EventBus instance id to retrieve from internal list
+		 * @returns {EventBus} EventBus instance if found, otherwise null
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBus = ketaEventBusManagerProvider.get('eventBus');
+		 *     });
+		 */
+		this.get = function(eventBusId) {
+			return angular.isDefined(eventBuses[eventBusId]) ? eventBuses[eventBusId] : null;
+		};
+
+		/**
+		 * @name getAll
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Gets all EventBus instances from internal list.
+		 * &lt;/p>
+		 * @returns {Object} EventBus instances map (id as key)
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         var eventBuses = ketaEventBusManagerProvider.getAll();
+		 *     });
+		 */
+		this.getAll = function() {
+			return eventBuses;
+		};
+
+		/**
+		 * @name enableDebug
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Enables debug mode which outputs requests and responses to console.
+		 * &lt;/p>
+		 * @returns {void} returns nothing
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.enableDebug();
+		 *     });
+		 */
+		this.enableDebug = function() {
+			debug = true;
+		};
+
+		/**
+		 * @name disableDebug
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Disables debug mode which normally outputs requests and responses to console.
+		 * &lt;/p>
+		 * @returns {void} returns nothing
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         ketaEventBusManagerProvider.disableDebug();
+		 *     });
+		 */
+		this.disableDebug = function() {
+			debug = false;
+		};
+
+		/**
+		 * @name inDebugMode
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Returns true if currently in debug mode.
+		 * &lt;/p>
+		 * @returns {Boolean} true if debug mode is enabled
+		 * @example
+		 * angular.module('exampleApp', ['keta.services.EventBusManager'])
+		 *     .config(function(ketaEventBusManagerProvider) {
+		 *         if (ketaEventBusManagerProvider.inDebugMode()) {
+		 *             // do something useful
+		 *         }
+		 *     });
+		 */
+		this.inDebugMode = function() {
+			return debug === true;
+		};
+
+		this.$get = function EventBusManagerService() {
+
+			/**
+			 * @class ketaEventBusManager
+			 * @propertyOf EventBusManagerProvider
+			 * @description EventBusManager Service
+			 */
+			var api = {
+
+				add: this.add,
+
+				remove: this.remove,
+
+				removeAll: this.removeAll,
+
+				get: this.get,
+
+				getAll: this.getAll,
+
+				enableDebug: this.enableDebug,
+
+				disableDebug: this.disableDebug,
+
+				inDebugMode: this.inDebugMode
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

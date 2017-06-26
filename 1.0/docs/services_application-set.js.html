@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/application-set.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.0.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/application-set.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @author Marco Lehmann &lt;marco.lehmann@kiwigrid.com>
+ * @copyright Kiwigrid GmbH 2014-2015
+ * @module keta.services.ApplicationSet
+ * @description ApplicationSet Provider
+ */
+
+angular.module('keta.services.ApplicationSet',
+	[
+		'keta.services.Application'
+	])
+
+	/**
+	 * @class ApplicationSetProvider
+	 * @propertyOf keta.services.ApplicationSet
+	 * @description ApplicationSet Provider
+	 */
+	.provider('ketaApplicationSet', function ApplicationSetProvider() {
+
+		var DEFAULT_OFFSET = 0;
+		var DEFAULT_LIMIT = 50;
+
+		this.$get = function ApplicationSetService(
+			$q, $rootScope, $log,
+			ketaApplication, ketaEventBusDispatcher, ketaEventBusManager) {
+
+			/**
+			 * @class ketaApplicationSetInstance
+			 * @propertyOf ApplicationSetProvider
+			 * @description ApplicationSet Instance
+			 * @param {EventBus} givenEventBus eventBus to use for ApplicationSetInstance
+			 */
+			var ApplicationSetInstance = function(givenEventBus) {
+
+				// keep reference
+				var that = this;
+
+				// save EventBus instance
+				var eventBus = givenEventBus;
+
+				// internal params object
+				var params = {};
+
+				/**
+				 * @name filter
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a filter before ApplicationSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} filter filter to use
+				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
+				 *             .filter({
+				 *                 userId: 'login'
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.filter = function(filter) {
+					params.filter = filter;
+					return that;
+				};
+
+				/**
+				 * @name project
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a projection before ApplicationSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} projection projection to use
+				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
+				 *             .filter({
+				 *                 userId: 'login'
+				 *             })
+				 *             .project({
+				 *                 appId: 1
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.project = function(projection) {
+					params.projection = projection;
+					return that;
+				};
+
+				/**
+				 * @name sort
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a sorting before ApplicationSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} sorting sorting to use
+				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
+				 *             .filter({
+				 *                 userId: 'login'
+				 *             })
+				 *             .sort({
+				 *                 'appId': 1
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.sort = function(sorting) {
+					params.sorting = sorting;
+					return that;
+				};
+
+				/**
+				 * @name paginate
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Adds a pagination before ApplicationSet query is sent to EventBus.
+				 * &lt;/p>
+				 * @param {Object} pagination pagination to use
+				 * @returns {ApplicationSetInstance} ApplicationSetInstance to chain
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
+				 *             .filter({
+				 *                 userId: 'login'
+				 *             })
+				 *             .paginate({
+				 *                 offset: 0,
+				 *                 limit: 50
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.paginate = function(pagination) {
+					if (angular.isDefined(pagination)) {
+						params.offset = angular.isDefined(pagination.offset) ? pagination.offset : DEFAULT_OFFSET;
+						params.limit = angular.isDefined(pagination.limit) ? pagination.limit : DEFAULT_LIMIT;
+					} else {
+						params.offset = DEFAULT_OFFSET;
+						params.limit = DEFAULT_LIMIT;
+					}
+					return that;
+				};
+
+				/**
+				 * @name query
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Finally executes ApplicationSet query by sending it to the associated EventBus instance.
+				 * &lt;/p>
+				 * @returns {promise} Promise which is resolved when query is returned
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus)
+				 *             .filter({
+				 *                 userId: 'login'
+				 *             })
+				 *             .query()
+				 *             .then(function(reply) {
+				 *                 // success handler
+				 *                 // ...
+				 *             }, function(reply) {
+				 *                 // error handler
+				 *                 // ...
+				 *             });
+				 *     });
+				 */
+				that.query = function() {
+					var deferred = $q.defer();
+
+					ketaEventBusDispatcher.send(eventBus, 'appservice', {
+						action: 'getAppsInfo',
+						params: params
+					}, function(reply) {
+						if (reply) {
+							// inject used params
+							reply.params = params;
+
+							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
+
+								// create ApplicationInstances
+								if (angular.isDefined(reply.result) &amp;&amp;
+									angular.isDefined(reply.result.items)) {
+									angular.forEach(reply.result.items, function(item, index) {
+										reply.result.items[index] = ketaApplication.create(eventBus, item);
+									});
+								}
+
+								// log if in debug mode
+								if (ketaEventBusManager.inDebugMode()) {
+									$log.request(['appservice', {
+										action: 'getAppsInfo',
+										params: params
+									}, reply], $log.ADVANCED_FORMATTER);
+								}
+
+								deferred.resolve(reply);
+								$rootScope.$digest();
+
+							} else {
+								deferred.reject(reply);
+							}
+						} else {
+							deferred.reject('Something bad happened. Got no reply.');
+						}
+					});
+
+					return deferred.promise;
+				};
+
+			};
+
+			/**
+			 * @class ketaApplicationSet
+			 * @propertyOf ApplicationSetProvider
+			 * @description ApplicationSet Service
+			 */
+			var api = {
+
+				/**
+				 * @name create
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Creates an ApplicationSetInstance with given EventBus instance.
+				 * &lt;/p>
+				 * @param {EventBus} eventBus EventBus instance to use for communication
+				 * @returns {ApplicationSetInstance} ApplicationSetInstance created
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         var applicationSet = ketaApplicationSet.create(eventBus);
+				 *     });
+				 */
+				create: function(eventBus) {
+					return new ApplicationSetInstance(eventBus);
+				},
+
+				/**
+				 * @name indexOf
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns index of given Application in ApplicationSet by comparing app IDs.
+				 * &lt;/p>
+				 * @param {ApplicationSetInstance} set ApplicationSetInstance to search in
+				 * @param {ApplicationInstance} application ApplicationInstance to search for
+				 * @returns {number} index
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // index equals 0 after the call
+				 *                 var index = ketaApplicationSet.indexOf(reply, reply.result.items[0]);
+				 *             });
+				 *     });
+				 */
+				indexOf: function(set, application) {
+					var index = -1;
+					if (angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items)) {
+						angular.forEach(set.result.items, function(item, key) {
+							if (item.appId === application.appId) {
+								index = key;
+							}
+						});
+					}
+					return index;
+				},
+
+				/**
+				 * @name length
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns number of applications in given ApplicationSet.
+				 * &lt;/p>
+				 * @param {ApplicationSetInstance} set ApplicationSetInstance to search in
+				 * @returns {number} number of applications
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // length equals number of applications in ApplicationSet
+				 *                 var length = ketaApplicationSet.length(reply);
+				 *             });
+				 *     });
+				 */
+				length: function(set) {
+					var length =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) &amp;&amp;
+						angular.isArray(set.result.items) ? set.result.items.length : 0;
+					return length;
+				},
+
+				/**
+				 * @name get
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns application in given ApplicationSet by specified index.
+				 * &lt;/p>
+				 * @param {ApplicationSetInstance} set ApplicationSetInstance to search in
+				 * @param {number} index Index of application to return
+				 * @returns {ApplicationInstance} ApplicationInstance retrieved from set
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 // application equals first item after the call
+				 *                 var application = ketaApplicationSet.get(reply, 0);
+				 *             });
+				 *     });
+				 */
+				get: function(set, index) {
+					var application =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) &amp;&amp;
+						angular.isDefined(set.result.items[index]) ? set.result.items[index] : null;
+					return application;
+				},
+
+				/**
+				 * @name getAll
+				 * @function
+				 * @description
+				 * &lt;p>
+				 *   Returns all applications in given ApplicationSet.
+				 * &lt;/p>
+				 * @param {ApplicationSetInstance} set ApplicationSetInstance to search in
+				 * @returns {Array} All ApplicationInstances retrieved from set
+				 * @example
+				 * angular.module('exampleApp', ['keta.services.ApplicationSet'])
+				 *     .controller('ExampleController', function(ketaApplicationSet) {
+				 *         ketaApplicationSet.create(eventBus).query()
+				 *             .then(function(reply) {
+				 *                 var applications = ketaApplicationSet.getAll(reply);
+				 *             });
+				 *     });
+				 */
+				getAll: function(set) {
+					var applications =
+						angular.isDefined(set.result) &amp;&amp;
+						angular.isDefined(set.result.items) ? set.result.items : [];
+					return applications;
+				}
+
+			};
+
+			return api;
+
+		};
+
+	});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>
