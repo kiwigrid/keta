@@ -1,0 +1,37 @@
+{
+  "name": "keta",
+  "version": "1.0.0",
+  "description": "Frontend Components for Kiwigrid Platform based AngularJS Apps",
+  "keywords": [
+    "keta",
+    "Library",
+    "Kiwigrid",
+    "Platform",
+    "AngularJS",
+    "Apps"
+  ],
+  "homepage": "https://github.io/kiwigrid/keta",
+  "bugs": {
+    "url": "https://github.com/kiwigrid/keta/issues",
+    "email": "keta@kiwigrid.com"
+  },
+  "main": "dist/keta.js",
+  "scripts": {
+    "postinstall": "bower install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "registry": "https://repo.dev.kiwigrid.com/artifactory/api/npm/kiwi-npm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kiwigrid/keta.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "angular": "1.5.11",
+    "moment": "2.13.0",
+    "sockjs-client": "1.1.2",
+    "@kiwigrid/vertxbus-client": "2.1.4"
+  }
+}

@@ -2401,6 +2401,8 @@ angular.module('keta.directives.DatePicker')
  *         // Array of actions to render for each row.
  *         // getLink method will be used to construct a link with the help of the row object,
  *         // getLabel is used as callback to retrieve value for title-tag,
+ *         // getTitle is used as callback to retrieve value for text right after the icon,
+ *         // target is used as target attribute for the link (e.g. _blank, _self, ...),
  *         // icon is used as icon-class for visualizing the action.
  *         // runAction is a callback-function that will be executed when the user clicks on
  *         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
@@ -2417,6 +2419,10 @@ angular.module('keta.directives.DatePicker')
  *             getLabel: function() {
  *                 return 'Edit';
  *             },
+ *             getTitle: function() {
+ *                 return 'Edit';
+ *             },
+ *             target: '_self',
  *             icon: 'glyphicon glyphicon-pencil',
  *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
@@ -3369,14 +3375,17 @@ angular.module('keta.directives.ExtendedTable')
 '										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-attr-target="{{item.target ? item.target : undefined}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +
@@ -3402,14 +3411,17 @@ angular.module('keta.directives.ExtendedTable')
 '										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-attr-target="{{item.target ? item.target : undefined}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +
@@ -8440,7 +8452,7 @@ angular.module('keta.services.EventBus', [])
 		 * @description EventBus Instance
 		 * @param {Object} givenConfig Config to use for EventBus
 		 */
-		var EventBus = function EventBus(givenConfig) {
+		var KetaEventBus = function KetaEventBus(givenConfig) {
 
 			/**
 			 * @private
@@ -8499,7 +8511,7 @@ angular.module('keta.services.EventBus', [])
 
 			/**
 			 * @private
-			 * @description Internal reference to vertx.EventBus instance.
+			 * @description Internal reference to EventBus instance.
 			 */
 			var eb = null;
 
@@ -8508,9 +8520,9 @@ angular.module('keta.services.EventBus', [])
 			 * @function
 			 * @description
 			 * <p>
-			 *   Returns vertx.EventBus instance.
+			 *   Returns EventBus instance.
 			 * </p>
-			 * @returns {vertx.EventBus} vertx.EventBus instance
+			 * @returns {eb} EventBus instance
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
 			 *     .controller('ExampleController', function(ketaEventBus) {
@@ -8547,7 +8559,11 @@ angular.module('keta.services.EventBus', [])
 				if (config.url !== false) {
 
 					// instantiate vertx.EventBus
-					eb = new vertx.EventBus(config.url);
+					if (typeof vertx !== 'undefined' && vertx.EventBus) {
+						eb = new vertx.EventBus(config.url);
+					} else {
+						eb = new EventBus(config.url); // eslint-disable-line no-undef
+					}
 
 					// add onclose handler
 					eb.onclose = function() {
@@ -8577,7 +8593,7 @@ angular.module('keta.services.EventBus', [])
 		 *   Creates an EventBus instance with given config, which is merged with the default config.
 		 * </p>
 		 * @param {Object} config config to use in created EventBus instance
-		 * @returns {EventBus} EventBus created
+		 * @returns {ketaEventBus} EventBus created
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
 		 *     .config(function(ketaEventBusProvider) {
@@ -8607,7 +8623,7 @@ angular.module('keta.services.EventBus', [])
 		 *     });
 		 */
 		this.create = function(config) {
-			return new EventBus(config);
+			return new KetaEventBus(config);
 		};
 
 		this.$get = function EventBusService() {};

@@ -22,7 +22,7 @@ angular.module('keta.services.EventBus', [])
 		 * @description EventBus Instance
 		 * @param {Object} givenConfig Config to use for EventBus
 		 */
-		var EventBus = function EventBus(givenConfig) {
+		var KetaEventBus = function KetaEventBus(givenConfig) {
 
 			/**
 			 * @private
@@ -81,7 +81,7 @@ angular.module('keta.services.EventBus', [])
 
 			/**
 			 * @private
-			 * @description Internal reference to vertx.EventBus instance.
+			 * @description Internal reference to EventBus instance.
 			 */
 			var eb = null;
 
@@ -90,9 +90,9 @@ angular.module('keta.services.EventBus', [])
 			 * @function
 			 * @description
 			 * <p>
-			 *   Returns vertx.EventBus instance.
+			 *   Returns EventBus instance.
 			 * </p>
-			 * @returns {vertx.EventBus} vertx.EventBus instance
+			 * @returns {eb} EventBus instance
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.EventBus'])
 			 *     .controller('ExampleController', function(ketaEventBus) {
@@ -129,7 +129,11 @@ angular.module('keta.services.EventBus', [])
 				if (config.url !== false) {
 
 					// instantiate vertx.EventBus
-					eb = new vertx.EventBus(config.url);
+					if (typeof vertx !== 'undefined' && vertx.EventBus) {
+						eb = new vertx.EventBus(config.url);
+					} else {
+						eb = new EventBus(config.url); // eslint-disable-line no-undef
+					}
 
 					// add onclose handler
 					eb.onclose = function() {
@@ -159,7 +163,7 @@ angular.module('keta.services.EventBus', [])
 		 *   Creates an EventBus instance with given config, which is merged with the default config.
 		 * </p>
 		 * @param {Object} config config to use in created EventBus instance
-		 * @returns {EventBus} EventBus created
+		 * @returns {ketaEventBus} EventBus created
 		 * @example
 		 * angular.module('exampleApp', ['keta.services.EventBus'])
 		 *     .config(function(ketaEventBusProvider) {
@@ -189,7 +193,7 @@ angular.module('keta.services.EventBus', [])
 		 *     });
 		 */
 		this.create = function(config) {
-			return new EventBus(config);
+			return new KetaEventBus(config);
 		};
 
 		this.$get = function EventBusService() {};

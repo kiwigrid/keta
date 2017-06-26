@@ -142,6 +142,8 @@
  *         // Array of actions to render for each row.
  *         // getLink method will be used to construct a link with the help of the row object,
  *         // getLabel is used as callback to retrieve value for title-tag,
+ *         // getTitle is used as callback to retrieve value for text right after the icon,
+ *         // target is used as target attribute for the link (e.g. _blank, _self, ...),
  *         // icon is used as icon-class for visualizing the action.
  *         // runAction is a callback-function that will be executed when the user clicks on
  *         // the corresponding button. To use this functionality it is necessary to provide the type-parameter
@@ -158,6 +160,10 @@
  *             getLabel: function() {
  *                 return 'Edit';
  *             },
+ *             getTitle: function() {
+ *                 return 'Edit';
+ *             },
+ *             target: '_self',
  *             icon: 'glyphicon glyphicon-pencil',
  *             type: ketaExtendedTableConstants.ACTION_LIST_TYPE.LINK
  *         }, {
@@ -1110,14 +1116,17 @@ angular.module('keta.directives.ExtendedTable')
 '										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-attr-target="{{item.target ? item.target : undefined}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +
@@ -1143,14 +1152,17 @@ angular.module('keta.directives.ExtendedTable')
 '										data-ng-if="showActionListItem(item, row)">' +
 '										<a class="btn btn-link"' +
 '											data-ng-href="{{item.getLink(row)}}"' +
+'											data-ng-attr-target="{{item.target ? item.target : undefined}}"' +
 '											data-ng-if="!item.type || item.type === ACTION_LIST_TYPE_LINK"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '										<a class="btn btn-link" href=""' +
 '											data-ng-click="item.runAction(row)"' +
 '											data-ng-if="item.type === ACTION_LIST_TYPE_ACTION"' +
 '											title="{{item.getLabel()}}"><span' +
-'											class="{{item.icon}}" aria-hidden="true"></span></a>' +
+'											class="{{item.icon}}" aria-hidden="true"></span><span' +
+'											data-ng-if="item.getTitle()">{{item.getTitle()}}</span></a>' +
 '									</span>' +
 '								</div>' +
 '							</td>' +

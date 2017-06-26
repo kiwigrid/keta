@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.0.0
+
+_Released: 2017-06-26_
+
+* ensure compatibility with AngularJS 1.5.11
+* added optional label and target for extended table action links (parameters `getTitle` and `target`)
+
 ## Version 0.7.5
 
 _Released: 2017-02-15_
