@@ -1120,7 +1120,10 @@ angular.module('keta.directives.AppBar')
 '			<span>' +
 '				{{ getLabel(MESSAGE_KEY_PREFIX + \'_logged_in_as\') }}' +
 '				<strong>{{ user.givenName }} {{ user.familyName }} ({{impersonationInfo.userId}}). </strong>' +
-'				<a href="{{impersonationInfo.backUrl}}" title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}">' +
+'				<a' +
+'					target="_self"' +
+'					href="{{impersonationInfo.backUrl}}"' +
+'					title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}">' +
 '					{{ getLabel(MESSAGE_KEY_PREFIX + \'_drop_access\') }}' +
 '				</a>' +
 '			</span>' +

@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.0.1
+
+_Released: 2017-06-30_
+
+* fixed cancel-link in `impersonation bar` to work with our `nodecore` middleware
+
 ## Version 1.0.0
 
 _Released: 2017-06-26_
