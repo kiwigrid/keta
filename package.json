@@ -1,6 +1,6 @@
 {
   "name": "keta",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Frontend Components for Kiwigrid Platform based AngularJS Apps",
   "keywords": [
     "keta",
@@ -29,7 +29,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "angular": "1.5.11",
+    "angular": "1.6.5",
     "moment": "2.13.0",
     "sockjs-client": "1.1.2",
     "@kiwigrid/vertxbus-client": "2.1.4"

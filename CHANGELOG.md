@@ -2,13 +2,19 @@
 
 #### Frontend Components for Kiwigrid Platform based AngularJS Apps
 
-Copyright Kiwigrid GmbH 2014-2016
+Copyright Kiwigrid GmbH 2014-2017
 
 ---
 
 Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/)
 
 # Changelog
+
+## Version 1.0.2
+
+_Released: 2017-07-20_
+
+* ensure compatibility with AngularJS 1.6.5
 
 ## Version 1.0.1
 
