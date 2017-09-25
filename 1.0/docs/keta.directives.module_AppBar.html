@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 1.0.2
+			Version 1.1.0
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.2" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.2" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.1.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.1.0" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.2" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.2" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.1.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.1.0" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -107,7 +107,7 @@
     
     
     <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2017</li></ul></dd>
     
     
     
@@ -135,6 +135,7 @@
     <pre class="prettyprint"><code>&lt;div data-keta-app-bar
     data-event-bus-id="eventBusId"
     data-locales="locales"
+    data-css-classes="appBarCssClasses"
     data-current-locale="currentLocale"
     data-fallback-locale="fallbackLocale"
     data-labels="labels"
@@ -150,6 +151,7 @@
     <pre class="prettyprint"><code>&lt;div data-keta-app-bar
     data-event-bus-id="eventBusId"
     data-locales="locales"
+    data-css-classes="appBarCssClasses"
     data-current-locale="currentLocale"
     data-fallback-locale="fallbackLocale"
     data-labels="labels"
@@ -177,6 +179,15 @@
             nameShort: 'EN',
             code: 'en_GB'
         }];
+
+        // custom CSS classes for different menu parts of this directive
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.WORLD_SWITCHER] = 'my-world-switcher-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.MENU_BAR_TOGGLE] = 'my-menu-toggle-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.NOTIFICATION_BAR_TOGGLE] = 'my-notification-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.APP_TITLE] = 'my-app-title-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.USER_MENU] = 'my-user-menu-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.LANGUAGE_MENU] = 'my-language-menu-class';
+        $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.ENERGY_MANAGER_MENU] = 'my-em-menu-class';
 
         // current locale
         $scope.currentLocale = 'de_DE';

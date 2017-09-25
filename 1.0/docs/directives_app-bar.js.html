@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 1.0.2
+			Version 1.1.0
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.2" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.2" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.1.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.1.0" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.0.2" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.0.2" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.1.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.1.0" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -70,7 +70,7 @@
 /**
  * @name keta.directives.AppBar
  * @author Vincent Romanus &lt;vincent.romanus@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014-2015
+ * @copyright Kiwigrid GmbH 2014-2017
  * @module keta.directives.AppBar
  * @description
  * &lt;p>
@@ -81,6 +81,7 @@
  * &amp;lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
+ *     data-css-classes="appBarCssClasses"
  *     data-current-locale="currentLocale"
  *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
@@ -96,6 +97,7 @@
  * &amp;lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
+ *     data-css-classes="appBarCssClasses"
  *     data-current-locale="currentLocale"
  *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
@@ -123,6 +125,15 @@
  *             nameShort: 'EN',
  *             code: 'en_GB'
  *         }];
+ *
+ *         // custom CSS classes for different menu parts of this directive
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.WORLD_SWITCHER] = 'my-world-switcher-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.MENU_BAR_TOGGLE] = 'my-menu-toggle-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.NOTIFICATION_BAR_TOGGLE] = 'my-notification-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.APP_TITLE] = 'my-app-title-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.USER_MENU] = 'my-user-menu-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.LANGUAGE_MENU] = 'my-language-menu-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.ENERGY_MANAGER_MENU] = 'my-em-menu-class';
  *
  *         // current locale
  *         $scope.currentLocale = 'de_DE';
@@ -360,6 +371,10 @@ angular.module('keta.directives.AppBar',
 				// this will be sorted alphabetically in ascending order
 				locales: '=?',
 
+				// css classes for different parts of the appBar
+				// defined as object
+				cssClasses: '=?',
+
 				// current locale
 				currentLocale: '=?',
 
@@ -398,6 +413,7 @@ angular.module('keta.directives.AppBar',
 				scope.menus = {};
 				scope.worlds = scope.worlds || [];
 				scope.locales = scope.locales || [];
+				scope.cssClasses = scope.cssClasses || {};
 				scope.energyManagers = [];
 				scope.impersonationInfo = {};
 
@@ -741,7 +757,7 @@ angular.module('keta.directives.AppBar',
 				}
 
 				/**
-				 * get display mode classes
+				 * get display mode and custom css classes
 				 * @param {string} menuName name of the menu
 				 * @param {string} elementType either 'menu' or 'label'
 				 * @returns {string} all css classes that should be applied to this element in the template
@@ -789,6 +805,11 @@ angular.module('keta.directives.AppBar',
 						}
 
 					});
+
+					if (angular.isString(scope.cssClasses[menuName])) {
+						classes.push(scope.cssClasses[menuName]);
+					}
+
 					return classes.join(' ');
 
 				};
