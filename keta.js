@@ -34,7 +34,7 @@ angular.module('keta', [
 /**
  * @name keta.directives.AppBar
  * @author Vincent Romanus <vincent.romanus@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014-2015
+ * @copyright Kiwigrid GmbH 2014-2017
  * @module keta.directives.AppBar
  * @description
  * <p>
@@ -45,6 +45,7 @@ angular.module('keta', [
  * &lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
+ *     data-css-classes="appBarCssClasses"
  *     data-current-locale="currentLocale"
  *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
@@ -60,6 +61,7 @@ angular.module('keta', [
  * &lt;div data-keta-app-bar
  *     data-event-bus-id="eventBusId"
  *     data-locales="locales"
+ *     data-css-classes="appBarCssClasses"
  *     data-current-locale="currentLocale"
  *     data-fallback-locale="fallbackLocale"
  *     data-labels="labels"
@@ -87,6 +89,15 @@ angular.module('keta', [
  *             nameShort: 'EN',
  *             code: 'en_GB'
  *         }];
+ *
+ *         // custom CSS classes for different menu parts of this directive
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.WORLD_SWITCHER] = 'my-world-switcher-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.MENU_BAR_TOGGLE] = 'my-menu-toggle-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.NOTIFICATION_BAR_TOGGLE] = 'my-notification-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.APP_TITLE] = 'my-app-title-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.USER_MENU] = 'my-user-menu-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.LANGUAGE_MENU] = 'my-language-menu-class';
+ *         $scope.appBarCssClasses[ketaAppBarConstants.COMPONENT.ENERGY_MANAGER_MENU] = 'my-em-menu-class';
  *
  *         // current locale
  *         $scope.currentLocale = 'de_DE';
@@ -324,6 +335,10 @@ angular.module('keta.directives.AppBar',
 				// this will be sorted alphabetically in ascending order
 				locales: '=?',
 
+				// css classes for different parts of the appBar
+				// defined as object
+				cssClasses: '=?',
+
 				// current locale
 				currentLocale: '=?',
 
@@ -362,6 +377,7 @@ angular.module('keta.directives.AppBar',
 				scope.menus = {};
 				scope.worlds = scope.worlds || [];
 				scope.locales = scope.locales || [];
+				scope.cssClasses = scope.cssClasses || {};
 				scope.energyManagers = [];
 				scope.impersonationInfo = {};
 
@@ -705,7 +721,7 @@ angular.module('keta.directives.AppBar',
 				}
 
 				/**
-				 * get display mode classes
+				 * get display mode and custom css classes
 				 * @param {string} menuName name of the menu
 				 * @param {string} elementType either 'menu' or 'label'
 				 * @returns {string} all css classes that should be applied to this element in the template
@@ -753,6 +769,11 @@ angular.module('keta.directives.AppBar',
 						}
 
 					});
+
+					if (angular.isString(scope.cssClasses[menuName])) {
+						classes.push(scope.cssClasses[menuName]);
+					}
+
 					return classes.join(' ');
 
 				};
@@ -1130,7 +1151,7 @@ angular.module('keta.directives.AppBar')
 '		</div>' +
 '	</div>' +
 '' +
-'	<nav class="navbar navbar-level-1 brand-bar" role="navigation">' +
+'	<nav class="navbar navbar-level-1 brand-bar keta-app-bar-first-row" role="navigation">' +
 '		<div class="container-fluid">' +
 '			<div data-ng-transclude></div>' +
 '			<div class="dropdown pull-right"' +
@@ -1148,11 +1169,12 @@ angular.module('keta.directives.AppBar')
 '		</div>' +
 '	</nav>' +
 '' +
-'	<nav class="navbar navbar-default navbar-level-2" data-ng-class="{\'navbar-fixed-top\': scrollOverNavbarFirst}"' +
+'	<nav class="navbar navbar-default navbar-level-2 keta-app-bar-second-row"' +
+'		data-ng-class="{\'navbar-fixed-top\': scrollOverNavbarFirst}"' +
 '		role="navigation">' +
 '		<div class="container-fluid">' +
 '' +
-'			<ul class="nav navbar-nav">' +
+'			<ul class="nav navbar-nav keta-app-bar-toggle">' +
 '				<li class="menu-navbar" data-ng-class="getClasses(MENU_ELEMENTS.MENU_BAR_TOGGLE)">' +
 '					<a href="" data-ng-click="toggleSidebar($event, \'left\')">' +
 '						<span class="glyphicon glyphicon-align-justify"></span>' +
@@ -1169,7 +1191,7 @@ angular.module('keta.directives.AppBar')
 '' +
 '			<ul class="nav navbar-nav navbar-right">' +
 '' +
-'				<li class="dropdown" data-ng-class="getClasses(MENU_ELEMENTS.USER_MENU)">' +
+'				<li class="dropdown keta-app-bar-user-menu" data-ng-class="getClasses(MENU_ELEMENTS.USER_MENU)">' +
 '					<a href="" data-ng-click="toggleOpenState(MENU_ELEMENTS.USER_MENU)">' +
 '						<span class="glyphicon glyphicon-user"></span>' +
 '						<span class="navbar-label" data-ng-class="getClasses(MENU_ELEMENTS.USER_MENU, \'label\')">' +
@@ -1191,7 +1213,7 @@ angular.module('keta.directives.AppBar')
 '					</ul>' +
 '				</li>' +
 '' +
-'				<li class="dropdown"' +
+'				<li class="dropdown keta-app-bar-em-menu"' +
 '					data-ng-if="energyManagers.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.ENERGY_MANAGER_MENU)">' +
 '					<a href="" class="dropdown-toggle"' +
@@ -1224,7 +1246,7 @@ angular.module('keta.directives.AppBar')
 '					</ul>' +
 '				</li>' +
 '' +
-'				<li class="dropdown"' +
+'				<li class="dropdown keta-app-bar-lang-menu"' +
 '					data-ng-if="locales.length > 0"' +
 '					data-ng-class="getClasses(MENU_ELEMENTS.LANGUAGE_MENU)">' +
 '					<a href="" class="dropdown-toggle" data-ng-click="toggleOpenState(MENU_ELEMENTS.LANGUAGE_MENU)">' +
@@ -1243,7 +1265,7 @@ angular.module('keta.directives.AppBar')
 '					</ul>' +
 '				</li>' +
 '' +
-'				<li class="dropdown" data-ng-class="getClasses(MENU_ELEMENTS.COMPACT_MENU)">' +
+'				<li class="dropdown keta-app-bar-compact-menu" data-ng-class="getClasses(MENU_ELEMENTS.COMPACT_MENU)">' +
 '					<a href="" data-ng-click="toggleOpenState(MENU_ELEMENTS.COMPACT_MENU)">' +
 '						<span class="glyphicon glyphicon-option-vertical"></span>' +
 '					</a>' +
@@ -1281,7 +1303,8 @@ angular.module('keta.directives.AppBar')
 '					</ul>' +
 '				</li>' +
 '' +
-'				<li data-ng-class="getClasses(MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE)">' +
+'				<li class="keta-app-bar-notification-menu"' +
+'					data-ng-class="getClasses(MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE)">' +
 '					<a href="" id="toggleSidebarButton" data-ng-click="toggleSidebar($event, \'right\')">' +
 '						<span class="glyphicon glyphicon-bell"' +
 '							title="{{ getLabel(MESSAGE_KEY_PREFIX + \'_notifications\') }}"></span>' +

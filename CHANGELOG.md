@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.1.0
+
+_Released: 2017-09-25_
+
+* `AppBar` directive: added param `cssClasses` and default classes
+
 ## Version 1.0.2
 
 _Released: 2017-07-20_
