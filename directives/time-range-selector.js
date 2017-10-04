@@ -1071,20 +1071,31 @@ angular.module('keta.directives.TimeRangeSelector', [
 				 */
 				scope.submit = function submit() {
 
-					// if only from was selected and submitted afterwards automatically set to
-					if (scope.model.from !== null && scope.model.to === null) {
-						scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
+					if (!scope.isSelectionInvalid()) {
+
+						// if only 'from' was selected and submitted afterwards automatically set 'to'
+						if (scope.model.to === null) {
+							scope.model.to = getDisplayModeDate(scope.model.from, scope.displayMode, false);
+						}
+
+						// emit event
+						scope.$emit(
+							ketaTimeRangeSelectorConstants.EVENT.SELECT,
+							{
+								id: scope.elementIdentifier,
+								model: scope.model
+							}
+						);
 					}
 
-					// emit event
-					scope.$emit(
-						ketaTimeRangeSelectorConstants.EVENT.SELECT,
-						{
-							id: scope.elementIdentifier,
-							model: scope.model
-						}
-					);
+				};
 
+				/**
+				 * Checks if time range selection is invalid
+				 * @returns {boolean} invalid
+				 */
+				scope.isSelectionInvalid = function() {
+					return scope.model.from === null;
 				};
 
 
@@ -1267,14 +1278,19 @@ angular.module('keta.directives.TimeRangeSelector')
 '	<!-- quick links -->' +
 '	<ul class="pager pager-quick-links"' +
 '		data-ng-if="showJumpToSelectionButton || showJumpToTodayButton || showSelectButton">' +
-'		<li class="text-center">' +
+'		<li>' +
 '			<a href="" data-ng-if="showJumpToTodayButton"' +
 '				data-ng-click="goToToday()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_today\'] }}</a>' +
+'		</li>' +
+'		<li>' +
 '			<a href="" data-ng-if="showJumpToSelectionButton"' +
 '				data-ng-click="goToSelection()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_selection\'] }}</a>' +
+'		</li>' +
+'		<li data-ng-class="{\'disabled\': isSelectionInvalid()}">' +
 '			<a href="" data-ng-if="showSelectButton"' +
 '				data-ng-click="submit()">{{ currentLabels[MESSAGE_KEY_PREFIX + \'_select\'] }}</a>' +
 '		</li>' +
+'' +
 '	</ul>' +
 '' +
 '</div>' +

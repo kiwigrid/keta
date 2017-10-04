@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.1.1
+
+_Released: 2017-10-04_
+
+* `ketaTimeRangeSelector` directive fix:
+  * click on `select` button now automatically sets the end of the range to the same as the start date 
+
 ## Version 1.1.0
 
 _Released: 2017-09-25_
