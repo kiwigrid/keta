@@ -181,7 +181,7 @@ angular.module('keta.utils.Application',
 				var mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 					angular.isDefined(app.meta.i18n[language]) &&
 					angular.isDefined(app.meta.i18n[language].media) ?
-						app.meta.i18n[language].media : null;
+					app.meta.i18n[language].media : null;
 
 
 				if (mediaSource === null) {
@@ -191,7 +191,7 @@ angular.module('keta.utils.Application',
 					mediaSource = ketaCommonUtils.doesPropertyExist(app, 'meta.i18n') &&
 						angular.isDefined(app.meta.i18n[languageShort]) &&
 						angular.isDefined(app.meta.i18n[languageShort].media) ?
-							app.meta.i18n[languageShort].media : null;
+						app.meta.i18n[languageShort].media : null;
 				}
 
 				if (mediaSource === null &&
@@ -227,8 +227,8 @@ angular.module('keta.utils.Application',
 
 							appIcon =
 								linkOrigin[linkOrigin.length - 1] !== '/' && media.src[0] !== '/' ?
-								linkOrigin + '/' + media.src :
-								linkOrigin + media.src;
+									linkOrigin + '/' + media.src :
+									linkOrigin + media.src;
 
 						}
 

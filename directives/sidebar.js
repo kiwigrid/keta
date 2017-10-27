@@ -103,8 +103,8 @@ angular.module('keta.directives.Sidebar', [])
 				// close on click outside
 				$document.bind('click', function(event) {
 					if (bodyElem.hasClass(
-							ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
-						)) {
+						ketaSidebarConstants.CSS.OFFCANVAS + '-' + scope.configuration.position
+					)) {
 						var sideBarHtml = element.html(),
 							targetElementHtml = angular.element(event.target).html();
 

@@ -197,7 +197,7 @@ angular.module('keta.services.AccessToken',
 		var getProperty = function(property) {
 			return decodedAccessToken !== null &&
 				angular.isDefined(decodedAccessToken[property]) ?
-					decodedAccessToken[property] : null;
+				decodedAccessToken[property] : null;
 		};
 
 		var api = {

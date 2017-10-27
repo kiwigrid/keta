@@ -75,9 +75,9 @@ angular.module('keta.utils.Api', [])
 
 			// prevent double QUERY_DIVIDER_CHAR
 			var cleanedUpQuery = query.replace(
-					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER,
-					ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER
-				) + '"';
+				ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER,
+				ketaApiUtilsConstants.CHARS.QUERY_DIVIDER + '"' + ketaApiUtilsConstants.CHARS.QUERY_DIVIDER
+			) + '"';
 
 			return cleanedUpQuery;
 

@@ -10,6 +10,14 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.2.0
+
+_Released: 2017-10-27_
+
+* non-functional changes:
+  * switched completely from bower to npm
+  * updated npm dependencies
+
 ## Version 1.1.1
 
 _Released: 2017-10-04_
