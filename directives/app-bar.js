@@ -3,7 +3,6 @@
 /**
  * @name keta.directives.AppBar
  * @author Vincent Romanus <vincent.romanus@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014-2017
  * @module keta.directives.AppBar
  * @description
  * <p>
