@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.3.0
+
+_Released: 2018-01-25_
+
+* non-functional changes:
+  * moved npm dependencies to peerDependencies
+
 ## Version 1.2.0
 
 _Released: 2017-10-27_
