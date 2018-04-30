@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 1.3.0
+			Version 1.4.0
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.3.0" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.3.0" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.4.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.4.0" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.3.0" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.3.0" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.4.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.4.0" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -70,7 +70,6 @@
 /**
  * @name keta.directives.AppBar
  * @author Vincent Romanus &lt;vincent.romanus@kiwigrid.com>
- * @copyright Kiwigrid GmbH 2014-2017
  * @module keta.directives.AppBar
  * @description
  * &lt;p>
@@ -320,6 +319,16 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		},
+		'es_ES': {
+			'__keta.directives.AppBar_app_title': 'Aplicación',
+			'__keta.directives.AppBar_all_apps': 'Todas las aplicaciónes',
+			'__keta.directives.AppBar_all_energy_managers': 'Todas las Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Cerrar sesión',
+			'__keta.directives.AppBar_user_profile': 'Cuenta de usuario',
+			'__keta.directives.AppBar_logged_in_as': 'Has iniciado sesión temporalmente como',
+			'__keta.directives.AppBar_drop_access': 'Terminar acceso'
+		},
 		'fr_FR': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
@@ -349,7 +358,17 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Account utente',
 			'__keta.directives.AppBar_logged_in_as': 'Stai temporaneamente l’accesso come',
 			'__keta.directives.AppBar_drop_access': 'Goccia accesso'
-		}
+		},
+		'sv_SE': {
+			'__keta.directives.AppBar_app_title': 'Tillämpning',
+			'__keta.directives.AppBar_all_apps': 'Alla tillämpningar',
+			'__keta.directives.AppBar_all_energy_managers': 'Alla Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Logga ut',
+			'__keta.directives.AppBar_user_profile': 'Användarkonto',
+			'__keta.directives.AppBar_logged_in_as': 'Du är tillfälligt inloggad som',
+			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst'
+		},
 	})
 
 	.directive('ketaAppBar', function AppBarDirective(
