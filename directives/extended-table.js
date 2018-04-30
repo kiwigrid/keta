@@ -312,6 +312,14 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_no_entries': 'Keine Einträge',
 			'__keta.directives.ExtendedTable_of': 'von'
 		},
+		'es_ES': {
+			'__keta.directives.ExtendedTable_search': 'Búsqueda',
+			'__keta.directives.ExtendedTable_add_column': 'Añadir columna',
+			'__keta.directives.ExtendedTable_remove_column': 'Eliminar columna',
+			'__keta.directives.ExtendedTable_sort': 'Clasificación',
+			'__keta.directives.ExtendedTable_no_entries': 'No hay entradas',
+			'__keta.directives.ExtendedTable_of': 'antes de'
+		},
 		'fr_FR': {
 			'__keta.directives.ExtendedTable_search': 'Recherche',
 			'__keta.directives.ExtendedTable_add_column': 'Ajouter colonne',
@@ -335,6 +343,14 @@ angular.module('keta.directives.ExtendedTable',
 			'__keta.directives.ExtendedTable_sort': 'Ordinare',
 			'__keta.directives.ExtendedTable_no_entries': 'Nessuna voce',
 			'__keta.directives.ExtendedTable_of': 'di'
+		},
+		'sv_SE': {
+			'__keta.directives.ExtendedTable_search': 'Sök',
+			'__keta.directives.ExtendedTable_add_column': 'Lägg till en kolumn',
+			'__keta.directives.ExtendedTable_remove_column': 'Ta bort kolumnen',
+			'__keta.directives.ExtendedTable_sort': 'Sortera',
+			'__keta.directives.ExtendedTable_no_entries': 'Inga inlägg',
+			'__keta.directives.ExtendedTable_of': 'av'
 		}
 	})
 

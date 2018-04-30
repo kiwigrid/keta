@@ -10,6 +10,13 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.4.0
+
+_Released: 2018-04-30_
+
+* added component translations for spanish and swedish
+* added swedish translations for country utils service 
+
 ## Version 1.3.0
 
 _Released: 2018-01-25_

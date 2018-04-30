@@ -252,6 +252,16 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
 			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
 		},
+		'es_ES': {
+			'__keta.directives.AppBar_app_title': 'Aplicación',
+			'__keta.directives.AppBar_all_apps': 'Todas las aplicaciónes',
+			'__keta.directives.AppBar_all_energy_managers': 'Todas las Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Cerrar sesión',
+			'__keta.directives.AppBar_user_profile': 'Cuenta de usuario',
+			'__keta.directives.AppBar_logged_in_as': 'Has iniciado sesión temporalmente como',
+			'__keta.directives.AppBar_drop_access': 'Terminar acceso'
+		},
 		'fr_FR': {
 			'__keta.directives.AppBar_app_title': 'Application',
 			'__keta.directives.AppBar_all_apps': 'Toutes les Applications',
@@ -281,7 +291,17 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Account utente',
 			'__keta.directives.AppBar_logged_in_as': 'Stai temporaneamente l’accesso come',
 			'__keta.directives.AppBar_drop_access': 'Goccia accesso'
-		}
+		},
+		'sv_SE': {
+			'__keta.directives.AppBar_app_title': 'Tillämpning',
+			'__keta.directives.AppBar_all_apps': 'Alla tillämpningar',
+			'__keta.directives.AppBar_all_energy_managers': 'Alla Energy-Managers',
+			'__keta.directives.AppBar_energy_manager': 'Energy-Manager',
+			'__keta.directives.AppBar_user_logout': 'Logga ut',
+			'__keta.directives.AppBar_user_profile': 'Användarkonto',
+			'__keta.directives.AppBar_logged_in_as': 'Du är tillfälligt inloggad som',
+			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst'
+		},
 	})
 
 	.directive('ketaAppBar', function AppBarDirective(
