@@ -332,7 +332,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Användarkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Du är tillfälligt inloggad som',
 			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst'
-		},
+		}
 	})
 
 	.directive('ketaAppBar', function AppBarDirective(
@@ -5622,18 +5622,21 @@ angular.module('keta.services.AccessToken',
 		'keta.services.AppContext'
 	])
 
-	/**
-	 * @class ketaAccessTokenConstants
-	 * @propertyOf keta.services.AccessToken
-	 * @description Access Token Constants
-	 */
+/**
+ * @class ketaAccessTokenConstants
+ * @propertyOf keta.services.AccessToken
+ * @description Access Token Constants
+ */
 	.constant('ketaAccessTokenConstants', {
 
 		// session types
 		SESSION_TYPE: {
 			NORMAL: 'normal',
 			IMPERSONATED: 'impersonated'
-		}
+		},
+
+		// json web token regular expression
+		JWT_REGULAR_EXPRESSION: new RegExp('^(\\w+)\\.(\\w+)\\.([\x00-\x7F]+)$') // eslint-disable-line no-control-regex
 
 	})
 
@@ -5806,7 +5809,7 @@ angular.module('keta.services.AccessToken',
 		 */
 		var getProperty = function(property) {
 			return decodedAccessToken !== null &&
-				angular.isDefined(decodedAccessToken[property]) ?
+			angular.isDefined(decodedAccessToken[property]) ?
 				decodedAccessToken[property] : null;
 		};
 
@@ -5854,7 +5857,7 @@ angular.module('keta.services.AccessToken',
 			 * @name decode
 			 * @function
 			 * @description Decode access token.
-			 * @param {string} token access token to decode
+			 * @param {string} token access token to decode (jwt or legacy)
 			 * @returns {Object} access token properties
 			 * @example
 			 * angular.module('exampleApp', ['keta.services.AccessToken'])
@@ -5865,11 +5868,20 @@ angular.module('keta.services.AccessToken',
 			decode: function(token) {
 				var props = {};
 				try {
-					var decoded = Base64.decode(token);
+					var decoded;
 
-					// strip away everything after }.
-					if (decoded.indexOf('}.') !== -1) {
-						decoded = decoded.substr(0, decoded.indexOf('}.') + 1);
+					// check if token is a JSON Web Token
+					if (ketaAccessTokenConstants.JWT_REGULAR_EXPRESSION.test(token)) {
+						// take payload from token
+						var payload = token.split('.')[1];
+						decoded = Base64.decode(payload);
+					} else {
+						decoded = Base64.decode(token);
+
+						// strip away everything after }.
+						if (decoded.indexOf('}.') !== -1) {
+							decoded = decoded.substr(0, decoded.indexOf('}.') + 1);
+						}
 					}
 
 					props = JSON.parse(decoded);

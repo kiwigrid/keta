@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.5.0
+
+_Released: 2018-09-03_
+
+* possibility to decode a JSON Web Token for authentication
+
 ## Version 1.4.0
 
 _Released: 2018-04-30_

@@ -301,7 +301,7 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_profile': 'Användarkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Du är tillfälligt inloggad som',
 			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst'
-		},
+		}
 	})
 
 	.directive('ketaAppBar', function AppBarDirective(
