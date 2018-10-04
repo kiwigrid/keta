@@ -10706,6 +10706,9 @@ angular.module('keta.utils.Application',
 					var link = document.createElement('a');
 					link.href = app.entryUri;
 
+					var params = app.entryUri.split('?')[1];
+					params = params ? '?' + params : '';
+
 					var linkProtocol =
 						link.protocol +
 						(link.protocol[link.protocol.length - 1] === ':' ?
@@ -10731,15 +10734,11 @@ angular.module('keta.utils.Application',
 								linkOrigin[linkOrigin.length - 1] !== '/' && media.src[0] !== '/' ?
 									linkOrigin + '/' + media.src :
 									linkOrigin + media.src;
-
+							appIcon += params;
 						}
-
 					});
-
 				}
-
 				return appIcon;
-
 			},
 
 			/**

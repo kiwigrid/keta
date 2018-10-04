@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.6.0
+
+_Released: 2018-10-04_
+
+* add channel as query param for app-icons
+
 ## Version 1.5.0
 
 _Released: 2018-09-03_
