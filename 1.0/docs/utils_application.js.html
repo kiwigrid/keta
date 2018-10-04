@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 1.5.0
+			Version 1.6.0
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.5.0" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.5.0" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.6.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.6.0" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.5.0" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.5.0" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.6.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.6.0" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -271,6 +271,9 @@ angular.module('keta.utils.Application',
 					var link = document.createElement('a');
 					link.href = app.entryUri;
 
+					var params = app.entryUri.split('?')[1];
+					params = params ? '?' + params : '';
+
 					var linkProtocol =
 						link.protocol +
 						(link.protocol[link.protocol.length - 1] === ':' ?
@@ -296,15 +299,11 @@ angular.module('keta.utils.Application',
 								linkOrigin[linkOrigin.length - 1] !== '/' &amp;&amp; media.src[0] !== '/' ?
 									linkOrigin + '/' + media.src :
 									linkOrigin + media.src;
-
+							appIcon += params;
 						}
-
 					});
-
 				}
-
 				return appIcon;
-
 			},
 
 			/**
