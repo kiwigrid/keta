@@ -42,9 +42,23 @@ angular.module('keta.services.AccessToken',
 
 		/**
 		 * @private
+		 * @description True, if the current authentication provider is a Keycloak.
+		 */
+		var isKeycloak = ketaAppContext.get('common.keycloak');
+
+		/**
+		 * @private
+		 * @description keycloak-js representation
+		 */
+		var keycloak = isKeycloak ? window.auth.authz : {};
+
+		/**
+		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = ketaAppContext.get('oauth.accessToken');
+		var accessToken = isKeycloak
+			? keycloak.token
+			: ketaAppContext.get('oauth.accessToken');
 
 		/**
 		 * @private
@@ -326,8 +340,11 @@ angular.module('keta.services.AccessToken',
 					refreshInProgress = true;
 
 					var refreshUrl = ketaAppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
+					var promise = isKeycloak
+						? keycloak.updateToken()
+						: $http({method: 'GET', url: refreshUrl});
 
-					$http({method: 'GET', url: refreshUrl}).then(
+					promise.then(
 						function(response) {
 							refreshPromise.resolve(response);
 							refreshInProgress = false;

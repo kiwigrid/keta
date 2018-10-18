@@ -478,8 +478,11 @@ angular.module('keta.services.EventBusDispatcher',
 						if (reply && reply.code === api.RESPONSE_CODE_AUTHENTICATION_TIMEOUT) {
 							// refresh access token
 							ketaAccessToken.refresh().then(function(response) {
-								if (angular.isDefined(response.data.accessToken)) {
+								if (angular.isDefined(response.data) && angular.isDefined(response.data.accessToken)) {
 									ketaAccessToken.set(response.data.accessToken);
+									api.send(eventBus, address, message, replyHandler);
+								} else if (angular.isDefined(response.access_token)) {
+									ketaAccessToken.set(response.access_token);
 									api.send(eventBus, address, message, replyHandler);
 								} else {
 									$window.location.reload();
