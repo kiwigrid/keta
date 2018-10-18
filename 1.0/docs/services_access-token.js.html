@@ -26,15 +26,15 @@
 			Frontend Components for Kiwigrid Platform based AngularJS Apps
 		</p>
 		<p class="text-center">
-			Version 1.6.0
+			Version 1.7.0
 		</p>
 		<p class="text-center hidden-xs hidden-sm">
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.6.0" role="button">ZIP File</a>
-			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.6.0" role="button">TAR Ball</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.7.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.7.0" role="button">TAR Ball</a>
 		</p>
 		<p class="text-center visible-xs visible-sm">
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.6.0" role="button">ZIP File</a>
-			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.6.0" role="button">TAR Ball</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.7.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.7.0" role="button">TAR Ball</a>
 		</p>
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="../index.html">Home</a></li>
@@ -109,9 +109,23 @@ angular.module('keta.services.AccessToken',
 
 		/**
 		 * @private
+		 * @description True, if the current authentication provider is a Keycloak.
+		 */
+		var isKeycloak = ketaAppContext.get('common.keycloak');
+
+		/**
+		 * @private
+		 * @description keycloak-js representation
+		 */
+		var keycloak = isKeycloak ? window.auth.authz : {};
+
+		/**
+		 * @private
 		 * @description Internal representation of access token which was injected by web server into context.js.
 		 */
-		var accessToken = ketaAppContext.get('oauth.accessToken');
+		var accessToken = isKeycloak
+			? keycloak.token
+			: ketaAppContext.get('oauth.accessToken');
 
 		/**
 		 * @private
@@ -393,8 +407,11 @@ angular.module('keta.services.AccessToken',
 					refreshInProgress = true;
 
 					var refreshUrl = ketaAppContext.get('oauth.refreshTokenPath') || '/refreshAccessToken';
+					var promise = isKeycloak
+						? keycloak.updateToken()
+						: $http({method: 'GET', url: refreshUrl});
 
-					$http({method: 'GET', url: refreshUrl}).then(
+					promise.then(
 						function(response) {
 							refreshPromise.resolve(response);
 							refreshInProgress = false;
