@@ -10,7 +10,8 @@
 angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
-		'keta.services.DeviceEvent'
+		'keta.services.DeviceEvent',
+		'keta.services.DeviceSetPollers'
 	])
 
 	/**
@@ -22,10 +23,11 @@ angular.module('keta.services.DeviceSet',
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
+		var DEFAULT_POLL_INTERVAL_MILLISECONDS = 15000;
 
 		this.$get = function DeviceSetService(
-			$q, $rootScope, $log,
-			ketaDevice, ketaDeviceEvent, ketaEventBusDispatcher, ketaEventBusManager) {
+			$q, $rootScope, $log, $interval,
+			ketaDevice, ketaDeviceEvent, ketaDeviceSetPollers, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			// api reference
 			var api;
@@ -214,6 +216,120 @@ angular.module('keta.services.DeviceSet',
 					return that;
 				};
 
+				var fetchDevices = function(replyProcessor) {
+					ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
+						action: 'getDevices',
+						params: params
+					}, replyProcessor);
+				};
+
+				var logFetchQueryReply = function(reply) {
+					$log.request(['deviceservice', {
+						action: 'getDevices',
+						params: params
+					}, reply], $log.ADVANCED_FORMATTER);
+				};
+
+				var compareGuids = function(thisDevice, thatDevice) {
+					if (thisDevice.guid < thatDevice.guid) {
+						return -1;
+					}
+					if (thisDevice.guid > thatDevice.guid) {
+						return 1;
+					}
+					return 0;
+				};
+
+				var addToStored = function(device) {
+					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.CREATED, device), eventBus);
+				};
+
+				var deleteFromStored = function(device) {
+					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.DELETED, device), eventBus);
+				};
+
+				var updateStored = function(device) {
+					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.UPDATED, device), eventBus);
+				};
+
+				var synchroniseChangesToStoredDevices = function(fetchQueryReply) {
+					var currentDevices = api.getAll(set)
+						.slice()
+						.sort(compareGuids);
+					var fetchedDevices = api.getAll(fetchQueryReply)
+						.sort(compareGuids);
+
+					var c = 0;
+					var f = 0;
+					while (c < currentDevices.length && f < fetchedDevices.length) {
+						if (currentDevices[c].guid < fetchedDevices[f].guid) {
+							deleteFromStored(currentDevices[c]);
+							c++;
+						} else if (currentDevices[c].guid > fetchedDevices[f].guid) {
+							addToStored(fetchedDevices[f]);
+							f++;
+						} else if (!angular.equals(currentDevices[c], fetchedDevices[f])) {
+							updateStored(fetchedDevices[f]);
+							c++;
+							f++;
+						} else {
+							c++;
+							f++;
+						}
+					}
+					for (; c < currentDevices.length; c++) {
+						deleteFromStored(currentDevices[c]);
+					}
+					for (; f < fetchedDevices.length; f++) {
+						addToStored(fetchedDevices[f]);
+					}
+				};
+
+				var fetchAndStoreDevices = function() {
+					fetchDevices(function(reply) {
+						if (!reply || reply.code !== ketaEventBusDispatcher.RESPONSE_CODE_OK) {
+							logFetchQueryReply(reply);
+							return;
+						}
+
+						synchroniseChangesToStoredDevices(reply);
+
+						if (ketaEventBusManager.inDebugMode()) {
+							logFetchQueryReply(reply);
+						}
+					});
+				};
+
+				var storeAndReturnFetchedDevices = function(queryReply, deferredResult) {
+					if (!queryReply) {
+						deferredResult.reject('Something bad happened. Got no reply.');
+						return;
+					}
+
+					queryReply.params = params;
+					if (queryReply.code !== ketaEventBusDispatcher.RESPONSE_CODE_OK) {
+						deferredResult.reject(queryReply);
+						return;
+					}
+
+					if (angular.isDefined(queryReply.result) &&
+						angular.isDefined(queryReply.result.items)) {
+						angular.forEach(queryReply.result.items, function(item, index) {
+							queryReply.result.items[index] = ketaDevice.create(eventBus, item);
+						});
+						set = queryReply;
+					} else {
+						set = {};
+					}
+
+					if (ketaEventBusManager.inDebugMode()) {
+						logFetchQueryReply(queryReply);
+					}
+
+					deferredResult.resolve(queryReply);
+					$rootScope.$digest();
+				};
+
 				/**
 				 * @name query
 				 * @function
@@ -237,98 +353,17 @@ angular.module('keta.services.DeviceSet',
 				 *     });
 				 */
 				that.query = function() {
-					var deferred = $q.defer();
-
-					// register device set listener if configured
 					if (registerListener) {
-
-						// generate UUID
-						var liveHandlerUUID = 'CLIENT_' + ketaEventBusDispatcher.generateUUID();
-
-						// register handler under created UUID
-						ketaEventBusDispatcher.registerHandler(eventBus, liveHandlerUUID, function(event) {
-
-							// inject guid if missing
-							if (!angular.isDefined(event.value.guid) &&
-								angular.isDefined(event.value.tagValues)) {
-								var tagValueKeys = Object.keys(event.value.tagValues);
-								event.value.guid = event.value.tagValues[tagValueKeys[0]].guid;
-							}
-
-							// process event using sync
-							api.sync(set, ketaDeviceEvent.create(event.type, event.value), eventBus);
-
-							// log if in debug mode
-							if (ketaEventBusManager.inDebugMode()) {
-								$log.event([event], $log.ADVANCED_FORMATTER);
-							}
-
-						});
-
-						// register device set listener
-						ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
-							action: 'registerDeviceSetListener',
-							body: {
-								filter: params.filter,
-								projection: params.projection,
-								replyAddress: liveHandlerUUID
-							}
-						}, function(reply) {
-							// log if in debug mode
-							if (ketaEventBusManager.inDebugMode()) {
-								$log.request(['deviceservice', {
-									action: 'registerDeviceSetListener',
-									body: {
-										filter: params.filter,
-										projection: params.projection,
-										replyAddress: liveHandlerUUID
-									}
-								}, reply], $log.ADVANCED_FORMATTER);
-							}
-						});
-
+						// The listener functionality will be removed, so it is replaced with polling
+						// here in order not to break the apps using KETA
+						var poller = $interval(fetchAndStoreDevices, DEFAULT_POLL_INTERVAL_MILLISECONDS);
+						ketaDeviceSetPollers.add(poller);
 					}
 
-					ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
-						action: 'getDevices',
-						params: params
-					}, function(reply) {
-						if (reply) {
-							// inject used params
-							reply.params = params;
-
-							if (reply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK) {
-
-								// create DeviceInstances
-								if (angular.isDefined(reply.result) &&
-									angular.isDefined(reply.result.items)) {
-									angular.forEach(reply.result.items, function(item, index) {
-										reply.result.items[index] = ketaDevice.create(eventBus, item);
-									});
-									set = reply;
-								} else {
-									set = {};
-								}
-
-								// log if in debug mode
-								if (ketaEventBusManager.inDebugMode()) {
-									$log.request(['deviceservice', {
-										action: 'getDevices',
-										params: params
-									}, reply], $log.ADVANCED_FORMATTER);
-								}
-
-								deferred.resolve(reply);
-								$rootScope.$digest();
-
-							} else {
-								deferred.reject(reply);
-							}
-						} else {
-							deferred.reject('Something bad happened. Got no reply.');
-						}
+					var deferred = $q.defer();
+					fetchDevices(function(reply) {
+						storeAndReturnFetchedDevices(reply, deferred);
 					});
-
 					return deferred.promise;
 				};
 

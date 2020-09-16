@@ -9,7 +9,8 @@
 
 angular.module('keta.services.EventBusDispatcher',
 	[
-		'keta.services.AccessToken'
+		'keta.services.AccessToken',
+		'keta.services.DeviceSetPollers'
 	])
 
 	/**
@@ -19,7 +20,7 @@ angular.module('keta.services.EventBusDispatcher',
 	 */
 	.provider('ketaEventBusDispatcher', function EventBusDispatcherProvider() {
 
-		this.$get = function EventBusDispatcherService($window, $timeout, ketaAccessToken) {
+		this.$get = function EventBusDispatcherService($window, $timeout, ketaAccessToken, ketaDeviceSetPollers) {
 
 			/**
 			 * @private
@@ -470,6 +471,10 @@ angular.module('keta.services.EventBusDispatcher',
 				 *     });
 				 */
 				send: function(eventBus, address, message, replyHandler) {
+					if (message.action === 'unregisterAllListeners' ||
+						message.action === 'unregisterAllDeviceSetListeners') {
+						ketaDeviceSetPollers.stopAndRemoveAll();
+					}
 
 					// inject access token
 					message.accessToken = ketaAccessToken.get();
