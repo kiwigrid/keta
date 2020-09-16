@@ -201,7 +201,8 @@ angular.module('keta.directives.AppBar',
 			USER_MENU: 'userMenu',
 			LANGUAGE_MENU: 'languageMenu',
 			ENERGY_MANAGER_MENU: 'energyManagerMenu',
-			COMPACT_MENU: 'compactMenu'
+			COMPACT_MENU: 'compactMenu',
+			STATUS_LINK: 'statusLink'
 		},
 		ROOT_APP_ID: 'kiwigrid.desktop',
 		SIZE: {
@@ -240,7 +241,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Logout',
 			'__keta.directives.AppBar_user_profile': 'User Account',
 			'__keta.directives.AppBar_logged_in_as': 'You are temporarily logged in as',
-			'__keta.directives.AppBar_drop_access': 'Drop access'
+			'__keta.directives.AppBar_drop_access': 'Drop access',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'de_DE': {
 			'__keta.directives.AppBar_app_title': 'Applikation',
@@ -250,7 +252,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Abmelden',
 			'__keta.directives.AppBar_user_profile': 'Benutzerkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Sie sind temporär angemeldet als',
-			'__keta.directives.AppBar_drop_access': 'Zugriff beenden'
+			'__keta.directives.AppBar_drop_access': 'Zugriff beenden',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'es_ES': {
 			'__keta.directives.AppBar_app_title': 'Aplicación',
@@ -260,7 +263,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Cerrar sesión',
 			'__keta.directives.AppBar_user_profile': 'Cuenta de usuario',
 			'__keta.directives.AppBar_logged_in_as': 'Has iniciado sesión temporalmente como',
-			'__keta.directives.AppBar_drop_access': 'Terminar acceso'
+			'__keta.directives.AppBar_drop_access': 'Terminar acceso',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'fr_FR': {
 			'__keta.directives.AppBar_app_title': 'Application',
@@ -270,7 +274,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Se déconnecter',
 			'__keta.directives.AppBar_user_profile': 'Compte d’utilisateur',
 			'__keta.directives.AppBar_logged_in_as': 'Vous êtes connecté en tant que temporairement',
-			'__keta.directives.AppBar_drop_access': 'Déposez accès'
+			'__keta.directives.AppBar_drop_access': 'Déposez accès',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'nl_NL': {
 			'__keta.directives.AppBar_app_title': 'Applicatie',
@@ -280,7 +285,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Uitloggen',
 			'__keta.directives.AppBar_user_profile': 'Gebruikers account',
 			'__keta.directives.AppBar_logged_in_as': 'U bent tijdelijk aangemeld als',
-			'__keta.directives.AppBar_drop_access': 'Drop toegang'
+			'__keta.directives.AppBar_drop_access': 'Drop toegang',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'it_IT': {
 			'__keta.directives.AppBar_app_title': 'Application',
@@ -290,7 +296,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Disconnettersi',
 			'__keta.directives.AppBar_user_profile': 'Account utente',
 			'__keta.directives.AppBar_logged_in_as': 'Stai temporaneamente l’accesso come',
-			'__keta.directives.AppBar_drop_access': 'Goccia accesso'
+			'__keta.directives.AppBar_drop_access': 'Goccia accesso',
+			'__keta.directives.AppBar_status_link': 'Status'
 		},
 		'sv_SE': {
 			'__keta.directives.AppBar_app_title': 'Tillämpning',
@@ -300,7 +307,8 @@ angular.module('keta.directives.AppBar',
 			'__keta.directives.AppBar_user_logout': 'Logga ut',
 			'__keta.directives.AppBar_user_profile': 'Användarkonto',
 			'__keta.directives.AppBar_logged_in_as': 'Du är tillfälligt inloggad som',
-			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst'
+			'__keta.directives.AppBar_drop_access': 'Släpp åtkomst',
+			'__keta.directives.AppBar_status_link': 'Status'
 		}
 	})
 
@@ -342,6 +350,9 @@ angular.module('keta.directives.AppBar',
 
 				// array of worlds with label and link
 				worlds: '=?',
+
+				// string with link to status page
+				statusLink: '=?',
 
 				// display mode configuration object
 				displayModes: '=?',
@@ -1251,6 +1262,16 @@ angular.module('keta.directives.AppBar')
 '							<a href="" data-ng-click="setLocale(locale)">{{ locale.name }}</a>' +
 '						</li>' +
 '					</ul>' +
+'				</li>' +
+'' +
+'				<li class="dropdown keta-app-bar-status-link"' +
+'				    data-ng-if="!!statusLink"' +
+'				    data-ng-class="getClasses(MENU_ELEMENTS.STATUS_LINK)">' +
+'					<a href="{{statusLink}}" target="_blank">' +
+'						<span class="glyphicon glyphicon-zoom-in"' +
+'								title="Status"></span>' +
+'						{{ getLabel(MESSAGE_KEY_PREFIX + \'_status_link\') }}' +
+'					</a>' +
 '				</li>' +
 '' +
 '				<li class="dropdown keta-app-bar-compact-menu" data-ng-class="getClasses(MENU_ELEMENTS.COMPACT_MENU)">' +

@@ -10,6 +10,19 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.8.0
+
+_Released: 2020-07-24_
+
+* add status link to keta app bar
+* code improvements
+
+## Version 1.7.0
+
+_Released: 2018-10-18_
+
+* add Keycloak refresh token handling
+
 ## Version 1.6.0
 
 _Released: 2018-10-04_
