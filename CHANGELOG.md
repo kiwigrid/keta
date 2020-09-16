@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.8.1
+
+_Release: 2020-08-20_
+
+* add display mode to status link in app bar
+
 ## Version 1.8.0
 
 _Released: 2020-07-24_

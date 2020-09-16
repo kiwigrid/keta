@@ -460,6 +460,7 @@ angular.module('keta.directives.AppBar',
 				defaultDisplayModes[scope.MENU_ELEMENTS.MENU_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.NOTIFICATION_BAR_TOGGLE] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.APP_TITLE] = sizesFullState;
+				defaultDisplayModes[scope.MENU_ELEMENTS.STATUS_LINK] = sizesFullState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.USER_MENU] = sizesDefaultState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.ENERGY_MANAGER_MENU] = sizesDefaultState;
 				defaultDisplayModes[scope.MENU_ELEMENTS.LANGUAGE_MENU] = sizesDefaultState;
