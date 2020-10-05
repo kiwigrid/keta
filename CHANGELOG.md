@@ -10,6 +10,12 @@ Official page: [http://kiwigrid.github.io/keta/](http://kiwigrid.github.io/keta/
 
 # Changelog
 
+## Version 1.10.0
+
+_Released: 2020-10-05_
+
+* Add service providing polling for devices and for tag values
+
 ## Version 1.9.0
 
 _Released: 2020-08-02_
@@ -18,22 +24,21 @@ _Released: 2020-08-02_
 
 ## Version 1.8.1
 
-_Release: 2020-08-20_
+_Released: 2020-08-20_
 
-* add display mode to status link in app bar
+* Add display mode to status link in app bar
 
 ## Version 1.8.0
 
 _Released: 2020-07-24_
 
-* add status link to keta app bar
-* code improvements
+* Add status link to app bar
 
 ## Version 1.7.0
 
 _Released: 2018-10-18_
 
-* add Keycloak refresh token handling
+* Add Keycloak refresh token handling
 
 ## Version 1.6.0
 

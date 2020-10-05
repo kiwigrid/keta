@@ -11,7 +11,7 @@ angular.module('keta.services.DeviceSet',
 	[
 		'keta.services.Device',
 		'keta.services.DeviceEvent',
-		'keta.services.DeviceSetPollers'
+		'keta.services.DevicePolling'
 	])
 
 	/**
@@ -23,11 +23,10 @@ angular.module('keta.services.DeviceSet',
 
 		var DEFAULT_OFFSET = 0;
 		var DEFAULT_LIMIT = 50;
-		var DEFAULT_POLL_INTERVAL_MILLISECONDS = 15000;
 
 		this.$get = function DeviceSetService(
 			$q, $rootScope, $log, $interval,
-			ketaDevice, ketaDeviceEvent, ketaDeviceSetPollers, ketaEventBusDispatcher, ketaEventBusManager) {
+			ketaDevice, ketaDeviceEvent, ketaDevicePolling, ketaEventBusDispatcher, ketaEventBusManager) {
 
 			// api reference
 			var api;
@@ -230,76 +229,6 @@ angular.module('keta.services.DeviceSet',
 					}, reply], $log.ADVANCED_FORMATTER);
 				};
 
-				var compareGuids = function(thisDevice, thatDevice) {
-					if (thisDevice.guid < thatDevice.guid) {
-						return -1;
-					}
-					if (thisDevice.guid > thatDevice.guid) {
-						return 1;
-					}
-					return 0;
-				};
-
-				var addToStored = function(device) {
-					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.CREATED, device), eventBus);
-				};
-
-				var deleteFromStored = function(device) {
-					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.DELETED, device), eventBus);
-				};
-
-				var updateStored = function(device) {
-					api.sync(set, ketaDeviceEvent.create(ketaDeviceEvent.UPDATED, device), eventBus);
-				};
-
-				var synchroniseChangesToStoredDevices = function(fetchQueryReply) {
-					var currentDevices = api.getAll(set)
-						.slice()
-						.sort(compareGuids);
-					var fetchedDevices = api.getAll(fetchQueryReply)
-						.sort(compareGuids);
-
-					var c = 0;
-					var f = 0;
-					while (c < currentDevices.length && f < fetchedDevices.length) {
-						if (currentDevices[c].guid < fetchedDevices[f].guid) {
-							deleteFromStored(currentDevices[c]);
-							c++;
-						} else if (currentDevices[c].guid > fetchedDevices[f].guid) {
-							addToStored(fetchedDevices[f]);
-							f++;
-						} else if (!angular.equals(currentDevices[c], fetchedDevices[f])) {
-							updateStored(fetchedDevices[f]);
-							c++;
-							f++;
-						} else {
-							c++;
-							f++;
-						}
-					}
-					for (; c < currentDevices.length; c++) {
-						deleteFromStored(currentDevices[c]);
-					}
-					for (; f < fetchedDevices.length; f++) {
-						addToStored(fetchedDevices[f]);
-					}
-				};
-
-				var fetchAndStoreDevices = function() {
-					fetchDevices(function(reply) {
-						if (!reply || reply.code !== ketaEventBusDispatcher.RESPONSE_CODE_OK) {
-							logFetchQueryReply(reply);
-							return;
-						}
-
-						synchroniseChangesToStoredDevices(reply);
-
-						if (ketaEventBusManager.inDebugMode()) {
-							logFetchQueryReply(reply);
-						}
-					});
-				};
-
 				var storeAndReturnFetchedDevices = function(queryReply, deferredResult) {
 					if (!queryReply) {
 						deferredResult.reject('Something bad happened. Got no reply.');
@@ -354,10 +283,9 @@ angular.module('keta.services.DeviceSet',
 				 */
 				that.query = function() {
 					if (registerListener) {
-						// The listener functionality will be removed, so it is replaced with polling
-						// here in order not to break the apps using KETA
-						var poller = $interval(fetchAndStoreDevices, DEFAULT_POLL_INTERVAL_MILLISECONDS);
-						ketaDeviceSetPollers.add(poller);
+						ketaDevicePolling.pollDevices(eventBus, params, function(changeEvent) {
+							api.sync(set, changeEvent, eventBus);
+						});
 					}
 
 					var deferred = $q.defer();
