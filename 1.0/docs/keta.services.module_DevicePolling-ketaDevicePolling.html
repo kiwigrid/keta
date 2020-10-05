@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Class: UserSetInstance</title>
+	<title>keta – Docs – Class: ketaDevicePolling</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,7 +58,7 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Class: UserSetInstance</h1>
+		<h1 class="page-title">Class: ketaDevicePolling</h1>
 		
 
 
@@ -67,9 +67,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="keta.services.module_UserSet.html">.UserSet</a>~</span>
+        <span class="ancestors"><a href="keta.services.module_DevicePolling.html">.DevicePolling</a>~</span>
     
-    UserSetInstance
+    ketaDevicePolling
     </h2>
     
 </header>  
@@ -81,7 +81,7 @@
     
         
 <dt>
-    <h3 class="name" id="UserSetInstance"><span class="type-signature"></span>new UserSetInstance<span class="signature">(givenEventBus)</span><span class="type-signature"></span></h3>
+    <h3 class="name" id="ketaDevicePolling"><span class="type-signature"></span>new ketaDevicePolling<span class="signature">()</span><span class="type-signature"></span></h3>
     
     
 </dt>
@@ -89,7 +89,15 @@
     
     
     <div class="description">
-        UserSet Instance
+        <p>
+  A service providing polling for devices and tag values as a replacement
+  for the listener functionality that is removed in the Kiwicloud device service
+  version 12.
+</p>
+<p>
+  It has been added as a temporary solution to be used until apps using listeners
+  are transitioned to work without that functionality.
+</p>
     </div>
     
 
@@ -97,54 +105,6 @@
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="table">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>givenEventBus</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">EventBus</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">eventBus to use for UserSetInstance</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -170,7 +130,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="services_user-set.js.html">services/user-set.js</a>, <a href="services_user-set.js.html#line29">line 29</a>
+        <a href="services_device-polling.js.html">services/device-polling.js</a>, <a href="services_device-polling.js.html#line10">line 10</a>
     </li></ul></dd>
     
     

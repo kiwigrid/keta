@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>keta – Docs – Source: services/device-polling.js</title>
+	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
+
+	<link href="/keta/css/keta.min.css" rel="stylesheet">
+	<link href="/keta/css/style.css" rel="stylesheet">
+	<link href="/keta/css/docs.css" rel="stylesheet">
+	<link href="/keta/css/prettify-tomorrow.css" rel="stylesheet">
+
+	<!--[if lt IE 9]>
+	<script src="/keta/js/html5shiv.min.js"></script>
+	<script src="/keta/js/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<div class="col-xs-12 col-sm-12 col-md-3 sidebar">
+		<p id="logo">
+			<a href="/keta/"><img src="/keta/img/keta.svg"></a>
+		</p>
+		<p class="lead text-center">
+			Frontend Components for Kiwigrid Platform based AngularJS Apps
+		</p>
+		<p class="text-center">
+			Version 1.10.0
+		</p>
+		<p class="text-center hidden-xs hidden-sm">
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.10.0" role="button">ZIP File</a>
+			<a class="btn btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.10.0" role="button">TAR Ball</a>
+		</p>
+		<p class="text-center visible-xs visible-sm">
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/zipball/1.10.0" role="button">ZIP File</a>
+			<a class="btn btn-lg btn-primary" href="https://github.com/kiwigrid/keta/tarball/1.10.0" role="button">TAR Ball</a>
+		</p>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="../index.html">Home</a></li>
+			<li><a href="../examples/">Examples</a></li>
+			<li class="active"><a href="../docs/">Documentation</a></li>
+		</ul>
+		<p class="footer text-center hidden-xs hidden-sm">
+			View the project on <a href="https://github.com/kiwigrid/keta">Github</a>.<br>
+			Maintained by <a href="http://www.kiwigrid.com">Kiwigrid GmbH</a>.<br>
+			Licensed under the <a href="https://raw.githubusercontent.com/kiwigrid/keta/master/LICENSE">MIT License</a>.
+		</p>
+		<p id="company" class="text-center hidden-xs hidden-sm">
+			<a href="http://www.kiwigrid.com"><img src="/keta/img/kiwigrid.svg"></a>
+		</p>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-2 col-md-offset-3 index">
+		<nav>
+			<h1><a href="index.html">Index</a></h1><h3>Modules</h3><ul class="list-unstyled"><li><a href="keta.services.module_AccessToken.html">AccessToken</a></li><li><a href="keta.utils.module_Api.html">Api</a></li><li><a href="keta.directives.module_AppBar.html">AppBar</a></li><li><a href="keta.services.module_AppContext.html">AppContext</a></li><li><a href="keta.services.module_Application.html">Application</a></li><li><a href="keta.utils.module_Application.html">Application</a></li><li><a href="keta.services.module_ApplicationSet.html">ApplicationSet</a></li><li><a href="keta.utils.module_Common.html">Common</a></li><li><a href="keta.utils.module_Country.html">Country</a></li><li><a href="keta.directives.module_DatePicker.html">DatePicker</a></li><li><a href="keta.services.module_Device.html">Device</a></li><li><a href="keta.services.module_DeviceEvent.html">DeviceEvent</a></li><li><a href="keta.services.module_DevicePolling.html">DevicePolling</a></li><li><a href="keta.services.module_DeviceSet.html">DeviceSet</a></li><li><a href="keta.services.module_EventBus.html">EventBus</a></li><li><a href="keta.services.module_EventBusDispatcher.html">EventBusDispatcher</a></li><li><a href="keta.services.module_EventBusManager.html">EventBusManager</a></li><li><a href="keta.directives.module_ExtendedTable.html">ExtendedTable</a></li><li><a href="keta.services.module_Logger.html">Logger</a></li><li><a href="keta.directives.module_MainMenu.html">MainMenu</a></li><li><a href="keta.filters.module_OrderObjectBy.html">OrderObjectBy</a></li><li><a href="keta.directives.module_Sidebar.html">Sidebar</a></li><li><a href="keta.filters.module_Slice.html">Slice</a></li><li><a href="keta.services.module_Tag.html">Tag</a></li><li><a href="keta.services.module_TagSet.html">TagSet</a></li><li><a href="keta.directives.module_TimeRangeSelector.html">TimeRangeSelector</a></li><li><a href="keta.filters.module_Unit.html">Unit</a></li><li><a href="keta.services.module_User.html">User</a></li><li><a href="keta.services.module_UserSet.html">UserSet</a></li></ul>
+		</nav>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
+		<h1 class="page-title">Source: services/device-polling.js</h1>
+		
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+/**
+ * @copyright Kiwigrid GmbH 2014-2020
+ * @module keta.services.DevicePolling
+ * @description DevicePolling provider
+ */
+
+angular.module('keta.services.DevicePolling', [])
+	/**
+	 * @class ketaDevicePolling
+	 * @propertyOf keta.services.DevicePolling
+	 * @description
+	 * &lt;p>
+	 *   A service providing polling for devices and tag values as a replacement
+	 *   for the listener functionality that is removed in the Kiwicloud device service
+	 *   version 12.
+	 * &lt;/p>
+	 * &lt;p>
+	 *   It has been added as a temporary solution to be used until apps using listeners
+	 *   are transitioned to work without that functionality.
+	 * &lt;/p>
+	 */
+	.service('ketaDevicePolling', function DevicePolling(
+		$interval, $log, $q,
+		ketaEventBusDispatcher, ketaEventBusManager, ketaDeviceEvent, ketaDeviceSetPollers
+	) {
+		var DEFAULT_POLL_INTERVAL_SECONDS = 15;
+		var MILLISECONDS_PER_SECOND = 1000;
+
+		var isValid = function(queryReply) {
+			return queryReply
+				&amp;&amp; queryReply.code === ketaEventBusDispatcher.RESPONSE_CODE_OK
+				&amp;&amp; angular.isDefined(queryReply.result)
+				&amp;&amp; angular.isDefined(queryReply.result.items);
+		};
+
+		var logFetchQueryReply = function(queryParameters, reply) {
+			$log.request(['deviceservice', {
+				action: 'getDevices',
+				params: queryParameters
+			}, reply], $log.ADVANCED_FORMATTER);
+		};
+
+		var fetchDevices = function(eventBus, queryParameters) {
+			var deferred = $q.defer();
+			ketaEventBusDispatcher.send(eventBus, 'deviceservice', {
+				action: 'getDevices',
+				params: queryParameters
+			}, function(reply) {
+				if (!isValid(reply)) {
+					logFetchQueryReply(reply);
+					return;
+				}
+
+				if (ketaEventBusManager.inDebugMode()) {
+					logFetchQueryReply(reply);
+				}
+				deferred.resolve(reply);
+			});
+			return deferred.promise;
+		};
+
+		var compareGuids = function(thisDevice, thatDevice) {
+			if (thisDevice.guid &lt; thatDevice.guid) {
+				return -1;
+			}
+			if (thisDevice.guid > thatDevice.guid) {
+				return 1;
+			}
+			return 0;
+		};
+
+		var emitDeletionEvent = function(device, receiver) {
+			receiver(ketaDeviceEvent.create(ketaDeviceEvent.DELETED, device));
+		};
+
+		var emitCreationEvent = function(device, receiver) {
+			receiver(ketaDeviceEvent.create(ketaDeviceEvent.CREATED, device));
+		};
+
+		var emitUpdateEvent = function(device, receiver) {
+			receiver(ketaDeviceEvent.create(ketaDeviceEvent.UPDATED, device));
+		};
+
+		var compareDeviceLists = function(currentDevices, fetchedDevices, changeEventProcessor) {
+			var c = 0;
+			var f = 0;
+			while (c &lt; currentDevices.length &amp;&amp; f &lt; fetchedDevices.length) {
+				if (currentDevices[c].guid &lt; fetchedDevices[f].guid) {
+					emitDeletionEvent(currentDevices[c], changeEventProcessor);
+					c++;
+				} else if (currentDevices[c].guid > fetchedDevices[f].guid) {
+					emitCreationEvent(fetchedDevices[f], changeEventProcessor);
+					f++;
+				} else if (!angular.equals(currentDevices[c], fetchedDevices[f])) {
+					emitUpdateEvent(fetchedDevices[f], changeEventProcessor);
+					c++;
+					f++;
+				} else {
+					c++;
+					f++;
+				}
+			}
+			for (; c &lt; currentDevices.length; c++) {
+				emitDeletionEvent(currentDevices[c], changeEventProcessor);
+			}
+			for (; f &lt; fetchedDevices.length; f++) {
+				emitCreationEvent(fetchedDevices[f], changeEventProcessor);
+			}
+		};
+
+		/**
+		 * @name pollDevices
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Poll devices defined by the query parameters in the specified interval.
+		 * &lt;/p>
+		 * &lt;p>
+		 *   If a device matching the query changes, an event is emitted to the
+		 *   processing function.
+		 * &lt;/p>
+		 * &lt;p>
+		 *   This function is intended as a temporary replacement for the removed
+		 *   registerDeviceSetListener endpoint of the device service.
+		 * &lt;/p>
+		 * @param {EventBus} eventBus An event bus instance to communicate with the
+		 *   device service
+		 * @param {Object} queryParameters An object containing the parameters for the
+		 *   device service endpoint to query devices
+		 * @param {function} changeEventProcessor A function receiving an emitted
+		 *   device event upon a change in matching devices
+		 * @param {number} [intervalSeconds=15] The time between each query
+		 * @returns {void}
+		 */
+		this.pollDevices = function(eventBus, queryParameters, changeEventProcessor, intervalSeconds) {
+			intervalSeconds = intervalSeconds || DEFAULT_POLL_INTERVAL_SECONDS;
+
+			var currentDevices;
+			fetchDevices(eventBus, queryParameters).then(function(reply) {
+				currentDevices = reply.result.items.sort(compareGuids);
+			});
+
+			var poller = $interval(function() {
+				fetchDevices(eventBus, queryParameters).then(function(reply) {
+					var fetchedDevices = reply.result.items.sort(compareGuids);
+					if (currentDevices) {
+						compareDeviceLists(currentDevices, fetchedDevices, changeEventProcessor);
+					}
+					currentDevices = fetchedDevices;
+				});
+			}, intervalSeconds * MILLISECONDS_PER_SECOND);
+			ketaDeviceSetPollers.add(poller);
+		};
+
+		var emitTagValues = function(changeEvent, receiver) {
+			if (changeEvent.getType() !== ketaDeviceEvent.CREATED
+				&amp;&amp; changeEvent.getType() !== ketaDeviceEvent.UPDATED) {
+				return;
+			}
+
+			var tagValuesObject = changeEvent.getDevice().tagValues;
+
+			// Object#keys has better browser compatibility than Object#values
+			var tagValues = Object.keys(tagValuesObject).map(function(tagName) {
+				return tagValuesObject[tagName];
+			});
+			receiver(tagValues);
+		};
+
+		/**
+		 * @name pollTagValues
+		 * @function
+		 * @description
+		 * &lt;p>
+		 *   Poll tag values defined by the device query parameters in the specified
+		 *   interval.
+		 * &lt;/p>
+		 * &lt;p>
+		 *   If a device matching the query is added or changes, its tag values are
+		 *   emitted to the processing function.
+		 * &lt;/p>
+		 * &lt;p>
+		 *   This function is intended as a temporary replacement for the removed
+		 *   registerTagValueListener endpoint of the device service.
+		 * &lt;/p>
+		 * @param {EventBus} eventBus An event bus instance to communicate with the
+		 *   device service
+		 * @param {Object} queryParameters An object containing the parameters for the
+		 *   device service endpoint to query devices
+		 * @param {function} tagValuesProcessor A function receiving the emitted
+		 *   array of tag values upon changes in matching devices
+		 * @param {number} [intervalSeconds=15] The time between each query
+		 * @returns {void}
+		 */
+		this.pollTagValues = function(eventBus, queryParameters, tagValuesProcessor, intervalSeconds) {
+			this.pollDevices(eventBus, queryParameters, function(changeEvent) {
+				emitTagValues(changeEvent, tagValuesProcessor);
+			}, intervalSeconds);
+		};
+	});
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+	</div>
+
+	<script src="/keta/js/prettify.js"></script>
+	<script src="/keta/js/lang-css.js"></script>
+	<script> prettyPrint(); </script>
+	<script src="/keta/js/linenumber.js"></script>
+</body>
+</html>

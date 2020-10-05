@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>keta – Docs – Module: Application</title>
+	<title>keta – Docs – Module: DevicePolling</title>
 	<meta name="description" content="jsDoc of Frontend Components for Kiwigrid Platform based AngularJS Apps">
 
 	<link href="/keta/css/keta.min.css" rel="stylesheet">
@@ -58,7 +58,7 @@
 	</div>
 
 	<div class="col-xs-12 col-sm-12 col-md-7 canvas" id="#top">
-		<h1 class="page-title">Module: Application</h1>
+		<h1 class="page-title">Module: DevicePolling</h1>
 		
 
 
@@ -67,7 +67,7 @@
     
 <header>
     <h2>
-    Application
+    DevicePolling
     </h2>
     
 </header>  
@@ -78,9 +78,7 @@
     
     
         
-            <div class="description"><p>
-  Application service utilities for cross-component usage.
-</p></div>
+            <div class="description">DevicePolling provider</div>
         
         
         
@@ -96,17 +94,10 @@
     
     
     
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul class="list-unstyled">
-            <li>Marco Lehmann &lt;marco.lehmann (at) kiwigrid.com&gt;</li>
-        </ul>
-    </dd>
-    
     
     
     <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2015</li></ul></dd>
+    <dd class="tag-copyright"><ul class="list-unstyled dummy"><li>Kiwigrid GmbH 2014-2020</li></ul></dd>
     
     
     
@@ -116,7 +107,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="utils_application.js.html">utils/application.js</a>, <a href="utils_application.js.html#line3">line 3</a>
+        <a href="services_device-polling.js.html">services/device-polling.js</a>, <a href="services_device-polling.js.html#line3">line 3</a>
     </li></ul></dd>
     
     
@@ -142,7 +133,7 @@
         <h3 class="subsection-title">Classes</h3>
         
         <dl>
-            <dt><a href="keta.utils.module_Application-ApplicationUtils.html">ApplicationUtils</a></dt>
+            <dt><a href="keta.services.module_DevicePolling-ketaDevicePolling.html">ketaDevicePolling</a></dt>
             <dd></dd>
         </dl>
     
@@ -154,12 +145,12 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <ul class="list-unstyled"><li><a href="#~getAppAuthor"><span class="type-signature">&lt;inner> </span>getAppAuthor<span class="signature">(app, type)</span><span class="type-signature"> &rarr; {string}</span></a></li><li><a href="#~getAppIcon"><span class="type-signature">&lt;inner> </span>getAppIcon<span class="signature">(app, language)</span><span class="type-signature"> &rarr; {string}</span></a></li><li><a href="#~getAppList"><span class="type-signature">&lt;inner> </span>getAppList<span class="signature">(options)</span><span class="type-signature"> &rarr; {promise}</span></a></li><li><a href="#~getAppName"><span class="type-signature">&lt;inner> </span>getAppName<span class="signature">(app, uiLocale)</span><span class="type-signature"> &rarr; {string|null}</span></a></li></ul>
+        <ul class="list-unstyled"><li><a href="#~pollDevices"><span class="type-signature">&lt;inner> </span>pollDevices<span class="signature">(eventBus, queryParameters, changeEventProcessor, <span class="optional">intervalSeconds</span>)</span><span class="type-signature"> &rarr; {void}</span></a></li><li><a href="#~pollTagValues"><span class="type-signature">&lt;inner> </span>pollTagValues<span class="signature">(eventBus, queryParameters, tagValuesProcessor, <span class="optional">intervalSeconds</span>)</span><span class="type-signature"> &rarr; {void}</span></a></li></ul>
         
         <dl class="methods">
             
 <dt>
-    <h3 class="name" id="~getAppAuthor"><span class="type-signature">&lt;inner> </span>getAppAuthor<span class="signature">(app, type)</span><span class="type-signature"> &rarr; {string}</span></h3>
+    <h3 class="name" id="~pollDevices"><span class="type-signature">&lt;inner> </span>pollDevices<span class="signature">(eventBus, queryParameters, changeEventProcessor, <span class="optional">intervalSeconds</span>)</span><span class="type-signature"> &rarr; {void}</span></h3>
     
     
 </dt>
@@ -168,7 +159,15 @@
     
     <div class="description">
         <p>
-  Returns author from type or the first author in app.meta.author array.
+  Poll devices defined by the query parameters in the specified interval.
+</p>
+<p>
+  If a device matching the query changes, an event is emitted to the
+  processing function.
+</p>
+<p>
+  This function is intended as a temporary replacement for the removed
+  registerDeviceSetListener endpoint of the device service.
 </p>
     </div>
     
@@ -191,7 +190,11 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -203,46 +206,147 @@
 	
         <tr>
             
-                <td class="name"><code>app</code></td>
+                <td class="name"><code>eventBus</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">EventBus</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">application instance</td>
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">An event bus instance to communicate with the
+  device service</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>queryParameters</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">author type</td>
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">An object containing the parameters for the
+  device service endpoint to query devices</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>changeEventProcessor</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">A function receiving an emitted
+  device event upon a change in matching devices</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>intervalSeconds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    15
+                
+                </td>
+            
+            
+            <td class="description last">The time between each query</td>
         </tr>
 	
 	
@@ -273,7 +377,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="utils_application.js.html">utils/application.js</a>, <a href="utils_application.js.html#line242">line 242</a>
+        <a href="services_device-polling.js.html">services/device-polling.js</a>, <a href="services_device-polling.js.html#line113">line 113</a>
     </li></ul></dd>
     
     
@@ -300,13 +404,11 @@
 <div class="param-desc">
 	
 		
-<span class="param-type">string</span>
+<span class="param-type">void</span>
 
 
 	
 	
-    app author name
-    
 </div>
         
     
@@ -316,7 +418,7 @@
         
             
 <dt>
-    <h3 class="name" id="~getAppIcon"><span class="type-signature">&lt;inner> </span>getAppIcon<span class="signature">(app, language)</span><span class="type-signature"> &rarr; {string}</span></h3>
+    <h3 class="name" id="~pollTagValues"><span class="type-signature">&lt;inner> </span>pollTagValues<span class="signature">(eventBus, queryParameters, tagValuesProcessor, <span class="optional">intervalSeconds</span>)</span><span class="type-signature"> &rarr; {void}</span></h3>
     
     
 </dt>
@@ -325,9 +427,16 @@
     
     <div class="description">
         <p>
-  Returns app icon source from app meta object by using
-  link-element to easily access url params.
-  If app has no icon informations it return <code>null</code>.
+  Poll tag values defined by the device query parameters in the specified
+  interval.
+</p>
+<p>
+  If a device matching the query is added or changes, its tag values are
+  emitted to the processing function.
+</p>
+<p>
+  This function is intended as a temporary replacement for the removed
+  registerTagValueListener endpoint of the device service.
 </p>
     </div>
     
@@ -350,7 +459,11 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -362,46 +475,147 @@
 	
         <tr>
             
-                <td class="name"><code>app</code></td>
+                <td class="name"><code>eventBus</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">EventBus</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">application instance</td>
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">An event bus instance to communicate with the
+  device service</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>language</code></td>
+                <td class="name"><code>queryParameters</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">current language</td>
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">An object containing the parameters for the
+  device service endpoint to query devices</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>tagValuesProcessor</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">A function receiving the emitted
+  array of tag values upon changes in matching devices</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>intervalSeconds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    15
+                
+                </td>
+            
+            
+            <td class="description last">The time between each query</td>
         </tr>
 	
 	
@@ -432,7 +646,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="utils_application.js.html">utils/application.js</a>, <a href="utils_application.js.html#line163">line 163</a>
+        <a href="services_device-polling.js.html">services/device-polling.js</a>, <a href="services_device-polling.js.html#line172">line 172</a>
     </li></ul></dd>
     
     
@@ -459,339 +673,11 @@
 <div class="param-desc">
 	
 		
-<span class="param-type">string</span>
+<span class="param-type">void</span>
 
 
 	
 	
-    app icon src
-    
-</div>
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h3 class="name" id="~getAppList"><span class="type-signature">&lt;inner> </span>getAppList<span class="signature">(options)</span><span class="type-signature"> &rarr; {promise}</span></h3>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>
-  Returns an array with all apps that are not blacklisted and have an entryUri. It is also
-  possible to get apps for a specific user by providing an appropriate filter with key userId.
-</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="table">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">options to configure the API call</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="utils_application.js.html">utils/application.js</a>, <a href="utils_application.js.html#line55">line 55</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-	
-		
-<span class="param-type">promise</span>
-
-
-	
-	
-    app list promise
-    
-</div>
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>angular.module('exampleApp', ['keta.utils.Application'])
-    .controller('ExampleController', function(ketaApplicationUtils) {
-
-        // get apps with default options
-        // eventBusId: kiwibus
-        // forceRefresh: false
-        // filter: {} (no filter applied)
-        ketaApplicationUtils.getAppList().then(function(apps) {
-            // ...
-        });
-
-        // get apps with options in place
-        ketaApplicationUtils.getAppList({
-            eventBusId: 'myCustomEventBusId',
-            forceRefresh: true,
-            filter: {
-                userId: 'john.doe'
-            },
-            excludeAppIds: {
-                'kiwigrid.desktop': true
-            }
-        }).then(function(apps) {
-            // ...
-        });
-
-    });</code></pre>
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h3 class="name" id="~getAppName"><span class="type-signature">&lt;inner> </span>getAppName<span class="signature">(app, uiLocale)</span><span class="type-signature"> &rarr; {string|null}</span></h3>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>
-  uiLocale is the current (user set) UI language of the running app.
-  Can be either short ('de') or long ('en-US') format.
-</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="table">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>app</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">application instance</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>uiLocale</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">current locale</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="list-unstyled dummy"><li>
-        <a href="utils_application.js.html">utils/application.js</a>, <a href="utils_application.js.html#line145">line 145</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-	
-		
-<span class="param-type">string</span>
-|
-
-<span class="param-type">null</span>
-
-
-	
-	
-    application localized application name
-    
 </div>
         
     
