@@ -237,7 +237,7 @@ angular.module('keta.directives.AppBar',
 			COMPACT_MENU: 'compactMenu',
 			STATUS_LINK: 'statusLink'
 		},
-		ROOT_APP_ID: 'kiwigrid.desktop',
+		ROOT_APP_ID: 'kiwigrid.usersettingsapp',
 		SIZE: {
 			XXS: 'xxs',
 			XS: 'xs',
@@ -710,7 +710,7 @@ angular.module('keta.directives.AppBar',
 								ketaCommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
 							scope.rootApp.name = name;
 							scope.worlds.unshift({
-								name: 'Desktop',
+								name: 'User Settings App',
 								link: scope.rootApp.link
 							});
 						}
@@ -6825,6 +6825,12 @@ angular.module('keta.services.DeviceEvent', [])
 	});
 
 // source: dist/services/device-polling.js
+/**
+ * @copyright Kiwigrid GmbH 2014-2020
+ * @module keta.services.DevicePolling
+ * @description DevicePolling provider
+ */
+
 angular.module('keta.services.DevicePolling', [])
 	/**
 	 * @class ketaDevicePolling
@@ -10809,7 +10815,7 @@ angular.module('keta.utils.Application',
 			 *                 userId: 'john.doe'
 			 *             },
 			 *             excludeAppIds: {
-			 *                 'kiwigrid.desktop': true
+			 *                 'kiwigrid.usersettingsapp': true
 			 *             }
 			 *         }).then(function(apps) {
 			 *             // ...

@@ -82,7 +82,7 @@ angular.module('keta.utils.Application',
 			 *                 userId: 'john.doe'
 			 *             },
 			 *             excludeAppIds: {
-			 *                 'kiwigrid.desktop': true
+			 *                 'kiwigrid.usersettingsapp': true
 			 *             }
 			 *         }).then(function(apps) {
 			 *             // ...

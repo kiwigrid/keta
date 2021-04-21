@@ -204,7 +204,7 @@ angular.module('keta.directives.AppBar',
 			COMPACT_MENU: 'compactMenu',
 			STATUS_LINK: 'statusLink'
 		},
-		ROOT_APP_ID: 'kiwigrid.desktop',
+		ROOT_APP_ID: 'kiwigrid.usersettingsapp',
 		SIZE: {
 			XXS: 'xxs',
 			XS: 'xs',
@@ -677,7 +677,7 @@ angular.module('keta.directives.AppBar',
 								ketaCommonUtils.addUrlParameter(entryUri, 'userId', accessToken.user_id);
 							scope.rootApp.name = name;
 							scope.worlds.unshift({
-								name: 'Desktop',
+								name: 'User Settings App',
 								link: scope.rootApp.link
 							});
 						}

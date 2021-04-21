@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * @copyright Kiwigrid GmbH 2014-2020
+ * @module keta.services.DevicePolling
+ * @description DevicePolling provider
+ */
+
 angular.module('keta.services.DevicePolling', [])
 	/**
 	 * @class ketaDevicePolling
